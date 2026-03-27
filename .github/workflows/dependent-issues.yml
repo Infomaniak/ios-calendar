@@ -1,0 +1,25 @@
+name: Dependent Issues
+
+on:
+  issues:
+    types:
+      - opened
+      - edited
+      - closed
+      - reopened
+  pull_request_target:
+    types:
+      - opened
+      - edited
+      - closed
+      - reopened
+      - synchronize
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check_dependencies:
+    uses: infomaniak/.github/.github/workflows/dependent-issues.yml@v2
+    secrets: inherit
