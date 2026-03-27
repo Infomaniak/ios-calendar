@@ -37,6 +37,12 @@ included:
  - Project.swift
  - Tuist/Package.swift
  - Tuist/ProjectDescriptionHelpers
+ - Calendar/Sources
+ - CalendarCore
+ - CalendarCoreUI
+ - CalendarFeatures
+ - CalendarTests
+ - CalendarUITests
 custom_rules:
   private_state:
     included:
