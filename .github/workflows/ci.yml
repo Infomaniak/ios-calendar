@@ -1,0 +1,29 @@
+name: CI workflow
+
+on:
+  pull_request:
+    branches: [ main, protected/* ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+  
+jobs:
+  build:
+    name: Build and Test project
+    runs-on: [ self-hosted, iOS ]
+
+    steps:
+      - uses: jdx/mise-action@6d1e696aa24c1aa1bcc1adea0212707c71ab78a8
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Generate
+        run: tuist install && tuist generate
+      - name: Check implicit imports
+        run: tuist inspect implicit-imports
+      - name: Build
+        run: tuist build --clean "Calendar"
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@fd88b7d7ccbaefd23d8f36f73b59db7a3d246602 #6.0.0
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
