@@ -1,0 +1,6 @@
+project: Calendar.xcworkspace
+retain_public: true
+schemes:
+- Calendar
+index_exclude:
+  - "Derived/**"
