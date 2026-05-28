@@ -16,17 +16,16 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import CalendarMainView
 import SwiftUI
 
-public struct RootView: View {
+public struct EventDetailsView: View {
     public init() {}
 
     public var body: some View {
-        MainView()
+        EmptyView()
     }
 }
 
 #Preview {
-    RootView()
+    EventDetailsView()
 }
