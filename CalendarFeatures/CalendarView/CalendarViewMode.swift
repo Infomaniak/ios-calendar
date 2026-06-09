@@ -16,17 +16,10 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import CalendarMainView
-import SwiftUI
+import Foundation
 
-public struct RootView: View {
-    public init() {}
-
-    public var body: some View {
-        MainView()
-    }
-}
-
-#Preview {
-    RootView()
+public enum CalendarViewMode: CaseIterable, Sendable {
+    case planning
+    case week
+    case month
 }

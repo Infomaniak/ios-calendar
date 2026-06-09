@@ -16,17 +16,25 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import CalendarMainView
 import SwiftUI
 
-public struct RootView: View {
+public struct CalendarView: View {
+    @State private var selectedMode: CalendarViewMode = .planning
+
     public init() {}
 
     public var body: some View {
-        MainView()
+        switch selectedMode {
+        case .planning:
+            PlanningView()
+        case .week:
+            WeekView()
+        case .month:
+            MonthView()
+        }
     }
 }
 
 #Preview {
-    RootView()
+    CalendarView()
 }

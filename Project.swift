@@ -20,26 +20,50 @@ import Foundation
 import ProjectDescription
 import ProjectDescriptionHelpers
 
+let onboardingView = Feature(name: "OnboardingView", additionalDependencies: [])
+
 let preloadingView = Feature(name: "PreloadingView", additionalDependencies: [])
 
-let mainView = Feature(name: "MainView", additionalDependencies: [])
+let calendarView = Feature(name: "CalendarView", additionalDependencies: [])
 
-let onboardingView = Feature(name: "OnboardingView", additionalDependencies: [])
+let createEditEventView = Feature(name: "CreateEditEventView", additionalDependencies: [])
+
+let eventDetailsView = Feature(name: "EventDetailsView", additionalDependencies: [])
+
+let calendarListView = Feature(name: "CalendarListView", additionalDependencies: [])
+
+let settingsView = Feature(name: "SettingsView", additionalDependencies: [])
+
+let mainView = Feature(
+    name: "MainView",
+    dependencies: [
+        calendarView,
+        createEditEventView,
+        eventDetailsView,
+        calendarListView,
+        settingsView
+    ]
+)
 
 let rootView = Feature(
     name: "RootView",
     dependencies: [
-        mainView,
+        onboardingView,
         preloadingView,
-        onboardingView
+        mainView
     ]
 )
 
 let mainiOSAppFeatures = [
-    rootView,
-    mainView,
+    onboardingView,
     preloadingView,
-    onboardingView
+    calendarView,
+    createEditEventView,
+    eventDetailsView,
+    calendarListView,
+    settingsView,
+    mainView,
+    rootView
 ]
 
 let project = Project(
