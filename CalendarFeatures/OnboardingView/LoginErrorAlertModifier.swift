@@ -9,31 +9,27 @@
 
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  GNU General Public License for more details.
 
  You should have received a copy of the GNU General Public License
- along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 import SwiftUI
 
-public struct OnboardingView: View {
-    @StateObject private var loginHandler = LoginHandler()
-    @State private var selection = 0
-
-    public init() {}
-
-    public var body: some View {
-        OnboardingBottomButtonsView(
-            loginHandler: loginHandler,
-            selection: $selection,
-            slideCount: 2
-        )
-        .loginErrorAlert(loginHandler: loginHandler)
+public extension View {
+    func loginErrorAlert(loginHandler: LoginHandler) -> some View {
+        alert(
+            isPresented: Binding(
+                get: { loginHandler.error != nil },
+                set: { presented in
+                    if !presented {
+                        loginHandler.error = nil
+                    }
+                }
+            ),
+            error: loginHandler.error
+        ) {}
     }
-}
-
-#Preview {
-    OnboardingView()
 }

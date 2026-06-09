@@ -16,13 +16,32 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarCore
+import CalendarCoreUI
+import CalendarRootView
+import InfomaniakCore
+import InfomaniakDI
 import SwiftUI
 
 @main
 struct CalendarApp: App {
+    // periphery:ignore - Making sure the DI is registered at a very early stage of the app launch.
+    private let dependencyInjectionHook = CalendarTargetAssembly()
+
+    @StateObject private var rootViewState = RootViewState()
+
     var body: some Scene {
         WindowGroup {
-            Text("Hello world")
+            RootView()
+                .environmentObject(rootViewState)
+                .sceneLifecycle(willEnterForeground: willEnterForeground)
+        }
+    }
+
+    private func willEnterForeground() {
+        if rootViewState.state != .onboarding && rootViewState.state != .preloading {
+            @InjectService var appLaunchCounter: AppLaunchCounter
+            appLaunchCounter.increase()
         }
     }
 }
