@@ -1,0 +1,1126 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 6.3.2 effective-5.10 (swiftlang-6.3.2.1.108 clang-2100.1.1.101)
+// swift-module-flags: -target arm64-apple-ios13.0 -enable-objc-interop -enable-library-evolution -swift-version 5 -O -module-name KmpCalendar
+// swift-module-flags-ignorable:  -formal-cxx-interoperability-mode=off -interface-compiler-version 6.3.2
+import Foundation
+@_exported import KmpCalendar
+import Swift
+import _Concurrency
+import _StringProcessing
+import _SwiftConcurrencyShims
+public enum Skie {
+  public enum RuntimeKotlin {
+    public enum SkieColdFlowIterator {
+      public typealias __Kotlin = KmpCalendar.SkieColdFlowIterator
+    }
+    public enum SkieKotlinFlow {
+      public typealias __Kotlin = KmpCalendar.SkieKotlinFlow
+    }
+    public enum SkieKotlinMutableSharedFlow {
+      public typealias __Kotlin = KmpCalendar.SkieKotlinMutableSharedFlow
+    }
+    public enum SkieKotlinMutableStateFlow {
+      public typealias __Kotlin = KmpCalendar.SkieKotlinMutableStateFlow
+    }
+    public enum SkieKotlinOptionalFlow {
+      public typealias __Kotlin = KmpCalendar.SkieKotlinOptionalFlow
+    }
+    public enum SkieKotlinOptionalMutableSharedFlow {
+      public typealias __Kotlin = KmpCalendar.SkieKotlinOptionalMutableSharedFlow
+    }
+    public enum SkieKotlinOptionalMutableStateFlow {
+      public typealias __Kotlin = KmpCalendar.SkieKotlinOptionalMutableStateFlow
+    }
+    public enum SkieKotlinOptionalSharedFlow {
+      public typealias __Kotlin = KmpCalendar.SkieKotlinOptionalSharedFlow
+    }
+    public enum SkieKotlinOptionalStateFlow {
+      public typealias __Kotlin = KmpCalendar.SkieKotlinOptionalStateFlow
+    }
+    public enum SkieKotlinSharedFlow {
+      public typealias __Kotlin = KmpCalendar.SkieKotlinSharedFlow
+    }
+    public enum SkieKotlinStateFlow {
+      public typealias __Kotlin = KmpCalendar.SkieKotlinStateFlow
+    }
+    public enum Skie_CancellationHandler {
+      public typealias __Kotlin = KmpCalendar.Skie_CancellationHandler
+    }
+    public enum Skie_DispatcherDelegate {
+      public typealias __Kotlin = KmpCalendar.Skie_DispatcherDelegate
+    }
+    public enum Skie_SuspendHandler {
+      public typealias __Kotlin = KmpCalendar.Skie_SuspendHandler
+    }
+    public enum Skie_SuspendResult {
+      public typealias __Kotlin = KmpCalendar.Skie_SuspendResult
+      public enum Success {
+        public typealias __Kotlin = KmpCalendar.Skie_SuspendResult.Success
+      }
+      public enum Error {
+        public typealias __Kotlin = KmpCalendar.Skie_SuspendResult.Error
+      }
+      public enum Canceled {
+        public typealias __Kotlin = KmpCalendar.Skie_SuspendResult.Canceled
+      }
+    }
+  }
+  public typealias co_touchlab_skie__runtime_kotlin = KmpCalendar.Skie.RuntimeKotlin
+  public enum KotlinxCoroutinesCore {
+    public enum Flow {
+      public typealias __Kotlin = KmpCalendar.Kotlinx_coroutines_coreFlow
+    }
+    public enum StateFlow {
+      public typealias __Kotlin = KmpCalendar.Kotlinx_coroutines_coreStateFlow
+    }
+    public enum SharedFlow {
+      public typealias __Kotlin = KmpCalendar.Kotlinx_coroutines_coreSharedFlow
+    }
+    public enum MutableSharedFlow {
+      public typealias __Kotlin = KmpCalendar.Kotlinx_coroutines_coreMutableSharedFlow
+    }
+    public enum MutableStateFlow {
+      public typealias __Kotlin = KmpCalendar.Kotlinx_coroutines_coreMutableStateFlow
+    }
+    public enum Runnable {
+      public typealias __Kotlin = KmpCalendar.Kotlinx_coroutines_coreRunnable
+    }
+  }
+  public typealias org_jetbrains_kotlinx__kotlinx_coroutines_core = KmpCalendar.Skie.KotlinxCoroutinesCore
+  public enum KotlinxDatetime {
+    public enum DateTimeFormat {
+    }
+    public enum DateTimeFormatBuilder {
+      public enum WithTime {
+      }
+      public enum WithDate {
+      }
+      public enum WithYearMonth {
+      }
+      public enum WithDateTime {
+      }
+      public enum WithDateTimeComponents {
+      }
+      public enum WithUtcOffset {
+      }
+    }
+  }
+  public typealias org_jetbrains_kotlinx__kotlinx_datetime = KmpCalendar.Skie.KotlinxDatetime
+  public enum KotlinxSerializationCore {
+    public enum SerialKind {
+    }
+    public enum SerializersModule {
+    }
+    public enum PolymorphicKind {
+    }
+    public enum PrimitiveKind {
+    }
+    public enum StructureKind {
+    }
+  }
+  public typealias org_jetbrains_kotlinx__kotlinx_serialization_core = KmpCalendar.Skie.KotlinxSerializationCore
+}
+@_hasMissingDesignatedInitializers public class SkieSwiftFlowIterator<T> : _Concurrency.AsyncIteratorProtocol {
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func next() async -> T?
+  @objc deinit
+  public typealias Element = T
+  @available(iOS 18.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, macOS 15.0, *)
+  @_implements(_Concurrency.AsyncIteratorProtocol, Failure) public typealias __AsyncIteratorProtocol_Failure = Swift.Never
+}
+public protocol SkieSwiftFlowProtocol<Element> : _Concurrency.AsyncSequence {
+  associatedtype Element
+  associatedtype Delegate : KmpCalendar.Kotlinx_coroutines_coreFlow
+  @_spi(SKIE) var delegate: Self.Delegate { get }
+}
+@_hasMissingDesignatedInitializers final public class SkieSwiftFlow<T> : KmpCalendar.SkieSwiftFlowProtocol, Swift._ObjectiveCBridgeable {
+  @_spi(SKIE) final public let delegate: any KmpCalendar.Kotlinx_coroutines_coreFlow
+  public static func _forceBridgeFromObjectiveC(_ source: KmpCalendar.SkieKotlinFlow<Swift.AnyObject>, result: inout KmpCalendar.SkieSwiftFlow<T>?)
+  public static func _conditionallyBridgeFromObjectiveC(_ source: KmpCalendar.SkieKotlinFlow<Swift.AnyObject>, result: inout KmpCalendar.SkieSwiftFlow<T>?) -> Swift.Bool
+  public static func _unconditionallyBridgeFromObjectiveC(_ source: KmpCalendar.SkieKotlinFlow<Swift.AnyObject>?) -> Self
+  final public func _bridgeToObjectiveC() -> KmpCalendar.SkieKotlinFlow<Swift.AnyObject>
+  final public func makeAsyncIterator() -> KmpCalendar.SkieSwiftFlowIterator<T>
+  public typealias AsyncIterator = KmpCalendar.SkieSwiftFlowIterator<T>
+  public typealias Element = T
+  public typealias _ObjectiveCType = KmpCalendar.SkieKotlinFlow<Swift.AnyObject>
+  public typealias Delegate = any KmpCalendar.Kotlinx_coroutines_coreFlow
+  @available(iOS 18.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, macOS 15.0, *)
+  @_implements(_Concurrency.AsyncSequence, Failure) public typealias __AsyncSequence_Failure = Swift.Never
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers final public class SkieSwiftOptionalFlow<T> : KmpCalendar.SkieSwiftFlowProtocol, Swift._ObjectiveCBridgeable {
+  @_spi(SKIE) final public let delegate: any KmpCalendar.Kotlinx_coroutines_coreFlow
+  public static func _forceBridgeFromObjectiveC(_ source: KmpCalendar.SkieKotlinOptionalFlow<Swift.AnyObject>, result: inout KmpCalendar.SkieSwiftOptionalFlow<T>?)
+  public static func _conditionallyBridgeFromObjectiveC(_ source: KmpCalendar.SkieKotlinOptionalFlow<Swift.AnyObject>, result: inout KmpCalendar.SkieSwiftOptionalFlow<T>?) -> Swift.Bool
+  public static func _unconditionallyBridgeFromObjectiveC(_ source: KmpCalendar.SkieKotlinOptionalFlow<Swift.AnyObject>?) -> Self
+  final public func _bridgeToObjectiveC() -> KmpCalendar.SkieKotlinOptionalFlow<Swift.AnyObject>
+  final public func makeAsyncIterator() -> KmpCalendar.SkieSwiftFlowIterator<T?>
+  public typealias AsyncIterator = KmpCalendar.SkieSwiftFlowIterator<T?>
+  public typealias Element = T?
+  public typealias _ObjectiveCType = KmpCalendar.SkieKotlinOptionalFlow<Swift.AnyObject>
+  public typealias Delegate = any KmpCalendar.Kotlinx_coroutines_coreFlow
+  @available(iOS 18.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, macOS 15.0, *)
+  @_implements(_Concurrency.AsyncSequence, Failure) public typealias __AsyncSequence_Failure = Swift.Never
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers final public class SkieSwiftSharedFlow<T> : KmpCalendar.SkieSwiftFlowProtocol, Swift._ObjectiveCBridgeable {
+  @_spi(SKIE) final public let delegate: any KmpCalendar.Kotlinx_coroutines_coreSharedFlow
+  final public var replayCache: [T] {
+    get
+  }
+  public static func _forceBridgeFromObjectiveC(_ source: KmpCalendar.SkieKotlinSharedFlow<Swift.AnyObject>, result: inout KmpCalendar.SkieSwiftSharedFlow<T>?)
+  public static func _conditionallyBridgeFromObjectiveC(_ source: KmpCalendar.SkieKotlinSharedFlow<Swift.AnyObject>, result: inout KmpCalendar.SkieSwiftSharedFlow<T>?) -> Swift.Bool
+  public static func _unconditionallyBridgeFromObjectiveC(_ source: KmpCalendar.SkieKotlinSharedFlow<Swift.AnyObject>?) -> Self
+  final public func _bridgeToObjectiveC() -> KmpCalendar.SkieKotlinSharedFlow<Swift.AnyObject>
+  final public func makeAsyncIterator() -> KmpCalendar.SkieSwiftFlowIterator<T>
+  public typealias AsyncIterator = KmpCalendar.SkieSwiftFlowIterator<T>
+  public typealias Element = T
+  public typealias _ObjectiveCType = KmpCalendar.SkieKotlinSharedFlow<Swift.AnyObject>
+  public typealias Delegate = any KmpCalendar.Kotlinx_coroutines_coreSharedFlow
+  @available(iOS 18.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, macOS 15.0, *)
+  @_implements(_Concurrency.AsyncSequence, Failure) public typealias __AsyncSequence_Failure = Swift.Never
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers final public class SkieSwiftOptionalSharedFlow<T> : KmpCalendar.SkieSwiftFlowProtocol, Swift._ObjectiveCBridgeable {
+  @_spi(SKIE) final public let delegate: any KmpCalendar.Kotlinx_coroutines_coreSharedFlow
+  final public var replayCache: [T?] {
+    get
+  }
+  public static func _forceBridgeFromObjectiveC(_ source: KmpCalendar.SkieKotlinOptionalSharedFlow<Swift.AnyObject>, result: inout KmpCalendar.SkieSwiftOptionalSharedFlow<T>?)
+  public static func _conditionallyBridgeFromObjectiveC(_ source: KmpCalendar.SkieKotlinOptionalSharedFlow<Swift.AnyObject>, result: inout KmpCalendar.SkieSwiftOptionalSharedFlow<T>?) -> Swift.Bool
+  public static func _unconditionallyBridgeFromObjectiveC(_ source: KmpCalendar.SkieKotlinOptionalSharedFlow<Swift.AnyObject>?) -> Self
+  final public func _bridgeToObjectiveC() -> KmpCalendar.SkieKotlinOptionalSharedFlow<Swift.AnyObject>
+  final public func makeAsyncIterator() -> KmpCalendar.SkieSwiftFlowIterator<T?>
+  public typealias AsyncIterator = KmpCalendar.SkieSwiftFlowIterator<T?>
+  public typealias Element = T?
+  public typealias _ObjectiveCType = KmpCalendar.SkieKotlinOptionalSharedFlow<Swift.AnyObject>
+  public typealias Delegate = any KmpCalendar.Kotlinx_coroutines_coreSharedFlow
+  @available(iOS 18.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, macOS 15.0, *)
+  @_implements(_Concurrency.AsyncSequence, Failure) public typealias __AsyncSequence_Failure = Swift.Never
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers final public class SkieSwiftMutableSharedFlow<T> : KmpCalendar.SkieSwiftFlowProtocol, Swift._ObjectiveCBridgeable {
+  @_spi(SKIE) final public let delegate: any KmpCalendar.Kotlinx_coroutines_coreMutableSharedFlow
+  final public var subscriptionCount: KmpCalendar.SkieSwiftStateFlow<KmpCalendar.KotlinInt> {
+    get
+  }
+  final public var replayCache: [T] {
+    get
+  }
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  final public func emit(value: T) async throws
+  final public func tryEmit(value: T) -> Swift.Bool
+  final public func resetReplayCache()
+  public static func _forceBridgeFromObjectiveC(_ source: KmpCalendar.SkieKotlinMutableSharedFlow<Swift.AnyObject>, result: inout KmpCalendar.SkieSwiftMutableSharedFlow<T>?)
+  public static func _conditionallyBridgeFromObjectiveC(_ source: KmpCalendar.SkieKotlinMutableSharedFlow<Swift.AnyObject>, result: inout KmpCalendar.SkieSwiftMutableSharedFlow<T>?) -> Swift.Bool
+  public static func _unconditionallyBridgeFromObjectiveC(_ source: KmpCalendar.SkieKotlinMutableSharedFlow<Swift.AnyObject>?) -> Self
+  final public func _bridgeToObjectiveC() -> KmpCalendar.SkieKotlinMutableSharedFlow<Swift.AnyObject>
+  final public func makeAsyncIterator() -> KmpCalendar.SkieSwiftFlowIterator<T>
+  public typealias AsyncIterator = KmpCalendar.SkieSwiftFlowIterator<T>
+  public typealias Element = T
+  public typealias _ObjectiveCType = KmpCalendar.SkieKotlinMutableSharedFlow<Swift.AnyObject>
+  public typealias Delegate = any KmpCalendar.Kotlinx_coroutines_coreMutableSharedFlow
+  @available(iOS 18.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, macOS 15.0, *)
+  @_implements(_Concurrency.AsyncSequence, Failure) public typealias __AsyncSequence_Failure = Swift.Never
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers final public class SkieSwiftOptionalMutableSharedFlow<T> : KmpCalendar.SkieSwiftFlowProtocol, Swift._ObjectiveCBridgeable {
+  @_spi(SKIE) final public let delegate: any KmpCalendar.Kotlinx_coroutines_coreMutableSharedFlow
+  final public var subscriptionCount: KmpCalendar.SkieSwiftStateFlow<KmpCalendar.KotlinInt> {
+    get
+  }
+  final public var replayCache: [T?] {
+    get
+  }
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  final public func emit(value: T?) async throws
+  final public func tryEmit(value: T?) -> Swift.Bool
+  final public func resetReplayCache()
+  public static func _forceBridgeFromObjectiveC(_ source: KmpCalendar.SkieKotlinOptionalMutableSharedFlow<Swift.AnyObject>, result: inout KmpCalendar.SkieSwiftOptionalMutableSharedFlow<T>?)
+  public static func _conditionallyBridgeFromObjectiveC(_ source: KmpCalendar.SkieKotlinOptionalMutableSharedFlow<Swift.AnyObject>, result: inout KmpCalendar.SkieSwiftOptionalMutableSharedFlow<T>?) -> Swift.Bool
+  public static func _unconditionallyBridgeFromObjectiveC(_ source: KmpCalendar.SkieKotlinOptionalMutableSharedFlow<Swift.AnyObject>?) -> Self
+  final public func _bridgeToObjectiveC() -> KmpCalendar.SkieKotlinOptionalMutableSharedFlow<Swift.AnyObject>
+  final public func makeAsyncIterator() -> KmpCalendar.SkieSwiftFlowIterator<T?>
+  public typealias AsyncIterator = KmpCalendar.SkieSwiftFlowIterator<T?>
+  public typealias Element = T?
+  public typealias _ObjectiveCType = KmpCalendar.SkieKotlinOptionalMutableSharedFlow<Swift.AnyObject>
+  public typealias Delegate = any KmpCalendar.Kotlinx_coroutines_coreMutableSharedFlow
+  @available(iOS 18.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, macOS 15.0, *)
+  @_implements(_Concurrency.AsyncSequence, Failure) public typealias __AsyncSequence_Failure = Swift.Never
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers final public class SkieSwiftStateFlow<T> : KmpCalendar.SkieSwiftFlowProtocol, Swift._ObjectiveCBridgeable {
+  @_spi(SKIE) final public let delegate: any KmpCalendar.Kotlinx_coroutines_coreStateFlow
+  final public var value: T {
+    get
+  }
+  final public var replayCache: [T] {
+    get
+  }
+  public static func _forceBridgeFromObjectiveC(_ source: KmpCalendar.SkieKotlinStateFlow<Swift.AnyObject>, result: inout KmpCalendar.SkieSwiftStateFlow<T>?)
+  public static func _conditionallyBridgeFromObjectiveC(_ source: KmpCalendar.SkieKotlinStateFlow<Swift.AnyObject>, result: inout KmpCalendar.SkieSwiftStateFlow<T>?) -> Swift.Bool
+  public static func _unconditionallyBridgeFromObjectiveC(_ source: KmpCalendar.SkieKotlinStateFlow<Swift.AnyObject>?) -> Self
+  final public func _bridgeToObjectiveC() -> KmpCalendar.SkieKotlinStateFlow<Swift.AnyObject>
+  final public func makeAsyncIterator() -> KmpCalendar.SkieSwiftFlowIterator<T>
+  public typealias AsyncIterator = KmpCalendar.SkieSwiftFlowIterator<T>
+  public typealias Element = T
+  public typealias _ObjectiveCType = KmpCalendar.SkieKotlinStateFlow<Swift.AnyObject>
+  public typealias Delegate = any KmpCalendar.Kotlinx_coroutines_coreStateFlow
+  @available(iOS 18.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, macOS 15.0, *)
+  @_implements(_Concurrency.AsyncSequence, Failure) public typealias __AsyncSequence_Failure = Swift.Never
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers final public class SkieSwiftOptionalStateFlow<T> : KmpCalendar.SkieSwiftFlowProtocol, Swift._ObjectiveCBridgeable {
+  @_spi(SKIE) final public let delegate: any KmpCalendar.Kotlinx_coroutines_coreStateFlow
+  final public var value: T? {
+    get
+  }
+  final public var replayCache: [T?] {
+    get
+  }
+  public static func _forceBridgeFromObjectiveC(_ source: KmpCalendar.SkieKotlinOptionalStateFlow<Swift.AnyObject>, result: inout KmpCalendar.SkieSwiftOptionalStateFlow<T>?)
+  public static func _conditionallyBridgeFromObjectiveC(_ source: KmpCalendar.SkieKotlinOptionalStateFlow<Swift.AnyObject>, result: inout KmpCalendar.SkieSwiftOptionalStateFlow<T>?) -> Swift.Bool
+  public static func _unconditionallyBridgeFromObjectiveC(_ source: KmpCalendar.SkieKotlinOptionalStateFlow<Swift.AnyObject>?) -> Self
+  final public func _bridgeToObjectiveC() -> KmpCalendar.SkieKotlinOptionalStateFlow<Swift.AnyObject>
+  final public func makeAsyncIterator() -> KmpCalendar.SkieSwiftFlowIterator<T?>
+  public typealias AsyncIterator = KmpCalendar.SkieSwiftFlowIterator<T?>
+  public typealias Element = T?
+  public typealias _ObjectiveCType = KmpCalendar.SkieKotlinOptionalStateFlow<Swift.AnyObject>
+  public typealias Delegate = any KmpCalendar.Kotlinx_coroutines_coreStateFlow
+  @available(iOS 18.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, macOS 15.0, *)
+  @_implements(_Concurrency.AsyncSequence, Failure) public typealias __AsyncSequence_Failure = Swift.Never
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers final public class SkieSwiftMutableStateFlow<T> : KmpCalendar.SkieSwiftFlowProtocol, Swift._ObjectiveCBridgeable {
+  @_spi(SKIE) final public let delegate: any KmpCalendar.Kotlinx_coroutines_coreMutableStateFlow
+  final public var value: T {
+    get
+    set(value)
+  }
+  final public var replayCache: [T] {
+    get
+  }
+  final public var subscriptionCount: KmpCalendar.SkieSwiftStateFlow<KmpCalendar.KotlinInt> {
+    get
+  }
+  final public func compareAndSet(expect: T, update: T) -> Swift.Bool
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  final public func emit(value: T) async throws
+  final public func tryEmit(value: T) -> Swift.Bool
+  final public func resetReplayCache()
+  public static func _forceBridgeFromObjectiveC(_ source: KmpCalendar.SkieKotlinMutableStateFlow<Swift.AnyObject>, result: inout KmpCalendar.SkieSwiftMutableStateFlow<T>?)
+  public static func _conditionallyBridgeFromObjectiveC(_ source: KmpCalendar.SkieKotlinMutableStateFlow<Swift.AnyObject>, result: inout KmpCalendar.SkieSwiftMutableStateFlow<T>?) -> Swift.Bool
+  public static func _unconditionallyBridgeFromObjectiveC(_ source: KmpCalendar.SkieKotlinMutableStateFlow<Swift.AnyObject>?) -> Self
+  final public func _bridgeToObjectiveC() -> KmpCalendar.SkieKotlinMutableStateFlow<Swift.AnyObject>
+  final public func makeAsyncIterator() -> KmpCalendar.SkieSwiftFlowIterator<T>
+  public typealias AsyncIterator = KmpCalendar.SkieSwiftFlowIterator<T>
+  public typealias Element = T
+  public typealias _ObjectiveCType = KmpCalendar.SkieKotlinMutableStateFlow<Swift.AnyObject>
+  public typealias Delegate = any KmpCalendar.Kotlinx_coroutines_coreMutableStateFlow
+  @available(iOS 18.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, macOS 15.0, *)
+  @_implements(_Concurrency.AsyncSequence, Failure) public typealias __AsyncSequence_Failure = Swift.Never
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers final public class SkieSwiftOptionalMutableStateFlow<T> : KmpCalendar.SkieSwiftFlowProtocol, Swift._ObjectiveCBridgeable {
+  @_spi(SKIE) final public let delegate: any KmpCalendar.Kotlinx_coroutines_coreMutableStateFlow
+  final public var value: T? {
+    get
+    set(value)
+  }
+  final public var replayCache: [T?] {
+    get
+  }
+  final public var subscriptionCount: KmpCalendar.SkieSwiftStateFlow<KmpCalendar.KotlinInt> {
+    get
+  }
+  final public func compareAndSet(expect: T?, update: T?) -> Swift.Bool
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  final public func emit(value: T?) async throws
+  final public func tryEmit(value: T?) -> Swift.Bool
+  final public func resetReplayCache()
+  public static func _forceBridgeFromObjectiveC(_ source: KmpCalendar.SkieKotlinOptionalMutableStateFlow<Swift.AnyObject>, result: inout KmpCalendar.SkieSwiftOptionalMutableStateFlow<T>?)
+  public static func _conditionallyBridgeFromObjectiveC(_ source: KmpCalendar.SkieKotlinOptionalMutableStateFlow<Swift.AnyObject>, result: inout KmpCalendar.SkieSwiftOptionalMutableStateFlow<T>?) -> Swift.Bool
+  public static func _unconditionallyBridgeFromObjectiveC(_ source: KmpCalendar.SkieKotlinOptionalMutableStateFlow<Swift.AnyObject>?) -> Self
+  final public func _bridgeToObjectiveC() -> KmpCalendar.SkieKotlinOptionalMutableStateFlow<Swift.AnyObject>
+  final public func makeAsyncIterator() -> KmpCalendar.SkieSwiftFlowIterator<T?>
+  public typealias AsyncIterator = KmpCalendar.SkieSwiftFlowIterator<T?>
+  public typealias Element = T?
+  public typealias _ObjectiveCType = KmpCalendar.SkieKotlinOptionalMutableStateFlow<Swift.AnyObject>
+  public typealias Delegate = any KmpCalendar.Kotlinx_coroutines_coreMutableStateFlow
+  @available(iOS 18.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, macOS 15.0, *)
+  @_implements(_Concurrency.AsyncSequence, Failure) public typealias __AsyncSequence_Failure = Swift.Never
+  @objc deinit
+}
+extension KmpCalendar.Skie.RuntimeKotlin.SkieColdFlowIterator {
+  public struct __Suspend<E> where E : AnyObject {
+    public let __kotlinObject: KmpCalendar.SkieColdFlowIterator<E>
+    public init(_ __kotlinObject: KmpCalendar.SkieColdFlowIterator<E>)
+  }
+}
+public func skie<E>(_ kotlinObject: KmpCalendar.SkieColdFlowIterator<E>) -> KmpCalendar.Skie.RuntimeKotlin.SkieColdFlowIterator.__Suspend<E> where E : AnyObject
+extension KmpCalendar.Skie.RuntimeKotlin.SkieColdFlowIterator.__Suspend {
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func hasNext() async throws -> KmpCalendar.KotlinBoolean
+}
+extension KmpCalendar.Kotlinx_coroutines_coreFlow {
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func collect(collector: any KmpCalendar.Kotlinx_coroutines_coreFlowCollector) async throws
+}
+extension KmpCalendar.Kotlinx_coroutines_coreFlowCollector {
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func emit(value: Any?) async throws
+}
+extension KmpCalendar.CalendarManager {
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func syncCalendars(accountId: Swift.Int64) async throws
+}
+extension KmpCalendar.AccountManager {
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func doInitAccount(accountId: Swift.Int64, credentials: KmpCalendar.DavCredentials) async throws
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func removeAccount(accountId: Swift.Int64) async throws
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func retrieveDavCredential(authToken: Swift.String, login: Swift.String?) async throws -> KmpCalendar.DavCredentials
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func retrieveDavCredential(authToken: Swift.String) async throws -> KmpCalendar.DavCredentials
+}
+public func SkieKotlinFlow<T>(_ flow: KmpCalendar.SkieSwiftFlow<T>) -> KmpCalendar.SkieKotlinFlow<T> where T : AnyObject
+public func SkieKotlinFlow<T>(_ flow: KmpCalendar.SkieSwiftSharedFlow<T>) -> KmpCalendar.SkieKotlinFlow<T> where T : AnyObject
+public func SkieKotlinFlow<T>(_ flow: KmpCalendar.SkieSwiftMutableSharedFlow<T>) -> KmpCalendar.SkieKotlinFlow<T> where T : AnyObject
+public func SkieKotlinFlow<T>(_ flow: KmpCalendar.SkieSwiftStateFlow<T>) -> KmpCalendar.SkieKotlinFlow<T> where T : AnyObject
+public func SkieKotlinFlow<T>(_ flow: KmpCalendar.SkieSwiftMutableStateFlow<T>) -> KmpCalendar.SkieKotlinFlow<T> where T : AnyObject
+public func SkieKotlinFlow<T>(_ flow: KmpCalendar.SkieSwiftFlow<T>) -> KmpCalendar.SkieKotlinFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinFlow<T>(_ flow: KmpCalendar.SkieSwiftSharedFlow<T>) -> KmpCalendar.SkieKotlinFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinFlow<T>(_ flow: KmpCalendar.SkieSwiftMutableSharedFlow<T>) -> KmpCalendar.SkieKotlinFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinFlow<T>(_ flow: KmpCalendar.SkieSwiftStateFlow<T>) -> KmpCalendar.SkieKotlinFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinFlow<T>(_ flow: KmpCalendar.SkieSwiftMutableStateFlow<T>) -> KmpCalendar.SkieKotlinFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+extension KmpCalendar.SkieSwiftFlow where T : AnyObject {
+  convenience public init(_ flow: KmpCalendar.SkieKotlinFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinSharedFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinMutableSharedFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinStateFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinMutableStateFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftSharedFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftMutableSharedFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftStateFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftMutableStateFlow<T>)
+}
+extension KmpCalendar.SkieSwiftFlow where T : Swift._ObjectiveCBridgeable {
+  convenience public init(_ flow: KmpCalendar.SkieKotlinFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinMutableSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinMutableStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftMutableSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftMutableStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftSharedFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftMutableSharedFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftStateFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftMutableStateFlow<T>)
+}
+public func SkieKotlinOptionalFlow<T>(_ flow: KmpCalendar.SkieSwiftFlow<T>) -> KmpCalendar.SkieKotlinOptionalFlow<T> where T : AnyObject
+public func SkieKotlinOptionalFlow<T>(_ flow: KmpCalendar.SkieSwiftOptionalFlow<T>) -> KmpCalendar.SkieKotlinOptionalFlow<T> where T : AnyObject
+public func SkieKotlinOptionalFlow<T>(_ flow: KmpCalendar.SkieSwiftSharedFlow<T>) -> KmpCalendar.SkieKotlinOptionalFlow<T> where T : AnyObject
+public func SkieKotlinOptionalFlow<T>(_ flow: KmpCalendar.SkieSwiftOptionalSharedFlow<T>) -> KmpCalendar.SkieKotlinOptionalFlow<T> where T : AnyObject
+public func SkieKotlinOptionalFlow<T>(_ flow: KmpCalendar.SkieSwiftMutableSharedFlow<T>) -> KmpCalendar.SkieKotlinOptionalFlow<T> where T : AnyObject
+public func SkieKotlinOptionalFlow<T>(_ flow: KmpCalendar.SkieSwiftOptionalMutableSharedFlow<T>) -> KmpCalendar.SkieKotlinOptionalFlow<T> where T : AnyObject
+public func SkieKotlinOptionalFlow<T>(_ flow: KmpCalendar.SkieSwiftStateFlow<T>) -> KmpCalendar.SkieKotlinOptionalFlow<T> where T : AnyObject
+public func SkieKotlinOptionalFlow<T>(_ flow: KmpCalendar.SkieSwiftOptionalStateFlow<T>) -> KmpCalendar.SkieKotlinOptionalFlow<T> where T : AnyObject
+public func SkieKotlinOptionalFlow<T>(_ flow: KmpCalendar.SkieSwiftMutableStateFlow<T>) -> KmpCalendar.SkieKotlinOptionalFlow<T> where T : AnyObject
+public func SkieKotlinOptionalFlow<T>(_ flow: KmpCalendar.SkieSwiftOptionalMutableStateFlow<T>) -> KmpCalendar.SkieKotlinOptionalFlow<T> where T : AnyObject
+public func SkieKotlinOptionalFlow<T>(_ flow: KmpCalendar.SkieSwiftFlow<T>) -> KmpCalendar.SkieKotlinOptionalFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinOptionalFlow<T>(_ flow: KmpCalendar.SkieSwiftOptionalFlow<T>) -> KmpCalendar.SkieKotlinOptionalFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinOptionalFlow<T>(_ flow: KmpCalendar.SkieSwiftSharedFlow<T>) -> KmpCalendar.SkieKotlinOptionalFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinOptionalFlow<T>(_ flow: KmpCalendar.SkieSwiftOptionalSharedFlow<T>) -> KmpCalendar.SkieKotlinOptionalFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinOptionalFlow<T>(_ flow: KmpCalendar.SkieSwiftMutableSharedFlow<T>) -> KmpCalendar.SkieKotlinOptionalFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinOptionalFlow<T>(_ flow: KmpCalendar.SkieSwiftOptionalMutableSharedFlow<T>) -> KmpCalendar.SkieKotlinOptionalFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinOptionalFlow<T>(_ flow: KmpCalendar.SkieSwiftStateFlow<T>) -> KmpCalendar.SkieKotlinOptionalFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinOptionalFlow<T>(_ flow: KmpCalendar.SkieSwiftOptionalStateFlow<T>) -> KmpCalendar.SkieKotlinOptionalFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinOptionalFlow<T>(_ flow: KmpCalendar.SkieSwiftMutableStateFlow<T>) -> KmpCalendar.SkieKotlinOptionalFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinOptionalFlow<T>(_ flow: KmpCalendar.SkieSwiftOptionalMutableStateFlow<T>) -> KmpCalendar.SkieKotlinOptionalFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+extension KmpCalendar.SkieSwiftOptionalFlow where T : AnyObject {
+  convenience public init(_ flow: KmpCalendar.SkieKotlinFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinOptionalFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinSharedFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinOptionalSharedFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinMutableSharedFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinOptionalMutableSharedFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinStateFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinOptionalStateFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinMutableStateFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinOptionalMutableStateFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftOptionalFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftSharedFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftOptionalSharedFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftMutableSharedFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftOptionalMutableSharedFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftStateFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftOptionalStateFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftMutableStateFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftOptionalMutableStateFlow<T>)
+}
+extension KmpCalendar.SkieSwiftOptionalFlow where T : Swift._ObjectiveCBridgeable {
+  convenience public init(_ flow: KmpCalendar.SkieKotlinFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinOptionalFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinOptionalSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinMutableSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinOptionalMutableSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinOptionalStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinMutableStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinOptionalMutableStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftOptionalFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftOptionalSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftMutableSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftOptionalMutableSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftOptionalStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftMutableStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftOptionalMutableStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftOptionalFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftSharedFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftOptionalSharedFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftMutableSharedFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftOptionalMutableSharedFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftStateFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftOptionalStateFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftMutableStateFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftOptionalMutableStateFlow<T>)
+}
+public func SkieKotlinSharedFlow<T>(_ flow: KmpCalendar.SkieSwiftSharedFlow<T>) -> KmpCalendar.SkieKotlinSharedFlow<T> where T : AnyObject
+public func SkieKotlinSharedFlow<T>(_ flow: KmpCalendar.SkieSwiftMutableSharedFlow<T>) -> KmpCalendar.SkieKotlinSharedFlow<T> where T : AnyObject
+public func SkieKotlinSharedFlow<T>(_ flow: KmpCalendar.SkieSwiftStateFlow<T>) -> KmpCalendar.SkieKotlinSharedFlow<T> where T : AnyObject
+public func SkieKotlinSharedFlow<T>(_ flow: KmpCalendar.SkieSwiftMutableStateFlow<T>) -> KmpCalendar.SkieKotlinSharedFlow<T> where T : AnyObject
+public func SkieKotlinSharedFlow<T>(_ flow: KmpCalendar.SkieSwiftSharedFlow<T>) -> KmpCalendar.SkieKotlinSharedFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinSharedFlow<T>(_ flow: KmpCalendar.SkieSwiftMutableSharedFlow<T>) -> KmpCalendar.SkieKotlinSharedFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinSharedFlow<T>(_ flow: KmpCalendar.SkieSwiftStateFlow<T>) -> KmpCalendar.SkieKotlinSharedFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinSharedFlow<T>(_ flow: KmpCalendar.SkieSwiftMutableStateFlow<T>) -> KmpCalendar.SkieKotlinSharedFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+extension KmpCalendar.SkieSwiftSharedFlow where T : AnyObject {
+  convenience public init(_ flow: KmpCalendar.SkieKotlinSharedFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinMutableSharedFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinStateFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinMutableStateFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftSharedFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftMutableSharedFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftStateFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftMutableStateFlow<T>)
+}
+extension KmpCalendar.SkieSwiftSharedFlow where T : Swift._ObjectiveCBridgeable {
+  convenience public init(_ flow: KmpCalendar.SkieKotlinSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinMutableSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinMutableStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftMutableSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftMutableStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftSharedFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftMutableSharedFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftStateFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftMutableStateFlow<T>)
+}
+public func SkieKotlinOptionalSharedFlow<T>(_ flow: KmpCalendar.SkieSwiftSharedFlow<T>) -> KmpCalendar.SkieKotlinOptionalSharedFlow<T> where T : AnyObject
+public func SkieKotlinOptionalSharedFlow<T>(_ flow: KmpCalendar.SkieSwiftOptionalSharedFlow<T>) -> KmpCalendar.SkieKotlinOptionalSharedFlow<T> where T : AnyObject
+public func SkieKotlinOptionalSharedFlow<T>(_ flow: KmpCalendar.SkieSwiftMutableSharedFlow<T>) -> KmpCalendar.SkieKotlinOptionalSharedFlow<T> where T : AnyObject
+public func SkieKotlinOptionalSharedFlow<T>(_ flow: KmpCalendar.SkieSwiftOptionalMutableSharedFlow<T>) -> KmpCalendar.SkieKotlinOptionalSharedFlow<T> where T : AnyObject
+public func SkieKotlinOptionalSharedFlow<T>(_ flow: KmpCalendar.SkieSwiftStateFlow<T>) -> KmpCalendar.SkieKotlinOptionalSharedFlow<T> where T : AnyObject
+public func SkieKotlinOptionalSharedFlow<T>(_ flow: KmpCalendar.SkieSwiftOptionalStateFlow<T>) -> KmpCalendar.SkieKotlinOptionalSharedFlow<T> where T : AnyObject
+public func SkieKotlinOptionalSharedFlow<T>(_ flow: KmpCalendar.SkieSwiftMutableStateFlow<T>) -> KmpCalendar.SkieKotlinOptionalSharedFlow<T> where T : AnyObject
+public func SkieKotlinOptionalSharedFlow<T>(_ flow: KmpCalendar.SkieSwiftOptionalMutableStateFlow<T>) -> KmpCalendar.SkieKotlinOptionalSharedFlow<T> where T : AnyObject
+public func SkieKotlinOptionalSharedFlow<T>(_ flow: KmpCalendar.SkieSwiftSharedFlow<T>) -> KmpCalendar.SkieKotlinOptionalSharedFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinOptionalSharedFlow<T>(_ flow: KmpCalendar.SkieSwiftOptionalSharedFlow<T>) -> KmpCalendar.SkieKotlinOptionalSharedFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinOptionalSharedFlow<T>(_ flow: KmpCalendar.SkieSwiftMutableSharedFlow<T>) -> KmpCalendar.SkieKotlinOptionalSharedFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinOptionalSharedFlow<T>(_ flow: KmpCalendar.SkieSwiftOptionalMutableSharedFlow<T>) -> KmpCalendar.SkieKotlinOptionalSharedFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinOptionalSharedFlow<T>(_ flow: KmpCalendar.SkieSwiftStateFlow<T>) -> KmpCalendar.SkieKotlinOptionalSharedFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinOptionalSharedFlow<T>(_ flow: KmpCalendar.SkieSwiftOptionalStateFlow<T>) -> KmpCalendar.SkieKotlinOptionalSharedFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinOptionalSharedFlow<T>(_ flow: KmpCalendar.SkieSwiftMutableStateFlow<T>) -> KmpCalendar.SkieKotlinOptionalSharedFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinOptionalSharedFlow<T>(_ flow: KmpCalendar.SkieSwiftOptionalMutableStateFlow<T>) -> KmpCalendar.SkieKotlinOptionalSharedFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+extension KmpCalendar.SkieSwiftOptionalSharedFlow where T : AnyObject {
+  convenience public init(_ flow: KmpCalendar.SkieKotlinSharedFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinOptionalSharedFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinMutableSharedFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinOptionalMutableSharedFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinStateFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinOptionalStateFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinMutableStateFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinOptionalMutableStateFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftSharedFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftOptionalSharedFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftMutableSharedFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftOptionalMutableSharedFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftStateFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftOptionalStateFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftMutableStateFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftOptionalMutableStateFlow<T>)
+}
+extension KmpCalendar.SkieSwiftOptionalSharedFlow where T : Swift._ObjectiveCBridgeable {
+  convenience public init(_ flow: KmpCalendar.SkieKotlinSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinOptionalSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinMutableSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinOptionalMutableSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinOptionalStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinMutableStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinOptionalMutableStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftOptionalSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftMutableSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftOptionalMutableSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftOptionalStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftMutableStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftOptionalMutableStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftSharedFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftOptionalSharedFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftMutableSharedFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftOptionalMutableSharedFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftStateFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftOptionalStateFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftMutableStateFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftOptionalMutableStateFlow<T>)
+}
+public func SkieKotlinMutableSharedFlow<T>(_ flow: KmpCalendar.SkieSwiftMutableSharedFlow<T>) -> KmpCalendar.SkieKotlinMutableSharedFlow<T> where T : AnyObject
+public func SkieKotlinMutableSharedFlow<T>(_ flow: KmpCalendar.SkieSwiftMutableSharedFlow<T>) -> KmpCalendar.SkieKotlinMutableSharedFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+extension KmpCalendar.SkieSwiftMutableSharedFlow where T : AnyObject {
+  convenience public init(_ flow: KmpCalendar.SkieKotlinMutableSharedFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftMutableSharedFlow<T>)
+}
+extension KmpCalendar.SkieSwiftMutableSharedFlow where T : Swift._ObjectiveCBridgeable {
+  convenience public init(_ flow: KmpCalendar.SkieKotlinMutableSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftMutableSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftMutableSharedFlow<T>)
+}
+public func SkieKotlinOptionalMutableSharedFlow<T>(_ flow: KmpCalendar.SkieSwiftMutableSharedFlow<T>) -> KmpCalendar.SkieKotlinOptionalMutableSharedFlow<T> where T : AnyObject
+public func SkieKotlinOptionalMutableSharedFlow<T>(_ flow: KmpCalendar.SkieSwiftOptionalMutableSharedFlow<T>) -> KmpCalendar.SkieKotlinOptionalMutableSharedFlow<T> where T : AnyObject
+public func SkieKotlinOptionalMutableSharedFlow<T>(_ flow: KmpCalendar.SkieSwiftMutableSharedFlow<T>) -> KmpCalendar.SkieKotlinOptionalMutableSharedFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinOptionalMutableSharedFlow<T>(_ flow: KmpCalendar.SkieSwiftOptionalMutableSharedFlow<T>) -> KmpCalendar.SkieKotlinOptionalMutableSharedFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+extension KmpCalendar.SkieSwiftOptionalMutableSharedFlow where T : AnyObject {
+  convenience public init(_ flow: KmpCalendar.SkieKotlinMutableSharedFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinOptionalMutableSharedFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftMutableSharedFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftOptionalMutableSharedFlow<T>)
+}
+extension KmpCalendar.SkieSwiftOptionalMutableSharedFlow where T : Swift._ObjectiveCBridgeable {
+  convenience public init(_ flow: KmpCalendar.SkieKotlinMutableSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinOptionalMutableSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftMutableSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftOptionalMutableSharedFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftMutableSharedFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftOptionalMutableSharedFlow<T>)
+}
+public func SkieKotlinStateFlow<T>(_ flow: KmpCalendar.SkieSwiftStateFlow<T>) -> KmpCalendar.SkieKotlinStateFlow<T> where T : AnyObject
+public func SkieKotlinStateFlow<T>(_ flow: KmpCalendar.SkieSwiftMutableStateFlow<T>) -> KmpCalendar.SkieKotlinStateFlow<T> where T : AnyObject
+public func SkieKotlinStateFlow<T>(_ flow: KmpCalendar.SkieSwiftStateFlow<T>) -> KmpCalendar.SkieKotlinStateFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinStateFlow<T>(_ flow: KmpCalendar.SkieSwiftMutableStateFlow<T>) -> KmpCalendar.SkieKotlinStateFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+extension KmpCalendar.SkieSwiftStateFlow where T : AnyObject {
+  convenience public init(_ flow: KmpCalendar.SkieKotlinStateFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinMutableStateFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftStateFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftMutableStateFlow<T>)
+}
+extension KmpCalendar.SkieSwiftStateFlow where T : Swift._ObjectiveCBridgeable {
+  convenience public init(_ flow: KmpCalendar.SkieKotlinStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinMutableStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftMutableStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftStateFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftMutableStateFlow<T>)
+}
+public func SkieKotlinOptionalStateFlow<T>(_ flow: KmpCalendar.SkieSwiftStateFlow<T>) -> KmpCalendar.SkieKotlinOptionalStateFlow<T> where T : AnyObject
+public func SkieKotlinOptionalStateFlow<T>(_ flow: KmpCalendar.SkieSwiftOptionalStateFlow<T>) -> KmpCalendar.SkieKotlinOptionalStateFlow<T> where T : AnyObject
+public func SkieKotlinOptionalStateFlow<T>(_ flow: KmpCalendar.SkieSwiftMutableStateFlow<T>) -> KmpCalendar.SkieKotlinOptionalStateFlow<T> where T : AnyObject
+public func SkieKotlinOptionalStateFlow<T>(_ flow: KmpCalendar.SkieSwiftOptionalMutableStateFlow<T>) -> KmpCalendar.SkieKotlinOptionalStateFlow<T> where T : AnyObject
+public func SkieKotlinOptionalStateFlow<T>(_ flow: KmpCalendar.SkieSwiftStateFlow<T>) -> KmpCalendar.SkieKotlinOptionalStateFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinOptionalStateFlow<T>(_ flow: KmpCalendar.SkieSwiftOptionalStateFlow<T>) -> KmpCalendar.SkieKotlinOptionalStateFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinOptionalStateFlow<T>(_ flow: KmpCalendar.SkieSwiftMutableStateFlow<T>) -> KmpCalendar.SkieKotlinOptionalStateFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinOptionalStateFlow<T>(_ flow: KmpCalendar.SkieSwiftOptionalMutableStateFlow<T>) -> KmpCalendar.SkieKotlinOptionalStateFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+extension KmpCalendar.SkieSwiftOptionalStateFlow where T : AnyObject {
+  convenience public init(_ flow: KmpCalendar.SkieKotlinStateFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinOptionalStateFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinMutableStateFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinOptionalMutableStateFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftStateFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftOptionalStateFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftMutableStateFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftOptionalMutableStateFlow<T>)
+}
+extension KmpCalendar.SkieSwiftOptionalStateFlow where T : Swift._ObjectiveCBridgeable {
+  convenience public init(_ flow: KmpCalendar.SkieKotlinStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinOptionalStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinMutableStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinOptionalMutableStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftOptionalStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftMutableStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftOptionalMutableStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftStateFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftOptionalStateFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftMutableStateFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftOptionalMutableStateFlow<T>)
+}
+public func SkieKotlinMutableStateFlow<T>(_ flow: KmpCalendar.SkieSwiftMutableStateFlow<T>) -> KmpCalendar.SkieKotlinMutableStateFlow<T> where T : AnyObject
+public func SkieKotlinMutableStateFlow<T>(_ flow: KmpCalendar.SkieSwiftMutableStateFlow<T>) -> KmpCalendar.SkieKotlinMutableStateFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+extension KmpCalendar.SkieSwiftMutableStateFlow where T : AnyObject {
+  convenience public init(_ flow: KmpCalendar.SkieKotlinMutableStateFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftMutableStateFlow<T>)
+}
+extension KmpCalendar.SkieSwiftMutableStateFlow where T : Swift._ObjectiveCBridgeable {
+  convenience public init(_ flow: KmpCalendar.SkieKotlinMutableStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftMutableStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftMutableStateFlow<T>)
+}
+public func SkieKotlinOptionalMutableStateFlow<T>(_ flow: KmpCalendar.SkieSwiftMutableStateFlow<T>) -> KmpCalendar.SkieKotlinOptionalMutableStateFlow<T> where T : AnyObject
+public func SkieKotlinOptionalMutableStateFlow<T>(_ flow: KmpCalendar.SkieSwiftOptionalMutableStateFlow<T>) -> KmpCalendar.SkieKotlinOptionalMutableStateFlow<T> where T : AnyObject
+public func SkieKotlinOptionalMutableStateFlow<T>(_ flow: KmpCalendar.SkieSwiftMutableStateFlow<T>) -> KmpCalendar.SkieKotlinOptionalMutableStateFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+public func SkieKotlinOptionalMutableStateFlow<T>(_ flow: KmpCalendar.SkieSwiftOptionalMutableStateFlow<T>) -> KmpCalendar.SkieKotlinOptionalMutableStateFlow<T._ObjectiveCType> where T : Swift._ObjectiveCBridgeable
+extension KmpCalendar.SkieSwiftOptionalMutableStateFlow where T : AnyObject {
+  convenience public init(_ flow: KmpCalendar.SkieKotlinMutableStateFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinOptionalMutableStateFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftMutableStateFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftOptionalMutableStateFlow<T>)
+}
+extension KmpCalendar.SkieSwiftOptionalMutableStateFlow where T : Swift._ObjectiveCBridgeable {
+  convenience public init(_ flow: KmpCalendar.SkieKotlinMutableStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieKotlinOptionalMutableStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftMutableStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftOptionalMutableStateFlow<T._ObjectiveCType>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftMutableStateFlow<T>)
+  convenience public init(_ flow: KmpCalendar.SkieSwiftOptionalMutableStateFlow<T>)
+}
+@frozen public enum CalendarAccessLevel : Swift.Hashable, Swift.CaseIterable, Swift._ObjectiveCBridgeable {
+  case none
+  case read
+  case readWrite
+  case owner
+  public var canWrite: Swift.Bool {
+    get
+  }
+  public var isReadOnly: Swift.Bool {
+    get
+  }
+  public var name: Swift.String {
+    get
+  }
+  public var ordinal: Swift.Int32 {
+    get
+  }
+  public static func _forceBridgeFromObjectiveC(_ source: KmpCalendar.__CalendarAccessLevel, result: inout KmpCalendar.CalendarAccessLevel?)
+  public static func _conditionallyBridgeFromObjectiveC(_ source: KmpCalendar.__CalendarAccessLevel, result: inout KmpCalendar.CalendarAccessLevel?) -> Swift.Bool
+  public static func _unconditionallyBridgeFromObjectiveC(_ source: KmpCalendar.__CalendarAccessLevel?) -> KmpCalendar.CalendarAccessLevel
+  public func _bridgeToObjectiveC() -> KmpCalendar.__CalendarAccessLevel
+  public typealias _ObjectiveCType = KmpCalendar.__CalendarAccessLevel
+  public static func == (a: KmpCalendar.CalendarAccessLevel, b: KmpCalendar.CalendarAccessLevel) -> Swift.Bool
+  public typealias AllCases = [KmpCalendar.CalendarAccessLevel]
+  nonisolated public static var allCases: [KmpCalendar.CalendarAccessLevel] {
+    get
+  }
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension KmpCalendar.CalendarAccessLevel {
+  public func toKotlinEnum() -> KmpCalendar.__CalendarAccessLevel
+}
+extension KmpCalendar.__CalendarAccessLevel {
+  public func toSwiftEnum() -> KmpCalendar.CalendarAccessLevel
+}
+@frozen public enum AttendeeRole : Swift.Hashable, Swift.CaseIterable, Swift._ObjectiveCBridgeable {
+  case organizer
+  case requested
+  case optional
+  case nonParticipant
+  public var name: Swift.String {
+    get
+  }
+  public var ordinal: Swift.Int32 {
+    get
+  }
+  public static func _forceBridgeFromObjectiveC(_ source: KmpCalendar.__AttendeeRole, result: inout KmpCalendar.AttendeeRole?)
+  public static func _conditionallyBridgeFromObjectiveC(_ source: KmpCalendar.__AttendeeRole, result: inout KmpCalendar.AttendeeRole?) -> Swift.Bool
+  public static func _unconditionallyBridgeFromObjectiveC(_ source: KmpCalendar.__AttendeeRole?) -> KmpCalendar.AttendeeRole
+  public func _bridgeToObjectiveC() -> KmpCalendar.__AttendeeRole
+  public typealias _ObjectiveCType = KmpCalendar.__AttendeeRole
+  public static func == (a: KmpCalendar.AttendeeRole, b: KmpCalendar.AttendeeRole) -> Swift.Bool
+  public typealias AllCases = [KmpCalendar.AttendeeRole]
+  nonisolated public static var allCases: [KmpCalendar.AttendeeRole] {
+    get
+  }
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension KmpCalendar.AttendeeRole {
+  public func toKotlinEnum() -> KmpCalendar.__AttendeeRole
+}
+extension KmpCalendar.__AttendeeRole {
+  public func toSwiftEnum() -> KmpCalendar.AttendeeRole
+}
+@frozen public enum ParticipationStatus : Swift.Hashable, Swift.CaseIterable, Swift._ObjectiveCBridgeable {
+  case accepted
+  case declined
+  case tentative
+  case needsAction
+  public var name: Swift.String {
+    get
+  }
+  public var ordinal: Swift.Int32 {
+    get
+  }
+  public static func _forceBridgeFromObjectiveC(_ source: KmpCalendar.__ParticipationStatus, result: inout KmpCalendar.ParticipationStatus?)
+  public static func _conditionallyBridgeFromObjectiveC(_ source: KmpCalendar.__ParticipationStatus, result: inout KmpCalendar.ParticipationStatus?) -> Swift.Bool
+  public static func _unconditionallyBridgeFromObjectiveC(_ source: KmpCalendar.__ParticipationStatus?) -> KmpCalendar.ParticipationStatus
+  public func _bridgeToObjectiveC() -> KmpCalendar.__ParticipationStatus
+  public typealias _ObjectiveCType = KmpCalendar.__ParticipationStatus
+  public static func == (a: KmpCalendar.ParticipationStatus, b: KmpCalendar.ParticipationStatus) -> Swift.Bool
+  public typealias AllCases = [KmpCalendar.ParticipationStatus]
+  nonisolated public static var allCases: [KmpCalendar.ParticipationStatus] {
+    get
+  }
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension KmpCalendar.ParticipationStatus {
+  public func toKotlinEnum() -> KmpCalendar.__ParticipationStatus
+}
+extension KmpCalendar.__ParticipationStatus {
+  public func toSwiftEnum() -> KmpCalendar.ParticipationStatus
+}
+@frozen public enum Frequency : Swift.Hashable, Swift.CaseIterable, Swift._ObjectiveCBridgeable {
+  case secondly
+  case minutely
+  case hourly
+  case daily
+  case weekly
+  case monthly
+  case yearly
+  public var name: Swift.String {
+    get
+  }
+  public var ordinal: Swift.Int32 {
+    get
+  }
+  public static func _forceBridgeFromObjectiveC(_ source: KmpCalendar.__Frequency, result: inout KmpCalendar.Frequency?)
+  public static func _conditionallyBridgeFromObjectiveC(_ source: KmpCalendar.__Frequency, result: inout KmpCalendar.Frequency?) -> Swift.Bool
+  public static func _unconditionallyBridgeFromObjectiveC(_ source: KmpCalendar.__Frequency?) -> KmpCalendar.Frequency
+  public func _bridgeToObjectiveC() -> KmpCalendar.__Frequency
+  public typealias _ObjectiveCType = KmpCalendar.__Frequency
+  public static func == (a: KmpCalendar.Frequency, b: KmpCalendar.Frequency) -> Swift.Bool
+  public typealias AllCases = [KmpCalendar.Frequency]
+  nonisolated public static var allCases: [KmpCalendar.Frequency] {
+    get
+  }
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension KmpCalendar.Frequency {
+  public func toKotlinEnum() -> KmpCalendar.__Frequency
+}
+extension KmpCalendar.__Frequency {
+  public func toSwiftEnum() -> KmpCalendar.Frequency
+}
+@frozen public enum Kotlinx_datetimePadding : Swift.Hashable, Swift.CaseIterable, Swift._ObjectiveCBridgeable {
+  case none
+  case zero
+  case space
+  public var name: Swift.String {
+    get
+  }
+  public var ordinal: Swift.Int32 {
+    get
+  }
+  public static func _forceBridgeFromObjectiveC(_ source: KmpCalendar.__Kotlinx_datetimePadding, result: inout KmpCalendar.Kotlinx_datetimePadding?)
+  public static func _conditionallyBridgeFromObjectiveC(_ source: KmpCalendar.__Kotlinx_datetimePadding, result: inout KmpCalendar.Kotlinx_datetimePadding?) -> Swift.Bool
+  public static func _unconditionallyBridgeFromObjectiveC(_ source: KmpCalendar.__Kotlinx_datetimePadding?) -> KmpCalendar.Kotlinx_datetimePadding
+  public func _bridgeToObjectiveC() -> KmpCalendar.__Kotlinx_datetimePadding
+  public typealias _ObjectiveCType = KmpCalendar.__Kotlinx_datetimePadding
+  public static func == (a: KmpCalendar.Kotlinx_datetimePadding, b: KmpCalendar.Kotlinx_datetimePadding) -> Swift.Bool
+  public typealias AllCases = [KmpCalendar.Kotlinx_datetimePadding]
+  nonisolated public static var allCases: [KmpCalendar.Kotlinx_datetimePadding] {
+    get
+  }
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension KmpCalendar.Kotlinx_datetimePadding {
+  public func toKotlinEnum() -> KmpCalendar.__Kotlinx_datetimePadding
+}
+extension KmpCalendar.__Kotlinx_datetimePadding {
+  public func toSwiftEnum() -> KmpCalendar.Kotlinx_datetimePadding
+}
+@frozen public enum Kotlinx_datetimeMonth : Swift.Hashable, Swift.CaseIterable, Swift._ObjectiveCBridgeable {
+  case january
+  case february
+  case march
+  case april
+  case may
+  case june
+  case july
+  case august
+  case september
+  case october
+  case november
+  case december
+  public var name: Swift.String {
+    get
+  }
+  public var ordinal: Swift.Int32 {
+    get
+  }
+  public static func _forceBridgeFromObjectiveC(_ source: KmpCalendar.__Kotlinx_datetimeMonth, result: inout KmpCalendar.Kotlinx_datetimeMonth?)
+  public static func _conditionallyBridgeFromObjectiveC(_ source: KmpCalendar.__Kotlinx_datetimeMonth, result: inout KmpCalendar.Kotlinx_datetimeMonth?) -> Swift.Bool
+  public static func _unconditionallyBridgeFromObjectiveC(_ source: KmpCalendar.__Kotlinx_datetimeMonth?) -> KmpCalendar.Kotlinx_datetimeMonth
+  public func _bridgeToObjectiveC() -> KmpCalendar.__Kotlinx_datetimeMonth
+  public typealias _ObjectiveCType = KmpCalendar.__Kotlinx_datetimeMonth
+  public static func == (a: KmpCalendar.Kotlinx_datetimeMonth, b: KmpCalendar.Kotlinx_datetimeMonth) -> Swift.Bool
+  public typealias AllCases = [KmpCalendar.Kotlinx_datetimeMonth]
+  nonisolated public static var allCases: [KmpCalendar.Kotlinx_datetimeMonth] {
+    get
+  }
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension KmpCalendar.Kotlinx_datetimeMonth {
+  public func toKotlinEnum() -> KmpCalendar.__Kotlinx_datetimeMonth
+}
+extension KmpCalendar.__Kotlinx_datetimeMonth {
+  public func toSwiftEnum() -> KmpCalendar.Kotlinx_datetimeMonth
+}
+@frozen public enum Kotlinx_datetimeDayOfWeek : Swift.Hashable, Swift.CaseIterable, Swift._ObjectiveCBridgeable {
+  case monday
+  case tuesday
+  case wednesday
+  case thursday
+  case friday
+  case saturday
+  case sunday
+  public var name: Swift.String {
+    get
+  }
+  public var ordinal: Swift.Int32 {
+    get
+  }
+  public static func _forceBridgeFromObjectiveC(_ source: KmpCalendar.__Kotlinx_datetimeDayOfWeek, result: inout KmpCalendar.Kotlinx_datetimeDayOfWeek?)
+  public static func _conditionallyBridgeFromObjectiveC(_ source: KmpCalendar.__Kotlinx_datetimeDayOfWeek, result: inout KmpCalendar.Kotlinx_datetimeDayOfWeek?) -> Swift.Bool
+  public static func _unconditionallyBridgeFromObjectiveC(_ source: KmpCalendar.__Kotlinx_datetimeDayOfWeek?) -> KmpCalendar.Kotlinx_datetimeDayOfWeek
+  public func _bridgeToObjectiveC() -> KmpCalendar.__Kotlinx_datetimeDayOfWeek
+  public typealias _ObjectiveCType = KmpCalendar.__Kotlinx_datetimeDayOfWeek
+  public static func == (a: KmpCalendar.Kotlinx_datetimeDayOfWeek, b: KmpCalendar.Kotlinx_datetimeDayOfWeek) -> Swift.Bool
+  public typealias AllCases = [KmpCalendar.Kotlinx_datetimeDayOfWeek]
+  nonisolated public static var allCases: [KmpCalendar.Kotlinx_datetimeDayOfWeek] {
+    get
+  }
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension KmpCalendar.Kotlinx_datetimeDayOfWeek {
+  public func toKotlinEnum() -> KmpCalendar.__Kotlinx_datetimeDayOfWeek
+}
+extension KmpCalendar.__Kotlinx_datetimeDayOfWeek {
+  public func toSwiftEnum() -> KmpCalendar.Kotlinx_datetimeDayOfWeek
+}
+extension KmpCalendar.Skie.RuntimeKotlin.Skie_SuspendResult {
+  @frozen public enum __Sealed : Swift.Hashable {
+    case canceled(KmpCalendar.Skie_SuspendResult.Canceled)
+    case error(KmpCalendar.Skie_SuspendResult.Error)
+    case success(KmpCalendar.Skie_SuspendResult.Success)
+    public static func == (a: KmpCalendar.Skie.RuntimeKotlin.Skie_SuspendResult.__Sealed, b: KmpCalendar.Skie.RuntimeKotlin.Skie_SuspendResult.__Sealed) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+}
+public func onEnum<__Sealed>(of sealed: __Sealed) -> KmpCalendar.Skie.RuntimeKotlin.Skie_SuspendResult.__Sealed where __Sealed : KmpCalendar.Skie_SuspendResult
+@_disfavoredOverload public func onEnum<__Sealed>(of sealed: __Sealed?) -> KmpCalendar.Skie.RuntimeKotlin.Skie_SuspendResult.__Sealed? where __Sealed : KmpCalendar.Skie_SuspendResult
+extension KmpCalendar.Skie.KotlinxDatetime.DateTimeFormat {
+  @frozen public enum __Sealed : Swift.Hashable {
+    case `else`
+    public static func == (a: KmpCalendar.Skie.KotlinxDatetime.DateTimeFormat.__Sealed, b: KmpCalendar.Skie.KotlinxDatetime.DateTimeFormat.__Sealed) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+}
+public func onEnum<__Sealed>(of sealed: __Sealed) -> KmpCalendar.Skie.KotlinxDatetime.DateTimeFormat.__Sealed where __Sealed : KmpCalendar.Kotlinx_datetimeDateTimeFormat
+@_disfavoredOverload public func onEnum<__Sealed>(of sealed: __Sealed?) -> KmpCalendar.Skie.KotlinxDatetime.DateTimeFormat.__Sealed? where __Sealed : KmpCalendar.Kotlinx_datetimeDateTimeFormat
+extension KmpCalendar.Skie.KotlinxDatetime.DateTimeFormatBuilder {
+  @frozen public enum __Sealed {
+    case withTime(any KmpCalendar.Kotlinx_datetimeDateTimeFormatBuilderWithTime)
+    case withUtcOffset(any KmpCalendar.Kotlinx_datetimeDateTimeFormatBuilderWithUtcOffset)
+    case withYearMonth(any KmpCalendar.Kotlinx_datetimeDateTimeFormatBuilderWithYearMonth)
+    case `else`
+  }
+}
+public func onEnum<__Sealed>(of sealed: __Sealed) -> KmpCalendar.Skie.KotlinxDatetime.DateTimeFormatBuilder.__Sealed where __Sealed : KmpCalendar.Kotlinx_datetimeDateTimeFormatBuilder
+@_disfavoredOverload public func onEnum<__Sealed>(of sealed: __Sealed?) -> KmpCalendar.Skie.KotlinxDatetime.DateTimeFormatBuilder.__Sealed? where __Sealed : KmpCalendar.Kotlinx_datetimeDateTimeFormatBuilder
+extension KmpCalendar.Skie.KotlinxDatetime.DateTimeFormatBuilder.WithTime {
+  @frozen public enum __Sealed {
+    case withDateTime(any KmpCalendar.Kotlinx_datetimeDateTimeFormatBuilderWithDateTime)
+    case `else`
+  }
+}
+public func onEnum<__Sealed>(of sealed: __Sealed) -> KmpCalendar.Skie.KotlinxDatetime.DateTimeFormatBuilder.WithTime.__Sealed where __Sealed : KmpCalendar.Kotlinx_datetimeDateTimeFormatBuilderWithTime
+@_disfavoredOverload public func onEnum<__Sealed>(of sealed: __Sealed?) -> KmpCalendar.Skie.KotlinxDatetime.DateTimeFormatBuilder.WithTime.__Sealed? where __Sealed : KmpCalendar.Kotlinx_datetimeDateTimeFormatBuilderWithTime
+extension KmpCalendar.Skie.KotlinxDatetime.DateTimeFormatBuilder.WithDate {
+  @frozen public enum __Sealed {
+    case withDateTime(any KmpCalendar.Kotlinx_datetimeDateTimeFormatBuilderWithDateTime)
+    case `else`
+  }
+}
+public func onEnum<__Sealed>(of sealed: __Sealed) -> KmpCalendar.Skie.KotlinxDatetime.DateTimeFormatBuilder.WithDate.__Sealed where __Sealed : KmpCalendar.Kotlinx_datetimeDateTimeFormatBuilderWithDate
+@_disfavoredOverload public func onEnum<__Sealed>(of sealed: __Sealed?) -> KmpCalendar.Skie.KotlinxDatetime.DateTimeFormatBuilder.WithDate.__Sealed? where __Sealed : KmpCalendar.Kotlinx_datetimeDateTimeFormatBuilderWithDate
+extension KmpCalendar.Skie.KotlinxDatetime.DateTimeFormatBuilder.WithYearMonth {
+  @frozen public enum __Sealed {
+    case withDate(any KmpCalendar.Kotlinx_datetimeDateTimeFormatBuilderWithDate)
+    case `else`
+  }
+}
+public func onEnum<__Sealed>(of sealed: __Sealed) -> KmpCalendar.Skie.KotlinxDatetime.DateTimeFormatBuilder.WithYearMonth.__Sealed where __Sealed : KmpCalendar.Kotlinx_datetimeDateTimeFormatBuilderWithYearMonth
+@_disfavoredOverload public func onEnum<__Sealed>(of sealed: __Sealed?) -> KmpCalendar.Skie.KotlinxDatetime.DateTimeFormatBuilder.WithYearMonth.__Sealed? where __Sealed : KmpCalendar.Kotlinx_datetimeDateTimeFormatBuilderWithYearMonth
+extension KmpCalendar.Skie.KotlinxDatetime.DateTimeFormatBuilder.WithDateTime {
+  @frozen public enum __Sealed {
+    case withDateTimeComponents(any KmpCalendar.Kotlinx_datetimeDateTimeFormatBuilderWithDateTimeComponents)
+    case `else`
+  }
+}
+public func onEnum<__Sealed>(of sealed: __Sealed) -> KmpCalendar.Skie.KotlinxDatetime.DateTimeFormatBuilder.WithDateTime.__Sealed where __Sealed : KmpCalendar.Kotlinx_datetimeDateTimeFormatBuilderWithDateTime
+@_disfavoredOverload public func onEnum<__Sealed>(of sealed: __Sealed?) -> KmpCalendar.Skie.KotlinxDatetime.DateTimeFormatBuilder.WithDateTime.__Sealed? where __Sealed : KmpCalendar.Kotlinx_datetimeDateTimeFormatBuilderWithDateTime
+extension KmpCalendar.Skie.KotlinxDatetime.DateTimeFormatBuilder.WithDateTimeComponents {
+  @frozen public enum __Sealed : Swift.Hashable {
+    case `else`
+    public static func == (a: KmpCalendar.Skie.KotlinxDatetime.DateTimeFormatBuilder.WithDateTimeComponents.__Sealed, b: KmpCalendar.Skie.KotlinxDatetime.DateTimeFormatBuilder.WithDateTimeComponents.__Sealed) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+}
+public func onEnum<__Sealed>(of sealed: __Sealed) -> KmpCalendar.Skie.KotlinxDatetime.DateTimeFormatBuilder.WithDateTimeComponents.__Sealed where __Sealed : KmpCalendar.Kotlinx_datetimeDateTimeFormatBuilderWithDateTimeComponents
+@_disfavoredOverload public func onEnum<__Sealed>(of sealed: __Sealed?) -> KmpCalendar.Skie.KotlinxDatetime.DateTimeFormatBuilder.WithDateTimeComponents.__Sealed? where __Sealed : KmpCalendar.Kotlinx_datetimeDateTimeFormatBuilderWithDateTimeComponents
+extension KmpCalendar.Skie.KotlinxDatetime.DateTimeFormatBuilder.WithUtcOffset {
+  @frozen public enum __Sealed {
+    case withDateTimeComponents(any KmpCalendar.Kotlinx_datetimeDateTimeFormatBuilderWithDateTimeComponents)
+    case `else`
+  }
+}
+public func onEnum<__Sealed>(of sealed: __Sealed) -> KmpCalendar.Skie.KotlinxDatetime.DateTimeFormatBuilder.WithUtcOffset.__Sealed where __Sealed : KmpCalendar.Kotlinx_datetimeDateTimeFormatBuilderWithUtcOffset
+@_disfavoredOverload public func onEnum<__Sealed>(of sealed: __Sealed?) -> KmpCalendar.Skie.KotlinxDatetime.DateTimeFormatBuilder.WithUtcOffset.__Sealed? where __Sealed : KmpCalendar.Kotlinx_datetimeDateTimeFormatBuilderWithUtcOffset
+extension KmpCalendar.Skie.KotlinxSerializationCore.SerialKind {
+  @frozen public enum __Sealed : Swift.Hashable {
+    case polymorphicKind(KmpCalendar.Kotlinx_serialization_corePolymorphicKind)
+    case primitiveKind(KmpCalendar.Kotlinx_serialization_corePrimitiveKind)
+    case cONTEXTUAL(KmpCalendar.Kotlinx_serialization_coreSerialKind.CONTEXTUAL)
+    case eNUM(KmpCalendar.Kotlinx_serialization_coreSerialKind.ENUM)
+    case structureKind(KmpCalendar.Kotlinx_serialization_coreStructureKind)
+    public static func == (a: KmpCalendar.Skie.KotlinxSerializationCore.SerialKind.__Sealed, b: KmpCalendar.Skie.KotlinxSerializationCore.SerialKind.__Sealed) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+}
+public func onEnum<__Sealed>(of sealed: __Sealed) -> KmpCalendar.Skie.KotlinxSerializationCore.SerialKind.__Sealed where __Sealed : KmpCalendar.Kotlinx_serialization_coreSerialKind
+@_disfavoredOverload public func onEnum<__Sealed>(of sealed: __Sealed?) -> KmpCalendar.Skie.KotlinxSerializationCore.SerialKind.__Sealed? where __Sealed : KmpCalendar.Kotlinx_serialization_coreSerialKind
+extension KmpCalendar.Skie.KotlinxSerializationCore.SerializersModule {
+  @frozen public enum __Sealed : Swift.Hashable {
+    case `else`
+    public static func == (a: KmpCalendar.Skie.KotlinxSerializationCore.SerializersModule.__Sealed, b: KmpCalendar.Skie.KotlinxSerializationCore.SerializersModule.__Sealed) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+}
+public func onEnum<__Sealed>(of sealed: __Sealed) -> KmpCalendar.Skie.KotlinxSerializationCore.SerializersModule.__Sealed where __Sealed : KmpCalendar.Kotlinx_serialization_coreSerializersModule
+@_disfavoredOverload public func onEnum<__Sealed>(of sealed: __Sealed?) -> KmpCalendar.Skie.KotlinxSerializationCore.SerializersModule.__Sealed? where __Sealed : KmpCalendar.Kotlinx_serialization_coreSerializersModule
+extension KmpCalendar.Skie.KotlinxSerializationCore.PolymorphicKind {
+  @frozen public enum __Sealed : Swift.Hashable {
+    case oPEN(KmpCalendar.Kotlinx_serialization_corePolymorphicKind.OPEN)
+    case sEALED(KmpCalendar.Kotlinx_serialization_corePolymorphicKind.SEALED)
+    public static func == (a: KmpCalendar.Skie.KotlinxSerializationCore.PolymorphicKind.__Sealed, b: KmpCalendar.Skie.KotlinxSerializationCore.PolymorphicKind.__Sealed) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+}
+public func onEnum<__Sealed>(of sealed: __Sealed) -> KmpCalendar.Skie.KotlinxSerializationCore.PolymorphicKind.__Sealed where __Sealed : KmpCalendar.Kotlinx_serialization_corePolymorphicKind
+@_disfavoredOverload public func onEnum<__Sealed>(of sealed: __Sealed?) -> KmpCalendar.Skie.KotlinxSerializationCore.PolymorphicKind.__Sealed? where __Sealed : KmpCalendar.Kotlinx_serialization_corePolymorphicKind
+extension KmpCalendar.Skie.KotlinxSerializationCore.PrimitiveKind {
+  @frozen public enum __Sealed : Swift.Hashable {
+    case bOOLEAN(KmpCalendar.Kotlinx_serialization_corePrimitiveKind.BOOLEAN)
+    case bYTE(KmpCalendar.Kotlinx_serialization_corePrimitiveKind.BYTE)
+    case cHAR(KmpCalendar.Kotlinx_serialization_corePrimitiveKind.CHAR)
+    case dOUBLE(KmpCalendar.Kotlinx_serialization_corePrimitiveKind.DOUBLE)
+    case fLOAT(KmpCalendar.Kotlinx_serialization_corePrimitiveKind.FLOAT)
+    case iNT(KmpCalendar.Kotlinx_serialization_corePrimitiveKind.INT)
+    case lONG(KmpCalendar.Kotlinx_serialization_corePrimitiveKind.LONG)
+    case sHORT(KmpCalendar.Kotlinx_serialization_corePrimitiveKind.SHORT)
+    case sTRING(KmpCalendar.Kotlinx_serialization_corePrimitiveKind.STRING)
+    public static func == (a: KmpCalendar.Skie.KotlinxSerializationCore.PrimitiveKind.__Sealed, b: KmpCalendar.Skie.KotlinxSerializationCore.PrimitiveKind.__Sealed) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+}
+public func onEnum<__Sealed>(of sealed: __Sealed) -> KmpCalendar.Skie.KotlinxSerializationCore.PrimitiveKind.__Sealed where __Sealed : KmpCalendar.Kotlinx_serialization_corePrimitiveKind
+@_disfavoredOverload public func onEnum<__Sealed>(of sealed: __Sealed?) -> KmpCalendar.Skie.KotlinxSerializationCore.PrimitiveKind.__Sealed? where __Sealed : KmpCalendar.Kotlinx_serialization_corePrimitiveKind
+extension KmpCalendar.Skie.KotlinxSerializationCore.StructureKind {
+  @frozen public enum __Sealed : Swift.Hashable {
+    case cLASS(KmpCalendar.Kotlinx_serialization_coreStructureKind.CLASS)
+    case lIST(KmpCalendar.Kotlinx_serialization_coreStructureKind.LIST)
+    case mAP(KmpCalendar.Kotlinx_serialization_coreStructureKind.MAP)
+    case oBJECT(KmpCalendar.Kotlinx_serialization_coreStructureKind.OBJECT)
+    public static func == (a: KmpCalendar.Skie.KotlinxSerializationCore.StructureKind.__Sealed, b: KmpCalendar.Skie.KotlinxSerializationCore.StructureKind.__Sealed) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+}
+public func onEnum<__Sealed>(of sealed: __Sealed) -> KmpCalendar.Skie.KotlinxSerializationCore.StructureKind.__Sealed where __Sealed : KmpCalendar.Kotlinx_serialization_coreStructureKind
+@_disfavoredOverload public func onEnum<__Sealed>(of sealed: __Sealed?) -> KmpCalendar.Skie.KotlinxSerializationCore.StructureKind.__Sealed? where __Sealed : KmpCalendar.Kotlinx_serialization_coreStructureKind
+extension KmpCalendar.CalendarAccessLevel : Swift.Sendable {}
+extension KmpCalendar.CalendarAccessLevel : Swift.BitwiseCopyable {}
+extension KmpCalendar.AttendeeRole : Swift.Sendable {}
+extension KmpCalendar.AttendeeRole : Swift.BitwiseCopyable {}
+extension KmpCalendar.ParticipationStatus : Swift.Sendable {}
+extension KmpCalendar.ParticipationStatus : Swift.BitwiseCopyable {}
+extension KmpCalendar.Frequency : Swift.Sendable {}
+extension KmpCalendar.Frequency : Swift.BitwiseCopyable {}
+extension KmpCalendar.Kotlinx_datetimePadding : Swift.Sendable {}
+extension KmpCalendar.Kotlinx_datetimePadding : Swift.BitwiseCopyable {}
+extension KmpCalendar.Kotlinx_datetimeMonth : Swift.Sendable {}
+extension KmpCalendar.Kotlinx_datetimeMonth : Swift.BitwiseCopyable {}
+extension KmpCalendar.Kotlinx_datetimeDayOfWeek : Swift.Sendable {}
+extension KmpCalendar.Kotlinx_datetimeDayOfWeek : Swift.BitwiseCopyable {}
+extension KmpCalendar.Skie.KotlinxDatetime.DateTimeFormat.__Sealed : Swift.Sendable {}
+extension KmpCalendar.Skie.KotlinxDatetime.DateTimeFormat.__Sealed : Swift.BitwiseCopyable {}
+extension KmpCalendar.Skie.KotlinxDatetime.DateTimeFormatBuilder.WithDateTimeComponents.__Sealed : Swift.Sendable {}
+extension KmpCalendar.Skie.KotlinxDatetime.DateTimeFormatBuilder.WithDateTimeComponents.__Sealed : Swift.BitwiseCopyable {}
+extension KmpCalendar.Skie.KotlinxSerializationCore.SerializersModule.__Sealed : Swift.Sendable {}
+extension KmpCalendar.Skie.KotlinxSerializationCore.SerializersModule.__Sealed : Swift.BitwiseCopyable {}

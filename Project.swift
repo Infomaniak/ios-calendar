@@ -140,6 +140,7 @@ let project = Project(
                 ],
                 dependencies: [
                     .target(name: "\(Constants.projectName)Resources"),
+                    .xcframework(path: "./Debug-Frameworks/KmpCalendar.xcframework"),
                     .external(name: "DeviceAssociation"),
                     .external(name: "InfomaniakCore"),
                     .external(name: "InfomaniakDI"),
