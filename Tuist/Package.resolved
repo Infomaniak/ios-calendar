@@ -1,0 +1,186 @@
+{
+  "originHash" : "32205f03f4e4fa164f977fbde0d6586f3f219a44e7173b92dfca3d0977634a08",
+  "pins" : [
+    {
+      "identity" : "alamofire",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Alamofire/Alamofire",
+      "state" : {
+        "revision" : "7595cbcf59809f9977c5f6378500de2ad73b7ddb",
+        "version" : "5.12.0"
+      }
+    },
+    {
+      "identity" : "ios-core",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Infomaniak/ios-core",
+      "state" : {
+        "revision" : "abce7c839e7da92252432f08b4c7dc1ba71b903c",
+        "version" : "18.11.1"
+      }
+    },
+    {
+      "identity" : "ios-core-ui",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Infomaniak/ios-core-ui",
+      "state" : {
+        "revision" : "8f50d7bcba8e926be5af324b32be0c1e5d70d6a2",
+        "version" : "24.11.0"
+      }
+    },
+    {
+      "identity" : "ios-create-account",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Infomaniak/ios-create-account",
+      "state" : {
+        "revision" : "45dfbaf58e09c281684939370adbdb59b0fc8c44",
+        "version" : "23.3.0"
+      }
+    },
+    {
+      "identity" : "ios-dependency-injection",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Infomaniak/ios-dependency-injection",
+      "state" : {
+        "revision" : "c24d45e86efe13e864b707f4711b7a9fd4b75ac0",
+        "version" : "2.0.7"
+      }
+    },
+    {
+      "identity" : "ios-device-check",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Infomaniak/ios-device-check",
+      "state" : {
+        "revision" : "d20a4959683e7c19faec674b1fd269e3167e5133",
+        "version" : "1.1.1"
+      }
+    },
+    {
+      "identity" : "ios-features",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Infomaniak/ios-features",
+      "state" : {
+        "revision" : "cc3fb4c8fc5756246b53b293a94abdd111bc674b",
+        "version" : "8.9.2"
+      }
+    },
+    {
+      "identity" : "ios-login",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Infomaniak/ios-login",
+      "state" : {
+        "revision" : "b53d08cd0830cfed227ce1b79dbaccd29827b81d",
+        "version" : "7.8.1"
+      }
+    },
+    {
+      "identity" : "lottie-spm",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/airbnb/lottie-spm",
+      "state" : {
+        "revision" : "69faaefa7721fba9e434a52c16adf4329c9084db",
+        "version" : "4.6.0"
+      }
+    },
+    {
+      "identity" : "matomo-sdk-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/matomo-org/matomo-sdk-ios",
+      "state" : {
+        "revision" : "f140afcb7cedebdcbf8b8230fdd822b4b61e3685",
+        "version" : "7.8.0"
+      }
+    },
+    {
+      "identity" : "nuke",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/kean/Nuke",
+      "state" : {
+        "revision" : "83e19143355b02e9261edb2323b3e1e93287ebb9",
+        "version" : "12.9.0"
+      }
+    },
+    {
+      "identity" : "osinfo",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/MarcoEidinger/OSInfo.git",
+      "state" : {
+        "revision" : "fa5164afc8ef56c3069728629647f140c03933f5",
+        "version" : "1.0.2"
+      }
+    },
+    {
+      "identity" : "realm-core",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/realm/realm-core.git",
+      "state" : {
+        "revision" : "cccb3ca9e26ec452a29f2f0d4050d1e38b8a3d43",
+        "version" : "14.14.0"
+      }
+    },
+    {
+      "identity" : "realm-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/realm/realm-swift",
+      "state" : {
+        "revision" : "1c105d34f25af7851c5a3ff146be006de247a6b4",
+        "version" : "10.54.6"
+      }
+    },
+    {
+      "identity" : "sentry-cocoa",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/getsentry/sentry-cocoa",
+      "state" : {
+        "revision" : "e6d00b6171c0c055debdf278554db035ae958926",
+        "version" : "9.16.1"
+      }
+    },
+    {
+      "identity" : "snackbar.swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Infomaniak/SnackBar.swift",
+      "state" : {
+        "revision" : "7d8d20af50c6b744aa9791b597f7efbd0a15add2",
+        "version" : "1.2.0"
+      }
+    },
+    {
+      "identity" : "snapkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SnapKit/SnapKit.git",
+      "state" : {
+        "revision" : "2842e6e84e82eb9a8dac0100ca90d9444b0307f4",
+        "version" : "5.7.1"
+      }
+    },
+    {
+      "identity" : "swiftbackports",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/shaps80/SwiftBackports",
+      "state" : {
+        "revision" : "ddca6a237c1ba2291d5a3cc47ec8480ce6e9f805",
+        "version" : "1.0.3"
+      }
+    },
+    {
+      "identity" : "swiftui-introspect",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/siteline/SwiftUI-Introspect",
+      "state" : {
+        "revision" : "26986a57e31c813f98262ddb62d4b07d40008535",
+        "version" : "26.0.1"
+      }
+    },
+    {
+      "identity" : "swiftuibackports",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/shaps80/SwiftUIBackports",
+      "state" : {
+        "revision" : "556d42f391b74059a354b81b8c8e19cc7cb576f4",
+        "version" : "1.15.1"
+      }
+    }
+  ],
+  "version" : 3
+}

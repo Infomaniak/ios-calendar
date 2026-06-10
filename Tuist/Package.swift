@@ -2,14 +2,33 @@
 import PackageDescription
 
 #if TUIST
-import struct ProjectDescription.PackageSettings
+import ProjectDescription
 
 let packageSettings = PackageSettings(
-    productTypes: [:]
+    productTypes: [
+        "DeviceAssociation": .framework,
+        "InfomaniakCore": .framework,
+        "InfomaniakCoreCommonUI": .framework,
+        "InfomaniakCoreSwiftUI": .framework,
+        "InfomaniakCreateAccount": .framework,
+        "InfomaniakDI": .framework,
+        "InfomaniakDeviceCheck": .framework,
+        "InfomaniakLogin": .framework,
+        "InterAppLogin": .framework,
+        "Nuke": .framework
+    ]
 )
 #endif
 
 let package = Package(
     name: "Calendar",
-    dependencies: []
+    dependencies: [
+        .package(url: "https://github.com/Infomaniak/ios-core", .upToNextMajor(from: "18.10.3")),
+        .package(url: "https://github.com/Infomaniak/ios-core-ui", .upToNextMajor(from: "24.10.0")),
+        .package(url: "https://github.com/Infomaniak/ios-create-account", .upToNextMajor(from: "23.3.0")),
+        .package(url: "https://github.com/Infomaniak/ios-dependency-injection", .upToNextMajor(from: "2.0.6")),
+        .package(url: "https://github.com/Infomaniak/ios-device-check", .upToNextMajor(from: "1.1.1")),
+        .package(url: "https://github.com/Infomaniak/ios-features", .upToNextMajor(from: "8.4.3")),
+        .package(url: "https://github.com/Infomaniak/ios-login", .upToNextMajor(from: "7.8.0"))
+    ]
 )

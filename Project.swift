@@ -20,9 +20,28 @@ import Foundation
 import ProjectDescription
 import ProjectDescriptionHelpers
 
-let onboardingView = Feature(name: "OnboardingView", additionalDependencies: [])
+let onboardingView = Feature(
+    name: "OnboardingView",
+    additionalDependencies: [
+        TargetDependency.external(name: "InfomaniakCore"),
+        TargetDependency.external(name: "InfomaniakCoreSwiftUI"),
+        TargetDependency.external(name: "InfomaniakDeviceCheck"),
+        TargetDependency.external(name: "InfomaniakLogin"),
+        TargetDependency.external(name: "InterAppLogin"),
+        TargetDependency.external(name: "InfomaniakCreateAccount")
+    ]
+)
 
-let preloadingView = Feature(name: "PreloadingView", additionalDependencies: [])
+let preloadingView = Feature(
+    name: "PreloadingView",
+    additionalDependencies: [
+        TargetDependency.external(name: "DesignSystem"),
+        TargetDependency.external(name: "InfomaniakCore"),
+        TargetDependency.external(name: "InfomaniakCoreCommonUI"),
+        TargetDependency.external(name: "InfomaniakCoreSwiftUI"),
+        TargetDependency.external(name: "InfomaniakDI")
+    ]
+)
 
 let calendarView = Feature(name: "CalendarView", additionalDependencies: [])
 
@@ -47,10 +66,11 @@ let mainView = Feature(
 
 let rootView = Feature(
     name: "RootView",
-    dependencies: [
+    additionalDependencies: [
         onboardingView,
         preloadingView,
-        mainView
+        mainView,
+        TargetDependency.external(name: "InfomaniakDI")
     ]
 )
 
@@ -96,7 +116,13 @@ let project = Project(
                 .target(name: "\(Constants.projectName)Core"),
                 .target(name: "\(Constants.projectName)CoreUI"),
                 .target(name: "\(Constants.projectName)Resources"),
-                rootView.asDependency
+                rootView.asDependency,
+                .external(name: "InfomaniakCore"),
+                .external(name: "InfomaniakCoreSwiftUI"),
+                .external(name: "InfomaniakDI"),
+                .external(name: "InfomaniakLogin"),
+                .external(name: "InterAppLogin"),
+                .external(name: "InfomaniakCreateAccount")
             ],
             settings: .settings(base: Constants.baseSettings),
             environmentVariables: [
@@ -113,7 +139,13 @@ let project = Project(
                     .folder("\(Constants.projectName)Core/")
                 ],
                 dependencies: [
-                    .target(name: "\(Constants.projectName)Resources")
+                    .target(name: "\(Constants.projectName)Resources"),
+                    .external(name: "DeviceAssociation"),
+                    .external(name: "InfomaniakCore"),
+                    .external(name: "InfomaniakDI"),
+                    .external(name: "InfomaniakDeviceCheck"),
+                    .external(name: "InfomaniakLogin"),
+                    .external(name: "InterAppLogin")
                 ],
                 settings: .settings(base: Constants.baseSettings)),
         .target(name: "\(Constants.projectName)CoreUI",
@@ -127,7 +159,8 @@ let project = Project(
                 ],
                 dependencies: [
                     .target(name: "\(Constants.projectName)Core"),
-                    .target(name: "\(Constants.projectName)Resources")
+                    .target(name: "\(Constants.projectName)Resources"),
+                    .external(name: "InfomaniakDI")
                 ],
                 settings: .settings(base: Constants.baseSettings)),
         .target(name: "\(Constants.projectName)Resources",

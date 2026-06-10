@@ -16,24 +16,15 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import SwiftUI
+import Foundation
+import InfomaniakCore
+import InfomaniakLogin
 
-public struct OnboardingView: View {
-    @StateObject private var loginHandler = LoginHandler()
-    @State private var selection = 0
-
-    public init() {}
-
-    public var body: some View {
-        OnboardingBottomButtonsView(
-            loginHandler: loginHandler,
-            selection: $selection,
-            slideCount: 2
-        )
-        .loginErrorAlert(loginHandler: loginHandler)
+public struct CalendarAccount: Identifiable, Equatable, Hashable, Sendable {
+    public var id: Int {
+        token.userId
     }
-}
 
-#Preview {
-    OnboardingView()
+    public let token: ApiToken
+    public let user: UserProfile
 }

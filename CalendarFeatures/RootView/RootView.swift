@@ -16,17 +16,32 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarCoreUI
 import CalendarMainView
+import CalendarOnboardingView
+import CalendarPreloadingView
 import SwiftUI
 
 public struct RootView: View {
+    @EnvironmentObject private var rootViewState: RootViewState
+
     public init() {}
 
     public var body: some View {
-        MainView()
+        ZStack {
+            switch rootViewState.state {
+            case .mainView:
+                MainView()
+            case .onboarding:
+                OnboardingView()
+            case .preloading:
+                PreloadingView()
+            }
+        }
     }
 }
 
 #Preview {
     RootView()
+        .environmentObject(RootViewState.previewMainView)
 }

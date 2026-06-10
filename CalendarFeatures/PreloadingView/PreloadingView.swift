@@ -16,16 +16,41 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarCore
+import CalendarCoreUI
+import InfomaniakCore
+import InfomaniakDI
 import SwiftUI
 
 public struct PreloadingView: View {
+    @EnvironmentObject private var rootViewState: RootViewState
+
     public init() {}
 
     public var body: some View {
-        EmptyView()
+        ProgressView()
+            .progressViewStyle(.circular)
+            .task { await preloadAndTransitionToRootView() }
+    }
+
+    func preloadAndTransitionToRootView() async {
+        @InjectService var tokenStore: TokenStore
+        @InjectService var appLaunchCounter: AppLaunchCounter
+
+        guard !appLaunchCounter.isFirstLaunch else {
+            tokenStore.removeAllTokens()
+            appLaunchCounter.increase()
+            rootViewState.transitionToRootViewState(.onboarding)
+            return
+        }
+
+        @InjectService var accountManager: AccountManager
+
+        await accountManager.loadAccounts()
     }
 }
 
 #Preview {
     PreloadingView()
+        .environmentObject(RootViewState.previewPreloading)
 }
