@@ -16,13 +16,46 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarCalendarListView
+import InfomaniakDI
+import KmpCalendar
+import OSLog
 import SwiftUI
 
 public struct MainView: View {
+    @Environment(\.calendarAccounts) private var calendarAccounts
+
+    @State private var isShowingCalendarListView = false
+
     public init() {}
 
     public var body: some View {
-        Text("MainView")
+        NavigationStack {
+            Text("MainView")
+                .toolbar {
+                    Button("Calendars") {
+                        isShowingCalendarListView = true
+                    }
+                }
+        }
+        .task(id: calendarAccounts) {
+            await syncCalendars()
+        }
+        .sheet(isPresented: $isShowingCalendarListView) {
+            CalendarListView()
+        }
+    }
+
+    private func syncCalendars() async {
+        @InjectService var calendarSDK: CalendarCoreGraph
+
+        for calendarAccount in calendarAccounts {
+            do {
+                try await calendarSDK.calendarManager.syncCalendars(accountId: Int64(calendarAccount.id))
+            } catch {
+                Logger.view.error("Failed to sync calendars for account \(calendarAccount.id): \(error.localizedDescription)")
+            }
+        }
     }
 }
 

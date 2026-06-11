@@ -16,13 +16,40 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarCoreUI
+import InfomaniakDI
+import KmpCalendar
+import OSLog
 import SwiftUI
 
 public struct CalendarListView: View {
+    @Environment(\.calendarAccounts) private var calendarAccounts
+
+    @State private var calendars = [UICalendar]()
+
     public init() {}
 
     public var body: some View {
-        EmptyView()
+        List {
+            ForEach(calendars) { calendar in
+                HStack {
+                    Circle()
+                        .fill(calendar.color)
+                        .frame(width: 8, height: 8)
+                    Text(calendar.displayName)
+                }
+            }
+        }
+        .task(id: calendarAccounts) {
+            await observeCalendars()
+        }
+    }
+
+    private func observeCalendars() async {
+        @InjectService var calendarSDK: CalendarCoreGraph
+        for await calendars in calendarSDK.calendarManager.observeCalendars() {
+            self.calendars = calendars.map { UICalendar(calendar: $0) }
+        }
     }
 }
 
