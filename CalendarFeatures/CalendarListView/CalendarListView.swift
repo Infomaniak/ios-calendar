@@ -30,19 +30,10 @@ public struct CalendarListView: View {
     public init() {}
 
     public var body: some View {
-        List {
-            ForEach(calendars) { calendar in
-                HStack {
-                    Circle()
-                        .fill(calendar.color)
-                        .frame(width: 8, height: 8)
-                    Text(calendar.displayName)
-                }
+        CalendarListContentView(calendars: calendars)
+            .task(id: calendarAccounts) {
+                await observeCalendars()
             }
-        }
-        .task(id: calendarAccounts) {
-            await observeCalendars()
-        }
     }
 
     private func observeCalendars() async {
@@ -51,8 +42,4 @@ public struct CalendarListView: View {
             self.calendars = calendars.map { UICalendar(calendar: $0) }
         }
     }
-}
-
-#Preview {
-    CalendarListView()
 }

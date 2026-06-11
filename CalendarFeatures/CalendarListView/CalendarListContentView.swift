@@ -16,30 +16,26 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Foundation
-import KmpCalendar
+import CalendarCoreUI
 import SwiftUI
 
-public struct UICalendar: Identifiable, Equatable, Hashable, Sendable {
-    public let id: String
-    public let displayName: String
-    public let color: Color
+struct CalendarListContentView: View {
+    let calendars: [UICalendar]
 
-    public init(id: String, displayName: String, color: Color) {
-        self.id = id
-        self.displayName = displayName
-        self.color = color
+    var body: some View {
+        List {
+            ForEach(calendars) { calendar in
+                HStack {
+                    Circle()
+                        .fill(calendar.color)
+                        .frame(width: 8, height: 8)
+                    Text(calendar.displayName)
+                }
+            }
+        }
     }
 }
 
-public extension UICalendar {
-    init(calendar: KmpCalendar.Calendar) {
-        id = calendar.idValue
-        displayName = calendar.displayName
-        color = Color(argb: calendar.color)
-    }
-}
-
-public extension UICalendar {
-    static let preview = UICalendar(id: "0", displayName: "John Appleseed - Personal", color: .red)
+#Preview {
+    CalendarListContentView(calendars: [.preview])
 }
