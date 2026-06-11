@@ -30,8 +30,9 @@ public struct RootView: View {
     public var body: some View {
         ZStack {
             switch rootViewState.state {
-            case .mainView:
+            case .mainView(let accounts):
                 MainView()
+                    .environment(\.calendarAccounts, accounts)
             case .onboarding:
                 OnboardingView()
             case .preloading:
