@@ -17,28 +17,6 @@
  */
 
 import Foundation
-import InfomaniakCore
-import InfomaniakLogin
 import KmpCalendar
 
-public struct CalendarAccount: Identifiable, Equatable, Hashable, Sendable {
-    public var id: Int {
-        token.userId
-    }
-
-    public let token: ApiToken
-    public let user: UserProfile
-    private let davUsername: String
-    private let davPassword: String
-
-    public init(token: ApiToken, user: UserProfile, davCredentials: DavCredentials) {
-        self.token = token
-        self.user = user
-        davUsername = davCredentials.username
-        davPassword = davCredentials.password
-    }
-
-    public var davCredendials: DavCredentials {
-        DavCredentials(username: davUsername, password: davPassword)
-    }
-}
+extension DavCredentials: @unchecked @retroactive Sendable {}

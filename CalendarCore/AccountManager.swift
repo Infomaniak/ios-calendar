@@ -21,6 +21,7 @@ import Foundation
 @preconcurrency import InfomaniakCore
 import InfomaniakDI
 import InfomaniakLogin
+@preconcurrency import KmpCalendar
 import OSLog
 
 public final class NoOpRefreshTokenDelegate: RefreshTokenDelegate {
@@ -34,6 +35,8 @@ public actor AccountManager {
     @LazyInjectService private var networkLoginService: InfomaniakNetworkLoginable
     @LazyInjectService private var tokenStore: TokenStore
     @LazyInjectService private var deviceManager: DeviceManagerable
+    @LazyInjectService private var calendarSDK: CalendarCoreGraph
+    @LazyInjectService private var davCredentialsKeychainHelper: DavCredentialsKeychainHelper
 
     public private(set) var calendarAccounts: [UserId: CalendarAccount] = [:]
 
@@ -61,16 +64,17 @@ public actor AccountManager {
 
     public func createAndSetCurrentAccount(code: String, codeVerifier: String) async throws {
         let token = try await networkLoginService.apiTokenUsing(code: code, codeVerifier: codeVerifier)
-        try await setCurrentAccount(token: token)
+        try await createAccount(token: token)
     }
 
     public func createAndSetCurrentAccount(token: ApiToken) async throws {
-        try await setCurrentAccount(token: token)
+        try await createAccount(token: token)
     }
 
     public func removeAccountFor(userId: Int) async {
         calendarAccounts[userId] = nil
         tokenStore.removeTokenFor(userId: userId)
+        try? await davCredentialsKeychainHelper.deleteCredentials(for: userId)
         await userProfileStore.removeUserProfile(id: userId)
         deviceManager.forgetLocalDeviceHash(forUserId: userId)
 
@@ -78,9 +82,30 @@ public actor AccountManager {
     }
 
     private func calendarAccountFor(token: ApiToken) async throws -> CalendarAccount {
-        let apiFetcher = getApiFetcher(token: token)
-        let user = try await userProfileStore.updateUserProfile(with: apiFetcher)
-        return CalendarAccount(token: token, user: user)
+        let user = try await getOrCreateUserProfile(token: token)
+        let davCredentials = try await getOrCreateDavCredentials(token: token)
+
+        try await calendarSDK.accountManager.doInitAccount(accountId: Int64(token.userId), credentials: davCredentials)
+        return CalendarAccount(token: token, user: user, davCredentials: davCredentials)
+    }
+
+    private func getOrCreateUserProfile(token: ApiToken) async throws -> UserProfile {
+        if let userProfile = await userProfileStore.getUserProfile(id: token.userId) {
+            return userProfile
+        } else {
+            let apiFetcher = getApiFetcher(token: token)
+            return try await userProfileStore.updateUserProfile(with: apiFetcher, options: .all)
+        }
+    }
+
+    private func getOrCreateDavCredentials(token: ApiToken) async throws -> DavCredentials {
+        if let credentials = await davCredentialsKeychainHelper.retrieveCredentials(for: token.userId) {
+            return credentials
+        } else {
+            let credentials = try await calendarSDK.accountManager.retrieveDavCredential(authToken: token.accessToken)
+            try await davCredentialsKeychainHelper.storeCredentials(credentials, for: token.userId)
+            return credentials
+        }
     }
 
     private func getApiFetcher(token: ApiToken) -> ApiFetcher {
@@ -97,7 +122,7 @@ public actor AccountManager {
         return apiFetcher
     }
 
-    private func setCurrentAccount(token: ApiToken) async throws {
+    private func createAccount(token: ApiToken) async throws {
         let calendarAccount = try await calendarAccountFor(token: token)
         calendarAccounts[calendarAccount.id] = calendarAccount
 
