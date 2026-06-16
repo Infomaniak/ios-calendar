@@ -45,7 +45,12 @@ let preloadingView = Feature(
     ]
 )
 
-let calendarView = Feature(name: "CalendarView", additionalDependencies: [])
+let calendarView = Feature(
+    name: "CalendarView",
+    additionalDependencies: [
+        TargetDependency.external(name: "InfomaniakDI")
+    ]
+)
 
 let createEditEventView = Feature(name: "CreateEditEventView", additionalDependencies: [])
 
