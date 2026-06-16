@@ -17,6 +17,7 @@
  */
 
 import CalendarCalendarListView
+import CalendarCalendarView
 import InfomaniakDI
 import KmpCalendar
 import OSLog
@@ -31,7 +32,7 @@ public struct MainView: View {
 
     public var body: some View {
         NavigationStack {
-            Text("MainView")
+            CalendarView()
                 .toolbar {
                     Button("Calendars") {
                         isShowingCalendarListView = true
