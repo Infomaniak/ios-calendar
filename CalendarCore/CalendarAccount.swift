@@ -31,14 +31,14 @@ public struct CalendarAccount: Identifiable, Equatable, Hashable, Sendable {
     private let davUsername: String
     private let davPassword: String
 
+    public var davCredentials: DavCredentials {
+        DavCredentials(username: davUsername, password: davPassword)
+    }
+
     public init(token: ApiToken, user: UserProfile, davCredentials: DavCredentials) {
         self.token = token
         self.user = user
         davUsername = davCredentials.username
         davPassword = davCredentials.password
-    }
-
-    public var davCredendials: DavCredentials {
-        DavCredentials(username: davUsername, password: davPassword)
     }
 }
