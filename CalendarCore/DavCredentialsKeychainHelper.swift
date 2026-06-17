@@ -88,12 +88,12 @@ public actor DavCredentialsKeychainHelper {
 
         let queryUpdate: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
+            kSecAttrAccount as String: credentials.username,
             kSecAttrService as String: tag,
             kSecAttrAccessGroup as String: accessGroup
         ]
 
         let attributes: [String: Any] = [
-            kSecAttrAccount as String: credentials.username,
             kSecAttrGeneric as String: userIdData,
             kSecValueData as String: passwordData
         ]
