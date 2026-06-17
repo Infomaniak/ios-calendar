@@ -22,41 +22,21 @@ import InfomaniakDI
 import KmpCalendar
 import SwiftUI
 
-struct PlanningDay: Identifiable, Hashable {
-    let date: Date
-    let events: [CalendarCoreUI.UIEvent]
-
-    var id: Date {
-        date
-    }
-}
-
 public struct PlanningView: View {
     @State private var planningDays: [PlanningDay] = []
 
     public init() {}
 
     public var body: some View {
-        List {
-            ForEach(planningDays) { day in
-                Section {
-                    ForEach(day.events) { event in
-                        HStack {
-                            VStack(alignment: .leading) {
-                                if let startDate = event.startDate {
-                                    Text(startDate, style: .time)
-                                }
-                                if let endDate = event.endDate {
-                                    Text(endDate, style: .time)
-                                        .foregroundStyle(.secondary)
-                                }
-                            }
-                            Text(event.title)
-                        }
-                    }
-                } header: {
-                    Text(day.date, style: .date)
-                }
+        VStack {
+            PlanningCollectionView(planningDays: planningDays)
+                .ignoresSafeArea(edges: .bottom)
+        }
+        .safeAreaInset(edge: .top) {
+            VStack {
+                Color.red
+                    .frame(maxHeight: 64)
+                PlanningNextEventCardView()
             }
         }
         .task {
@@ -72,18 +52,7 @@ public struct PlanningView: View {
         for await events in calendarSDK.calendarManager.observeEvents(calendarId: firstCalendar.idValue) {
             let uiEvents = events.map { UIEvent(event: $0) }
 
-            let grouped = Dictionary(grouping: uiEvents) { event in
-                Calendar.current.startOfDay(for: event.startDate ?? .distantPast)
-            }
-
-            let days = grouped
-                .map { date, events -> PlanningDay in
-                    let sortedEvents = events.sorted {
-                        ($0.startDate ?? .distantPast) < ($1.startDate ?? .distantPast)
-                    }
-                    return PlanningDay(date: date, events: sortedEvents)
-                }
-                .sorted { $0.date < $1.date }
+            let days = PlanningDay.makeContiguousDays(from: uiEvents)
 
             withAnimation {
                 planningDays = days

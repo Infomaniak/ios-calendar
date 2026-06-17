@@ -22,7 +22,6 @@ import InfomaniakDI
 @preconcurrency import MultiplatformCalendar
 import OSLog
 import SwiftUI
-import CalendarCalendarView
 
 public struct MainView: View {
     @Environment(\.calendarAccounts) private var calendarAccounts

@@ -58,4 +58,11 @@ public extension UIEvent {
 
 public extension UIEvent {
     static let preview = UIEvent(id: "0", title: "Event Title", startDate: Date(), endDate: Date().addingTimeInterval(3600))
+
+    static let random100Events: [UIEvent] = (0 ..< 100).map { index in
+        let dayRangeInSeconds = 30 * 24 * 3600
+        let randomStartDate = Date().addingTimeInterval(TimeInterval(Int.random(in: -dayRangeInSeconds ... dayRangeInSeconds)))
+        let randomEndDate = randomStartDate.addingTimeInterval(Double.random(in: 3600 ... 7200))
+        return UIEvent(id: "\(index)", title: "Event \(index)", startDate: randomStartDate, endDate: randomEndDate)
+    }
 }
