@@ -23,6 +23,7 @@ import InfomaniakDeviceCheck
 import InfomaniakDI
 import InfomaniakLogin
 import InterAppLogin
+import KmpCalendar
 import OSLog
 
 open class CalendarTargetAssembly: TargetAssembly {
@@ -48,6 +49,16 @@ open class CalendarTargetAssembly: TargetAssembly {
 
     override open class func getCommonServices() -> [Factory] {
         return [
+            Factory(type: CalendarCoreGraph.self) { _, resolver in
+                let appGroupPath = try resolver.resolve(
+                    type: AppGroupPathProvidable.self,
+                    forCustomTypeIdentifier: nil,
+                    factoryParameters: nil,
+                    resolver: resolver
+                )
+
+                return CalendarSDKProvider().sdk(databasePath: appGroupPath.realmRootURL.appending(path: "calendars.db").path())
+            },
             Factory(type: AccountManager.self) { _, _ in
                 AccountManager()
             },
@@ -62,6 +73,9 @@ open class CalendarTargetAssembly: TargetAssembly {
             },
             Factory(type: TokenStore.self) { _, _ in
                 TokenStore()
+            },
+            Factory(type: DavCredentialsKeychainHelper.self) { _, _ in
+                DavCredentialsKeychainHelper(accessGroup: Self.keychainGroupIdentifier)
             },
             Factory(type: DeviceManagerable.self) { _, _ in
                 let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0"

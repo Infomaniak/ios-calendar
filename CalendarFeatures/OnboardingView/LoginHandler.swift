@@ -148,7 +148,6 @@ public enum LoginError: Error, LocalizedError, Equatable {
     }
 }
 
-@MainActor
 public extension InfomaniakNetworkLoginable {
     private var deviceCheckEnvironment: InfomaniakDeviceCheck.Environment {
         switch ApiEnvironment.current {
