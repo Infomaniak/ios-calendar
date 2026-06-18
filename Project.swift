@@ -49,18 +49,24 @@ let createEditEventView = Feature(name: "CreateEditEventView", additionalDepende
 
 let eventDetailsView = Feature(name: "EventDetailsView", additionalDependencies: [])
 
-let calendarListView = Feature(name: "CalendarListView", additionalDependencies: [])
+let calendarListView = Feature(
+    name: "CalendarListView",
+    additionalDependencies: [
+        TargetDependency.external(name: "InfomaniakDI")
+    ]
+)
 
 let settingsView = Feature(name: "SettingsView", additionalDependencies: [])
 
 let mainView = Feature(
     name: "MainView",
-    dependencies: [
+    additionalDependencies: [
         calendarView,
         createEditEventView,
         eventDetailsView,
         calendarListView,
-        settingsView
+        settingsView,
+        TargetDependency.external(name: "InfomaniakDI")
     ]
 )
 

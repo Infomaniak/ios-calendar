@@ -16,30 +16,17 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import CalendarCoreUI
-import InfomaniakDI
-import KmpCalendar
-import OSLog
 import SwiftUI
 
-public struct CalendarListView: View {
-    @Environment(\.calendarAccounts) private var calendarAccounts
+extension Color {
+    init(argb: Int32) {
+        let value = UInt32(bitPattern: argb)
 
-    @State private var calendars = [UICalendar]()
+        let a = Double((value >> 24) & 0xFF) / 255.0
+        let r = Double((value >> 16) & 0xFF) / 255.0
+        let g = Double((value >> 8) & 0xFF) / 255.0
+        let b = Double(value & 0xFF) / 255.0
 
-    public init() {}
-
-    public var body: some View {
-        CalendarListContentView(calendars: calendars)
-            .task(id: calendarAccounts) {
-                await observeCalendars()
-            }
-    }
-
-    private func observeCalendars() async {
-        @InjectService var calendarSDK: CalendarCoreGraph
-        for await calendars in calendarSDK.calendarManager.observeCalendars() {
-            self.calendars = calendars.map { UICalendar(calendar: $0) }
-        }
+        self.init(.sRGB, red: r, green: g, blue: b, opacity: a)
     }
 }

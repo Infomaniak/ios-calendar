@@ -17,29 +17,25 @@
  */
 
 import CalendarCoreUI
-import InfomaniakDI
-import KmpCalendar
-import OSLog
 import SwiftUI
 
-public struct CalendarListView: View {
-    @Environment(\.calendarAccounts) private var calendarAccounts
+struct CalendarListContentView: View {
+    let calendars: [UICalendar]
 
-    @State private var calendars = [UICalendar]()
-
-    public init() {}
-
-    public var body: some View {
-        CalendarListContentView(calendars: calendars)
-            .task(id: calendarAccounts) {
-                await observeCalendars()
+    var body: some View {
+        List {
+            ForEach(calendars) { calendar in
+                HStack {
+                    Circle()
+                        .fill(calendar.color)
+                        .frame(width: 8, height: 8)
+                    Text(calendar.displayName)
+                }
             }
-    }
-
-    private func observeCalendars() async {
-        @InjectService var calendarSDK: CalendarCoreGraph
-        for await calendars in calendarSDK.calendarManager.observeCalendars() {
-            self.calendars = calendars.map { UICalendar(calendar: $0) }
         }
     }
+}
+
+#Preview {
+    CalendarListContentView(calendars: [.preview])
 }
