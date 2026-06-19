@@ -24,27 +24,27 @@ extension Slide {
     static var onboardingSlides: [Slide] {
         return [
             Slide(
-                backgroundImage: UIImage(systemName: "app.background.dotted")!,
+                backgroundImage: UIImage(systemName: "app.background.dotted") ?? UIImage(),
                 backgroundImageTintColor: nil,
-                content: .illustration(UIImage(systemName: "1.calendar")!),
+                content: .illustration(UIImage(systemName: "1.calendar") ?? UIImage()),
                 bottomView: OnboardingTextView(text: .oneSlide)
             ),
             Slide(
-                backgroundImage: UIImage(systemName: "app.background.dotted")!,
+                backgroundImage: UIImage(systemName: "app.background.dotted") ?? UIImage(),
                 backgroundImageTintColor: nil,
-                content: .illustration(UIImage(systemName: "2.calendar")!),
+                content: .illustration(UIImage(systemName: "2.calendar") ?? UIImage()),
                 bottomView: OnboardingTextView(text: .twoSlide)
             ),
             Slide(
-                backgroundImage: UIImage(systemName: "app.background.dotted")!,
+                backgroundImage: UIImage(systemName: "app.background.dotted") ?? UIImage(),
                 backgroundImageTintColor: nil,
-                content: .illustration(UIImage(systemName: "3.calendar")!),
+                content: .illustration(UIImage(systemName: "3.calendar") ?? UIImage()),
                 bottomView: OnboardingTextView(text: .threeSlide)
             ),
             Slide(
-                backgroundImage: UIImage(systemName: "app.background.dotted")!,
+                backgroundImage: UIImage(systemName: "app.background.dotted") ?? UIImage(),
                 backgroundImageTintColor: nil,
-                content: .illustration(UIImage(systemName: "4.calendar")!),
+                content: .illustration(UIImage(systemName: "4.calendar") ?? UIImage()),
                 bottomView: OnboardingTextView(text: .fourSlide)
             )
         ]

@@ -17,6 +17,7 @@
  */
 
 import SwiftUI
+import UIKit
 
 public extension Font {
     @frozen enum CalendarFont {
