@@ -16,11 +16,11 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarCoreUI
 import CalendarResources
 import DesignSystem
 import InfomaniakCoreSwiftUI
 import SwiftUI
-import CalendarCoreUI
 
 enum OnboardingText {
     case oneSlide

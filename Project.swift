@@ -23,6 +23,7 @@ import ProjectDescriptionHelpers
 let onboardingView = Feature(
     name: "OnboardingView",
     additionalDependencies: [
+        TargetDependency.target(name: "\(Constants.projectName)Resources"),
         TargetDependency.external(name: "InfomaniakCore"),
         TargetDependency.external(name: "InfomaniakCoreSwiftUI"),
         TargetDependency.external(name: "InfomaniakDeviceCheck"),
