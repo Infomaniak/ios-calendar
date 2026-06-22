@@ -43,6 +43,12 @@ struct PlanningCollectionView: UIViewRepresentable {
         )
         collectionView.delegate = context.coordinator
         context.coordinator.setupDatasource(for: collectionView)
+
+        if #available(iOS 26.0, *) {
+            // Remove the effect since we will use a custom header
+            collectionView.topEdgeEffect.isHidden = true
+        }
+
         return collectionView
     }
 
