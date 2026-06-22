@@ -48,15 +48,24 @@ final class PlanningDayHeaderView: UICollectionReusableView {
     func configure(date: Date) {
         weekdayLabel.text = Self.weekdayFormatter.string(from: date).uppercased()
         dayLabel.text = Self.dayFormatter.string(from: date)
+
+        if Calendar.current.isDateInToday(date) {
+            weekdayLabel.font = .preferredFont(forTextStyle: .caption1) // TODO: Should be bolder
+            weekdayLabel.textColor = .tintColor
+
+            dayLabel.font = .preferredFont(forTextStyle: .title2) // TODO: Should be bolder
+            dayLabel.textColor = .tintColor
+        } else {
+            weekdayLabel.font = .preferredFont(forTextStyle: .caption1)
+            weekdayLabel.textColor = .secondaryLabel
+
+            dayLabel.font = .preferredFont(forTextStyle: .title2)
+            dayLabel.textColor = .label
+        }
     }
 
     private func setUpView() {
-        weekdayLabel.font = .preferredFont(forTextStyle: .caption1)
-        weekdayLabel.textColor = .secondaryLabel
         weekdayLabel.adjustsFontForContentSizeCategory = true
-
-        dayLabel.font = .preferredFont(forTextStyle: .title2)
-        dayLabel.textColor = .label
         dayLabel.adjustsFontForContentSizeCategory = true
 
         let stack = UIStackView(arrangedSubviews: [weekdayLabel, dayLabel])
