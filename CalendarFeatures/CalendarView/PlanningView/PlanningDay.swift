@@ -62,5 +62,6 @@ extension PlanningDay {
 }
 
 extension PlanningDay {
+    // periphery:ignore - False positive, used by preview
     static let preview: [PlanningDay] = makeContiguousDays(from: UIEvent.random100Events)
 }
