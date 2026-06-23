@@ -12,18 +12,28 @@ jobs:
   build:
     name: Build and Test project
     runs-on: [ self-hosted, iOS ]
+    env:
+      DERIVED_DATA_PATH: ${{ github.workspace }}/DerivedData
 
     steps:
-      - uses: jdx/mise-action@6d1e696aa24c1aa1bcc1adea0212707c71ab78a8
       - name: Checkout
         uses: actions/checkout@v6
+      - name: Setup mise
+        uses: jdx/mise-action@6d1e696aa24c1aa1bcc1adea0212707c71ab78a8
+        with:
+          cache: false
       - name: Generate
         run: tuist install && tuist generate
       - name: Check implicit imports
         run: tuist inspect implicit-imports
       - name: Build
-        run: tuist build --clean "Calendar"
+        run: tuist build --clean --derived-data-path "$DERIVED_DATA_PATH" "Calendar"
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@fd88b7d7ccbaefd23d8f36f73b59db7a3d246602 #6.0.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      - name: Periphery
+        run: |
+          INDEX_STORE_PATH="$DERIVED_DATA_PATH/Index.noindex/DataStore"
+          test -d "$INDEX_STORE_PATH"
+          periphery scan --retain-codable-properties --format github-actions --relative-results --strict --skip-build --index-store-path "$INDEX_STORE_PATH"
