@@ -36,10 +36,10 @@ extension Kotlinx_datetimeLocalDateTime {
 public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
     public let id: String
     public let title: String
-    public let startDate: Date?
-    public let endDate: Date?
+    public let startDate: Date
+    public let endDate: Date
 
-    public init(id: String, title: String, startDate: Date?, endDate: Date?) {
+    public init(id: String, title: String, startDate: Date, endDate: Date) {
         self.id = id
         self.title = title
         self.startDate = startDate
@@ -48,11 +48,16 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
 }
 
 public extension UIEvent {
-    init(event: KmpCalendar.Event) {
+    init?(event: KmpCalendar.Event) {
         id = event.idValue
         title = event.title
-        startDate = event.start?.date
-        endDate = event.end?.date
+        if let startDate = event.start?.date,
+           let endDate = event.end?.date {
+            self.startDate = startDate
+            self.endDate = endDate
+        } else {
+            return nil
+        }
     }
 }
 

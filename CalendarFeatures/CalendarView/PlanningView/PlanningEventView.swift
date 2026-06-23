@@ -16,8 +16,8 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import SwiftUI
 import CalendarCoreUI
+import SwiftUI
 
 struct PlanningEventView: View {
     let event: CalendarCoreUI.UIEvent

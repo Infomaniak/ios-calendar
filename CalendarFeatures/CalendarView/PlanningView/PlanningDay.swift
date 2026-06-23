@@ -16,9 +16,9 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarCoreUI
 import Foundation
 import KmpCalendar
-import CalendarCoreUI
 
 struct PlanningDay: Identifiable, Hashable {
     let date: Date
@@ -33,7 +33,7 @@ extension PlanningDay {
     static func makeContiguousDays(from events: [CalendarCoreUI.UIEvent]) -> [PlanningDay] {
         let calendar = Calendar.current
         let grouped = Dictionary(grouping: events) { event in
-            calendar.startOfDay(for: event.startDate ?? .distantPast)
+            calendar.startOfDay(for: event.startDate)
         }
 
         let referenceDate = grouped.keys.min() ?? calendar.startOfDay(for: Date())
@@ -49,7 +49,7 @@ extension PlanningDay {
         while currentDate < lastWeek.end {
             let dayStart = calendar.startOfDay(for: currentDate)
             let sortedEvents = (grouped[dayStart] ?? []).sorted {
-                ($0.startDate ?? .distantPast) < ($1.startDate ?? .distantPast)
+                $0.startDate < $1.startDate
             }
             days.append(PlanningDay(date: dayStart, events: sortedEvents))
 

@@ -50,8 +50,7 @@ public struct PlanningView: View {
         guard let firstCalendar = calendars.first else { return }
 
         for await events in calendarSDK.calendarManager.observeEvents(calendarId: firstCalendar.idValue) {
-            let uiEvents = events.map { UIEvent(event: $0) }
-
+            let uiEvents = events.compactMap { UIEvent(event: $0) }
             let days = PlanningDay.makeContiguousDays(from: uiEvents)
 
             withAnimation {
