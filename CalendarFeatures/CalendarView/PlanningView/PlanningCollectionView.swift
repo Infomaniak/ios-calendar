@@ -27,7 +27,6 @@ enum PlanningLayoutMetrics {
     static let eventRowHeight: CGFloat = 48
     static let dayHeaderHeight: CGFloat = 64
     static let weekHeaderHeight: CGFloat = 32
-    static let nextEventCardMaxHeight: CGFloat = 196
 
     static let dayHeaderKind = "PlanningDayHeaderKind"
     static let weekHeaderKind = "PlanningWeekHeaderKind"

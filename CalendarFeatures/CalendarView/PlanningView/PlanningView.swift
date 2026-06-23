@@ -30,14 +30,7 @@ public struct PlanningView: View {
     public var body: some View {
         VStack {
             PlanningCollectionView(planningDays: planningDays)
-                .ignoresSafeArea(edges: .bottom)
-        }
-        .safeAreaInset(edge: .top) {
-            VStack {
-                Color.red
-                    .frame(maxHeight: 64)
-                PlanningNextEventCardView()
-            }
+                .ignoresSafeArea()
         }
         .task {
             await observeEvents()
