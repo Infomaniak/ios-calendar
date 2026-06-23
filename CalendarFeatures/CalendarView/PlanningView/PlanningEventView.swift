@@ -24,6 +24,7 @@ struct PlanningEventView: View {
 
     var body: some View {
         Text(event.title)
+            .planningEventStyle(event: event)
     }
 }
 
