@@ -57,6 +57,25 @@ public extension UIEvent {
 public extension UIEvent {
     static let preview = UIEvent(id: "0", title: "Event Title", startDate: Date(), endDate: Date().addingTimeInterval(3600))
 
+    static let shortPreview = UIEvent(
+        id: "1",
+        title: "Short Title With A Very Long Title But It's Okay Because We Want To Test The UI And See How It Looks With A Long Title",
+        startDate: Date(),
+        endDate: Date().addingTimeInterval(60 * 15)
+    )
+    static let mediumPreview = UIEvent(
+        id: "2",
+        title: "Medium Title With A Very Long Title But It's Okay Because We Want To Test The UI And See How It Looks With A Long Title",
+        startDate: Date(),
+        endDate: Date().addingTimeInterval(60 * 60 * 2)
+    )
+    static let longPreview = UIEvent(
+        id: "3",
+        title: "Long Title With A Very Long Title But It's Okay Because We Want To Test The UI And See How It Looks With A Long Title",
+        startDate: Date(),
+        endDate: Date().addingTimeInterval(60 * 60 * 24 * 2)
+    )
+
     static let random100Events: [UIEvent] = (0 ..< 100).map { index in
         let dayRangeInSeconds = 30 * 24 * 3600
         let randomStartDate = Date().addingTimeInterval(TimeInterval(Int.random(in: -dayRangeInSeconds ... dayRangeInSeconds)))

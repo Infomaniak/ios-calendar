@@ -28,5 +28,9 @@ struct PlanningEventView: View {
 }
 
 #Preview {
-    PlanningEventView(event: .preview)
+    VStack {
+        PlanningEventView(event: .shortPreview)
+        PlanningEventView(event: .mediumPreview)
+        PlanningEventView(event: .longPreview)
+    }
 }
