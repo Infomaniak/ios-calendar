@@ -48,6 +48,7 @@ let preloadingView = Feature(
 let calendarView = Feature(
     name: "CalendarView",
     additionalDependencies: [
+        TargetDependency.external(name: "DesignSystem"),
         TargetDependency.external(name: "InfomaniakDI")
     ]
 )
