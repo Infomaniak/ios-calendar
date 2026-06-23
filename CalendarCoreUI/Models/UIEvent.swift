@@ -19,17 +19,9 @@
 import Foundation
 import KmpCalendar
 
-extension Kotlinx_datetimeLocalDateTime {
-    var date: Date? {
-        let calendar = Calendar.current
-        var components = DateComponents()
-        components.year = Int(year)
-        components.month = Int(month.ordinal)
-        components.day = Int(day)
-        components.hour = Int(hour)
-        components.minute = Int(minute)
-        components.second = Int(second)
-        return calendar.date(from: components)
+extension KotlinInstant {
+    var date: Date {
+        Date(timeIntervalSince1970: TimeInterval(toEpochMilliseconds()) / 1000.0)
     }
 }
 
@@ -51,11 +43,12 @@ public extension UIEvent {
     init?(event: KmpCalendar.Event) {
         id = event.idValue
         title = event.title
-        if let startDate = event.start?.date,
-           let endDate = event.end?.date {
-            self.startDate = startDate
-            self.endDate = endDate
-        } else {
+
+        switch event.timing {
+        case let timed as EventTimingTimed:
+            startDate = timed.start.date
+            endDate = timed.end.date
+        default:
             return nil
         }
     }
