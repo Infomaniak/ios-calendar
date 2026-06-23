@@ -87,17 +87,22 @@ public enum Skie {
     }
   }
   public typealias org_jetbrains_kotlinx__kotlinx_coroutines_core = KmpCalendar.Skie.KotlinxCoroutinesCore
+  public enum Core {
+    public enum EventTiming {
+    }
+  }
+  public typealias multiplatform_calendar__Core = KmpCalendar.Skie.Core
   public enum KotlinxDatetime {
     public enum DateTimeFormat {
     }
     public enum DateTimeFormatBuilder {
-      public enum WithTime {
-      }
       public enum WithDate {
       }
       public enum WithYearMonth {
       }
       public enum WithDateTime {
+      }
+      public enum WithTime {
       }
       public enum WithDateTimeComponents {
       }
@@ -735,6 +740,41 @@ extension KmpCalendar.CalendarAccessLevel {
 extension KmpCalendar.__CalendarAccessLevel {
   public func toSwiftEnum() -> KmpCalendar.CalendarAccessLevel
 }
+@frozen public enum Frequency : Swift.Hashable, Swift.CaseIterable, Swift._ObjectiveCBridgeable {
+  case secondly
+  case minutely
+  case hourly
+  case daily
+  case weekly
+  case monthly
+  case yearly
+  public var name: Swift.String {
+    get
+  }
+  public var ordinal: Swift.Int32 {
+    get
+  }
+  public static func _forceBridgeFromObjectiveC(_ source: KmpCalendar.__Frequency, result: inout KmpCalendar.Frequency?)
+  public static func _conditionallyBridgeFromObjectiveC(_ source: KmpCalendar.__Frequency, result: inout KmpCalendar.Frequency?) -> Swift.Bool
+  public static func _unconditionallyBridgeFromObjectiveC(_ source: KmpCalendar.__Frequency?) -> KmpCalendar.Frequency
+  public func _bridgeToObjectiveC() -> KmpCalendar.__Frequency
+  public typealias _ObjectiveCType = KmpCalendar.__Frequency
+  public static func == (a: KmpCalendar.Frequency, b: KmpCalendar.Frequency) -> Swift.Bool
+  public typealias AllCases = [KmpCalendar.Frequency]
+  nonisolated public static var allCases: [KmpCalendar.Frequency] {
+    get
+  }
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension KmpCalendar.Frequency {
+  public func toKotlinEnum() -> KmpCalendar.__Frequency
+}
+extension KmpCalendar.__Frequency {
+  public func toSwiftEnum() -> KmpCalendar.Frequency
+}
 @frozen public enum AttendeeRole : Swift.Hashable, Swift.CaseIterable, Swift._ObjectiveCBridgeable {
   case organizer
   case requested
@@ -799,28 +839,28 @@ extension KmpCalendar.ParticipationStatus {
 extension KmpCalendar.__ParticipationStatus {
   public func toSwiftEnum() -> KmpCalendar.ParticipationStatus
 }
-@frozen public enum Frequency : Swift.Hashable, Swift.CaseIterable, Swift._ObjectiveCBridgeable {
-  case secondly
-  case minutely
-  case hourly
-  case daily
-  case weekly
-  case monthly
-  case yearly
+@frozen public enum Kotlinx_datetimeDayOfWeek : Swift.Hashable, Swift.CaseIterable, Swift._ObjectiveCBridgeable {
+  case monday
+  case tuesday
+  case wednesday
+  case thursday
+  case friday
+  case saturday
+  case sunday
   public var name: Swift.String {
     get
   }
   public var ordinal: Swift.Int32 {
     get
   }
-  public static func _forceBridgeFromObjectiveC(_ source: KmpCalendar.__Frequency, result: inout KmpCalendar.Frequency?)
-  public static func _conditionallyBridgeFromObjectiveC(_ source: KmpCalendar.__Frequency, result: inout KmpCalendar.Frequency?) -> Swift.Bool
-  public static func _unconditionallyBridgeFromObjectiveC(_ source: KmpCalendar.__Frequency?) -> KmpCalendar.Frequency
-  public func _bridgeToObjectiveC() -> KmpCalendar.__Frequency
-  public typealias _ObjectiveCType = KmpCalendar.__Frequency
-  public static func == (a: KmpCalendar.Frequency, b: KmpCalendar.Frequency) -> Swift.Bool
-  public typealias AllCases = [KmpCalendar.Frequency]
-  nonisolated public static var allCases: [KmpCalendar.Frequency] {
+  public static func _forceBridgeFromObjectiveC(_ source: KmpCalendar.__Kotlinx_datetimeDayOfWeek, result: inout KmpCalendar.Kotlinx_datetimeDayOfWeek?)
+  public static func _conditionallyBridgeFromObjectiveC(_ source: KmpCalendar.__Kotlinx_datetimeDayOfWeek, result: inout KmpCalendar.Kotlinx_datetimeDayOfWeek?) -> Swift.Bool
+  public static func _unconditionallyBridgeFromObjectiveC(_ source: KmpCalendar.__Kotlinx_datetimeDayOfWeek?) -> KmpCalendar.Kotlinx_datetimeDayOfWeek
+  public func _bridgeToObjectiveC() -> KmpCalendar.__Kotlinx_datetimeDayOfWeek
+  public typealias _ObjectiveCType = KmpCalendar.__Kotlinx_datetimeDayOfWeek
+  public static func == (a: KmpCalendar.Kotlinx_datetimeDayOfWeek, b: KmpCalendar.Kotlinx_datetimeDayOfWeek) -> Swift.Bool
+  public typealias AllCases = [KmpCalendar.Kotlinx_datetimeDayOfWeek]
+  nonisolated public static var allCases: [KmpCalendar.Kotlinx_datetimeDayOfWeek] {
     get
   }
   public func hash(into hasher: inout Swift.Hasher)
@@ -828,42 +868,11 @@ extension KmpCalendar.__ParticipationStatus {
     get
   }
 }
-extension KmpCalendar.Frequency {
-  public func toKotlinEnum() -> KmpCalendar.__Frequency
+extension KmpCalendar.Kotlinx_datetimeDayOfWeek {
+  public func toKotlinEnum() -> KmpCalendar.__Kotlinx_datetimeDayOfWeek
 }
-extension KmpCalendar.__Frequency {
-  public func toSwiftEnum() -> KmpCalendar.Frequency
-}
-@frozen public enum Kotlinx_datetimePadding : Swift.Hashable, Swift.CaseIterable, Swift._ObjectiveCBridgeable {
-  case none
-  case zero
-  case space
-  public var name: Swift.String {
-    get
-  }
-  public var ordinal: Swift.Int32 {
-    get
-  }
-  public static func _forceBridgeFromObjectiveC(_ source: KmpCalendar.__Kotlinx_datetimePadding, result: inout KmpCalendar.Kotlinx_datetimePadding?)
-  public static func _conditionallyBridgeFromObjectiveC(_ source: KmpCalendar.__Kotlinx_datetimePadding, result: inout KmpCalendar.Kotlinx_datetimePadding?) -> Swift.Bool
-  public static func _unconditionallyBridgeFromObjectiveC(_ source: KmpCalendar.__Kotlinx_datetimePadding?) -> KmpCalendar.Kotlinx_datetimePadding
-  public func _bridgeToObjectiveC() -> KmpCalendar.__Kotlinx_datetimePadding
-  public typealias _ObjectiveCType = KmpCalendar.__Kotlinx_datetimePadding
-  public static func == (a: KmpCalendar.Kotlinx_datetimePadding, b: KmpCalendar.Kotlinx_datetimePadding) -> Swift.Bool
-  public typealias AllCases = [KmpCalendar.Kotlinx_datetimePadding]
-  nonisolated public static var allCases: [KmpCalendar.Kotlinx_datetimePadding] {
-    get
-  }
-  public func hash(into hasher: inout Swift.Hasher)
-  public var hashValue: Swift.Int {
-    get
-  }
-}
-extension KmpCalendar.Kotlinx_datetimePadding {
-  public func toKotlinEnum() -> KmpCalendar.__Kotlinx_datetimePadding
-}
-extension KmpCalendar.__Kotlinx_datetimePadding {
-  public func toSwiftEnum() -> KmpCalendar.Kotlinx_datetimePadding
+extension KmpCalendar.__Kotlinx_datetimeDayOfWeek {
+  public func toSwiftEnum() -> KmpCalendar.Kotlinx_datetimeDayOfWeek
 }
 @frozen public enum Kotlinx_datetimeMonth : Swift.Hashable, Swift.CaseIterable, Swift._ObjectiveCBridgeable {
   case january
@@ -905,28 +914,24 @@ extension KmpCalendar.Kotlinx_datetimeMonth {
 extension KmpCalendar.__Kotlinx_datetimeMonth {
   public func toSwiftEnum() -> KmpCalendar.Kotlinx_datetimeMonth
 }
-@frozen public enum Kotlinx_datetimeDayOfWeek : Swift.Hashable, Swift.CaseIterable, Swift._ObjectiveCBridgeable {
-  case monday
-  case tuesday
-  case wednesday
-  case thursday
-  case friday
-  case saturday
-  case sunday
+@frozen public enum Kotlinx_datetimePadding : Swift.Hashable, Swift.CaseIterable, Swift._ObjectiveCBridgeable {
+  case none
+  case zero
+  case space
   public var name: Swift.String {
     get
   }
   public var ordinal: Swift.Int32 {
     get
   }
-  public static func _forceBridgeFromObjectiveC(_ source: KmpCalendar.__Kotlinx_datetimeDayOfWeek, result: inout KmpCalendar.Kotlinx_datetimeDayOfWeek?)
-  public static func _conditionallyBridgeFromObjectiveC(_ source: KmpCalendar.__Kotlinx_datetimeDayOfWeek, result: inout KmpCalendar.Kotlinx_datetimeDayOfWeek?) -> Swift.Bool
-  public static func _unconditionallyBridgeFromObjectiveC(_ source: KmpCalendar.__Kotlinx_datetimeDayOfWeek?) -> KmpCalendar.Kotlinx_datetimeDayOfWeek
-  public func _bridgeToObjectiveC() -> KmpCalendar.__Kotlinx_datetimeDayOfWeek
-  public typealias _ObjectiveCType = KmpCalendar.__Kotlinx_datetimeDayOfWeek
-  public static func == (a: KmpCalendar.Kotlinx_datetimeDayOfWeek, b: KmpCalendar.Kotlinx_datetimeDayOfWeek) -> Swift.Bool
-  public typealias AllCases = [KmpCalendar.Kotlinx_datetimeDayOfWeek]
-  nonisolated public static var allCases: [KmpCalendar.Kotlinx_datetimeDayOfWeek] {
+  public static func _forceBridgeFromObjectiveC(_ source: KmpCalendar.__Kotlinx_datetimePadding, result: inout KmpCalendar.Kotlinx_datetimePadding?)
+  public static func _conditionallyBridgeFromObjectiveC(_ source: KmpCalendar.__Kotlinx_datetimePadding, result: inout KmpCalendar.Kotlinx_datetimePadding?) -> Swift.Bool
+  public static func _unconditionallyBridgeFromObjectiveC(_ source: KmpCalendar.__Kotlinx_datetimePadding?) -> KmpCalendar.Kotlinx_datetimePadding
+  public func _bridgeToObjectiveC() -> KmpCalendar.__Kotlinx_datetimePadding
+  public typealias _ObjectiveCType = KmpCalendar.__Kotlinx_datetimePadding
+  public static func == (a: KmpCalendar.Kotlinx_datetimePadding, b: KmpCalendar.Kotlinx_datetimePadding) -> Swift.Bool
+  public typealias AllCases = [KmpCalendar.Kotlinx_datetimePadding]
+  nonisolated public static var allCases: [KmpCalendar.Kotlinx_datetimePadding] {
     get
   }
   public func hash(into hasher: inout Swift.Hasher)
@@ -934,11 +939,11 @@ extension KmpCalendar.__Kotlinx_datetimeMonth {
     get
   }
 }
-extension KmpCalendar.Kotlinx_datetimeDayOfWeek {
-  public func toKotlinEnum() -> KmpCalendar.__Kotlinx_datetimeDayOfWeek
+extension KmpCalendar.Kotlinx_datetimePadding {
+  public func toKotlinEnum() -> KmpCalendar.__Kotlinx_datetimePadding
 }
-extension KmpCalendar.__Kotlinx_datetimeDayOfWeek {
-  public func toSwiftEnum() -> KmpCalendar.Kotlinx_datetimeDayOfWeek
+extension KmpCalendar.__Kotlinx_datetimePadding {
+  public func toSwiftEnum() -> KmpCalendar.Kotlinx_datetimePadding
 }
 extension KmpCalendar.Skie.RuntimeKotlin.Skie_SuspendResult {
   @frozen public enum __Sealed : Swift.Hashable {
@@ -954,6 +959,19 @@ extension KmpCalendar.Skie.RuntimeKotlin.Skie_SuspendResult {
 }
 public func onEnum<__Sealed>(of sealed: __Sealed) -> KmpCalendar.Skie.RuntimeKotlin.Skie_SuspendResult.__Sealed where __Sealed : KmpCalendar.Skie_SuspendResult
 @_disfavoredOverload public func onEnum<__Sealed>(of sealed: __Sealed?) -> KmpCalendar.Skie.RuntimeKotlin.Skie_SuspendResult.__Sealed? where __Sealed : KmpCalendar.Skie_SuspendResult
+extension KmpCalendar.Skie.Core.EventTiming {
+  @frozen public enum __Sealed : Swift.Hashable {
+    case allDay(KmpCalendar.EventTimingAllDay)
+    case timed(KmpCalendar.EventTimingTimed)
+    public static func == (a: KmpCalendar.Skie.Core.EventTiming.__Sealed, b: KmpCalendar.Skie.Core.EventTiming.__Sealed) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+}
+public func onEnum<__Sealed>(of sealed: __Sealed) -> KmpCalendar.Skie.Core.EventTiming.__Sealed where __Sealed : KmpCalendar.EventTiming
+@_disfavoredOverload public func onEnum<__Sealed>(of sealed: __Sealed?) -> KmpCalendar.Skie.Core.EventTiming.__Sealed? where __Sealed : KmpCalendar.EventTiming
 extension KmpCalendar.Skie.KotlinxDatetime.DateTimeFormat {
   @frozen public enum __Sealed : Swift.Hashable {
     case `else`
@@ -976,14 +994,6 @@ extension KmpCalendar.Skie.KotlinxDatetime.DateTimeFormatBuilder {
 }
 public func onEnum<__Sealed>(of sealed: __Sealed) -> KmpCalendar.Skie.KotlinxDatetime.DateTimeFormatBuilder.__Sealed where __Sealed : KmpCalendar.Kotlinx_datetimeDateTimeFormatBuilder
 @_disfavoredOverload public func onEnum<__Sealed>(of sealed: __Sealed?) -> KmpCalendar.Skie.KotlinxDatetime.DateTimeFormatBuilder.__Sealed? where __Sealed : KmpCalendar.Kotlinx_datetimeDateTimeFormatBuilder
-extension KmpCalendar.Skie.KotlinxDatetime.DateTimeFormatBuilder.WithTime {
-  @frozen public enum __Sealed {
-    case withDateTime(any KmpCalendar.Kotlinx_datetimeDateTimeFormatBuilderWithDateTime)
-    case `else`
-  }
-}
-public func onEnum<__Sealed>(of sealed: __Sealed) -> KmpCalendar.Skie.KotlinxDatetime.DateTimeFormatBuilder.WithTime.__Sealed where __Sealed : KmpCalendar.Kotlinx_datetimeDateTimeFormatBuilderWithTime
-@_disfavoredOverload public func onEnum<__Sealed>(of sealed: __Sealed?) -> KmpCalendar.Skie.KotlinxDatetime.DateTimeFormatBuilder.WithTime.__Sealed? where __Sealed : KmpCalendar.Kotlinx_datetimeDateTimeFormatBuilderWithTime
 extension KmpCalendar.Skie.KotlinxDatetime.DateTimeFormatBuilder.WithDate {
   @frozen public enum __Sealed {
     case withDateTime(any KmpCalendar.Kotlinx_datetimeDateTimeFormatBuilderWithDateTime)
@@ -1008,6 +1018,14 @@ extension KmpCalendar.Skie.KotlinxDatetime.DateTimeFormatBuilder.WithDateTime {
 }
 public func onEnum<__Sealed>(of sealed: __Sealed) -> KmpCalendar.Skie.KotlinxDatetime.DateTimeFormatBuilder.WithDateTime.__Sealed where __Sealed : KmpCalendar.Kotlinx_datetimeDateTimeFormatBuilderWithDateTime
 @_disfavoredOverload public func onEnum<__Sealed>(of sealed: __Sealed?) -> KmpCalendar.Skie.KotlinxDatetime.DateTimeFormatBuilder.WithDateTime.__Sealed? where __Sealed : KmpCalendar.Kotlinx_datetimeDateTimeFormatBuilderWithDateTime
+extension KmpCalendar.Skie.KotlinxDatetime.DateTimeFormatBuilder.WithTime {
+  @frozen public enum __Sealed {
+    case withDateTime(any KmpCalendar.Kotlinx_datetimeDateTimeFormatBuilderWithDateTime)
+    case `else`
+  }
+}
+public func onEnum<__Sealed>(of sealed: __Sealed) -> KmpCalendar.Skie.KotlinxDatetime.DateTimeFormatBuilder.WithTime.__Sealed where __Sealed : KmpCalendar.Kotlinx_datetimeDateTimeFormatBuilderWithTime
+@_disfavoredOverload public func onEnum<__Sealed>(of sealed: __Sealed?) -> KmpCalendar.Skie.KotlinxDatetime.DateTimeFormatBuilder.WithTime.__Sealed? where __Sealed : KmpCalendar.Kotlinx_datetimeDateTimeFormatBuilderWithTime
 extension KmpCalendar.Skie.KotlinxDatetime.DateTimeFormatBuilder.WithDateTimeComponents {
   @frozen public enum __Sealed : Swift.Hashable {
     case `else`
@@ -1104,20 +1122,28 @@ extension KmpCalendar.Skie.KotlinxSerializationCore.StructureKind {
 }
 public func onEnum<__Sealed>(of sealed: __Sealed) -> KmpCalendar.Skie.KotlinxSerializationCore.StructureKind.__Sealed where __Sealed : KmpCalendar.Kotlinx_serialization_coreStructureKind
 @_disfavoredOverload public func onEnum<__Sealed>(of sealed: __Sealed?) -> KmpCalendar.Skie.KotlinxSerializationCore.StructureKind.__Sealed? where __Sealed : KmpCalendar.Kotlinx_serialization_coreStructureKind
+extension KmpCalendar.Event {
+  public var calendarIdValue: Swift.String {
+    get
+  }
+  public var idValue: Swift.String {
+    get
+  }
+}
 extension KmpCalendar.CalendarAccessLevel : Swift.Sendable {}
 extension KmpCalendar.CalendarAccessLevel : Swift.BitwiseCopyable {}
+extension KmpCalendar.Frequency : Swift.Sendable {}
+extension KmpCalendar.Frequency : Swift.BitwiseCopyable {}
 extension KmpCalendar.AttendeeRole : Swift.Sendable {}
 extension KmpCalendar.AttendeeRole : Swift.BitwiseCopyable {}
 extension KmpCalendar.ParticipationStatus : Swift.Sendable {}
 extension KmpCalendar.ParticipationStatus : Swift.BitwiseCopyable {}
-extension KmpCalendar.Frequency : Swift.Sendable {}
-extension KmpCalendar.Frequency : Swift.BitwiseCopyable {}
-extension KmpCalendar.Kotlinx_datetimePadding : Swift.Sendable {}
-extension KmpCalendar.Kotlinx_datetimePadding : Swift.BitwiseCopyable {}
-extension KmpCalendar.Kotlinx_datetimeMonth : Swift.Sendable {}
-extension KmpCalendar.Kotlinx_datetimeMonth : Swift.BitwiseCopyable {}
 extension KmpCalendar.Kotlinx_datetimeDayOfWeek : Swift.Sendable {}
 extension KmpCalendar.Kotlinx_datetimeDayOfWeek : Swift.BitwiseCopyable {}
+extension KmpCalendar.Kotlinx_datetimeMonth : Swift.Sendable {}
+extension KmpCalendar.Kotlinx_datetimeMonth : Swift.BitwiseCopyable {}
+extension KmpCalendar.Kotlinx_datetimePadding : Swift.Sendable {}
+extension KmpCalendar.Kotlinx_datetimePadding : Swift.BitwiseCopyable {}
 extension KmpCalendar.Skie.KotlinxDatetime.DateTimeFormat.__Sealed : Swift.Sendable {}
 extension KmpCalendar.Skie.KotlinxDatetime.DateTimeFormat.__Sealed : Swift.BitwiseCopyable {}
 extension KmpCalendar.Skie.KotlinxDatetime.DateTimeFormatBuilder.WithDateTimeComponents.__Sealed : Swift.Sendable {}

@@ -261,8 +261,6 @@ Classes:
     ResultType: "NSString * _Nonnull"
 - Name: "KmpCalendarKotlinEnumCompanion"
   SwiftName: "KotlinEnumCompanion"
-- Name: "KmpCalendarKotlinNothing"
-  SwiftName: "KotlinNothing"
 - Name: "KmpCalendarKotlinInstant"
   SwiftName: "KotlinInstant"
   Properties:
@@ -377,6 +375,8 @@ Classes:
     Parameters:
     - Position: 0
       Type: "id _Nonnull"
+- Name: "KmpCalendarKotlinNothing"
+  SwiftName: "KotlinNothing"
 - Name: "KmpCalendarSkieColdFlowIterator"
   SwiftName: "SkieColdFlowIterator"
   SwiftPrivate: true
@@ -936,7 +936,7 @@ Classes:
       Type: "BOOL"
     - Position: 5
       Type: "KmpCalendarCalendarAccessLevel * _Nonnull"
-  - Selector: "initWithId:accountId:displayName:color:isVisible__Skie_DefaultArguments__133:"
+  - Selector: "initWithId:accountId:displayName:color:isVisible__Skie_DefaultArguments__147:"
     MethodKind: "Instance"
     SwiftName: "init(id:accountId:displayName:color:isVisible:)"
     Parameters:
@@ -1702,53 +1702,125 @@ Classes:
     MethodKind: "Instance"
     SwiftName: "init(name:ordinal:)"
     Availability: "nonswift"
-- Name: "KmpCalendarEvent"
-  SwiftName: "Event"
+- Name: "KmpCalendarEventTimingAllDay"
+  SwiftName: "EventTimingAllDay"
   Properties:
-  - Name: "attendees"
+  - Name: "endDate"
     PropertyKind: "Instance"
-    SwiftName: "attendees"
-    Type: "NSArray<KmpCalendarAttendee *> * _Nonnull"
-  - Name: "categories"
+    SwiftName: "endDate"
+    Type: "KmpCalendarKotlinx_datetimeLocalDate * _Nonnull"
+  - Name: "recurrenceRule"
     PropertyKind: "Instance"
-    SwiftName: "categories"
-    Type: "NSString * _Nullable"
-  - Name: "description_"
+    SwiftName: "recurrenceRule"
+    Type: "KmpCalendarRecurrenceRule * _Nullable"
+  - Name: "startDate"
     PropertyKind: "Instance"
-    SwiftName: "description_"
-    Type: "NSString * _Nullable"
+    SwiftName: "startDate"
+    Type: "KmpCalendarKotlinx_datetimeLocalDate * _Nonnull"
+  Methods:
+  - Selector: "initWithStartDate:endDate:recurrenceRule:"
+    MethodKind: "Instance"
+    SwiftName: "init(startDate:endDate:recurrenceRule:)"
+    Parameters:
+    - Position: 0
+      Type: "KmpCalendarKotlinx_datetimeLocalDate * _Nonnull"
+    - Position: 1
+      Type: "KmpCalendarKotlinx_datetimeLocalDate * _Nonnull"
+    - Position: 2
+      Type: "KmpCalendarRecurrenceRule * _Nullable"
+  - Selector: "initWithStartDate:endDate__Skie_DefaultArguments__159:"
+    MethodKind: "Instance"
+    SwiftName: "init(startDate:endDate:)"
+    Parameters:
+    - Position: 0
+      Type: "KmpCalendarKotlinx_datetimeLocalDate * _Nonnull"
+    - Position: 1
+      Type: "KmpCalendarKotlinx_datetimeLocalDate * _Nonnull"
+  - Selector: "doCopyStartDate:endDate:recurrenceRule:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(startDate:endDate:recurrenceRule:)"
+    ResultType: "KmpCalendarEventTimingAllDay * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "KmpCalendarKotlinx_datetimeLocalDate * _Nonnull"
+    - Position: 1
+      Type: "KmpCalendarKotlinx_datetimeLocalDate * _Nonnull"
+    - Position: 2
+      Type: "KmpCalendarRecurrenceRule * _Nullable"
+  - Selector: "isEqual:"
+    MethodKind: "Instance"
+    SwiftName: "isEqual(_:)"
+    ResultType: "BOOL"
+    Parameters:
+    - Position: 0
+      Type: "id _Nullable"
+  - Selector: "hash"
+    MethodKind: "Instance"
+    SwiftName: "hash()"
+    ResultType: "NSUInteger"
+  - Selector: "description"
+    MethodKind: "Instance"
+    SwiftName: "description()"
+    ResultType: "NSString * _Nonnull"
+  - Selector: "doCopy__Skie_DefaultArguments__133"
+    MethodKind: "Instance"
+    SwiftName: "doCopy()"
+    ResultType: "KmpCalendarEventTimingAllDay * _Nonnull"
+  - Selector: "doCopy__Skie_DefaultArguments__134StartDate:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(startDate:)"
+    ResultType: "KmpCalendarEventTimingAllDay * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "KmpCalendarKotlinx_datetimeLocalDate * _Nonnull"
+  - Selector: "doCopy__Skie_DefaultArguments__135EndDate:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(endDate:)"
+    ResultType: "KmpCalendarEventTimingAllDay * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "KmpCalendarKotlinx_datetimeLocalDate * _Nonnull"
+  - Selector: "doCopy__Skie_DefaultArguments__136StartDate:endDate:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(startDate:endDate:)"
+    ResultType: "KmpCalendarEventTimingAllDay * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "KmpCalendarKotlinx_datetimeLocalDate * _Nonnull"
+    - Position: 1
+      Type: "KmpCalendarKotlinx_datetimeLocalDate * _Nonnull"
+  - Selector: "doCopy__Skie_DefaultArguments__137RecurrenceRule:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(recurrenceRule:)"
+    ResultType: "KmpCalendarEventTimingAllDay * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "KmpCalendarRecurrenceRule * _Nullable"
+  - Selector: "doCopy__Skie_DefaultArguments__138StartDate:recurrenceRule:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(startDate:recurrenceRule:)"
+    ResultType: "KmpCalendarEventTimingAllDay * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "KmpCalendarKotlinx_datetimeLocalDate * _Nonnull"
+    - Position: 1
+      Type: "KmpCalendarRecurrenceRule * _Nullable"
+  - Selector: "doCopy__Skie_DefaultArguments__139EndDate:recurrenceRule:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(endDate:recurrenceRule:)"
+    ResultType: "KmpCalendarEventTimingAllDay * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "KmpCalendarKotlinx_datetimeLocalDate * _Nonnull"
+    - Position: 1
+      Type: "KmpCalendarRecurrenceRule * _Nullable"
+- Name: "KmpCalendarEventTimingTimed"
+  SwiftName: "EventTimingTimed"
+  Properties:
   - Name: "end"
     PropertyKind: "Instance"
     SwiftName: "end"
-    Type: "KmpCalendarKotlinx_datetimeLocalDateTime * _Nullable"
-  - Name: "etag"
-    PropertyKind: "Instance"
-    SwiftName: "etag"
-    Type: "NSString * _Nullable"
-  - Name: "isAllDay"
-    PropertyKind: "Instance"
-    SwiftName: "isAllDay"
-    Type: "BOOL"
-  - Name: "isSynced"
-    PropertyKind: "Instance"
-    SwiftName: "isSynced"
-    Type: "BOOL"
-  - Name: "lastModified"
-    PropertyKind: "Instance"
-    SwiftName: "lastModified"
-    Type: "KmpCalendarKotlinx_datetimeLocalDateTime * _Nullable"
-  - Name: "location"
-    PropertyKind: "Instance"
-    SwiftName: "location"
-    Type: "NSString * _Nullable"
-  - Name: "organizer"
-    PropertyKind: "Instance"
-    SwiftName: "organizer"
-    Type: "KmpCalendarAttendee * _Nullable"
-  - Name: "rawIcs"
-    PropertyKind: "Instance"
-    SwiftName: "rawIcs"
-    Type: "NSString * _Nullable"
+    Type: "KmpCalendarKotlinInstant * _Nonnull"
   - Name: "recurrenceRule"
     PropertyKind: "Instance"
     SwiftName: "recurrenceRule"
@@ -1756,101 +1828,37 @@ Classes:
   - Name: "start"
     PropertyKind: "Instance"
     SwiftName: "start"
-    Type: "KmpCalendarKotlinx_datetimeLocalDateTime * _Nullable"
-  - Name: "status"
-    PropertyKind: "Instance"
-    SwiftName: "status"
-    Type: "NSString * _Nullable"
-  - Name: "title"
-    PropertyKind: "Instance"
-    SwiftName: "title"
-    Type: "NSString * _Nonnull"
-  - Name: "calendarIdValue"
-    PropertyKind: "Instance"
-    SwiftName: "calendarIdValue"
-    Type: "NSString * _Nonnull"
-  - Name: "idValue"
-    PropertyKind: "Instance"
-    SwiftName: "idValue"
-    Type: "NSString * _Nonnull"
+    Type: "KmpCalendarKotlinInstant * _Nonnull"
   Methods:
-  - Selector: "initWithId:calendarId:title:description:location:status:categories:start:end:isAllDay:recurrenceRule:etag:rawIcs:lastModified:isSynced:attendees:organizer:"
+  - Selector: "initWithStart:end:recurrenceRule:"
     MethodKind: "Instance"
-    SwiftName: "init(id:calendarId:title:description:location:status:categories:start:end:isAllDay:recurrenceRule:etag:rawIcs:lastModified:isSynced:attendees:organizer:)"
+    SwiftName: "init(start:end:recurrenceRule:)"
     Parameters:
     - Position: 0
-      Type: "Skie__TypeDef__0__id"
+      Type: "KmpCalendarKotlinInstant * _Nonnull"
     - Position: 1
-      Type: "Skie__TypeDef__0__id"
+      Type: "KmpCalendarKotlinInstant * _Nonnull"
     - Position: 2
-      Type: "NSString * _Nonnull"
-    - Position: 3
-      Type: "NSString * _Nullable"
-    - Position: 4
-      Type: "NSString * _Nullable"
-    - Position: 5
-      Type: "NSString * _Nullable"
-    - Position: 6
-      Type: "NSString * _Nullable"
-    - Position: 7
-      Type: "KmpCalendarKotlinx_datetimeLocalDateTime * _Nullable"
-    - Position: 8
-      Type: "KmpCalendarKotlinx_datetimeLocalDateTime * _Nullable"
-    - Position: 9
-      Type: "BOOL"
-    - Position: 10
       Type: "KmpCalendarRecurrenceRule * _Nullable"
-    - Position: 11
-      Type: "NSString * _Nullable"
-    - Position: 12
-      Type: "NSString * _Nullable"
-    - Position: 13
-      Type: "KmpCalendarKotlinx_datetimeLocalDateTime * _Nullable"
-    - Position: 14
-      Type: "BOOL"
-    - Position: 15
-      Type: "NSArray<KmpCalendarAttendee *> * _Nonnull"
-    - Position: 16
-      Type: "KmpCalendarAttendee * _Nullable"
-  - Selector: "doCopyId:calendarId:title:description:location:status:categories:start:end:isAllDay:recurrenceRule:etag:rawIcs:lastModified:isSynced:attendees:organizer:"
+  - Selector: "initWithStart:end__Skie_DefaultArguments__160:"
     MethodKind: "Instance"
-    SwiftName: "doCopy(id:calendarId:title:description:location:status:categories:start:end:isAllDay:recurrenceRule:etag:rawIcs:lastModified:isSynced:attendees:organizer:)"
-    ResultType: "KmpCalendarEvent * _Nonnull"
+    SwiftName: "init(start:end:)"
     Parameters:
     - Position: 0
-      Type: "Skie__TypeDef__0__id"
+      Type: "KmpCalendarKotlinInstant * _Nonnull"
     - Position: 1
-      Type: "Skie__TypeDef__0__id"
+      Type: "KmpCalendarKotlinInstant * _Nonnull"
+  - Selector: "doCopyStart:end:recurrenceRule:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(start:end:recurrenceRule:)"
+    ResultType: "KmpCalendarEventTimingTimed * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "KmpCalendarKotlinInstant * _Nonnull"
+    - Position: 1
+      Type: "KmpCalendarKotlinInstant * _Nonnull"
     - Position: 2
-      Type: "NSString * _Nonnull"
-    - Position: 3
-      Type: "NSString * _Nullable"
-    - Position: 4
-      Type: "NSString * _Nullable"
-    - Position: 5
-      Type: "NSString * _Nullable"
-    - Position: 6
-      Type: "NSString * _Nullable"
-    - Position: 7
-      Type: "KmpCalendarKotlinx_datetimeLocalDateTime * _Nullable"
-    - Position: 8
-      Type: "KmpCalendarKotlinx_datetimeLocalDateTime * _Nullable"
-    - Position: 9
-      Type: "BOOL"
-    - Position: 10
       Type: "KmpCalendarRecurrenceRule * _Nullable"
-    - Position: 11
-      Type: "NSString * _Nullable"
-    - Position: 12
-      Type: "NSString * _Nullable"
-    - Position: 13
-      Type: "KmpCalendarKotlinx_datetimeLocalDateTime * _Nullable"
-    - Position: 14
-      Type: "BOOL"
-    - Position: 15
-      Type: "NSArray<KmpCalendarAttendee *> * _Nonnull"
-    - Position: 16
-      Type: "KmpCalendarAttendee * _Nullable"
   - Selector: "isEqual:"
     MethodKind: "Instance"
     SwiftName: "isEqual(_:)"
@@ -1866,908 +1874,58 @@ Classes:
     MethodKind: "Instance"
     SwiftName: "description()"
     ResultType: "NSString * _Nonnull"
-- Name: "KmpCalendarAttendee"
-  SwiftName: "Attendee"
-  Properties:
-  - Name: "displayName"
-    PropertyKind: "Instance"
-    SwiftName: "displayName"
-    Type: "NSString * _Nullable"
-  - Name: "email"
-    PropertyKind: "Instance"
-    SwiftName: "email"
-    Type: "NSString * _Nonnull"
-  - Name: "isOrganizer"
-    PropertyKind: "Instance"
-    SwiftName: "isOrganizer"
-    Type: "BOOL"
-  - Name: "responseNeeded"
-    PropertyKind: "Instance"
-    SwiftName: "responseNeeded"
-    Type: "BOOL"
-  - Name: "role"
-    PropertyKind: "Instance"
-    SwiftName: "role"
-    Type: "KmpCalendarAttendeeRole * _Nonnull"
-  - Name: "status"
-    PropertyKind: "Instance"
-    SwiftName: "status"
-    Type: "KmpCalendarParticipationStatus * _Nonnull"
-  Methods:
-  - Selector: "initWithEmail:displayName:status:role:isOrganizer:responseNeeded:"
-    MethodKind: "Instance"
-    SwiftName: "init(email:displayName:status:role:isOrganizer:responseNeeded:)"
-    Parameters:
-    - Position: 0
-      Type: "NSString * _Nonnull"
-    - Position: 1
-      Type: "NSString * _Nullable"
-    - Position: 2
-      Type: "KmpCalendarParticipationStatus * _Nonnull"
-    - Position: 3
-      Type: "KmpCalendarAttendeeRole * _Nonnull"
-    - Position: 4
-      Type: "BOOL"
-    - Position: 5
-      Type: "BOOL"
-  - Selector: "initWithEmail:status:role__Skie_DefaultArguments__134:"
-    MethodKind: "Instance"
-    SwiftName: "init(email:status:role:)"
-    Parameters:
-    - Position: 0
-      Type: "NSString * _Nonnull"
-    - Position: 1
-      Type: "KmpCalendarParticipationStatus * _Nonnull"
-    - Position: 2
-      Type: "KmpCalendarAttendeeRole * _Nonnull"
-  - Selector: "initWithEmail:displayName:status:role__Skie_DefaultArguments__135:"
-    MethodKind: "Instance"
-    SwiftName: "init(email:displayName:status:role:)"
-    Parameters:
-    - Position: 0
-      Type: "NSString * _Nonnull"
-    - Position: 1
-      Type: "NSString * _Nullable"
-    - Position: 2
-      Type: "KmpCalendarParticipationStatus * _Nonnull"
-    - Position: 3
-      Type: "KmpCalendarAttendeeRole * _Nonnull"
-  - Selector: "initWithEmail:status:role:isOrganizer__Skie_DefaultArguments__136:"
-    MethodKind: "Instance"
-    SwiftName: "init(email:status:role:isOrganizer:)"
-    Parameters:
-    - Position: 0
-      Type: "NSString * _Nonnull"
-    - Position: 1
-      Type: "KmpCalendarParticipationStatus * _Nonnull"
-    - Position: 2
-      Type: "KmpCalendarAttendeeRole * _Nonnull"
-    - Position: 3
-      Type: "BOOL"
-  - Selector: "initWithEmail:displayName:status:role:isOrganizer__Skie_DefaultArguments__137:"
-    MethodKind: "Instance"
-    SwiftName: "init(email:displayName:status:role:isOrganizer:)"
-    Parameters:
-    - Position: 0
-      Type: "NSString * _Nonnull"
-    - Position: 1
-      Type: "NSString * _Nullable"
-    - Position: 2
-      Type: "KmpCalendarParticipationStatus * _Nonnull"
-    - Position: 3
-      Type: "KmpCalendarAttendeeRole * _Nonnull"
-    - Position: 4
-      Type: "BOOL"
-  - Selector: "initWithEmail:status:role:responseNeeded__Skie_DefaultArguments__138:"
-    MethodKind: "Instance"
-    SwiftName: "init(email:status:role:responseNeeded:)"
-    Parameters:
-    - Position: 0
-      Type: "NSString * _Nonnull"
-    - Position: 1
-      Type: "KmpCalendarParticipationStatus * _Nonnull"
-    - Position: 2
-      Type: "KmpCalendarAttendeeRole * _Nonnull"
-    - Position: 3
-      Type: "BOOL"
-  - Selector: "initWithEmail:displayName:status:role:responseNeeded__Skie_DefaultArguments__139:"
-    MethodKind: "Instance"
-    SwiftName: "init(email:displayName:status:role:responseNeeded:)"
-    Parameters:
-    - Position: 0
-      Type: "NSString * _Nonnull"
-    - Position: 1
-      Type: "NSString * _Nullable"
-    - Position: 2
-      Type: "KmpCalendarParticipationStatus * _Nonnull"
-    - Position: 3
-      Type: "KmpCalendarAttendeeRole * _Nonnull"
-    - Position: 4
-      Type: "BOOL"
-  - Selector: "initWithEmail:status:role:isOrganizer:responseNeeded__Skie_DefaultArguments__140:"
-    MethodKind: "Instance"
-    SwiftName: "init(email:status:role:isOrganizer:responseNeeded:)"
-    Parameters:
-    - Position: 0
-      Type: "NSString * _Nonnull"
-    - Position: 1
-      Type: "KmpCalendarParticipationStatus * _Nonnull"
-    - Position: 2
-      Type: "KmpCalendarAttendeeRole * _Nonnull"
-    - Position: 3
-      Type: "BOOL"
-    - Position: 4
-      Type: "BOOL"
-  - Selector: "doCopyEmail:displayName:status:role:isOrganizer:responseNeeded:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(email:displayName:status:role:isOrganizer:responseNeeded:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "NSString * _Nonnull"
-    - Position: 1
-      Type: "NSString * _Nullable"
-    - Position: 2
-      Type: "KmpCalendarParticipationStatus * _Nonnull"
-    - Position: 3
-      Type: "KmpCalendarAttendeeRole * _Nonnull"
-    - Position: 4
-      Type: "BOOL"
-    - Position: 5
-      Type: "BOOL"
-  - Selector: "isEqual:"
-    MethodKind: "Instance"
-    SwiftName: "isEqual(_:)"
-    ResultType: "BOOL"
-    Parameters:
-    - Position: 0
-      Type: "id _Nullable"
-  - Selector: "hash"
-    MethodKind: "Instance"
-    SwiftName: "hash()"
-    ResultType: "NSUInteger"
-  - Selector: "description"
-    MethodKind: "Instance"
-    SwiftName: "description()"
-    ResultType: "NSString * _Nonnull"
-  - Selector: "doCopy__Skie_DefaultArguments__63"
+  - Selector: "doCopy__Skie_DefaultArguments__140"
     MethodKind: "Instance"
     SwiftName: "doCopy()"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-  - Selector: "doCopy__Skie_DefaultArguments__64Email:"
+    ResultType: "KmpCalendarEventTimingTimed * _Nonnull"
+  - Selector: "doCopy__Skie_DefaultArguments__141Start:"
     MethodKind: "Instance"
-    SwiftName: "doCopy(email:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
+    SwiftName: "doCopy(start:)"
+    ResultType: "KmpCalendarEventTimingTimed * _Nonnull"
     Parameters:
     - Position: 0
-      Type: "NSString * _Nonnull"
-  - Selector: "doCopy__Skie_DefaultArguments__65DisplayName:"
+      Type: "KmpCalendarKotlinInstant * _Nonnull"
+  - Selector: "doCopy__Skie_DefaultArguments__142End:"
     MethodKind: "Instance"
-    SwiftName: "doCopy(displayName:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
+    SwiftName: "doCopy(end:)"
+    ResultType: "KmpCalendarEventTimingTimed * _Nonnull"
     Parameters:
     - Position: 0
-      Type: "NSString * _Nullable"
-  - Selector: "doCopy__Skie_DefaultArguments__66Email:displayName:"
+      Type: "KmpCalendarKotlinInstant * _Nonnull"
+  - Selector: "doCopy__Skie_DefaultArguments__143Start:end:"
     MethodKind: "Instance"
-    SwiftName: "doCopy(email:displayName:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
+    SwiftName: "doCopy(start:end:)"
+    ResultType: "KmpCalendarEventTimingTimed * _Nonnull"
     Parameters:
     - Position: 0
-      Type: "NSString * _Nonnull"
+      Type: "KmpCalendarKotlinInstant * _Nonnull"
     - Position: 1
-      Type: "NSString * _Nullable"
-  - Selector: "doCopy__Skie_DefaultArguments__67Status:"
+      Type: "KmpCalendarKotlinInstant * _Nonnull"
+  - Selector: "doCopy__Skie_DefaultArguments__144RecurrenceRule:"
     MethodKind: "Instance"
-    SwiftName: "doCopy(status:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
+    SwiftName: "doCopy(recurrenceRule:)"
+    ResultType: "KmpCalendarEventTimingTimed * _Nonnull"
     Parameters:
     - Position: 0
-      Type: "KmpCalendarParticipationStatus * _Nonnull"
-  - Selector: "doCopy__Skie_DefaultArguments__68Email:status:"
+      Type: "KmpCalendarRecurrenceRule * _Nullable"
+  - Selector: "doCopy__Skie_DefaultArguments__145Start:recurrenceRule:"
     MethodKind: "Instance"
-    SwiftName: "doCopy(email:status:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
+    SwiftName: "doCopy(start:recurrenceRule:)"
+    ResultType: "KmpCalendarEventTimingTimed * _Nonnull"
     Parameters:
     - Position: 0
-      Type: "NSString * _Nonnull"
+      Type: "KmpCalendarKotlinInstant * _Nonnull"
     - Position: 1
-      Type: "KmpCalendarParticipationStatus * _Nonnull"
-  - Selector: "doCopy__Skie_DefaultArguments__69DisplayName:status:"
+      Type: "KmpCalendarRecurrenceRule * _Nullable"
+  - Selector: "doCopy__Skie_DefaultArguments__146End:recurrenceRule:"
     MethodKind: "Instance"
-    SwiftName: "doCopy(displayName:status:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
+    SwiftName: "doCopy(end:recurrenceRule:)"
+    ResultType: "KmpCalendarEventTimingTimed * _Nonnull"
     Parameters:
     - Position: 0
-      Type: "NSString * _Nullable"
+      Type: "KmpCalendarKotlinInstant * _Nonnull"
     - Position: 1
-      Type: "KmpCalendarParticipationStatus * _Nonnull"
-  - Selector: "doCopy__Skie_DefaultArguments__70Email:displayName:status:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(email:displayName:status:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "NSString * _Nonnull"
-    - Position: 1
-      Type: "NSString * _Nullable"
-    - Position: 2
-      Type: "KmpCalendarParticipationStatus * _Nonnull"
-  - Selector: "doCopy__Skie_DefaultArguments__71Role:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(role:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "KmpCalendarAttendeeRole * _Nonnull"
-  - Selector: "doCopy__Skie_DefaultArguments__72Email:role:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(email:role:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "NSString * _Nonnull"
-    - Position: 1
-      Type: "KmpCalendarAttendeeRole * _Nonnull"
-  - Selector: "doCopy__Skie_DefaultArguments__73DisplayName:role:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(displayName:role:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "NSString * _Nullable"
-    - Position: 1
-      Type: "KmpCalendarAttendeeRole * _Nonnull"
-  - Selector: "doCopy__Skie_DefaultArguments__74Email:displayName:role:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(email:displayName:role:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "NSString * _Nonnull"
-    - Position: 1
-      Type: "NSString * _Nullable"
-    - Position: 2
-      Type: "KmpCalendarAttendeeRole * _Nonnull"
-  - Selector: "doCopy__Skie_DefaultArguments__75Status:role:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(status:role:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "KmpCalendarParticipationStatus * _Nonnull"
-    - Position: 1
-      Type: "KmpCalendarAttendeeRole * _Nonnull"
-  - Selector: "doCopy__Skie_DefaultArguments__76Email:status:role:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(email:status:role:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "NSString * _Nonnull"
-    - Position: 1
-      Type: "KmpCalendarParticipationStatus * _Nonnull"
-    - Position: 2
-      Type: "KmpCalendarAttendeeRole * _Nonnull"
-  - Selector: "doCopy__Skie_DefaultArguments__77DisplayName:status:role:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(displayName:status:role:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "NSString * _Nullable"
-    - Position: 1
-      Type: "KmpCalendarParticipationStatus * _Nonnull"
-    - Position: 2
-      Type: "KmpCalendarAttendeeRole * _Nonnull"
-  - Selector: "doCopy__Skie_DefaultArguments__78Email:displayName:status:role:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(email:displayName:status:role:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "NSString * _Nonnull"
-    - Position: 1
-      Type: "NSString * _Nullable"
-    - Position: 2
-      Type: "KmpCalendarParticipationStatus * _Nonnull"
-    - Position: 3
-      Type: "KmpCalendarAttendeeRole * _Nonnull"
-  - Selector: "doCopy__Skie_DefaultArguments__79IsOrganizer:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(isOrganizer:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "BOOL"
-  - Selector: "doCopy__Skie_DefaultArguments__80Email:isOrganizer:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(email:isOrganizer:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "NSString * _Nonnull"
-    - Position: 1
-      Type: "BOOL"
-  - Selector: "doCopy__Skie_DefaultArguments__81DisplayName:isOrganizer:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(displayName:isOrganizer:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "NSString * _Nullable"
-    - Position: 1
-      Type: "BOOL"
-  - Selector: "doCopy__Skie_DefaultArguments__82Email:displayName:isOrganizer:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(email:displayName:isOrganizer:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "NSString * _Nonnull"
-    - Position: 1
-      Type: "NSString * _Nullable"
-    - Position: 2
-      Type: "BOOL"
-  - Selector: "doCopy__Skie_DefaultArguments__83Status:isOrganizer:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(status:isOrganizer:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "KmpCalendarParticipationStatus * _Nonnull"
-    - Position: 1
-      Type: "BOOL"
-  - Selector: "doCopy__Skie_DefaultArguments__84Email:status:isOrganizer:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(email:status:isOrganizer:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "NSString * _Nonnull"
-    - Position: 1
-      Type: "KmpCalendarParticipationStatus * _Nonnull"
-    - Position: 2
-      Type: "BOOL"
-  - Selector: "doCopy__Skie_DefaultArguments__85DisplayName:status:isOrganizer:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(displayName:status:isOrganizer:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "NSString * _Nullable"
-    - Position: 1
-      Type: "KmpCalendarParticipationStatus * _Nonnull"
-    - Position: 2
-      Type: "BOOL"
-  - Selector: "doCopy__Skie_DefaultArguments__86Email:displayName:status:isOrganizer:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(email:displayName:status:isOrganizer:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "NSString * _Nonnull"
-    - Position: 1
-      Type: "NSString * _Nullable"
-    - Position: 2
-      Type: "KmpCalendarParticipationStatus * _Nonnull"
-    - Position: 3
-      Type: "BOOL"
-  - Selector: "doCopy__Skie_DefaultArguments__87Role:isOrganizer:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(role:isOrganizer:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "KmpCalendarAttendeeRole * _Nonnull"
-    - Position: 1
-      Type: "BOOL"
-  - Selector: "doCopy__Skie_DefaultArguments__88Email:role:isOrganizer:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(email:role:isOrganizer:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "NSString * _Nonnull"
-    - Position: 1
-      Type: "KmpCalendarAttendeeRole * _Nonnull"
-    - Position: 2
-      Type: "BOOL"
-  - Selector: "doCopy__Skie_DefaultArguments__89DisplayName:role:isOrganizer:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(displayName:role:isOrganizer:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "NSString * _Nullable"
-    - Position: 1
-      Type: "KmpCalendarAttendeeRole * _Nonnull"
-    - Position: 2
-      Type: "BOOL"
-  - Selector: "doCopy__Skie_DefaultArguments__90Email:displayName:role:isOrganizer:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(email:displayName:role:isOrganizer:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "NSString * _Nonnull"
-    - Position: 1
-      Type: "NSString * _Nullable"
-    - Position: 2
-      Type: "KmpCalendarAttendeeRole * _Nonnull"
-    - Position: 3
-      Type: "BOOL"
-  - Selector: "doCopy__Skie_DefaultArguments__91Status:role:isOrganizer:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(status:role:isOrganizer:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "KmpCalendarParticipationStatus * _Nonnull"
-    - Position: 1
-      Type: "KmpCalendarAttendeeRole * _Nonnull"
-    - Position: 2
-      Type: "BOOL"
-  - Selector: "doCopy__Skie_DefaultArguments__92Email:status:role:isOrganizer:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(email:status:role:isOrganizer:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "NSString * _Nonnull"
-    - Position: 1
-      Type: "KmpCalendarParticipationStatus * _Nonnull"
-    - Position: 2
-      Type: "KmpCalendarAttendeeRole * _Nonnull"
-    - Position: 3
-      Type: "BOOL"
-  - Selector: "doCopy__Skie_DefaultArguments__93DisplayName:status:role:isOrganizer:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(displayName:status:role:isOrganizer:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "NSString * _Nullable"
-    - Position: 1
-      Type: "KmpCalendarParticipationStatus * _Nonnull"
-    - Position: 2
-      Type: "KmpCalendarAttendeeRole * _Nonnull"
-    - Position: 3
-      Type: "BOOL"
-  - Selector: "doCopy__Skie_DefaultArguments__94Email:displayName:status:role:isOrganizer:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(email:displayName:status:role:isOrganizer:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "NSString * _Nonnull"
-    - Position: 1
-      Type: "NSString * _Nullable"
-    - Position: 2
-      Type: "KmpCalendarParticipationStatus * _Nonnull"
-    - Position: 3
-      Type: "KmpCalendarAttendeeRole * _Nonnull"
-    - Position: 4
-      Type: "BOOL"
-  - Selector: "doCopy__Skie_DefaultArguments__95ResponseNeeded:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(responseNeeded:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "BOOL"
-  - Selector: "doCopy__Skie_DefaultArguments__96Email:responseNeeded:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(email:responseNeeded:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "NSString * _Nonnull"
-    - Position: 1
-      Type: "BOOL"
-  - Selector: "doCopy__Skie_DefaultArguments__97DisplayName:responseNeeded:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(displayName:responseNeeded:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "NSString * _Nullable"
-    - Position: 1
-      Type: "BOOL"
-  - Selector: "doCopy__Skie_DefaultArguments__98Email:displayName:responseNeeded:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(email:displayName:responseNeeded:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "NSString * _Nonnull"
-    - Position: 1
-      Type: "NSString * _Nullable"
-    - Position: 2
-      Type: "BOOL"
-  - Selector: "doCopy__Skie_DefaultArguments__99Status:responseNeeded:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(status:responseNeeded:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "KmpCalendarParticipationStatus * _Nonnull"
-    - Position: 1
-      Type: "BOOL"
-  - Selector: "doCopy__Skie_DefaultArguments__100Email:status:responseNeeded:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(email:status:responseNeeded:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "NSString * _Nonnull"
-    - Position: 1
-      Type: "KmpCalendarParticipationStatus * _Nonnull"
-    - Position: 2
-      Type: "BOOL"
-  - Selector: "doCopy__Skie_DefaultArguments__101DisplayName:status:responseNeeded:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(displayName:status:responseNeeded:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "NSString * _Nullable"
-    - Position: 1
-      Type: "KmpCalendarParticipationStatus * _Nonnull"
-    - Position: 2
-      Type: "BOOL"
-  - Selector: "doCopy__Skie_DefaultArguments__102Email:displayName:status:responseNeeded:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(email:displayName:status:responseNeeded:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "NSString * _Nonnull"
-    - Position: 1
-      Type: "NSString * _Nullable"
-    - Position: 2
-      Type: "KmpCalendarParticipationStatus * _Nonnull"
-    - Position: 3
-      Type: "BOOL"
-  - Selector: "doCopy__Skie_DefaultArguments__103Role:responseNeeded:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(role:responseNeeded:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "KmpCalendarAttendeeRole * _Nonnull"
-    - Position: 1
-      Type: "BOOL"
-  - Selector: "doCopy__Skie_DefaultArguments__104Email:role:responseNeeded:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(email:role:responseNeeded:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "NSString * _Nonnull"
-    - Position: 1
-      Type: "KmpCalendarAttendeeRole * _Nonnull"
-    - Position: 2
-      Type: "BOOL"
-  - Selector: "doCopy__Skie_DefaultArguments__105DisplayName:role:responseNeeded:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(displayName:role:responseNeeded:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "NSString * _Nullable"
-    - Position: 1
-      Type: "KmpCalendarAttendeeRole * _Nonnull"
-    - Position: 2
-      Type: "BOOL"
-  - Selector: "doCopy__Skie_DefaultArguments__106Email:displayName:role:responseNeeded:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(email:displayName:role:responseNeeded:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "NSString * _Nonnull"
-    - Position: 1
-      Type: "NSString * _Nullable"
-    - Position: 2
-      Type: "KmpCalendarAttendeeRole * _Nonnull"
-    - Position: 3
-      Type: "BOOL"
-  - Selector: "doCopy__Skie_DefaultArguments__107Status:role:responseNeeded:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(status:role:responseNeeded:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "KmpCalendarParticipationStatus * _Nonnull"
-    - Position: 1
-      Type: "KmpCalendarAttendeeRole * _Nonnull"
-    - Position: 2
-      Type: "BOOL"
-  - Selector: "doCopy__Skie_DefaultArguments__108Email:status:role:responseNeeded:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(email:status:role:responseNeeded:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "NSString * _Nonnull"
-    - Position: 1
-      Type: "KmpCalendarParticipationStatus * _Nonnull"
-    - Position: 2
-      Type: "KmpCalendarAttendeeRole * _Nonnull"
-    - Position: 3
-      Type: "BOOL"
-  - Selector: "doCopy__Skie_DefaultArguments__109DisplayName:status:role:responseNeeded:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(displayName:status:role:responseNeeded:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "NSString * _Nullable"
-    - Position: 1
-      Type: "KmpCalendarParticipationStatus * _Nonnull"
-    - Position: 2
-      Type: "KmpCalendarAttendeeRole * _Nonnull"
-    - Position: 3
-      Type: "BOOL"
-  - Selector: "doCopy__Skie_DefaultArguments__110Email:displayName:status:role:responseNeeded:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(email:displayName:status:role:responseNeeded:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "NSString * _Nonnull"
-    - Position: 1
-      Type: "NSString * _Nullable"
-    - Position: 2
-      Type: "KmpCalendarParticipationStatus * _Nonnull"
-    - Position: 3
-      Type: "KmpCalendarAttendeeRole * _Nonnull"
-    - Position: 4
-      Type: "BOOL"
-  - Selector: "doCopy__Skie_DefaultArguments__111IsOrganizer:responseNeeded:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(isOrganizer:responseNeeded:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "BOOL"
-    - Position: 1
-      Type: "BOOL"
-  - Selector: "doCopy__Skie_DefaultArguments__112Email:isOrganizer:responseNeeded:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(email:isOrganizer:responseNeeded:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "NSString * _Nonnull"
-    - Position: 1
-      Type: "BOOL"
-    - Position: 2
-      Type: "BOOL"
-  - Selector: "doCopy__Skie_DefaultArguments__113DisplayName:isOrganizer:responseNeeded:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(displayName:isOrganizer:responseNeeded:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "NSString * _Nullable"
-    - Position: 1
-      Type: "BOOL"
-    - Position: 2
-      Type: "BOOL"
-  - Selector: "doCopy__Skie_DefaultArguments__114Email:displayName:isOrganizer:responseNeeded:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(email:displayName:isOrganizer:responseNeeded:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "NSString * _Nonnull"
-    - Position: 1
-      Type: "NSString * _Nullable"
-    - Position: 2
-      Type: "BOOL"
-    - Position: 3
-      Type: "BOOL"
-  - Selector: "doCopy__Skie_DefaultArguments__115Status:isOrganizer:responseNeeded:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(status:isOrganizer:responseNeeded:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "KmpCalendarParticipationStatus * _Nonnull"
-    - Position: 1
-      Type: "BOOL"
-    - Position: 2
-      Type: "BOOL"
-  - Selector: "doCopy__Skie_DefaultArguments__116Email:status:isOrganizer:responseNeeded:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(email:status:isOrganizer:responseNeeded:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "NSString * _Nonnull"
-    - Position: 1
-      Type: "KmpCalendarParticipationStatus * _Nonnull"
-    - Position: 2
-      Type: "BOOL"
-    - Position: 3
-      Type: "BOOL"
-  - Selector: "doCopy__Skie_DefaultArguments__117DisplayName:status:isOrganizer:responseNeeded:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(displayName:status:isOrganizer:responseNeeded:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "NSString * _Nullable"
-    - Position: 1
-      Type: "KmpCalendarParticipationStatus * _Nonnull"
-    - Position: 2
-      Type: "BOOL"
-    - Position: 3
-      Type: "BOOL"
-  - Selector: "doCopy__Skie_DefaultArguments__118Email:displayName:status:isOrganizer:responseNeeded:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(email:displayName:status:isOrganizer:responseNeeded:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "NSString * _Nonnull"
-    - Position: 1
-      Type: "NSString * _Nullable"
-    - Position: 2
-      Type: "KmpCalendarParticipationStatus * _Nonnull"
-    - Position: 3
-      Type: "BOOL"
-    - Position: 4
-      Type: "BOOL"
-  - Selector: "doCopy__Skie_DefaultArguments__119Role:isOrganizer:responseNeeded:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(role:isOrganizer:responseNeeded:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "KmpCalendarAttendeeRole * _Nonnull"
-    - Position: 1
-      Type: "BOOL"
-    - Position: 2
-      Type: "BOOL"
-  - Selector: "doCopy__Skie_DefaultArguments__120Email:role:isOrganizer:responseNeeded:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(email:role:isOrganizer:responseNeeded:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "NSString * _Nonnull"
-    - Position: 1
-      Type: "KmpCalendarAttendeeRole * _Nonnull"
-    - Position: 2
-      Type: "BOOL"
-    - Position: 3
-      Type: "BOOL"
-  - Selector: "doCopy__Skie_DefaultArguments__121DisplayName:role:isOrganizer:responseNeeded:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(displayName:role:isOrganizer:responseNeeded:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "NSString * _Nullable"
-    - Position: 1
-      Type: "KmpCalendarAttendeeRole * _Nonnull"
-    - Position: 2
-      Type: "BOOL"
-    - Position: 3
-      Type: "BOOL"
-  - Selector: "doCopy__Skie_DefaultArguments__122Email:displayName:role:isOrganizer:responseNeeded:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(email:displayName:role:isOrganizer:responseNeeded:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "NSString * _Nonnull"
-    - Position: 1
-      Type: "NSString * _Nullable"
-    - Position: 2
-      Type: "KmpCalendarAttendeeRole * _Nonnull"
-    - Position: 3
-      Type: "BOOL"
-    - Position: 4
-      Type: "BOOL"
-  - Selector: "doCopy__Skie_DefaultArguments__123Status:role:isOrganizer:responseNeeded:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(status:role:isOrganizer:responseNeeded:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "KmpCalendarParticipationStatus * _Nonnull"
-    - Position: 1
-      Type: "KmpCalendarAttendeeRole * _Nonnull"
-    - Position: 2
-      Type: "BOOL"
-    - Position: 3
-      Type: "BOOL"
-  - Selector: "doCopy__Skie_DefaultArguments__124Email:status:role:isOrganizer:responseNeeded:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(email:status:role:isOrganizer:responseNeeded:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "NSString * _Nonnull"
-    - Position: 1
-      Type: "KmpCalendarParticipationStatus * _Nonnull"
-    - Position: 2
-      Type: "KmpCalendarAttendeeRole * _Nonnull"
-    - Position: 3
-      Type: "BOOL"
-    - Position: 4
-      Type: "BOOL"
-  - Selector: "doCopy__Skie_DefaultArguments__125DisplayName:status:role:isOrganizer:responseNeeded:"
-    MethodKind: "Instance"
-    SwiftName: "doCopy(displayName:status:role:isOrganizer:responseNeeded:)"
-    ResultType: "KmpCalendarAttendee * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "NSString * _Nullable"
-    - Position: 1
-      Type: "KmpCalendarParticipationStatus * _Nonnull"
-    - Position: 2
-      Type: "KmpCalendarAttendeeRole * _Nonnull"
-    - Position: 3
-      Type: "BOOL"
-    - Position: 4
-      Type: "BOOL"
-- Name: "KmpCalendarAttendeeRole"
-  SwiftBridge: "AttendeeRole"
-  SwiftName: "__AttendeeRole"
-  SwiftPrivate: true
-  Properties:
-  - Name: "organizer"
-    PropertyKind: "Class"
-    SwiftName: "organizer"
-    Type: "KmpCalendarAttendeeRole * _Nonnull"
-  - Name: "requested"
-    PropertyKind: "Class"
-    SwiftName: "requested"
-    Type: "KmpCalendarAttendeeRole * _Nonnull"
-  - Name: "optional"
-    PropertyKind: "Class"
-    SwiftName: "optional"
-    Type: "KmpCalendarAttendeeRole * _Nonnull"
-  - Name: "nonparticipant"
-    PropertyKind: "Class"
-    SwiftName: "nonParticipant"
-    Type: "KmpCalendarAttendeeRole * _Nonnull"
-  Methods:
-  - Selector: "initWithName:ordinal:"
-    MethodKind: "Instance"
-    SwiftName: "init(name:ordinal:)"
-    Availability: "nonswift"
-- Name: "KmpCalendarParticipationStatus"
-  SwiftBridge: "ParticipationStatus"
-  SwiftName: "__ParticipationStatus"
-  SwiftPrivate: true
-  Properties:
-  - Name: "accepted"
-    PropertyKind: "Class"
-    SwiftName: "accepted"
-    Type: "KmpCalendarParticipationStatus * _Nonnull"
-  - Name: "declined"
-    PropertyKind: "Class"
-    SwiftName: "declined"
-    Type: "KmpCalendarParticipationStatus * _Nonnull"
-  - Name: "tentative"
-    PropertyKind: "Class"
-    SwiftName: "tentative"
-    Type: "KmpCalendarParticipationStatus * _Nonnull"
-  - Name: "needsaction"
-    PropertyKind: "Class"
-    SwiftName: "needsAction"
-    Type: "KmpCalendarParticipationStatus * _Nonnull"
-  Methods:
-  - Selector: "initWithName:ordinal:"
-    MethodKind: "Instance"
-    SwiftName: "init(name:ordinal:)"
-    Availability: "nonswift"
+      Type: "KmpCalendarRecurrenceRule * _Nullable"
 - Name: "KmpCalendarRecurrenceRule"
   SwiftName: "RecurrenceRule"
   Properties:
@@ -2888,7 +2046,7 @@ Classes:
       Type: "KmpCalendarInt * _Nullable"
     - Position: 1
       Type: "KmpCalendarKotlinx_datetimeDayOfWeek * _Nonnull"
-  - Selector: "initWithDayOfWeek__Skie_DefaultArguments__141:"
+  - Selector: "initWithDayOfWeek__Skie_DefaultArguments__148:"
     MethodKind: "Instance"
     SwiftName: "init(dayOfWeek:)"
     Parameters:
@@ -2922,18 +2080,18 @@ Classes:
     MethodKind: "Instance"
     SwiftName: "description()"
     ResultType: "NSString * _Nonnull"
-  - Selector: "doCopy__Skie_DefaultArguments__126"
+  - Selector: "doCopy__Skie_DefaultArguments__63"
     MethodKind: "Instance"
     SwiftName: "doCopy()"
     ResultType: "KmpCalendarWeekDayNum * _Nonnull"
-  - Selector: "doCopy__Skie_DefaultArguments__127Ordinal:"
+  - Selector: "doCopy__Skie_DefaultArguments__64Ordinal:"
     MethodKind: "Instance"
     SwiftName: "doCopy(ordinal:)"
     ResultType: "KmpCalendarWeekDayNum * _Nonnull"
     Parameters:
     - Position: 0
       Type: "KmpCalendarInt * _Nullable"
-  - Selector: "doCopy__Skie_DefaultArguments__128DayOfWeek:"
+  - Selector: "doCopy__Skie_DefaultArguments__65DayOfWeek:"
     MethodKind: "Instance"
     SwiftName: "doCopy(dayOfWeek:)"
     ResultType: "KmpCalendarWeekDayNum * _Nonnull"
@@ -2988,6 +2146,908 @@ Classes:
     MethodKind: "Instance"
     SwiftName: "init(name:ordinal:)"
     Availability: "nonswift"
+- Name: "KmpCalendarAttendee"
+  SwiftName: "Attendee"
+  Properties:
+  - Name: "displayName"
+    PropertyKind: "Instance"
+    SwiftName: "displayName"
+    Type: "NSString * _Nullable"
+  - Name: "email"
+    PropertyKind: "Instance"
+    SwiftName: "email"
+    Type: "NSString * _Nonnull"
+  - Name: "isOrganizer"
+    PropertyKind: "Instance"
+    SwiftName: "isOrganizer"
+    Type: "BOOL"
+  - Name: "responseNeeded"
+    PropertyKind: "Instance"
+    SwiftName: "responseNeeded"
+    Type: "BOOL"
+  - Name: "role"
+    PropertyKind: "Instance"
+    SwiftName: "role"
+    Type: "KmpCalendarAttendeeRole * _Nonnull"
+  - Name: "status"
+    PropertyKind: "Instance"
+    SwiftName: "status"
+    Type: "KmpCalendarParticipationStatus * _Nonnull"
+  Methods:
+  - Selector: "initWithEmail:displayName:status:role:isOrganizer:responseNeeded:"
+    MethodKind: "Instance"
+    SwiftName: "init(email:displayName:status:role:isOrganizer:responseNeeded:)"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nonnull"
+    - Position: 1
+      Type: "NSString * _Nullable"
+    - Position: 2
+      Type: "KmpCalendarParticipationStatus * _Nonnull"
+    - Position: 3
+      Type: "KmpCalendarAttendeeRole * _Nonnull"
+    - Position: 4
+      Type: "BOOL"
+    - Position: 5
+      Type: "BOOL"
+  - Selector: "initWithEmail:status:role__Skie_DefaultArguments__149:"
+    MethodKind: "Instance"
+    SwiftName: "init(email:status:role:)"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nonnull"
+    - Position: 1
+      Type: "KmpCalendarParticipationStatus * _Nonnull"
+    - Position: 2
+      Type: "KmpCalendarAttendeeRole * _Nonnull"
+  - Selector: "initWithEmail:displayName:status:role__Skie_DefaultArguments__150:"
+    MethodKind: "Instance"
+    SwiftName: "init(email:displayName:status:role:)"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nonnull"
+    - Position: 1
+      Type: "NSString * _Nullable"
+    - Position: 2
+      Type: "KmpCalendarParticipationStatus * _Nonnull"
+    - Position: 3
+      Type: "KmpCalendarAttendeeRole * _Nonnull"
+  - Selector: "initWithEmail:status:role:isOrganizer__Skie_DefaultArguments__151:"
+    MethodKind: "Instance"
+    SwiftName: "init(email:status:role:isOrganizer:)"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nonnull"
+    - Position: 1
+      Type: "KmpCalendarParticipationStatus * _Nonnull"
+    - Position: 2
+      Type: "KmpCalendarAttendeeRole * _Nonnull"
+    - Position: 3
+      Type: "BOOL"
+  - Selector: "initWithEmail:displayName:status:role:isOrganizer__Skie_DefaultArguments__152:"
+    MethodKind: "Instance"
+    SwiftName: "init(email:displayName:status:role:isOrganizer:)"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nonnull"
+    - Position: 1
+      Type: "NSString * _Nullable"
+    - Position: 2
+      Type: "KmpCalendarParticipationStatus * _Nonnull"
+    - Position: 3
+      Type: "KmpCalendarAttendeeRole * _Nonnull"
+    - Position: 4
+      Type: "BOOL"
+  - Selector: "initWithEmail:status:role:responseNeeded__Skie_DefaultArguments__153:"
+    MethodKind: "Instance"
+    SwiftName: "init(email:status:role:responseNeeded:)"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nonnull"
+    - Position: 1
+      Type: "KmpCalendarParticipationStatus * _Nonnull"
+    - Position: 2
+      Type: "KmpCalendarAttendeeRole * _Nonnull"
+    - Position: 3
+      Type: "BOOL"
+  - Selector: "initWithEmail:displayName:status:role:responseNeeded__Skie_DefaultArguments__154:"
+    MethodKind: "Instance"
+    SwiftName: "init(email:displayName:status:role:responseNeeded:)"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nonnull"
+    - Position: 1
+      Type: "NSString * _Nullable"
+    - Position: 2
+      Type: "KmpCalendarParticipationStatus * _Nonnull"
+    - Position: 3
+      Type: "KmpCalendarAttendeeRole * _Nonnull"
+    - Position: 4
+      Type: "BOOL"
+  - Selector: "initWithEmail:status:role:isOrganizer:responseNeeded__Skie_DefaultArguments__155:"
+    MethodKind: "Instance"
+    SwiftName: "init(email:status:role:isOrganizer:responseNeeded:)"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nonnull"
+    - Position: 1
+      Type: "KmpCalendarParticipationStatus * _Nonnull"
+    - Position: 2
+      Type: "KmpCalendarAttendeeRole * _Nonnull"
+    - Position: 3
+      Type: "BOOL"
+    - Position: 4
+      Type: "BOOL"
+  - Selector: "doCopyEmail:displayName:status:role:isOrganizer:responseNeeded:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(email:displayName:status:role:isOrganizer:responseNeeded:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nonnull"
+    - Position: 1
+      Type: "NSString * _Nullable"
+    - Position: 2
+      Type: "KmpCalendarParticipationStatus * _Nonnull"
+    - Position: 3
+      Type: "KmpCalendarAttendeeRole * _Nonnull"
+    - Position: 4
+      Type: "BOOL"
+    - Position: 5
+      Type: "BOOL"
+  - Selector: "isEqual:"
+    MethodKind: "Instance"
+    SwiftName: "isEqual(_:)"
+    ResultType: "BOOL"
+    Parameters:
+    - Position: 0
+      Type: "id _Nullable"
+  - Selector: "hash"
+    MethodKind: "Instance"
+    SwiftName: "hash()"
+    ResultType: "NSUInteger"
+  - Selector: "description"
+    MethodKind: "Instance"
+    SwiftName: "description()"
+    ResultType: "NSString * _Nonnull"
+  - Selector: "doCopy__Skie_DefaultArguments__66"
+    MethodKind: "Instance"
+    SwiftName: "doCopy()"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+  - Selector: "doCopy__Skie_DefaultArguments__67Email:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(email:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nonnull"
+  - Selector: "doCopy__Skie_DefaultArguments__68DisplayName:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(displayName:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nullable"
+  - Selector: "doCopy__Skie_DefaultArguments__69Email:displayName:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(email:displayName:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nonnull"
+    - Position: 1
+      Type: "NSString * _Nullable"
+  - Selector: "doCopy__Skie_DefaultArguments__70Status:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(status:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "KmpCalendarParticipationStatus * _Nonnull"
+  - Selector: "doCopy__Skie_DefaultArguments__71Email:status:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(email:status:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nonnull"
+    - Position: 1
+      Type: "KmpCalendarParticipationStatus * _Nonnull"
+  - Selector: "doCopy__Skie_DefaultArguments__72DisplayName:status:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(displayName:status:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nullable"
+    - Position: 1
+      Type: "KmpCalendarParticipationStatus * _Nonnull"
+  - Selector: "doCopy__Skie_DefaultArguments__73Email:displayName:status:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(email:displayName:status:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nonnull"
+    - Position: 1
+      Type: "NSString * _Nullable"
+    - Position: 2
+      Type: "KmpCalendarParticipationStatus * _Nonnull"
+  - Selector: "doCopy__Skie_DefaultArguments__74Role:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(role:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "KmpCalendarAttendeeRole * _Nonnull"
+  - Selector: "doCopy__Skie_DefaultArguments__75Email:role:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(email:role:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nonnull"
+    - Position: 1
+      Type: "KmpCalendarAttendeeRole * _Nonnull"
+  - Selector: "doCopy__Skie_DefaultArguments__76DisplayName:role:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(displayName:role:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nullable"
+    - Position: 1
+      Type: "KmpCalendarAttendeeRole * _Nonnull"
+  - Selector: "doCopy__Skie_DefaultArguments__77Email:displayName:role:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(email:displayName:role:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nonnull"
+    - Position: 1
+      Type: "NSString * _Nullable"
+    - Position: 2
+      Type: "KmpCalendarAttendeeRole * _Nonnull"
+  - Selector: "doCopy__Skie_DefaultArguments__78Status:role:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(status:role:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "KmpCalendarParticipationStatus * _Nonnull"
+    - Position: 1
+      Type: "KmpCalendarAttendeeRole * _Nonnull"
+  - Selector: "doCopy__Skie_DefaultArguments__79Email:status:role:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(email:status:role:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nonnull"
+    - Position: 1
+      Type: "KmpCalendarParticipationStatus * _Nonnull"
+    - Position: 2
+      Type: "KmpCalendarAttendeeRole * _Nonnull"
+  - Selector: "doCopy__Skie_DefaultArguments__80DisplayName:status:role:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(displayName:status:role:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nullable"
+    - Position: 1
+      Type: "KmpCalendarParticipationStatus * _Nonnull"
+    - Position: 2
+      Type: "KmpCalendarAttendeeRole * _Nonnull"
+  - Selector: "doCopy__Skie_DefaultArguments__81Email:displayName:status:role:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(email:displayName:status:role:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nonnull"
+    - Position: 1
+      Type: "NSString * _Nullable"
+    - Position: 2
+      Type: "KmpCalendarParticipationStatus * _Nonnull"
+    - Position: 3
+      Type: "KmpCalendarAttendeeRole * _Nonnull"
+  - Selector: "doCopy__Skie_DefaultArguments__82IsOrganizer:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(isOrganizer:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "BOOL"
+  - Selector: "doCopy__Skie_DefaultArguments__83Email:isOrganizer:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(email:isOrganizer:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nonnull"
+    - Position: 1
+      Type: "BOOL"
+  - Selector: "doCopy__Skie_DefaultArguments__84DisplayName:isOrganizer:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(displayName:isOrganizer:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nullable"
+    - Position: 1
+      Type: "BOOL"
+  - Selector: "doCopy__Skie_DefaultArguments__85Email:displayName:isOrganizer:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(email:displayName:isOrganizer:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nonnull"
+    - Position: 1
+      Type: "NSString * _Nullable"
+    - Position: 2
+      Type: "BOOL"
+  - Selector: "doCopy__Skie_DefaultArguments__86Status:isOrganizer:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(status:isOrganizer:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "KmpCalendarParticipationStatus * _Nonnull"
+    - Position: 1
+      Type: "BOOL"
+  - Selector: "doCopy__Skie_DefaultArguments__87Email:status:isOrganizer:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(email:status:isOrganizer:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nonnull"
+    - Position: 1
+      Type: "KmpCalendarParticipationStatus * _Nonnull"
+    - Position: 2
+      Type: "BOOL"
+  - Selector: "doCopy__Skie_DefaultArguments__88DisplayName:status:isOrganizer:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(displayName:status:isOrganizer:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nullable"
+    - Position: 1
+      Type: "KmpCalendarParticipationStatus * _Nonnull"
+    - Position: 2
+      Type: "BOOL"
+  - Selector: "doCopy__Skie_DefaultArguments__89Email:displayName:status:isOrganizer:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(email:displayName:status:isOrganizer:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nonnull"
+    - Position: 1
+      Type: "NSString * _Nullable"
+    - Position: 2
+      Type: "KmpCalendarParticipationStatus * _Nonnull"
+    - Position: 3
+      Type: "BOOL"
+  - Selector: "doCopy__Skie_DefaultArguments__90Role:isOrganizer:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(role:isOrganizer:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "KmpCalendarAttendeeRole * _Nonnull"
+    - Position: 1
+      Type: "BOOL"
+  - Selector: "doCopy__Skie_DefaultArguments__91Email:role:isOrganizer:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(email:role:isOrganizer:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nonnull"
+    - Position: 1
+      Type: "KmpCalendarAttendeeRole * _Nonnull"
+    - Position: 2
+      Type: "BOOL"
+  - Selector: "doCopy__Skie_DefaultArguments__92DisplayName:role:isOrganizer:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(displayName:role:isOrganizer:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nullable"
+    - Position: 1
+      Type: "KmpCalendarAttendeeRole * _Nonnull"
+    - Position: 2
+      Type: "BOOL"
+  - Selector: "doCopy__Skie_DefaultArguments__93Email:displayName:role:isOrganizer:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(email:displayName:role:isOrganizer:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nonnull"
+    - Position: 1
+      Type: "NSString * _Nullable"
+    - Position: 2
+      Type: "KmpCalendarAttendeeRole * _Nonnull"
+    - Position: 3
+      Type: "BOOL"
+  - Selector: "doCopy__Skie_DefaultArguments__94Status:role:isOrganizer:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(status:role:isOrganizer:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "KmpCalendarParticipationStatus * _Nonnull"
+    - Position: 1
+      Type: "KmpCalendarAttendeeRole * _Nonnull"
+    - Position: 2
+      Type: "BOOL"
+  - Selector: "doCopy__Skie_DefaultArguments__95Email:status:role:isOrganizer:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(email:status:role:isOrganizer:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nonnull"
+    - Position: 1
+      Type: "KmpCalendarParticipationStatus * _Nonnull"
+    - Position: 2
+      Type: "KmpCalendarAttendeeRole * _Nonnull"
+    - Position: 3
+      Type: "BOOL"
+  - Selector: "doCopy__Skie_DefaultArguments__96DisplayName:status:role:isOrganizer:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(displayName:status:role:isOrganizer:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nullable"
+    - Position: 1
+      Type: "KmpCalendarParticipationStatus * _Nonnull"
+    - Position: 2
+      Type: "KmpCalendarAttendeeRole * _Nonnull"
+    - Position: 3
+      Type: "BOOL"
+  - Selector: "doCopy__Skie_DefaultArguments__97Email:displayName:status:role:isOrganizer:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(email:displayName:status:role:isOrganizer:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nonnull"
+    - Position: 1
+      Type: "NSString * _Nullable"
+    - Position: 2
+      Type: "KmpCalendarParticipationStatus * _Nonnull"
+    - Position: 3
+      Type: "KmpCalendarAttendeeRole * _Nonnull"
+    - Position: 4
+      Type: "BOOL"
+  - Selector: "doCopy__Skie_DefaultArguments__98ResponseNeeded:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(responseNeeded:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "BOOL"
+  - Selector: "doCopy__Skie_DefaultArguments__99Email:responseNeeded:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(email:responseNeeded:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nonnull"
+    - Position: 1
+      Type: "BOOL"
+  - Selector: "doCopy__Skie_DefaultArguments__100DisplayName:responseNeeded:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(displayName:responseNeeded:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nullable"
+    - Position: 1
+      Type: "BOOL"
+  - Selector: "doCopy__Skie_DefaultArguments__101Email:displayName:responseNeeded:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(email:displayName:responseNeeded:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nonnull"
+    - Position: 1
+      Type: "NSString * _Nullable"
+    - Position: 2
+      Type: "BOOL"
+  - Selector: "doCopy__Skie_DefaultArguments__102Status:responseNeeded:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(status:responseNeeded:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "KmpCalendarParticipationStatus * _Nonnull"
+    - Position: 1
+      Type: "BOOL"
+  - Selector: "doCopy__Skie_DefaultArguments__103Email:status:responseNeeded:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(email:status:responseNeeded:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nonnull"
+    - Position: 1
+      Type: "KmpCalendarParticipationStatus * _Nonnull"
+    - Position: 2
+      Type: "BOOL"
+  - Selector: "doCopy__Skie_DefaultArguments__104DisplayName:status:responseNeeded:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(displayName:status:responseNeeded:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nullable"
+    - Position: 1
+      Type: "KmpCalendarParticipationStatus * _Nonnull"
+    - Position: 2
+      Type: "BOOL"
+  - Selector: "doCopy__Skie_DefaultArguments__105Email:displayName:status:responseNeeded:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(email:displayName:status:responseNeeded:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nonnull"
+    - Position: 1
+      Type: "NSString * _Nullable"
+    - Position: 2
+      Type: "KmpCalendarParticipationStatus * _Nonnull"
+    - Position: 3
+      Type: "BOOL"
+  - Selector: "doCopy__Skie_DefaultArguments__106Role:responseNeeded:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(role:responseNeeded:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "KmpCalendarAttendeeRole * _Nonnull"
+    - Position: 1
+      Type: "BOOL"
+  - Selector: "doCopy__Skie_DefaultArguments__107Email:role:responseNeeded:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(email:role:responseNeeded:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nonnull"
+    - Position: 1
+      Type: "KmpCalendarAttendeeRole * _Nonnull"
+    - Position: 2
+      Type: "BOOL"
+  - Selector: "doCopy__Skie_DefaultArguments__108DisplayName:role:responseNeeded:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(displayName:role:responseNeeded:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nullable"
+    - Position: 1
+      Type: "KmpCalendarAttendeeRole * _Nonnull"
+    - Position: 2
+      Type: "BOOL"
+  - Selector: "doCopy__Skie_DefaultArguments__109Email:displayName:role:responseNeeded:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(email:displayName:role:responseNeeded:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nonnull"
+    - Position: 1
+      Type: "NSString * _Nullable"
+    - Position: 2
+      Type: "KmpCalendarAttendeeRole * _Nonnull"
+    - Position: 3
+      Type: "BOOL"
+  - Selector: "doCopy__Skie_DefaultArguments__110Status:role:responseNeeded:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(status:role:responseNeeded:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "KmpCalendarParticipationStatus * _Nonnull"
+    - Position: 1
+      Type: "KmpCalendarAttendeeRole * _Nonnull"
+    - Position: 2
+      Type: "BOOL"
+  - Selector: "doCopy__Skie_DefaultArguments__111Email:status:role:responseNeeded:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(email:status:role:responseNeeded:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nonnull"
+    - Position: 1
+      Type: "KmpCalendarParticipationStatus * _Nonnull"
+    - Position: 2
+      Type: "KmpCalendarAttendeeRole * _Nonnull"
+    - Position: 3
+      Type: "BOOL"
+  - Selector: "doCopy__Skie_DefaultArguments__112DisplayName:status:role:responseNeeded:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(displayName:status:role:responseNeeded:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nullable"
+    - Position: 1
+      Type: "KmpCalendarParticipationStatus * _Nonnull"
+    - Position: 2
+      Type: "KmpCalendarAttendeeRole * _Nonnull"
+    - Position: 3
+      Type: "BOOL"
+  - Selector: "doCopy__Skie_DefaultArguments__113Email:displayName:status:role:responseNeeded:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(email:displayName:status:role:responseNeeded:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nonnull"
+    - Position: 1
+      Type: "NSString * _Nullable"
+    - Position: 2
+      Type: "KmpCalendarParticipationStatus * _Nonnull"
+    - Position: 3
+      Type: "KmpCalendarAttendeeRole * _Nonnull"
+    - Position: 4
+      Type: "BOOL"
+  - Selector: "doCopy__Skie_DefaultArguments__114IsOrganizer:responseNeeded:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(isOrganizer:responseNeeded:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "BOOL"
+    - Position: 1
+      Type: "BOOL"
+  - Selector: "doCopy__Skie_DefaultArguments__115Email:isOrganizer:responseNeeded:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(email:isOrganizer:responseNeeded:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nonnull"
+    - Position: 1
+      Type: "BOOL"
+    - Position: 2
+      Type: "BOOL"
+  - Selector: "doCopy__Skie_DefaultArguments__116DisplayName:isOrganizer:responseNeeded:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(displayName:isOrganizer:responseNeeded:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nullable"
+    - Position: 1
+      Type: "BOOL"
+    - Position: 2
+      Type: "BOOL"
+  - Selector: "doCopy__Skie_DefaultArguments__117Email:displayName:isOrganizer:responseNeeded:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(email:displayName:isOrganizer:responseNeeded:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nonnull"
+    - Position: 1
+      Type: "NSString * _Nullable"
+    - Position: 2
+      Type: "BOOL"
+    - Position: 3
+      Type: "BOOL"
+  - Selector: "doCopy__Skie_DefaultArguments__118Status:isOrganizer:responseNeeded:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(status:isOrganizer:responseNeeded:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "KmpCalendarParticipationStatus * _Nonnull"
+    - Position: 1
+      Type: "BOOL"
+    - Position: 2
+      Type: "BOOL"
+  - Selector: "doCopy__Skie_DefaultArguments__119Email:status:isOrganizer:responseNeeded:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(email:status:isOrganizer:responseNeeded:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nonnull"
+    - Position: 1
+      Type: "KmpCalendarParticipationStatus * _Nonnull"
+    - Position: 2
+      Type: "BOOL"
+    - Position: 3
+      Type: "BOOL"
+  - Selector: "doCopy__Skie_DefaultArguments__120DisplayName:status:isOrganizer:responseNeeded:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(displayName:status:isOrganizer:responseNeeded:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nullable"
+    - Position: 1
+      Type: "KmpCalendarParticipationStatus * _Nonnull"
+    - Position: 2
+      Type: "BOOL"
+    - Position: 3
+      Type: "BOOL"
+  - Selector: "doCopy__Skie_DefaultArguments__121Email:displayName:status:isOrganizer:responseNeeded:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(email:displayName:status:isOrganizer:responseNeeded:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nonnull"
+    - Position: 1
+      Type: "NSString * _Nullable"
+    - Position: 2
+      Type: "KmpCalendarParticipationStatus * _Nonnull"
+    - Position: 3
+      Type: "BOOL"
+    - Position: 4
+      Type: "BOOL"
+  - Selector: "doCopy__Skie_DefaultArguments__122Role:isOrganizer:responseNeeded:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(role:isOrganizer:responseNeeded:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "KmpCalendarAttendeeRole * _Nonnull"
+    - Position: 1
+      Type: "BOOL"
+    - Position: 2
+      Type: "BOOL"
+  - Selector: "doCopy__Skie_DefaultArguments__123Email:role:isOrganizer:responseNeeded:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(email:role:isOrganizer:responseNeeded:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nonnull"
+    - Position: 1
+      Type: "KmpCalendarAttendeeRole * _Nonnull"
+    - Position: 2
+      Type: "BOOL"
+    - Position: 3
+      Type: "BOOL"
+  - Selector: "doCopy__Skie_DefaultArguments__124DisplayName:role:isOrganizer:responseNeeded:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(displayName:role:isOrganizer:responseNeeded:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nullable"
+    - Position: 1
+      Type: "KmpCalendarAttendeeRole * _Nonnull"
+    - Position: 2
+      Type: "BOOL"
+    - Position: 3
+      Type: "BOOL"
+  - Selector: "doCopy__Skie_DefaultArguments__125Email:displayName:role:isOrganizer:responseNeeded:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(email:displayName:role:isOrganizer:responseNeeded:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nonnull"
+    - Position: 1
+      Type: "NSString * _Nullable"
+    - Position: 2
+      Type: "KmpCalendarAttendeeRole * _Nonnull"
+    - Position: 3
+      Type: "BOOL"
+    - Position: 4
+      Type: "BOOL"
+  - Selector: "doCopy__Skie_DefaultArguments__126Status:role:isOrganizer:responseNeeded:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(status:role:isOrganizer:responseNeeded:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "KmpCalendarParticipationStatus * _Nonnull"
+    - Position: 1
+      Type: "KmpCalendarAttendeeRole * _Nonnull"
+    - Position: 2
+      Type: "BOOL"
+    - Position: 3
+      Type: "BOOL"
+  - Selector: "doCopy__Skie_DefaultArguments__127Email:status:role:isOrganizer:responseNeeded:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(email:status:role:isOrganizer:responseNeeded:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nonnull"
+    - Position: 1
+      Type: "KmpCalendarParticipationStatus * _Nonnull"
+    - Position: 2
+      Type: "KmpCalendarAttendeeRole * _Nonnull"
+    - Position: 3
+      Type: "BOOL"
+    - Position: 4
+      Type: "BOOL"
+  - Selector: "doCopy__Skie_DefaultArguments__128DisplayName:status:role:isOrganizer:responseNeeded:"
+    MethodKind: "Instance"
+    SwiftName: "doCopy(displayName:status:role:isOrganizer:responseNeeded:)"
+    ResultType: "KmpCalendarAttendee * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nullable"
+    - Position: 1
+      Type: "KmpCalendarParticipationStatus * _Nonnull"
+    - Position: 2
+      Type: "KmpCalendarAttendeeRole * _Nonnull"
+    - Position: 3
+      Type: "BOOL"
+    - Position: 4
+      Type: "BOOL"
+- Name: "KmpCalendarAttendeeRole"
+  SwiftBridge: "AttendeeRole"
+  SwiftName: "__AttendeeRole"
+  SwiftPrivate: true
+  Properties:
+  - Name: "organizer"
+    PropertyKind: "Class"
+    SwiftName: "organizer"
+    Type: "KmpCalendarAttendeeRole * _Nonnull"
+  - Name: "requested"
+    PropertyKind: "Class"
+    SwiftName: "requested"
+    Type: "KmpCalendarAttendeeRole * _Nonnull"
+  - Name: "optional"
+    PropertyKind: "Class"
+    SwiftName: "optional"
+    Type: "KmpCalendarAttendeeRole * _Nonnull"
+  - Name: "nonparticipant"
+    PropertyKind: "Class"
+    SwiftName: "nonParticipant"
+    Type: "KmpCalendarAttendeeRole * _Nonnull"
+  Methods:
+  - Selector: "initWithName:ordinal:"
+    MethodKind: "Instance"
+    SwiftName: "init(name:ordinal:)"
+    Availability: "nonswift"
+- Name: "KmpCalendarParticipationStatus"
+  SwiftBridge: "ParticipationStatus"
+  SwiftName: "__ParticipationStatus"
+  SwiftPrivate: true
+  Properties:
+  - Name: "accepted"
+    PropertyKind: "Class"
+    SwiftName: "accepted"
+    Type: "KmpCalendarParticipationStatus * _Nonnull"
+  - Name: "declined"
+    PropertyKind: "Class"
+    SwiftName: "declined"
+    Type: "KmpCalendarParticipationStatus * _Nonnull"
+  - Name: "tentative"
+    PropertyKind: "Class"
+    SwiftName: "tentative"
+    Type: "KmpCalendarParticipationStatus * _Nonnull"
+  - Name: "needsaction"
+    PropertyKind: "Class"
+    SwiftName: "needsAction"
+    Type: "KmpCalendarParticipationStatus * _Nonnull"
+  Methods:
+  - Selector: "initWithName:ordinal:"
+    MethodKind: "Instance"
+    SwiftName: "init(name:ordinal:)"
+    Availability: "nonswift"
 - Name: "KmpCalendarCalendarManager"
   SwiftName: "CalendarManager"
   Methods:
@@ -2998,10 +3058,19 @@ Classes:
   - Selector: "observeEventsCalendarId:"
     MethodKind: "Instance"
     SwiftName: "observeEvents(calendarId:)"
-    ResultType: "KmpCalendarSkieKotlinFlow<NSArray<KmpCalendarEvent *> *> * _Nonnull"
+    ResultType: "KmpCalendarSkieKotlinFlow<NSArray<id<KmpCalendarEvent>> *> * _Nonnull"
     Parameters:
     - Position: 0
       Type: "id _Nonnull"
+  - Selector: "observeEventsStart:end:"
+    MethodKind: "Instance"
+    SwiftName: "observeEvents(start:end:)"
+    ResultType: "KmpCalendarSkieKotlinFlow<NSArray<id<KmpCalendarEvent>> *> * _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "KmpCalendarKotlinInstant * _Nonnull"
+    - Position: 1
+      Type: "KmpCalendarKotlinInstant * _Nonnull"
   - Selector: "syncCalendarsAccountId:completionHandler:"
     MethodKind: "Instance"
     SwiftName: "__syncCalendars(accountId:completionHandler:)"
@@ -3135,13 +3204,13 @@ Classes:
   - Selector: "init"
     MethodKind: "Instance"
     SwiftName: "init()"
-  - Selector: "initWithMessage__Skie_DefaultArguments__143:"
+  - Selector: "initWithMessage__Skie_DefaultArguments__157:"
     MethodKind: "Instance"
     SwiftName: "init(message:)"
     Parameters:
     - Position: 0
       Type: "NSString * _Nullable"
-  - Selector: "initWithCause__Skie_DefaultArguments__144:"
+  - Selector: "initWithCause__Skie_DefaultArguments__158:"
     MethodKind: "Instance"
     SwiftName: "init(cause:)"
     Parameters:
@@ -3165,392 +3234,23 @@ Classes:
     Parameters:
     - Position: 0
       Type: "NSString * _Nonnull"
-- Name: "KmpCalendarKotlinx_datetimeLocalDateTime"
-  SwiftName: "Kotlinx_datetimeLocalDateTime"
-  Properties:
-  - Name: "date"
-    PropertyKind: "Instance"
-    SwiftName: "date"
-    Type: "KmpCalendarKotlinx_datetimeLocalDate * _Nonnull"
-  - Name: "day"
-    PropertyKind: "Instance"
-    SwiftName: "day"
-    Type: "int32_t"
-  - Name: "dayOfMonth"
-    PropertyKind: "Instance"
-    SwiftName: "dayOfMonth"
-    Type: "int32_t"
-  - Name: "dayOfWeek"
-    PropertyKind: "Instance"
-    SwiftName: "dayOfWeek"
-    Type: "KmpCalendarKotlinx_datetimeDayOfWeek * _Nonnull"
-  - Name: "dayOfYear"
-    PropertyKind: "Instance"
-    SwiftName: "dayOfYear"
-    Type: "int32_t"
-  - Name: "hour"
-    PropertyKind: "Instance"
-    SwiftName: "hour"
-    Type: "int32_t"
-  - Name: "minute"
-    PropertyKind: "Instance"
-    SwiftName: "minute"
-    Type: "int32_t"
-  - Name: "month"
-    PropertyKind: "Instance"
-    SwiftName: "month"
-    Type: "KmpCalendarKotlinx_datetimeMonth * _Nonnull"
-  - Name: "monthNumber"
-    PropertyKind: "Instance"
-    SwiftName: "monthNumber"
-    Type: "int32_t"
-  - Name: "nanosecond"
-    PropertyKind: "Instance"
-    SwiftName: "nanosecond"
-    Type: "int32_t"
-  - Name: "second"
-    PropertyKind: "Instance"
-    SwiftName: "second"
-    Type: "int32_t"
-  - Name: "time"
-    PropertyKind: "Instance"
-    SwiftName: "time"
-    Type: "KmpCalendarKotlinx_datetimeLocalTime * _Nonnull"
-  - Name: "year"
-    PropertyKind: "Instance"
-    SwiftName: "year"
-    Type: "int32_t"
+- Name: "KmpCalendarAppleIdAccessorsKt"
+  SwiftName: "AppleIdAccessorsKt"
   Methods:
-  - Selector: "initWithYear:month:day:hour:minute:second:nanosecond:"
-    MethodKind: "Instance"
-    SwiftName: "init(year:month:day:hour:minute:second:nanosecond:)"
-    Parameters:
-    - Position: 0
-      Type: "int32_t"
-    - Position: 1
-      Type: "int32_t"
-    - Position: 2
-      Type: "int32_t"
-    - Position: 3
-      Type: "int32_t"
-    - Position: 4
-      Type: "int32_t"
-    - Position: 5
-      Type: "int32_t"
-    - Position: 6
-      Type: "int32_t"
-  - Selector: "initWithYear:month:day:hour:minute:second:nanosecond_:"
-    MethodKind: "Instance"
-    SwiftName: "init(year:month:day:hour:minute:second:nanosecond:)"
-    Parameters:
-    - Position: 0
-      Type: "int32_t"
-    - Position: 1
-      Type: "KmpCalendarKotlinx_datetimeMonth * _Nonnull"
-    - Position: 2
-      Type: "int32_t"
-    - Position: 3
-      Type: "int32_t"
-    - Position: 4
-      Type: "int32_t"
-    - Position: 5
-      Type: "int32_t"
-    - Position: 6
-      Type: "int32_t"
-  - Selector: "initWithDate:time:"
-    MethodKind: "Instance"
-    SwiftName: "init(date:time:)"
-    Parameters:
-    - Position: 0
-      Type: "KmpCalendarKotlinx_datetimeLocalDate * _Nonnull"
-    - Position: 1
-      Type: "KmpCalendarKotlinx_datetimeLocalTime * _Nonnull"
-  - Selector: "compareToOther:"
-    MethodKind: "Instance"
-    SwiftName: "compareTo(other:)"
-    ResultType: "int32_t"
-    Parameters:
-    - Position: 0
-      Type: "KmpCalendarKotlinx_datetimeLocalDateTime * _Nonnull"
-  - Selector: "isEqual:"
-    MethodKind: "Instance"
-    SwiftName: "isEqual(_:)"
-    ResultType: "BOOL"
-    Parameters:
-    - Position: 0
-      Type: "id _Nullable"
-  - Selector: "hash"
-    MethodKind: "Instance"
-    SwiftName: "hash()"
-    ResultType: "NSUInteger"
-  - Selector: "description"
-    MethodKind: "Instance"
-    SwiftName: "description()"
+  - Selector: "calendarIdValue:"
+    MethodKind: "Class"
+    SwiftName: "calendarIdValue(_:)"
     ResultType: "NSString * _Nonnull"
-- Name: "KmpCalendarKotlinx_datetimeLocalDateTimeCompanion"
-  SwiftName: "Kotlinx_datetimeLocalDateTime.Companion"
-  Methods:
-  - Selector: "FormatBuilder:"
-    MethodKind: "Instance"
-    SwiftName: "Format(builder:)"
-    ResultType: "id<KmpCalendarKotlinx_datetimeDateTimeFormat> _Nonnull"
     Parameters:
     - Position: 0
-      Type: "void (^ _Nonnull)(id<KmpCalendarKotlinx_datetimeDateTimeFormatBuilderWithDateTime> _Nonnull)"
-  - Selector: "orNullYear:month:day:hour:minute:second:nanosecond:"
-    MethodKind: "Instance"
-    SwiftName: "orNull(year:month:day:hour:minute:second:nanosecond:)"
-    ResultType: "KmpCalendarKotlinx_datetimeLocalDateTime * _Nullable"
-    Parameters:
-    - Position: 0
-      Type: "int32_t"
-    - Position: 1
-      Type: "int32_t"
-    - Position: 2
-      Type: "int32_t"
-    - Position: 3
-      Type: "int32_t"
-    - Position: 4
-      Type: "int32_t"
-    - Position: 5
-      Type: "int32_t"
-    - Position: 6
-      Type: "int32_t"
-  - Selector: "orNullYear:month:day:hour:minute:second:nanosecond_:"
-    MethodKind: "Instance"
-    SwiftName: "orNull(year:month:day:hour:minute:second:nanosecond:)"
-    ResultType: "KmpCalendarKotlinx_datetimeLocalDateTime * _Nullable"
-    Parameters:
-    - Position: 0
-      Type: "int32_t"
-    - Position: 1
-      Type: "KmpCalendarKotlinx_datetimeMonth * _Nonnull"
-    - Position: 2
-      Type: "int32_t"
-    - Position: 3
-      Type: "int32_t"
-    - Position: 4
-      Type: "int32_t"
-    - Position: 5
-      Type: "int32_t"
-    - Position: 6
-      Type: "int32_t"
-  - Selector: "parseInput:format:"
-    MethodKind: "Instance"
-    SwiftName: "parse(input:format:)"
-    ResultType: "KmpCalendarKotlinx_datetimeLocalDateTime * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "id _Nonnull"
-    - Position: 1
-      Type: "id<KmpCalendarKotlinx_datetimeDateTimeFormat> _Nonnull"
-  - Selector: "serializer"
-    MethodKind: "Instance"
-    SwiftName: "serializer()"
-    ResultType: "id<KmpCalendarKotlinx_serialization_coreKSerializer> _Nonnull"
-- Name: "KmpCalendarKotlinx_datetimeLocalTime"
-  SwiftName: "Kotlinx_datetimeLocalTime"
-  Properties:
-  - Name: "hour"
-    PropertyKind: "Instance"
-    SwiftName: "hour"
-    Type: "int32_t"
-  - Name: "minute"
-    PropertyKind: "Instance"
-    SwiftName: "minute"
-    Type: "int32_t"
-  - Name: "nanosecond"
-    PropertyKind: "Instance"
-    SwiftName: "nanosecond"
-    Type: "int32_t"
-  - Name: "second"
-    PropertyKind: "Instance"
-    SwiftName: "second"
-    Type: "int32_t"
-  Methods:
-  - Selector: "initWithHour:minute:second:nanosecond:"
-    MethodKind: "Instance"
-    SwiftName: "init(hour:minute:second:nanosecond:)"
-    Parameters:
-    - Position: 0
-      Type: "int32_t"
-    - Position: 1
-      Type: "int32_t"
-    - Position: 2
-      Type: "int32_t"
-    - Position: 3
-      Type: "int32_t"
-  - Selector: "compareToOther:"
-    MethodKind: "Instance"
-    SwiftName: "compareTo(other:)"
-    ResultType: "int32_t"
-    Parameters:
-    - Position: 0
-      Type: "KmpCalendarKotlinx_datetimeLocalTime * _Nonnull"
-  - Selector: "isEqual:"
-    MethodKind: "Instance"
-    SwiftName: "isEqual(_:)"
-    ResultType: "BOOL"
-    Parameters:
-    - Position: 0
-      Type: "id _Nullable"
-  - Selector: "hash"
-    MethodKind: "Instance"
-    SwiftName: "hash()"
-    ResultType: "NSUInteger"
-  - Selector: "toMillisecondOfDay"
-    MethodKind: "Instance"
-    SwiftName: "toMillisecondOfDay()"
-    ResultType: "int32_t"
-  - Selector: "toNanosecondOfDay"
-    MethodKind: "Instance"
-    SwiftName: "toNanosecondOfDay()"
-    ResultType: "int64_t"
-  - Selector: "toSecondOfDay"
-    MethodKind: "Instance"
-    SwiftName: "toSecondOfDay()"
-    ResultType: "int32_t"
-  - Selector: "description"
-    MethodKind: "Instance"
-    SwiftName: "description()"
+      Type: "id<KmpCalendarEvent> _Nonnull"
+  - Selector: "idValue:"
+    MethodKind: "Class"
+    SwiftName: "idValue(_:)"
     ResultType: "NSString * _Nonnull"
-- Name: "KmpCalendarKotlinx_datetimeLocalTimeCompanion"
-  SwiftName: "Kotlinx_datetimeLocalTime.Companion"
-  Methods:
-  - Selector: "FormatBuilder:"
-    MethodKind: "Instance"
-    SwiftName: "Format(builder:)"
-    ResultType: "id<KmpCalendarKotlinx_datetimeDateTimeFormat> _Nonnull"
     Parameters:
     - Position: 0
-      Type: "void (^ _Nonnull)(id<KmpCalendarKotlinx_datetimeDateTimeFormatBuilderWithTime> _Nonnull)"
-  - Selector: "fromMillisecondOfDayMillisecondOfDay:"
-    MethodKind: "Instance"
-    SwiftName: "fromMillisecondOfDay(millisecondOfDay:)"
-    ResultType: "KmpCalendarKotlinx_datetimeLocalTime * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "int32_t"
-  - Selector: "fromNanosecondOfDayNanosecondOfDay:"
-    MethodKind: "Instance"
-    SwiftName: "fromNanosecondOfDay(nanosecondOfDay:)"
-    ResultType: "KmpCalendarKotlinx_datetimeLocalTime * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "int64_t"
-  - Selector: "fromSecondOfDaySecondOfDay:"
-    MethodKind: "Instance"
-    SwiftName: "fromSecondOfDay(secondOfDay:)"
-    ResultType: "KmpCalendarKotlinx_datetimeLocalTime * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "int32_t"
-  - Selector: "orNullHour:minute:second:nanosecond:"
-    MethodKind: "Instance"
-    SwiftName: "orNull(hour:minute:second:nanosecond:)"
-    ResultType: "KmpCalendarKotlinx_datetimeLocalTime * _Nullable"
-    Parameters:
-    - Position: 0
-      Type: "int32_t"
-    - Position: 1
-      Type: "int32_t"
-    - Position: 2
-      Type: "int32_t"
-    - Position: 3
-      Type: "int32_t"
-  - Selector: "parseInput:format:"
-    MethodKind: "Instance"
-    SwiftName: "parse(input:format:)"
-    ResultType: "KmpCalendarKotlinx_datetimeLocalTime * _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "id _Nonnull"
-    - Position: 1
-      Type: "id<KmpCalendarKotlinx_datetimeDateTimeFormat> _Nonnull"
-  - Selector: "serializer"
-    MethodKind: "Instance"
-    SwiftName: "serializer()"
-    ResultType: "id<KmpCalendarKotlinx_serialization_coreKSerializer> _Nonnull"
-- Name: "KmpCalendarKotlinx_datetimePadding"
-  SwiftBridge: "Kotlinx_datetimePadding"
-  SwiftName: "__Kotlinx_datetimePadding"
-  SwiftPrivate: true
-  Properties:
-  - Name: "none"
-    PropertyKind: "Class"
-    SwiftName: "none"
-    Type: "KmpCalendarKotlinx_datetimePadding * _Nonnull"
-  - Name: "zero"
-    PropertyKind: "Class"
-    SwiftName: "zero"
-    Type: "KmpCalendarKotlinx_datetimePadding * _Nonnull"
-  - Name: "space"
-    PropertyKind: "Class"
-    SwiftName: "space"
-    Type: "KmpCalendarKotlinx_datetimePadding * _Nonnull"
-  Methods:
-  - Selector: "initWithName:ordinal:"
-    MethodKind: "Instance"
-    SwiftName: "init(name:ordinal:)"
-    Availability: "nonswift"
-- Name: "KmpCalendarKotlinx_datetimeMonth"
-  SwiftBridge: "Kotlinx_datetimeMonth"
-  SwiftName: "__Kotlinx_datetimeMonth"
-  SwiftPrivate: true
-  Properties:
-  - Name: "january"
-    PropertyKind: "Class"
-    SwiftName: "january"
-    Type: "KmpCalendarKotlinx_datetimeMonth * _Nonnull"
-  - Name: "february"
-    PropertyKind: "Class"
-    SwiftName: "february"
-    Type: "KmpCalendarKotlinx_datetimeMonth * _Nonnull"
-  - Name: "march"
-    PropertyKind: "Class"
-    SwiftName: "march"
-    Type: "KmpCalendarKotlinx_datetimeMonth * _Nonnull"
-  - Name: "april"
-    PropertyKind: "Class"
-    SwiftName: "april"
-    Type: "KmpCalendarKotlinx_datetimeMonth * _Nonnull"
-  - Name: "may"
-    PropertyKind: "Class"
-    SwiftName: "may"
-    Type: "KmpCalendarKotlinx_datetimeMonth * _Nonnull"
-  - Name: "june"
-    PropertyKind: "Class"
-    SwiftName: "june"
-    Type: "KmpCalendarKotlinx_datetimeMonth * _Nonnull"
-  - Name: "july"
-    PropertyKind: "Class"
-    SwiftName: "july"
-    Type: "KmpCalendarKotlinx_datetimeMonth * _Nonnull"
-  - Name: "august"
-    PropertyKind: "Class"
-    SwiftName: "august"
-    Type: "KmpCalendarKotlinx_datetimeMonth * _Nonnull"
-  - Name: "september"
-    PropertyKind: "Class"
-    SwiftName: "september"
-    Type: "KmpCalendarKotlinx_datetimeMonth * _Nonnull"
-  - Name: "october"
-    PropertyKind: "Class"
-    SwiftName: "october"
-    Type: "KmpCalendarKotlinx_datetimeMonth * _Nonnull"
-  - Name: "november"
-    PropertyKind: "Class"
-    SwiftName: "november"
-    Type: "KmpCalendarKotlinx_datetimeMonth * _Nonnull"
-  - Name: "december"
-    PropertyKind: "Class"
-    SwiftName: "december"
-    Type: "KmpCalendarKotlinx_datetimeMonth * _Nonnull"
-  Methods:
-  - Selector: "initWithName:ordinal:"
-    MethodKind: "Instance"
-    SwiftName: "init(name:ordinal:)"
-    Availability: "nonswift"
+      Type: "id<KmpCalendarEvent> _Nonnull"
 - Name: "KmpCalendarKotlinx_datetimeDayOfWeek"
   SwiftBridge: "Kotlinx_datetimeDayOfWeek"
   SwiftName: "__Kotlinx_datetimeDayOfWeek"
@@ -3851,6 +3551,86 @@ Classes:
     ResultType: "NSString * _Nonnull"
 - Name: "KmpCalendarKotlinx_datetimeLocalDateProgressionCompanion"
   SwiftName: "Kotlinx_datetimeLocalDateProgression.Companion"
+- Name: "KmpCalendarKotlinx_datetimeMonth"
+  SwiftBridge: "Kotlinx_datetimeMonth"
+  SwiftName: "__Kotlinx_datetimeMonth"
+  SwiftPrivate: true
+  Properties:
+  - Name: "january"
+    PropertyKind: "Class"
+    SwiftName: "january"
+    Type: "KmpCalendarKotlinx_datetimeMonth * _Nonnull"
+  - Name: "february"
+    PropertyKind: "Class"
+    SwiftName: "february"
+    Type: "KmpCalendarKotlinx_datetimeMonth * _Nonnull"
+  - Name: "march"
+    PropertyKind: "Class"
+    SwiftName: "march"
+    Type: "KmpCalendarKotlinx_datetimeMonth * _Nonnull"
+  - Name: "april"
+    PropertyKind: "Class"
+    SwiftName: "april"
+    Type: "KmpCalendarKotlinx_datetimeMonth * _Nonnull"
+  - Name: "may"
+    PropertyKind: "Class"
+    SwiftName: "may"
+    Type: "KmpCalendarKotlinx_datetimeMonth * _Nonnull"
+  - Name: "june"
+    PropertyKind: "Class"
+    SwiftName: "june"
+    Type: "KmpCalendarKotlinx_datetimeMonth * _Nonnull"
+  - Name: "july"
+    PropertyKind: "Class"
+    SwiftName: "july"
+    Type: "KmpCalendarKotlinx_datetimeMonth * _Nonnull"
+  - Name: "august"
+    PropertyKind: "Class"
+    SwiftName: "august"
+    Type: "KmpCalendarKotlinx_datetimeMonth * _Nonnull"
+  - Name: "september"
+    PropertyKind: "Class"
+    SwiftName: "september"
+    Type: "KmpCalendarKotlinx_datetimeMonth * _Nonnull"
+  - Name: "october"
+    PropertyKind: "Class"
+    SwiftName: "october"
+    Type: "KmpCalendarKotlinx_datetimeMonth * _Nonnull"
+  - Name: "november"
+    PropertyKind: "Class"
+    SwiftName: "november"
+    Type: "KmpCalendarKotlinx_datetimeMonth * _Nonnull"
+  - Name: "december"
+    PropertyKind: "Class"
+    SwiftName: "december"
+    Type: "KmpCalendarKotlinx_datetimeMonth * _Nonnull"
+  Methods:
+  - Selector: "initWithName:ordinal:"
+    MethodKind: "Instance"
+    SwiftName: "init(name:ordinal:)"
+    Availability: "nonswift"
+- Name: "KmpCalendarKotlinx_datetimePadding"
+  SwiftBridge: "Kotlinx_datetimePadding"
+  SwiftName: "__Kotlinx_datetimePadding"
+  SwiftPrivate: true
+  Properties:
+  - Name: "none"
+    PropertyKind: "Class"
+    SwiftName: "none"
+    Type: "KmpCalendarKotlinx_datetimePadding * _Nonnull"
+  - Name: "zero"
+    PropertyKind: "Class"
+    SwiftName: "zero"
+    Type: "KmpCalendarKotlinx_datetimePadding * _Nonnull"
+  - Name: "space"
+    PropertyKind: "Class"
+    SwiftName: "space"
+    Type: "KmpCalendarKotlinx_datetimePadding * _Nonnull"
+  Methods:
+  - Selector: "initWithName:ordinal:"
+    MethodKind: "Instance"
+    SwiftName: "init(name:ordinal:)"
+    Availability: "nonswift"
 - Name: "KmpCalendarKotlinx_datetimeDayOfWeekNames"
   SwiftName: "Kotlinx_datetimeDayOfWeekNames"
   Properties:
@@ -4069,55 +3849,59 @@ Classes:
   SwiftName: "__SkieTypeExportsKt"
   Availability: "nonswift"
   Methods:
-  - Selector: "skieTypeExports_0P0:p1:p2:p3:p4:p5:p6:p7:p8:p9:p10:p11:p12:p13:p14:p15:p16:p17:p18:p19:p20:p21:"
+  - Selector: "skieTypeExports_0P0:p1:p2:p3:p4:p5:p6:p7:p8:p9:p10:p11:p12:p13:p14:p15:p16:p17:p18:p19:p20:p21:p22:p23:"
     MethodKind: "Class"
-    SwiftName: "skieTypeExports_0(p0:p1:p2:p3:p4:p5:p6:p7:p8:p9:p10:p11:p12:p13:p14:p15:p16:p17:p18:p19:p20:p21:)"
+    SwiftName: "skieTypeExports_0(p0:p1:p2:p3:p4:p5:p6:p7:p8:p9:p10:p11:p12:p13:p14:p15:p16:p17:p18:p19:p20:p21:p22:p23:)"
     Availability: "nonswift"
     ResultType: "void"
     Parameters:
     - Position: 0
-      Type: "id<KmpCalendarKotlinx_datetimeDateTimeFormatBuilderWithDateTimeComponents> _Nonnull"
+      Type: "id<KmpCalendarKotlinx_datetimeDateTimeFormatBuilderWithDateTime> _Nonnull"
     - Position: 1
-      Type: "id<KmpCalendarKotlinx_datetimeDateTimeFormatBuilderWithUtcOffset> _Nonnull"
+      Type: "id<KmpCalendarKotlinx_datetimeDateTimeFormatBuilderWithDateTimeComponents> _Nonnull"
     - Position: 2
-      Type: "KmpCalendarKotlinx_serialization_corePolymorphicKind * _Nonnull"
+      Type: "id<KmpCalendarKotlinx_datetimeDateTimeFormatBuilderWithTime> _Nonnull"
     - Position: 3
-      Type: "KmpCalendarKotlinx_serialization_corePolymorphicKindOPEN * _Nonnull"
+      Type: "id<KmpCalendarKotlinx_datetimeDateTimeFormatBuilderWithUtcOffset> _Nonnull"
     - Position: 4
-      Type: "KmpCalendarKotlinx_serialization_corePolymorphicKindSEALED * _Nonnull"
+      Type: "KmpCalendarKotlinx_serialization_corePolymorphicKind * _Nonnull"
     - Position: 5
-      Type: "KmpCalendarKotlinx_serialization_corePrimitiveKind * _Nonnull"
+      Type: "KmpCalendarKotlinx_serialization_corePolymorphicKindOPEN * _Nonnull"
     - Position: 6
-      Type: "KmpCalendarKotlinx_serialization_corePrimitiveKindBOOLEAN * _Nonnull"
+      Type: "KmpCalendarKotlinx_serialization_corePolymorphicKindSEALED * _Nonnull"
     - Position: 7
-      Type: "KmpCalendarKotlinx_serialization_corePrimitiveKindBYTE * _Nonnull"
+      Type: "KmpCalendarKotlinx_serialization_corePrimitiveKind * _Nonnull"
     - Position: 8
-      Type: "KmpCalendarKotlinx_serialization_corePrimitiveKindCHAR * _Nonnull"
+      Type: "KmpCalendarKotlinx_serialization_corePrimitiveKindBOOLEAN * _Nonnull"
     - Position: 9
-      Type: "KmpCalendarKotlinx_serialization_corePrimitiveKindDOUBLE * _Nonnull"
+      Type: "KmpCalendarKotlinx_serialization_corePrimitiveKindBYTE * _Nonnull"
     - Position: 10
-      Type: "KmpCalendarKotlinx_serialization_corePrimitiveKindFLOAT * _Nonnull"
+      Type: "KmpCalendarKotlinx_serialization_corePrimitiveKindCHAR * _Nonnull"
     - Position: 11
-      Type: "KmpCalendarKotlinx_serialization_corePrimitiveKindINT * _Nonnull"
+      Type: "KmpCalendarKotlinx_serialization_corePrimitiveKindDOUBLE * _Nonnull"
     - Position: 12
-      Type: "KmpCalendarKotlinx_serialization_corePrimitiveKindLONG * _Nonnull"
+      Type: "KmpCalendarKotlinx_serialization_corePrimitiveKindFLOAT * _Nonnull"
     - Position: 13
-      Type: "KmpCalendarKotlinx_serialization_corePrimitiveKindSHORT * _Nonnull"
+      Type: "KmpCalendarKotlinx_serialization_corePrimitiveKindINT * _Nonnull"
     - Position: 14
-      Type: "KmpCalendarKotlinx_serialization_corePrimitiveKindSTRING * _Nonnull"
+      Type: "KmpCalendarKotlinx_serialization_corePrimitiveKindLONG * _Nonnull"
     - Position: 15
-      Type: "KmpCalendarKotlinx_serialization_coreSerialKindCONTEXTUAL * _Nonnull"
+      Type: "KmpCalendarKotlinx_serialization_corePrimitiveKindSHORT * _Nonnull"
     - Position: 16
-      Type: "KmpCalendarKotlinx_serialization_coreSerialKindENUM * _Nonnull"
+      Type: "KmpCalendarKotlinx_serialization_corePrimitiveKindSTRING * _Nonnull"
     - Position: 17
-      Type: "KmpCalendarKotlinx_serialization_coreStructureKind * _Nonnull"
+      Type: "KmpCalendarKotlinx_serialization_coreSerialKindCONTEXTUAL * _Nonnull"
     - Position: 18
-      Type: "KmpCalendarKotlinx_serialization_coreStructureKindCLASS * _Nonnull"
+      Type: "KmpCalendarKotlinx_serialization_coreSerialKindENUM * _Nonnull"
     - Position: 19
-      Type: "KmpCalendarKotlinx_serialization_coreStructureKindLIST * _Nonnull"
+      Type: "KmpCalendarKotlinx_serialization_coreStructureKind * _Nonnull"
     - Position: 20
-      Type: "KmpCalendarKotlinx_serialization_coreStructureKindMAP * _Nonnull"
+      Type: "KmpCalendarKotlinx_serialization_coreStructureKindCLASS * _Nonnull"
     - Position: 21
+      Type: "KmpCalendarKotlinx_serialization_coreStructureKindLIST * _Nonnull"
+    - Position: 22
+      Type: "KmpCalendarKotlinx_serialization_coreStructureKindMAP * _Nonnull"
+    - Position: 23
       Type: "KmpCalendarKotlinx_serialization_coreStructureKindOBJECT * _Nonnull"
 - Name: "KmpCalendar__SkieSuspendWrappersKt"
   SwiftName: "__SkieSuspendWrappersKt"
@@ -4243,72 +4027,6 @@ Protocols:
     Parameters:
     - Position: 0
       Type: "id _Nullable"
-- Name: "KmpCalendarKotlinAnnotation"
-  SwiftName: "KotlinAnnotation"
-- Name: "KmpCalendarKotlinKClass"
-  SwiftName: "KotlinKClass"
-  Properties:
-  - Name: "qualifiedName"
-    PropertyKind: "Instance"
-    SwiftName: "qualifiedName"
-    Type: "NSString * _Nullable"
-  - Name: "simpleName"
-    PropertyKind: "Instance"
-    SwiftName: "simpleName"
-    Type: "NSString * _Nullable"
-  Methods:
-  - Selector: "isEqual:"
-    MethodKind: "Instance"
-    SwiftName: "isEqual(_:)"
-    ResultType: "BOOL"
-    Parameters:
-    - Position: 0
-      Type: "id _Nullable"
-  - Selector: "hash"
-    MethodKind: "Instance"
-    SwiftName: "hash()"
-    ResultType: "NSUInteger"
-  - Selector: "isInstanceValue:"
-    MethodKind: "Instance"
-    SwiftName: "isInstance(value:)"
-    ResultType: "BOOL"
-    Parameters:
-    - Position: 0
-      Type: "id _Nullable"
-- Name: "KmpCalendarKotlinKClassifier"
-  SwiftName: "KotlinKClassifier"
-- Name: "KmpCalendarKotlinKAnnotatedElement"
-  SwiftName: "KotlinKAnnotatedElement"
-- Name: "KmpCalendarKotlinKDeclarationContainer"
-  SwiftName: "KotlinKDeclarationContainer"
-- Name: "KmpCalendarKotlinAppendable"
-  SwiftName: "KotlinAppendable"
-  Methods:
-  - Selector: "appendValue:"
-    MethodKind: "Instance"
-    SwiftName: "append(value:)"
-    ResultType: "id<KmpCalendarKotlinAppendable> _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "unichar"
-  - Selector: "appendValue_:"
-    MethodKind: "Instance"
-    SwiftName: "append(value:)"
-    ResultType: "id<KmpCalendarKotlinAppendable> _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "id _Nullable"
-  - Selector: "appendValue:startIndex:endIndex:"
-    MethodKind: "Instance"
-    SwiftName: "append(value:startIndex:endIndex:)"
-    ResultType: "id<KmpCalendarKotlinAppendable> _Nonnull"
-    Parameters:
-    - Position: 0
-      Type: "id _Nullable"
-    - Position: 1
-      Type: "int32_t"
-    - Position: 2
-      Type: "int32_t"
 - Name: "KmpCalendarKotlinOpenEndRange"
   SwiftName: "KotlinOpenEndRange"
   Properties:
@@ -4392,6 +4110,72 @@ Protocols:
     MethodKind: "Instance"
     SwiftName: "iterator()"
     ResultType: "id<KmpCalendarKotlinIterator> _Nonnull"
+- Name: "KmpCalendarKotlinAnnotation"
+  SwiftName: "KotlinAnnotation"
+- Name: "KmpCalendarKotlinKClass"
+  SwiftName: "KotlinKClass"
+  Properties:
+  - Name: "qualifiedName"
+    PropertyKind: "Instance"
+    SwiftName: "qualifiedName"
+    Type: "NSString * _Nullable"
+  - Name: "simpleName"
+    PropertyKind: "Instance"
+    SwiftName: "simpleName"
+    Type: "NSString * _Nullable"
+  Methods:
+  - Selector: "isEqual:"
+    MethodKind: "Instance"
+    SwiftName: "isEqual(_:)"
+    ResultType: "BOOL"
+    Parameters:
+    - Position: 0
+      Type: "id _Nullable"
+  - Selector: "hash"
+    MethodKind: "Instance"
+    SwiftName: "hash()"
+    ResultType: "NSUInteger"
+  - Selector: "isInstanceValue:"
+    MethodKind: "Instance"
+    SwiftName: "isInstance(value:)"
+    ResultType: "BOOL"
+    Parameters:
+    - Position: 0
+      Type: "id _Nullable"
+- Name: "KmpCalendarKotlinKClassifier"
+  SwiftName: "KotlinKClassifier"
+- Name: "KmpCalendarKotlinKAnnotatedElement"
+  SwiftName: "KotlinKAnnotatedElement"
+- Name: "KmpCalendarKotlinKDeclarationContainer"
+  SwiftName: "KotlinKDeclarationContainer"
+- Name: "KmpCalendarKotlinAppendable"
+  SwiftName: "KotlinAppendable"
+  Methods:
+  - Selector: "appendValue:"
+    MethodKind: "Instance"
+    SwiftName: "append(value:)"
+    ResultType: "id<KmpCalendarKotlinAppendable> _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "unichar"
+  - Selector: "appendValue_:"
+    MethodKind: "Instance"
+    SwiftName: "append(value:)"
+    ResultType: "id<KmpCalendarKotlinAppendable> _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "id _Nullable"
+  - Selector: "appendValue:startIndex:endIndex:"
+    MethodKind: "Instance"
+    SwiftName: "append(value:startIndex:endIndex:)"
+    ResultType: "id<KmpCalendarKotlinAppendable> _Nonnull"
+    Parameters:
+    - Position: 0
+      Type: "id _Nullable"
+    - Position: 1
+      Type: "int32_t"
+    - Position: 2
+      Type: "int32_t"
 - Name: "KmpCalendarSkie_DispatcherDelegate"
   SwiftName: "Skie_DispatcherDelegate"
   SwiftPrivate: true
@@ -4507,6 +4291,60 @@ Protocols:
     MethodKind: "Instance"
     SwiftName: "run()"
     ResultType: "void"
+- Name: "KmpCalendarEvent"
+  SwiftName: "Event"
+  Properties:
+  - Name: "attendees"
+    PropertyKind: "Instance"
+    SwiftName: "attendees"
+    Type: "NSArray<KmpCalendarAttendee *> * _Nonnull"
+  - Name: "canEdit"
+    PropertyKind: "Instance"
+    SwiftName: "canEdit"
+    Type: "BOOL"
+  - Name: "categories"
+    PropertyKind: "Instance"
+    SwiftName: "categories"
+    Type: "NSString * _Nullable"
+  - Name: "color"
+    PropertyKind: "Instance"
+    SwiftName: "color"
+    Type: "int32_t"
+  - Name: "description_"
+    PropertyKind: "Instance"
+    SwiftName: "description_"
+    Type: "NSString * _Nullable"
+  - Name: "lastModified"
+    PropertyKind: "Instance"
+    SwiftName: "lastModified"
+    Type: "KmpCalendarKotlinInstant * _Nullable"
+  - Name: "location"
+    PropertyKind: "Instance"
+    SwiftName: "location"
+    Type: "NSString * _Nullable"
+  - Name: "organizer"
+    PropertyKind: "Instance"
+    SwiftName: "organizer"
+    Type: "KmpCalendarAttendee * _Nullable"
+  - Name: "status"
+    PropertyKind: "Instance"
+    SwiftName: "status"
+    Type: "NSString * _Nullable"
+  - Name: "timing"
+    PropertyKind: "Instance"
+    SwiftName: "timing"
+    Type: "id<KmpCalendarEventTiming> _Nonnull"
+  - Name: "title"
+    PropertyKind: "Instance"
+    SwiftName: "title"
+    Type: "NSString * _Nonnull"
+- Name: "KmpCalendarEventTiming"
+  SwiftName: "EventTiming"
+  Properties:
+  - Name: "recurrenceRule"
+    PropertyKind: "Instance"
+    SwiftName: "recurrenceRule"
+    Type: "KmpCalendarRecurrenceRule * _Nullable"
 - Name: "KmpCalendarCalendarCoreGraph"
   SwiftName: "CalendarCoreGraph"
   Properties:
@@ -4565,69 +4403,6 @@ Protocols:
     Parameters:
     - Position: 0
       Type: "NSString * _Nonnull"
-- Name: "KmpCalendarKotlinx_datetimeDateTimeFormatBuilderWithTime"
-  SwiftName: "Kotlinx_datetimeDateTimeFormatBuilderWithTime"
-  Methods:
-  - Selector: "amPmHourPadding:"
-    MethodKind: "Instance"
-    SwiftName: "amPmHour(padding:)"
-    ResultType: "void"
-    Parameters:
-    - Position: 0
-      Type: "KmpCalendarKotlinx_datetimePadding * _Nonnull"
-  - Selector: "amPmMarkerAm:pm:"
-    MethodKind: "Instance"
-    SwiftName: "amPmMarker(am:pm:)"
-    ResultType: "void"
-    Parameters:
-    - Position: 0
-      Type: "NSString * _Nonnull"
-    - Position: 1
-      Type: "NSString * _Nonnull"
-  - Selector: "hourPadding:"
-    MethodKind: "Instance"
-    SwiftName: "hour(padding:)"
-    ResultType: "void"
-    Parameters:
-    - Position: 0
-      Type: "KmpCalendarKotlinx_datetimePadding * _Nonnull"
-  - Selector: "minutePadding:"
-    MethodKind: "Instance"
-    SwiftName: "minute(padding:)"
-    ResultType: "void"
-    Parameters:
-    - Position: 0
-      Type: "KmpCalendarKotlinx_datetimePadding * _Nonnull"
-  - Selector: "secondPadding:"
-    MethodKind: "Instance"
-    SwiftName: "second(padding:)"
-    ResultType: "void"
-    Parameters:
-    - Position: 0
-      Type: "KmpCalendarKotlinx_datetimePadding * _Nonnull"
-  - Selector: "secondFractionMinLength:maxLength:"
-    MethodKind: "Instance"
-    SwiftName: "secondFraction(minLength:maxLength:)"
-    ResultType: "void"
-    Parameters:
-    - Position: 0
-      Type: "int32_t"
-    - Position: 1
-      Type: "int32_t"
-  - Selector: "secondFractionFixedLength:"
-    MethodKind: "Instance"
-    SwiftName: "secondFraction(fixedLength:)"
-    ResultType: "void"
-    Parameters:
-    - Position: 0
-      Type: "int32_t"
-  - Selector: "timeFormat:"
-    MethodKind: "Instance"
-    SwiftName: "time(format:)"
-    ResultType: "void"
-    Parameters:
-    - Position: 0
-      Type: "id<KmpCalendarKotlinx_datetimeDateTimeFormat> _Nonnull"
 - Name: "KmpCalendarKotlinx_datetimeDateTimeFormatBuilderWithDate"
   SwiftName: "Kotlinx_datetimeDateTimeFormatBuilderWithDate"
   Methods:
@@ -4710,6 +4485,69 @@ Protocols:
   - Selector: "dateTimeFormat:"
     MethodKind: "Instance"
     SwiftName: "dateTime(format:)"
+    ResultType: "void"
+    Parameters:
+    - Position: 0
+      Type: "id<KmpCalendarKotlinx_datetimeDateTimeFormat> _Nonnull"
+- Name: "KmpCalendarKotlinx_datetimeDateTimeFormatBuilderWithTime"
+  SwiftName: "Kotlinx_datetimeDateTimeFormatBuilderWithTime"
+  Methods:
+  - Selector: "amPmHourPadding:"
+    MethodKind: "Instance"
+    SwiftName: "amPmHour(padding:)"
+    ResultType: "void"
+    Parameters:
+    - Position: 0
+      Type: "KmpCalendarKotlinx_datetimePadding * _Nonnull"
+  - Selector: "amPmMarkerAm:pm:"
+    MethodKind: "Instance"
+    SwiftName: "amPmMarker(am:pm:)"
+    ResultType: "void"
+    Parameters:
+    - Position: 0
+      Type: "NSString * _Nonnull"
+    - Position: 1
+      Type: "NSString * _Nonnull"
+  - Selector: "hourPadding:"
+    MethodKind: "Instance"
+    SwiftName: "hour(padding:)"
+    ResultType: "void"
+    Parameters:
+    - Position: 0
+      Type: "KmpCalendarKotlinx_datetimePadding * _Nonnull"
+  - Selector: "minutePadding:"
+    MethodKind: "Instance"
+    SwiftName: "minute(padding:)"
+    ResultType: "void"
+    Parameters:
+    - Position: 0
+      Type: "KmpCalendarKotlinx_datetimePadding * _Nonnull"
+  - Selector: "secondPadding:"
+    MethodKind: "Instance"
+    SwiftName: "second(padding:)"
+    ResultType: "void"
+    Parameters:
+    - Position: 0
+      Type: "KmpCalendarKotlinx_datetimePadding * _Nonnull"
+  - Selector: "secondFractionMinLength:maxLength:"
+    MethodKind: "Instance"
+    SwiftName: "secondFraction(minLength:maxLength:)"
+    ResultType: "void"
+    Parameters:
+    - Position: 0
+      Type: "int32_t"
+    - Position: 1
+      Type: "int32_t"
+  - Selector: "secondFractionFixedLength:"
+    MethodKind: "Instance"
+    SwiftName: "secondFraction(fixedLength:)"
+    ResultType: "void"
+    Parameters:
+    - Position: 0
+      Type: "int32_t"
+  - Selector: "timeFormat:"
+    MethodKind: "Instance"
+    SwiftName: "time(format:)"
     ResultType: "void"
     Parameters:
     - Position: 0
