@@ -28,7 +28,7 @@ struct PlanningEventStyle: ViewModifier {
         static let onDatavizContainerVariant = Color.purple
     }
 
-    enum Mode: Sendable, Equatable {
+    enum Mode: Equatable {
         case `default`
         case maybe
         case declined
@@ -39,6 +39,10 @@ struct PlanningEventStyle: ViewModifier {
 
     init(event: CalendarCoreUI.UIEvent) {
         mode = Self.computeMode(for: event)
+    }
+
+    init(mode: Mode) {
+        self.mode = mode
     }
 
     private var foreground: Color {
@@ -98,9 +102,26 @@ extension View {
     func planningEventStyle(event: CalendarCoreUI.UIEvent) -> some View {
         modifier(PlanningEventStyle(event: event))
     }
+
+    func planningEventStyle(mode: PlanningEventStyle.Mode) -> some View {
+        modifier(PlanningEventStyle(mode: mode))
+    }
 }
 
 #Preview {
-    Text("Hello")
-        .planningEventStyle(event: .preview)
+    VStack {
+        Text("Default")
+            .planningEventStyle(mode: .default)
+
+        Text("Maybe")
+            .planningEventStyle(mode: .maybe)
+
+        Text("Declined")
+            .planningEventStyle(mode: .declined)
+
+        Text("Pending")
+            .planningEventStyle(mode: .pending)
+    }
+    .padding()
+    .background(Color.gray.opacity(0.1))
 }

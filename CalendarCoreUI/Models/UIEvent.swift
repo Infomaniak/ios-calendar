@@ -102,6 +102,7 @@ public extension UIEvent {
         startDate: Date(),
         endDate: Date().addingTimeInterval(60 * 15),
         status: .confirmed,
+        user: UIAttendee(displayName: "Tim Cook", email: "tim@apple.com", status: .accepted),
         attendees: UIAttendee.previews
     )
     static let mediumPreview = UIEvent(
@@ -110,6 +111,7 @@ public extension UIEvent {
         startDate: Date(),
         endDate: Date().addingTimeInterval(60 * 60 * 2),
         status: .tentative,
+        user: UIAttendee(displayName: "Tim Cook", email: "tim@apple.com", status: .needsAction),
         attendees: []
     )
     static let longPreview = UIEvent(
@@ -118,6 +120,7 @@ public extension UIEvent {
         startDate: Date(),
         endDate: Date().addingTimeInterval(60 * 60 * 24 * 2),
         status: .cancelled,
+        user: UIAttendee(displayName: "Tim Cook", email: "tim@apple.com", status: .declined),
         attendees: UIAttendee.previews
     )
 
