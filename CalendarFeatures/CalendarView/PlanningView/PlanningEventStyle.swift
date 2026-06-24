@@ -1,4 +1,3 @@
-//
 /*
  Infomaniak Calendar - iOS App
  Copyright (C) 2026 Infomaniak Network SA
@@ -23,23 +22,31 @@ import SwiftUI
 struct PlanningEventStyle: ViewModifier {
     let event: CalendarCoreUI.UIEvent
 
-    private var primaryColor: Color {
-        return Color.purple
+    struct FakeEventColors {
+        static let datavizContainer = Color.white
+        static let onDatavizContainer = Color.purple
+        static let datavizContainerVariant = Color.purple.opacity(0.3)
+        static let onDatavizContainerVariant = Color.purple
     }
 
-    private var secondaryColor: Color {
-        return Color.purple.opacity(0.5)
+    private var foreground: Color {
+        switch event.status {
+        case .confirmed, .none:
+            return FakeEventColors.onDatavizContainer
+        case .tentative, .cancelled:
+            return FakeEventColors.onDatavizContainerVariant
+        }
     }
 
     @ContentBuilder
     private var background: some View {
         switch event.status {
         case .tentative:
-            EmptyView()
+            FakeEventColors.datavizContainer
         case .cancelled:
-            DiagonalStripesView(color: secondaryColor)
+            DiagonalStripesView(color: FakeEventColors.datavizContainerVariant)
         default:
-            secondaryColor
+            FakeEventColors.datavizContainerVariant
         }
     }
 
@@ -47,7 +54,9 @@ struct PlanningEventStyle: ViewModifier {
         content
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(8)
+            .foregroundStyle(foreground)
             .background(background)
+            .strikethrough(event.status == .cancelled)
             .clipShape(.rect(cornerRadius: 8))
     }
 }
