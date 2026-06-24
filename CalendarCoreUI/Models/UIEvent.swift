@@ -37,24 +37,44 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
     public let startDate: Date
     public let endDate: Date
     public let status: UIEventStatus?
+
+    public let user: UIAttendee?
     public let attendees: [UIAttendee]
 
-    public init(id: String, title: String, startDate: Date, endDate: Date, status: UIEventStatus?, attendees: [UIAttendee]) {
+    public init(
+        id: String,
+        title: String,
+        startDate: Date,
+        endDate: Date,
+        status: UIEventStatus?,
+        user: UIAttendee? = nil,
+        attendees: [UIAttendee]
+    ) {
         self.id = id
         self.title = title
         self.startDate = startDate
         self.endDate = endDate
         self.status = status
+        self.user = user
         self.attendees = attendees
     }
 }
 
 public extension UIEvent {
-    init?(event: KmpCalendar.Event) {
+    init?(event: KmpCalendar.Event, userEmail: String?) {
         id = event.idValue
         title = event.title
         status = UIEventStatus(rawValue: event.status ?? "")
-        attendees = event.attendees.map { UIAttendee(attendee: $0) }
+
+        var user: UIAttendee?
+        self.attendees = event.attendees.map {
+            let uiAttendee = UIAttendee(attendee: $0)
+            if uiAttendee.email == userEmail {
+                user = uiAttendee
+            }
+            return uiAttendee
+        }
+        self.user = user
 
         switch event.timing {
         case let timed as EventTimingTimed:

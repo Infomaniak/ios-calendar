@@ -23,6 +23,8 @@ import KmpCalendar
 import SwiftUI
 
 public struct PlanningView: View {
+    @Environment(\.calendarAccounts) private var calendarAccounts
+
     @State private var planningDays: [PlanningDay] = []
 
     public init() {}
@@ -42,8 +44,11 @@ public struct PlanningView: View {
         let calendars = await getCalendars()
         guard let firstCalendar = calendars.first else { return }
 
+        let accountEmail = calendarAccounts.first { $0.id == firstCalendar.accountIdValue }?.user.email
+
         for await events in calendarSDK.calendarManager.observeEvents(calendarId: firstCalendar.idValue) {
-            let uiEvents = events.compactMap { UIEvent(event: $0) }
+            let uiEvents = events.compactMap { UIEvent(event: $0, userEmail: accountEmail) }
+
             let days = PlanningDay.makeContiguousDays(from: uiEvents)
 
             withAnimation {
