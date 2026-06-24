@@ -25,7 +25,7 @@ extension KotlinInstant {
     }
 }
 
-public enum UIEventStatus: String, Sendable {
+public enum UIEventStatus: String, Sendable, Equatable {
     case confirmed = "CONFIRMED"
     case tentative = "TENTATIVE"
     case cancelled = "CANCELLED"
@@ -37,13 +37,15 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
     public let startDate: Date
     public let endDate: Date
     public let status: UIEventStatus?
+    public let attendees: [UIAttendee]
 
-    public init(id: String, title: String, startDate: Date, endDate: Date, status: UIEventStatus?) {
+    public init(id: String, title: String, startDate: Date, endDate: Date, status: UIEventStatus?, attendees: [UIAttendee]) {
         self.id = id
         self.title = title
         self.startDate = startDate
         self.endDate = endDate
         self.status = status
+        self.attendees = attendees
     }
 }
 
@@ -52,6 +54,7 @@ public extension UIEvent {
         id = event.idValue
         title = event.title
         status = UIEventStatus(rawValue: event.status ?? "")
+        attendees = event.attendees.map { UIAttendee(attendee: $0) }
 
         switch event.timing {
         case let timed as EventTimingTimed:
@@ -69,7 +72,8 @@ public extension UIEvent {
         title: "Event Title",
         startDate: Date(),
         endDate: Date().addingTimeInterval(3600),
-        status: .confirmed
+        status: .confirmed,
+        attendees: UIAttendee.previews
     )
 
     static let shortPreview = UIEvent(
@@ -77,21 +81,24 @@ public extension UIEvent {
         title: "Short Title With A Very Long Title But It's Okay Because We Want To Test The UI And See How It Looks With A Long Title",
         startDate: Date(),
         endDate: Date().addingTimeInterval(60 * 15),
-        status: .confirmed
+        status: .confirmed,
+        attendees: UIAttendee.previews
     )
     static let mediumPreview = UIEvent(
         id: "2",
         title: "Medium Title With A Very Long Title But It's Okay Because We Want To Test The UI And See How It Looks With A Long Title",
         startDate: Date(),
         endDate: Date().addingTimeInterval(60 * 60 * 2),
-        status: .tentative
+        status: .tentative,
+        attendees: []
     )
     static let longPreview = UIEvent(
         id: "3",
         title: "Long Title With A Very Long Title But It's Okay Because We Want To Test The UI And See How It Looks With A Long Title",
         startDate: Date(),
         endDate: Date().addingTimeInterval(60 * 60 * 24 * 2),
-        status: .cancelled
+        status: .cancelled,
+        attendees: UIAttendee.previews
     )
 
     static let random100Events: [UIEvent] = (0 ..< 100).map { index in
@@ -103,7 +110,8 @@ public extension UIEvent {
             title: "Event \(index)",
             startDate: randomStartDate,
             endDate: randomEndDate,
-            status: .confirmed
+            status: .confirmed,
+            attendees: UIAttendee.previews
         )
     }
 }
