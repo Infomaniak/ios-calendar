@@ -67,7 +67,7 @@ public extension UIEvent {
         status = UIEventStatus(rawValue: event.status ?? "")
 
         var user: UIAttendee?
-        self.attendees = event.attendees.map {
+        attendees = event.attendees.map {
             let uiAttendee = UIAttendee(attendee: $0)
             if uiAttendee.email == userEmail {
                 user = uiAttendee

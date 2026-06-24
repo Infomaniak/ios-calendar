@@ -20,15 +20,15 @@ import CalendarCoreUI
 import SwiftUI
 
 struct PlanningEventStyle: ViewModifier {
-    // TO BE REMOVED
-    struct FakeEventColors {
+    /// TO BE REMOVED
+    enum FakeEventColors {
         static let datavizContainer = Color.white
         static let onDatavizContainer = Color.purple
         static let datavizContainerVariant = Color.purple.opacity(0.3)
         static let onDatavizContainerVariant = Color.purple
     }
 
-    enum Mode: Sendable {
+    enum Mode: Sendable, Equatable {
         case `default`
         case maybe
         case declined
@@ -50,7 +50,7 @@ struct PlanningEventStyle: ViewModifier {
         }
     }
 
-    @ContentBuilder
+    @ViewBuilder
     private var background: some View {
         switch mode {
         case .default, .declined:
