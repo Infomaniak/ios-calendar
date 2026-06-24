@@ -20,8 +20,7 @@ import CalendarCoreUI
 import SwiftUI
 
 struct PlanningEventStyle: ViewModifier {
-    let event: CalendarCoreUI.UIEvent
-
+    // TO BE REMOVED
     struct FakeEventColors {
         static let datavizContainer = Color.white
         static let onDatavizContainer = Color.purple
@@ -29,24 +28,37 @@ struct PlanningEventStyle: ViewModifier {
         static let onDatavizContainerVariant = Color.purple
     }
 
+    enum Mode: Sendable {
+        case `default`
+        case maybe
+        case declined
+        case pending
+    }
+
+    let mode: Mode
+
+    init(event: CalendarCoreUI.UIEvent) {
+        mode = Self.computeMode(for: event)
+    }
+
     private var foreground: Color {
-        switch event.status {
-        case .confirmed, .none:
-            return FakeEventColors.onDatavizContainer
-        case .tentative, .cancelled:
+        switch mode {
+        case .default, .maybe, .declined:
             return FakeEventColors.onDatavizContainerVariant
+        case .pending:
+            return FakeEventColors.onDatavizContainer
         }
     }
 
     @ContentBuilder
     private var background: some View {
-        switch event.status {
-        case .tentative:
-            FakeEventColors.datavizContainer
-        case .cancelled:
-            DiagonalStripesView(color: FakeEventColors.datavizContainerVariant)
-        default:
+        switch mode {
+        case .default, .declined:
             FakeEventColors.datavizContainerVariant
+        case .maybe:
+            DiagonalStripesView(color: FakeEventColors.datavizContainerVariant)
+        case .pending:
+            FakeEventColors.datavizContainer
         }
     }
 
@@ -56,8 +68,29 @@ struct PlanningEventStyle: ViewModifier {
             .padding(8)
             .foregroundStyle(foreground)
             .background(background)
-            .strikethrough(event.status == .cancelled)
+            .strikethrough(mode == .declined)
             .clipShape(.rect(cornerRadius: 8))
+    }
+
+    private static func computeMode(for event: CalendarCoreUI.UIEvent) -> Mode {
+        if event.status == .cancelled {
+            return .declined
+        }
+
+        guard let attendee = event.user else {
+            return .default
+        }
+
+        switch attendee.status {
+        case .accepted:
+            return .default
+        case .declined:
+            return .declined
+        case .tentative:
+            return .maybe
+        case .needsAction:
+            return .pending
+        }
     }
 }
 

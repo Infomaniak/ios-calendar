@@ -38,9 +38,9 @@ public extension UIParticipationStatus {
 }
 
 public struct UIAttendee: Sendable, Equatable, Hashable {
-    let displayName: String?
-    let email: String
-    let status: UIParticipationStatus
+    public let displayName: String?
+    public let email: String
+    public let status: UIParticipationStatus
 
     public init(displayName: String?, email: String, status: UIParticipationStatus) {
         self.displayName = displayName
