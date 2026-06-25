@@ -22,9 +22,20 @@ import SwiftUI
 struct PlanningEventView: View {
     let event: CalendarCoreUI.UIEvent
 
+    private let dateFormat = Date.FormatStyle.dateTime.hour().minute()
+
     var body: some View {
-        Text(event.title)
-            .planningEventStyle(event: event)
+        VStack(alignment: .leading) {
+            HStack {
+                Text(event.startDate, format: .dateTime.hour().minute())
+                Text("-")
+                Text(event.endDate, format: .dateTime.hour().minute())
+            }
+
+            Text(event.title)
+                .lineLimit(1)
+        }
+        .planningEventStyle(event: event)
     }
 }
 
