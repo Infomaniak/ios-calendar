@@ -1,47 +1,47 @@
 /*
  * Loco ios export: Xcode Strings (legacy)
  * Project: Calendar
- * Locale: en, English
+ * Locale: el, Greek
  * Tagged: ios
  * Exported by: Valentin Perignon
  * Exported at: Thu, 25 Jun 2026 16:08:34 +0200
  */
 
 /* loco:6a3d35f26bb2f27bf40b0052 */
-"allDayLabel" = "All Day";
+"allDayLabel" = "Όλη την ημέρα";
 
 /* loco:6a21369c4c1c4427f404f752 */
-"contentDescriptionCreateEvent" = "Create an event";
+"contentDescriptionCreateEvent" = "Δημιουργία εκδήλωσης";
 
 /* loco:6a3d34bb5eb5c479b60cd952 */
-"contentDescriptionHasAttendees" = "Has attendees";
+"contentDescriptionHasAttendees" = "Έχει συμμετέχοντες";
 
 /* loco:6a3d35153958b78884028532 */
-"contentDescriptionHasKMeetLink" = "Has a kMeet link";
+"contentDescriptionHasKMeetLink" = "Διαθέτει σύνδεσμο kMeet";
 
 /* loco:6a3d348259af9626a10b0f92 */
-"contentDescriptionHasLocation" = "Has a location";
+"contentDescriptionHasLocation" = "Έχει τοποθεσία";
 
 /* loco:6a21376e873ebaff3100af91 */
-"contentDescriptionToday" = "Today";
+"contentDescriptionToday" = "Σήμερα";
 
 /* loco:6a203e6bc6a8e2e3c9024e12 */
-"dayTitle" = "Day";
+"dayTitle" = "Ημέρα";
 
 /* loco:6a2040c0637876be5f0ec2f2 */
-"monthTitle" = "Month";
+"monthTitle" = "Μήνας";
 
 /* loco:6a2041176b9fab94970540c4 */
-"planningTitle" = "Planning";
+"planningTitle" = "Προγραμματισμός";
 
 /* loco:6a203f703a4a6492b407ce23 */
-"threeDaysTitle" = "Three days";
+"threeDaysTitle" = "Τρεις ημέρες";
 
 /* loco:6a33b6af70169a248e0094d6 */
 "weekHeaderDateRange" = "%d–%d %s %d";
 
 /* loco:6a33b6883afea93d8b078502 */
-"weekHeaderWeekNumber" = "W%d";
+"weekHeaderWeekNumber" = "Εβδ.%d";
 
 /* loco:6a20400eb551c8b00e0b8da4 */
-"weekTitle" = "Week";
+"weekTitle" = "Εβδομάδα";
