@@ -65,18 +65,21 @@ struct PlanningEventView: View {
                         .resizable()
                         .scaledToFit()
                         .frame(width: 16, height: 16)
+                        .accessibilityLabel(Text(CalendarResourcesStrings.contentDescriptionHasLocation))
                 }
                 if event.kMeetLink != nil {
                     CalendarResourcesAsset.Images.productKmeet.swiftUIImage
                         .resizable()
                         .scaledToFit()
                         .frame(width: 16, height: 16)
+                        .accessibilityLabel(Text(CalendarResourcesStrings.contentDescriptionHasKMeetLink))
                 }
                 if !event.attendees.isEmpty {
                     CalendarResourcesAsset.Images.usersStacked.swiftUIImage
                         .resizable()
                         .scaledToFit()
                         .frame(width: 16, height: 16)
+                        .accessibilityLabel(Text(CalendarResourcesStrings.contentDescriptionHasAttendees))
                 }
             }
         }

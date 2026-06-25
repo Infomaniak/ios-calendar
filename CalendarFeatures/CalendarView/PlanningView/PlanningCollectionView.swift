@@ -147,9 +147,19 @@ struct PlanningCollectionView: UIViewRepresentable {
             let cellRegistration = UICollectionView.CellRegistration<
                 UICollectionViewListCell, CalendarCoreUI.UIEvent
             > { cell, _, event in
-                cell.contentConfiguration = UIHostingConfiguration { PlanningEventView(event: event) }
+                if event.isAllDay {
+                    cell.contentConfiguration = UIHostingConfiguration {
+                        PlanningDayEventView(event: event)
+                    }
                     .margins(.all, 0)
                     .minSize(height: 20)
+                } else {
+                    cell.contentConfiguration = UIHostingConfiguration {
+                        PlanningEventView(event: event)
+                    }
+                    .margins(.all, 0)
+                    .minSize(height: 20)
+                }
             }
 
             let dayHeaderRegistration = UICollectionView.SupplementaryRegistration<PlanningDayHeaderView>(
