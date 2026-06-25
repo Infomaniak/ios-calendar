@@ -19,6 +19,23 @@
 import Foundation
 import MultiplatformCalendar
 
+extension Kotlinx_datetimeLocalDate {
+    var date: Date? {
+        let components = DateComponents(
+            calendar: .current,
+            year: Int(year),
+            month: Int(month.ordinal),
+            day: Int(day),
+            hour: 0,
+            minute: 0,
+            second: 0,
+            nanosecond: 0,
+            weekday: Int(dayOfWeek.ordinal)
+        )
+        return components.date
+    }
+}
+
 extension KotlinInstant {
     var date: Date {
         Date(timeIntervalSince1970: TimeInterval(toEpochMilliseconds()) / 1000.0)
@@ -34,11 +51,13 @@ public enum UIEventStatus: String, Sendable, Equatable {
 public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
     public let id: String
     public let title: String
-    public let startDate: Date
-    public let endDate: Date
     public let status: UIEventStatus?
     public let location: String?
     public let kMeetLink: String? = nil // TODO: Get it from Event
+
+    public let startDate: Date
+    public let endDate: Date
+    public let isAllDay: Bool
 
     public let user: UIAttendee?
     public let attendees: [UIAttendee]
@@ -48,6 +67,7 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
         title: String,
         startDate: Date,
         endDate: Date,
+        isAllDay: Bool = false,
         status: UIEventStatus?,
         location: String? = nil,
         user: UIAttendee? = nil,
@@ -57,6 +77,7 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
         self.title = title
         self.startDate = startDate
         self.endDate = endDate
+        self.isAllDay = isAllDay
         self.status = status
         self.location = location
         self.user = user
@@ -85,6 +106,15 @@ public extension UIEvent {
         case let timed as EventTimingTimed:
             startDate = timed.start.date
             endDate = timed.end.date
+            isAllDay = false
+        case let allDay as EventTimingAllDay:
+            guard let startDate = allDay.startDate.date, let endDate = allDay.endDate.date else {
+                return nil
+            }
+
+            self.startDate = startDate
+            self.endDate = endDate
+            isAllDay = true
         default:
             return nil
         }
