@@ -17,6 +17,7 @@
  */
 
 import CalendarCoreUI
+import CalendarResources
 import SwiftUI
 
 struct PlanningEventView: View {
@@ -24,17 +25,62 @@ struct PlanningEventView: View {
 
     private let dateFormat = Date.FormatStyle.dateTime.hour().minute()
 
+    enum UIConstants: Sendable {
+        static let minDuration: TimeInterval = 15
+        static let maxDuration: TimeInterval = 120
+
+        static let maxSize: CGFloat = 50
+    }
+
+    private var bottomPadding: CGFloat {
+        let duration = event.endDate.timeIntervalSince(event.startDate)
+        let durationInMinutes = duration / 60
+
+        guard durationInMinutes > UIConstants.minDuration else { return 0 }
+        guard durationInMinutes < UIConstants.maxDuration else { return UIConstants.maxSize }
+
+        let ratio = (durationInMinutes - UIConstants.minDuration) / (UIConstants.maxDuration - UIConstants.minDuration)
+        return CGFloat(ratio) * UIConstants.maxSize
+    }
+
     var body: some View {
-        VStack(alignment: .leading) {
-            HStack {
-                Text(event.startDate, format: .dateTime.hour().minute())
-                Text("-")
-                Text(event.endDate, format: .dateTime.hour().minute())
+        HStack {
+            VStack(alignment: .leading, spacing: 0) {
+                HStack {
+                    Text(event.startDate, format: dateFormat)
+                    Text("-")
+                    Text(event.endDate, format: dateFormat)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .font(.caption2)
+
+                Text(event.title)
+                    .lineLimit(1)
+                    .font(.caption.bold())
             }
 
-            Text(event.title)
-                .lineLimit(1)
+            HStack(spacing: 4) {
+                if event.location != nil {
+                    CalendarResourcesAsset.Images.mapPin.swiftUIImage
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 16, height: 16)
+                }
+                if event.kMeetLink != nil {
+                    CalendarResourcesAsset.Images.productKmeet.swiftUIImage
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 16, height: 16)
+                }
+                if !event.attendees.isEmpty {
+                    CalendarResourcesAsset.Images.usersStacked.swiftUIImage
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 16, height: 16)
+                }
+            }
         }
+        .padding(.bottom, bottomPadding)
         .planningEventStyle(event: event)
     }
 }

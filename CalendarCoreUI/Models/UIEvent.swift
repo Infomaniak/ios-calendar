@@ -37,6 +37,8 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
     public let startDate: Date
     public let endDate: Date
     public let status: UIEventStatus?
+    public let location: String?
+    public let kMeetLink: String? = nil // TODO: Get it from Event
 
     public let user: UIAttendee?
     public let attendees: [UIAttendee]
@@ -47,6 +49,7 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
         startDate: Date,
         endDate: Date,
         status: UIEventStatus?,
+        location: String? = nil,
         user: UIAttendee? = nil,
         attendees: [UIAttendee]
     ) {
@@ -55,6 +58,7 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
         self.startDate = startDate
         self.endDate = endDate
         self.status = status
+        self.location = location
         self.user = user
         self.attendees = attendees
     }
@@ -65,6 +69,7 @@ public extension UIEvent {
         id = event.idValue
         title = event.title
         status = UIEventStatus(rawValue: event.status ?? "")
+        location = event.location
 
         var user: UIAttendee?
         attendees = event.attendees.map {
