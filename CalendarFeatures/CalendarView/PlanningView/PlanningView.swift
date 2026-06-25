@@ -16,43 +16,30 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import CalendarCoreUI
 import Foundation
-import InfomaniakDI
-import MultiplatformCalendar
 import SwiftUI
 
 public struct PlanningView: View {
-    @State private var planningDays: [PlanningDay] = []
+    @StateObject private var planningViewModel = PlanningViewModel()
 
     public init() {}
 
     public var body: some View {
-        VStack {
-            PlanningCollectionView(planningDays: planningDays)
-                .ignoresSafeArea()
-        }
-        .task {
-            await observeEvents()
-        }
-    }
-
-    private func observeEvents() async {
-        @InjectService var calendarSDK: CalendarCoreGraph
-
-        let oneWeek = Int64(Date(timeIntervalSinceNow: 60 * 60 * 24 * 7).timeIntervalSince1970) * 1000
-
-        for await events in calendarSDK.calendarManager.observeEvents(
-            start: .companion.fromEpochMilliseconds(epochMilliseconds: -oneWeek),
-            end: .companion.fromEpochMilliseconds(epochMilliseconds: oneWeek),
-        ) {
-            let uiEvents = events.compactMap { UIEvent(event: $0, userEmail: "") }
-            let days = PlanningDay.makeContiguousDays(from: uiEvents)
-
-            withAnimation {
-                planningDays = days
+        PlanningCollectionView(planningViewModel: planningViewModel)
+            .ignoresSafeArea()
+            .toolbar {
+                ToolbarItem(placement: .bottomBar) {
+                    Button("Today") {
+                        withAnimation {
+                            planningViewModel.scrollTarget = Date()
+                        }
+                    }
+                }
             }
-        }
+            .task {
+                try? await Task.sleep(for: .milliseconds(500)) // Workaround to let the view load before scrolling to today
+                planningViewModel.scrollTarget = Date()
+            }
     }
 }
 

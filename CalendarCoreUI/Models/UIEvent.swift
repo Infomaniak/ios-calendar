@@ -34,6 +34,7 @@ public extension UIEvent {
     }
 
     struct Colors: Sendable, Equatable, Hashable {
+        private let id: Int32
         public let datavizContainer: Color
         public let onDatavizContainer: Color
         public let datavizContainerVariant: Color
@@ -45,6 +46,7 @@ public extension UIEvent {
             datavizContainerVariant: Color,
             onDatavizContainerVariant: Color
         ) {
+            id = datavizContainer.argb
             self.datavizContainer = datavizContainer
             self.onDatavizContainer = onDatavizContainer
             self.datavizContainerVariant = datavizContainerVariant
@@ -52,10 +54,19 @@ public extension UIEvent {
         }
 
         public init(eventColors: EventColors) {
+            id = eventColors.datavizContainer.light
             datavizContainer = Color(eventColor: eventColors.datavizContainer)
             onDatavizContainer = Color(eventColor: eventColors.onDatavizContainer)
             datavizContainerVariant = Color(eventColor: eventColors.datavizContainerVariant)
             onDatavizContainerVariant = Color(eventColor: eventColors.onDatavizContainerVariant)
+        }
+
+        public static func == (lhs: UIEvent.Colors, rhs: UIEvent.Colors) -> Bool {
+            lhs.id == rhs.id
+        }
+
+        public func hash(into hasher: inout Hasher) {
+            hasher.combine(id)
         }
     }
 }

@@ -19,7 +19,7 @@
 import DesignSystem
 import UIKit
 
-final class PlanningWeekHeaderView: UICollectionReusableView {
+final class PlanningWeekHeaderCell: UICollectionViewCell {
     private static let intervalFormatter: DateIntervalFormatter = {
         let formatter = DateIntervalFormatter()
         formatter.dateTemplate = "dMMMM"

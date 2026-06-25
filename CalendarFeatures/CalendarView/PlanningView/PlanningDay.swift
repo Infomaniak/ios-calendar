@@ -23,6 +23,13 @@ import MultiplatformCalendar
 struct PlanningDay: Identifiable, Hashable {
     let date: Date
     let events: [CalendarCoreUI.UIEvent]
+    let isWeekStart: Bool
+
+    init(date: Date, events: [CalendarCoreUI.UIEvent]) {
+        self.date = date
+        self.events = events
+        isWeekStart = Calendar.current.component(.weekday, from: date) == Calendar.current.firstWeekday
+    }
 
     var id: Date {
         date
