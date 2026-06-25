@@ -26,25 +26,43 @@ import SwiftUI
 
 public struct MainView: View {
     @Environment(\.calendarAccounts) private var calendarAccounts
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     @State private var isShowingCalendarListView = false
 
     public init() {}
 
     public var body: some View {
-        NavigationStack {
-            CalendarView()
-                .toolbar {
-                    Button("Calendars") {
-                        isShowingCalendarListView = true
-                    }
+        if horizontalSizeClass == .regular {
+            NavigationSplitView {
+                CalendarListView()
+            } detail: {
+                NavigationStack {
+                    CalendarView()
                 }
-        }
-        .task(id: calendarAccounts) {
-            await syncCalendars()
-        }
-        .sheet(isPresented: $isShowingCalendarListView) {
-            CalendarListView()
+            }
+            .task(id: calendarAccounts) {
+                await syncCalendars()
+            }
+        } else {
+            NavigationStack {
+                CalendarView()
+                    .toolbar {
+                        ToolbarItem(placement: .topBarLeading) {
+                            Button {
+                                isShowingCalendarListView = true
+                            } label: {
+                                Image(systemName: "list.bullet")
+                            }
+                        }
+                    }
+            }
+            .task(id: calendarAccounts) {
+                await syncCalendars()
+            }
+            .sheet(isPresented: $isShowingCalendarListView) {
+                CalendarListView()
+            }
         }
     }
 

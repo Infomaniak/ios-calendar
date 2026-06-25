@@ -23,14 +23,12 @@ struct CalendarListContentView: View {
     let calendars: [UICalendar]
 
     var body: some View {
-        List {
-            ForEach(calendars) { calendar in
-                HStack {
-                    Circle()
-                        .fill(calendar.color)
-                        .frame(width: 8, height: 8)
-                    Text(calendar.displayName)
-                }
+        ForEach(calendars) { calendar in
+            HStack {
+                Circle()
+                    .fill(calendar.color)
+                    .frame(width: 8, height: 8)
+                Text(calendar.displayName)
             }
         }
     }

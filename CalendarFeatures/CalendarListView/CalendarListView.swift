@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarCore
 import CalendarCoreUI
 import InfomaniakDI
 import MultiplatformCalendar
@@ -26,14 +27,54 @@ public struct CalendarListView: View {
     @Environment(\.calendarAccounts) private var calendarAccounts
 
     @State private var calendars = [UICalendar]()
+    @State private var expandedAccounts: Set<Int> = []
+    @State private var isExpanded = true
 
     public init() {}
 
     public var body: some View {
-        CalendarListContentView(calendars: calendars)
-            .task(id: calendarAccounts) {
-                await observeCalendars()
+        List {
+            ForEach(calendarAccounts) { account in
+                Section {
+                    DisclosureGroup(
+                        isExpanded: Binding(
+                            get: { expandedAccounts.contains(account.id) },
+                            set: { isExpanding in
+                                if isExpanding {
+                                    expandedAccounts.insert(account.id)
+                                } else {
+                                    expandedAccounts.remove(account.id)
+                                }
+                            }
+                        )
+                    ) {
+                        CalendarListContentView(calendars: calendarsFor(account: account))
+                    } label: {
+                        AccountCellView(account: account)
+                    }
+                }
             }
+
+            Section {
+                DisclosureGroup("Réglages", isExpanded: $isExpanded) {
+                    HStack {
+                        Image(systemName: "21.calendar")
+                        Text("Paramètres")
+                    }
+                    HStack {
+                        Image(systemName: "headphones")
+                        Text("Centre d'aide")
+                    }
+                }
+            }
+        }
+        .task(id: calendarAccounts) {
+            await observeCalendars()
+        }
+    }
+
+    private func calendarsFor(account: CalendarAccount) -> [UICalendar] {
+        calendars.filter { $0.accountId == account.id }
     }
 
     private func observeCalendars() async {
