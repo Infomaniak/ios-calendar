@@ -91,7 +91,7 @@ struct PlanningCollectionView: UIViewRepresentable {
         private static func makeDaySection(showsWeekHeader: Bool) -> NSCollectionLayoutSection {
             let itemSize = NSCollectionLayoutSize(
                 widthDimension: .fractionalWidth(1),
-                heightDimension: .absolute(PlanningLayoutMetrics.eventRowHeight)
+                heightDimension: .estimated(PlanningLayoutMetrics.eventRowHeight)
             )
             let item = NSCollectionLayoutItem(layoutSize: itemSize)
             item.contentInsets = NSDirectionalEdgeInsets.zero
@@ -100,9 +100,9 @@ struct PlanningCollectionView: UIViewRepresentable {
             group.contentInsets = NSDirectionalEdgeInsets.zero
 
             let section = NSCollectionLayoutSection(group: group)
-            section.interGroupSpacing = 0
+            section.interGroupSpacing = IKPadding.mini
             section.contentInsets = NSDirectionalEdgeInsets(
-                top: IKPadding.mini,
+                top: 0,
                 leading: PlanningLayoutMetrics.dayColumnWidth,
                 bottom: 0,
                 trailing: IKPadding.mini
@@ -132,7 +132,6 @@ struct PlanningCollectionView: UIViewRepresentable {
                     elementKind: PlanningLayoutMetrics.weekHeaderKind,
                     alignment: .topLeading
                 )
-                weekHeader.extendsBoundary = false
                 weekHeader.zIndex = 2
                 section.boundarySupplementaryItems = [weekHeader, dayHeader]
             } else {
@@ -148,10 +147,9 @@ struct PlanningCollectionView: UIViewRepresentable {
             let cellRegistration = UICollectionView.CellRegistration<
                 UICollectionViewListCell, CalendarCoreUI.UIEvent
             > { cell, _, event in
-                cell.contentConfiguration = UIHostingConfiguration {
-                    PlanningEventView(event: event)
-                }
-                .margins(.all, 0)
+                cell.contentConfiguration = UIHostingConfiguration { PlanningEventView(event: event) }
+                    .margins(.all, 0)
+                    .minSize(height: 20)
             }
 
             let dayHeaderRegistration = UICollectionView.SupplementaryRegistration<PlanningDayHeaderView>(
