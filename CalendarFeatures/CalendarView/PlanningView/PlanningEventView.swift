@@ -24,9 +24,14 @@ struct PlanningEventView: View {
 
     var body: some View {
         Text(event.title)
+            .planningEventStyle(event: event)
     }
 }
 
 #Preview {
-    PlanningEventView(event: .preview)
+    VStack {
+        PlanningEventView(event: .shortPreview)
+        PlanningEventView(event: .mediumPreview)
+        PlanningEventView(event: .longPreview)
+    }
 }

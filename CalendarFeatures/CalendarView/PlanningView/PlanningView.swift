@@ -46,7 +46,7 @@ public struct PlanningView: View {
             start: .companion.fromEpochMilliseconds(epochMilliseconds: -oneWeek),
             end: .companion.fromEpochMilliseconds(epochMilliseconds: oneWeek),
         ) {
-            let uiEvents = events.compactMap { UIEvent(event: $0) }
+            let uiEvents = events.compactMap { UIEvent(event: $0, userEmail: "") }
             let days = PlanningDay.makeContiguousDays(from: uiEvents)
 
             withAnimation {

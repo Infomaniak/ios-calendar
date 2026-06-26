@@ -25,24 +25,56 @@ extension KotlinInstant {
     }
 }
 
+public enum UIEventStatus: String, Sendable, Equatable {
+    case confirmed = "CONFIRMED"
+    case tentative = "TENTATIVE"
+    case cancelled = "CANCELLED"
+}
+
 public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
     public let id: String
     public let title: String
     public let startDate: Date
     public let endDate: Date
+    public let status: UIEventStatus?
 
-    public init(id: String, title: String, startDate: Date, endDate: Date) {
+    public let user: UIAttendee?
+    public let attendees: [UIAttendee]
+
+    public init(
+        id: String,
+        title: String,
+        startDate: Date,
+        endDate: Date,
+        status: UIEventStatus?,
+        user: UIAttendee? = nil,
+        attendees: [UIAttendee]
+    ) {
         self.id = id
         self.title = title
         self.startDate = startDate
         self.endDate = endDate
+        self.status = status
+        self.user = user
+        self.attendees = attendees
     }
 }
 
 public extension UIEvent {
-    init?(event: MultiplatformCalendar.Event) {
+    init?(event: MultiplatformCalendar.Event, userEmail: String?) {
         id = event.idValue
         title = event.title
+        status = UIEventStatus(rawValue: event.status ?? "")
+
+        var user: UIAttendee?
+        attendees = event.attendees.map {
+            let uiAttendee = UIAttendee(attendee: $0)
+            if uiAttendee.email == userEmail {
+                user = uiAttendee
+            }
+            return uiAttendee
+        }
+        self.user = user
 
         switch event.timing {
         case let timed as EventTimingTimed:
@@ -55,12 +87,54 @@ public extension UIEvent {
 }
 
 public extension UIEvent {
-    static let preview = UIEvent(id: "0", title: "Event Title", startDate: Date(), endDate: Date().addingTimeInterval(3600))
+    static let preview = UIEvent(
+        id: "0",
+        title: "Event Title",
+        startDate: Date(),
+        endDate: Date().addingTimeInterval(3600),
+        status: .confirmed,
+        attendees: UIAttendee.previews
+    )
+
+    static let shortPreview = UIEvent(
+        id: "1",
+        title: "Short Title With A Very Long Title But It's Okay Because We Want To Test The UI And See How It Looks With A Long Title",
+        startDate: Date(),
+        endDate: Date().addingTimeInterval(60 * 15),
+        status: .confirmed,
+        user: UIAttendee(displayName: "Tim Cook", email: "tim@apple.com", status: .accepted),
+        attendees: UIAttendee.previews
+    )
+    static let mediumPreview = UIEvent(
+        id: "2",
+        title: "Medium Title With A Very Long Title But It's Okay Because We Want To Test The UI And See How It Looks With A Long Title",
+        startDate: Date(),
+        endDate: Date().addingTimeInterval(60 * 60 * 2),
+        status: .tentative,
+        user: UIAttendee(displayName: "Tim Cook", email: "tim@apple.com", status: .needsAction),
+        attendees: []
+    )
+    static let longPreview = UIEvent(
+        id: "3",
+        title: "Long Title With A Very Long Title But It's Okay Because We Want To Test The UI And See How It Looks With A Long Title",
+        startDate: Date(),
+        endDate: Date().addingTimeInterval(60 * 60 * 24 * 2),
+        status: .cancelled,
+        user: UIAttendee(displayName: "Tim Cook", email: "tim@apple.com", status: .declined),
+        attendees: UIAttendee.previews
+    )
 
     static let random100Events: [UIEvent] = (0 ..< 100).map { index in
         let dayRangeInSeconds = 30 * 24 * 3600
         let randomStartDate = Date().addingTimeInterval(TimeInterval(Int.random(in: -dayRangeInSeconds ... dayRangeInSeconds)))
         let randomEndDate = randomStartDate.addingTimeInterval(Double.random(in: 3600 ... 7200))
-        return UIEvent(id: "\(index)", title: "Event \(index)", startDate: randomStartDate, endDate: randomEndDate)
+        return UIEvent(
+            id: "\(index)",
+            title: "Event \(index)",
+            startDate: randomStartDate,
+            endDate: randomEndDate,
+            status: .confirmed,
+            attendees: UIAttendee.previews
+        )
     }
 }

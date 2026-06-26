@@ -18,6 +18,7 @@
 
 import CalendarCalendarListView
 import CalendarCalendarView
+import CalendarCore
 import InfomaniakDI
 @preconcurrency import MultiplatformCalendar
 import OSLog
