@@ -22,6 +22,12 @@ import InfomaniakDI
 import KmpCalendar
 import SwiftUI
 
+public extension Date {
+    var instant: KotlinInstant {
+        KotlinInstant.companion.fromEpochMilliseconds(epochMilliseconds: Int64(timeIntervalSince1970 * 1000))
+    }
+}
+
 public struct PlanningView: View {
     @Environment(\.calendarAccounts) private var calendarAccounts
 
@@ -46,7 +52,9 @@ public struct PlanningView: View {
 
         let accountEmail = calendarAccounts.first { $0.id == firstCalendar.accountIdValue }?.user.email
 
-        for await events in calendarSDK.calendarManager.observeEvents(calendarId: firstCalendar.idValue) {
+        let lastMonth = Calendar.current.date(byAdding: .month, value: -1, to: Date()) ?? Date()
+        let nextMonth = Calendar.current.date(byAdding: .month, value: 1, to: Date()) ?? Date()
+        for await events in calendarSDK.calendarManager.observeEvents(start: lastMonth.instant, end: nextMonth.instant) {
             let uiEvents = events.compactMap { UIEvent(event: $0, userEmail: accountEmail) }
 
             let days = PlanningDay.makeContiguousDays(from: uiEvents)
