@@ -17,6 +17,7 @@
  */
 
 import CalendarCoreUI
+import Collections
 import Foundation
 import UIKit
 
@@ -24,23 +25,26 @@ import UIKit
 class PlanningViewModel: ObservableObject {
     static let windowSize = 500
 
-    @Published private(set) var planningDays: [PlanningDay] = []
+    @Published private(set) var planningDays: OrderedDictionary<Date, PlanningDay> = [:]
     @Published var scrollTarget: Date?
 
     init() {
         planningDays = generatePlanningDaysForWindow(centerDate: Date())
     }
 
-    private func generatePlanningDaysForWindow(centerDate: Date) -> [PlanningDay] {
+    private func generatePlanningDaysForWindow(centerDate: Date) -> OrderedDictionary<Date, PlanningDay> {
         let calendar = Calendar.current
         let dayStart = calendar.startOfDay(for: centerDate)
 
-        return (-Self.windowSize ... Self.windowSize).compactMap { dayOffset in
+        var days: OrderedDictionary<Date, PlanningDay> = [:]
+        for dayOffset in -Self.windowSize ... Self.windowSize {
             guard let date = calendar.date(byAdding: .day, value: dayOffset, to: dayStart) else {
-                return nil
+                continue
             }
 
-            return PlanningDay(date: date, events: [])
+            days[date] = PlanningDay(date: date, events: [])
         }
+
+        return days
     }
 }

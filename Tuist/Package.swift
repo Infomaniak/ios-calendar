@@ -27,6 +27,7 @@ let packageSettings = PackageSettings(
 let package = Package(
     name: "Calendar",
     dependencies: [
+        .package(url: "https://github.com/apple/swift-collections", .upToNextMajor(from: "1.6.0")),
         .package(url: "https://github.com/Infomaniak/ios-core", .upToNextMajor(from: "19.0.0")),
         .package(url: "https://github.com/Infomaniak/ios-core-ui", .upToNextMajor(from: "26.0.0")),
         .package(url: "https://github.com/Infomaniak/ios-core-uikit", .upToNextMajor(from: "2.0.0")),
