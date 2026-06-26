@@ -64,10 +64,10 @@ public extension UIEvent {
         }
 
         public init(eventColors: EventColors) {
-            datavizContainer = .blue
-            onDatavizContainer = .blue
-            datavizContainerVariant = .blue
-            onDatavizContainerVariant = .blue
+            datavizContainer = Color(eventColor: eventColors.datavizContainer)
+            onDatavizContainer = Color(eventColor: eventColors.onDatavizContainer)
+            datavizContainerVariant = Color(eventColor: eventColors.datavizContainerVariant)
+            onDatavizContainerVariant = Color(eventColor: eventColors.onDatavizContainerVariant)
         }
     }
 }
@@ -130,7 +130,7 @@ public extension UIEvent {
         }
         self.user = user
 
-        colors = .preview
+        colors = .init(eventColors: event.colors)
 
         switch event.timing {
         case let timed as EventTimingTimed:

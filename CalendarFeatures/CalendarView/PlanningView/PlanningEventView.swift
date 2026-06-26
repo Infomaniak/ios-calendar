@@ -25,7 +25,7 @@ struct PlanningEventView: View {
 
     private let dateFormat = Date.FormatStyle.dateTime.hour().minute()
 
-    enum UIConstants: Sendable {
+    enum UIConstants {
         static let minDuration: CGFloat = 15
         static let maxDuration: CGFloat = 120
 
