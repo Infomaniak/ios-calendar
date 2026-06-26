@@ -19,7 +19,7 @@
 import Foundation
 import InfomaniakCore
 import InfomaniakLogin
-import KmpCalendar
+import MultiplatformCalendar
 
 public struct CalendarAccount: Identifiable, Equatable, Hashable, Sendable {
     public var id: Int {

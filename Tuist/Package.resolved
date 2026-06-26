@@ -1,5 +1,5 @@
 {
-  "originHash" : "bc6af8fb91fa6a15c67d8147f321bdbe1bc5bfb88ce0ddb2cc203105b4d3ec80",
+  "originHash" : "bd247b98fedc4c07fbbb9cff4508bf7a4375f5e39427c2f35bd63dc24841f218",
   "pins" : [
     {
       "identity" : "alamofire",
@@ -83,6 +83,15 @@
       }
     },
     {
+      "identity" : "ios-onboarding",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Infomaniak/ios-onboarding",
+      "state" : {
+        "revision" : "ca793dc5613ae4fd67b209e3f5f0222e00a6da4d",
+        "version" : "1.4.4"
+      }
+    },
+    {
       "identity" : "lottie-spm",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/airbnb/lottie-spm",
@@ -98,6 +107,14 @@
       "state" : {
         "revision" : "f140afcb7cedebdcbf8b8230fdd822b4b61e3685",
         "version" : "7.8.0"
+      }
+    },
+    {
+      "identity" : "multiplatform-calendar",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Infomaniak/multiplatform-calendar",
+      "state" : {
+        "revision" : "d378e880cd72129e5d7dc76635291787e7d7e80c"
       }
     },
     {

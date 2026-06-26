@@ -17,7 +17,7 @@
  */
 
 import Foundation
-import KmpCalendar
+import MultiplatformCalendar
 import SwiftUI
 
 public struct UICalendar: Identifiable, Equatable, Hashable, Sendable {
@@ -33,10 +33,10 @@ public struct UICalendar: Identifiable, Equatable, Hashable, Sendable {
 }
 
 public extension UICalendar {
-    init(calendar: KmpCalendar.Calendar) {
+    init(calendar: MultiplatformCalendar.Calendar) {
         id = calendar.idValue
         displayName = calendar.displayName
-        color = Color(argb: calendar.color)
+        color = Color(argb: calendar.colorValue)
     }
 }
 

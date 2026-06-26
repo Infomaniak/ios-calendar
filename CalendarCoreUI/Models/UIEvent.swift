@@ -17,7 +17,7 @@
  */
 
 import Foundation
-import KmpCalendar
+import MultiplatformCalendar
 
 extension KotlinInstant {
     var date: Date {
@@ -61,7 +61,7 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
 }
 
 public extension UIEvent {
-    init?(event: KmpCalendar.Event, userEmail: String?) {
+    init?(event: MultiplatformCalendar.Event, userEmail: String?) {
         id = event.idValue
         title = event.title
         status = UIEventStatus(rawValue: event.status ?? "")

@@ -18,7 +18,7 @@
 
 import CalendarCoreUI
 import Foundation
-import KmpCalendar
+import MultiplatformCalendar
 
 struct PlanningDay: Identifiable, Hashable {
     let date: Date

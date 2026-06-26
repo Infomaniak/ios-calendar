@@ -17,7 +17,7 @@
  */
 
 import Foundation
-import KmpCalendar
+import MultiplatformCalendar
 import OSLog
 
 public actor DavCredentialsKeychainHelper {
