@@ -30,33 +30,13 @@ public struct CalendarListView: View {
     @Environment(\.openURL) private var openURL
 
     @State private var calendars = [UICalendar]()
-    @State private var expandedAccounts: Set<Int> = []
     @State private var isExpanded = true
 
     public init() {}
 
     public var body: some View {
         List {
-            ForEach(calendarAccounts) { account in
-                Section {
-                    DisclosureGroup(
-                        isExpanded: Binding(
-                            get: { expandedAccounts.contains(account.id) },
-                            set: { isExpanding in
-                                if isExpanding {
-                                    expandedAccounts.insert(account.id)
-                                } else {
-                                    expandedAccounts.remove(account.id)
-                                }
-                            }
-                        )
-                    ) {
-                        CalendarListContentView(calendars: calendarsFor(account: account))
-                    } label: {
-                        AccountCellView(user: account.user)
-                    }
-                }
-            }
+            CalendarListContentView(calendars: calendars)
 
             Section {
                 DisclosureGroup("Réglages", isExpanded: $isExpanded) {
@@ -73,17 +53,13 @@ public struct CalendarListView: View {
                             CalendarResourcesAsset.Images.headset.swiftUIImage
                         }
                     }
-                    .buttonStyle(.plain)
+                    .foregroundStyle(.primary)
                 }
             }
         }
         .task(id: calendarAccounts) {
             await observeCalendars()
         }
-    }
-
-    private func calendarsFor(account: CalendarAccount) -> [UICalendar] {
-        calendars.filter { $0.accountId == account.id }
     }
 
     private func observeCalendars() async {
