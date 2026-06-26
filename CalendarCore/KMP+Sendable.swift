@@ -20,3 +20,5 @@ import Foundation
 import KmpCalendar
 
 extension DavCredentials: @unchecked @retroactive Sendable {}
+
+extension CalendarManager: @unchecked @retroactive Sendable {}
