@@ -22,6 +22,7 @@ import InfomaniakDI
 import MultiplatformCalendar
 import OSLog
 import SwiftUI
+import CalendarResources
 
 public struct CalendarListView: View {
     @Environment(\.calendarAccounts) private var calendarAccounts
@@ -58,11 +59,11 @@ public struct CalendarListView: View {
             Section {
                 DisclosureGroup("Réglages", isExpanded: $isExpanded) {
                     HStack {
-                        Image(systemName: "21.calendar")
+                        CalendarResourcesAsset.Images.productCalendar.swiftUIImage
                         Text("Paramètres")
                     }
                     HStack {
-                        Image(systemName: "headphones")
+                        CalendarResourcesAsset.Images.headset.swiftUIImage
                         Text("Centre d'aide")
                     }
                 }
