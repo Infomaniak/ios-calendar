@@ -68,6 +68,7 @@ struct PlanningEventStyle: ViewModifier {
 
     func body(content: Content) -> some View {
         content
+            .opacity(mode == .declined ? 0.5 : 1)
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(8)
             .foregroundStyle(foreground)
