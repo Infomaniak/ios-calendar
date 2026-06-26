@@ -33,6 +33,7 @@ public struct CompactMainView: View {
                         } label: {
                             CalendarResourcesAsset.Images.burger.swiftUIImage
                         }
+                        .accessibilityLabel(CalendarResourcesStrings.openCalendarListTitle)
                     }
                 }
         }
