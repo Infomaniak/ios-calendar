@@ -23,6 +23,7 @@ import InfomaniakDI
 @preconcurrency import MultiplatformCalendar
 import OSLog
 import SwiftUI
+import CalendarSettingsView
 
 public struct MainView: View {
     @Environment(\.calendarAccounts) private var calendarAccounts
@@ -61,7 +62,9 @@ public struct MainView: View {
                 await syncCalendars()
             }
             .sheet(isPresented: $isShowingCalendarListView) {
-                CalendarListView()
+                NavigationStack {
+                    CalendarListView()
+                }
             }
         }
     }

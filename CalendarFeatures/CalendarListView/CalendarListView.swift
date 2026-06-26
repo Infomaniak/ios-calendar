@@ -23,9 +23,11 @@ import MultiplatformCalendar
 import OSLog
 import SwiftUI
 import CalendarResources
+import CalendarSettingsView
 
 public struct CalendarListView: View {
     @Environment(\.calendarAccounts) private var calendarAccounts
+    @Environment(\.openURL) private var openURL
 
     @State private var calendars = [UICalendar]()
     @State private var expandedAccounts: Set<Int> = []
@@ -58,14 +60,19 @@ public struct CalendarListView: View {
 
             Section {
                 DisclosureGroup("Réglages", isExpanded: $isExpanded) {
-                    HStack {
+                    NavigationLink(destination: SettingsView()) {
                         CalendarResourcesAsset.Images.productCalendar.swiftUIImage
                         Text(CalendarResourcesStrings.settingsTitle)
                     }
-                    HStack {
-                        CalendarResourcesAsset.Images.headset.swiftUIImage
-                        Text(CalendarResourcesStrings.helpTitle)
+                    Button {
+                        openURL(URL(string: "https://www.infomaniak.com/en/help")!)
+                    } label: {
+                        HStack {
+                            CalendarResourcesAsset.Images.headset.swiftUIImage
+                            Text(CalendarResourcesStrings.helpTitle)
+                        }
                     }
+                    .buttonStyle(.plain)
                 }
             }
         }
