@@ -18,7 +18,7 @@
 
 import CalendarCalendarListView
 import InfomaniakDI
-import KmpCalendar
+@preconcurrency import KmpCalendar
 import OSLog
 import SwiftUI
 
