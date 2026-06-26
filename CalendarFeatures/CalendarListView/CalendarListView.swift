@@ -45,7 +45,7 @@ public struct CalendarListView: View {
                         Text(CalendarResourcesStrings.settingsTitle)
                     }
                     Button {
-                        openHelpCenter()
+                        openURL(URLConstants.helpAndSupportURL)
                     } label: {
                         Label {
                             Text(CalendarResourcesStrings.helpTitle)
@@ -66,12 +66,6 @@ public struct CalendarListView: View {
         @InjectService var calendarSDK: CalendarCoreGraph
         for await calendars in calendarSDK.calendarManager.observeCalendars() {
             self.calendars = calendars.map { UICalendar(calendar: $0) }
-        }
-    }
-
-    private func openHelpCenter() {
-        if let url = URL(string: "https://www.infomaniak.com/en/help") {
-            openURL(url)
         }
     }
 }
