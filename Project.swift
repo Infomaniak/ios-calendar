@@ -58,14 +58,17 @@ let createEditEventView = Feature(name: "CreateEditEventView", additionalDepende
 
 let eventDetailsView = Feature(name: "EventDetailsView", additionalDependencies: [])
 
+let settingsView = Feature(name: "SettingsView", additionalDependencies: [])
+
 let calendarListView = Feature(
     name: "CalendarListView",
     additionalDependencies: [
-        TargetDependency.external(name: "InfomaniakDI")
+        settingsView,
+        TargetDependency.target(name: "CalendarResources"),
+        TargetDependency.external(name: "InfomaniakDI"),
+        TargetDependency.external(name: "InfomaniakCoreSwiftUI")
     ]
 )
-
-let settingsView = Feature(name: "SettingsView", additionalDependencies: [])
 
 let mainView = Feature(
     name: "MainView",
@@ -75,7 +78,9 @@ let mainView = Feature(
         eventDetailsView,
         calendarListView,
         settingsView,
+        TargetDependency.target(name: "CalendarResources"),
         TargetDependency.external(name: "InfomaniakDI")
+
     ]
 )
 
@@ -176,7 +181,10 @@ let project = Project(
                 dependencies: [
                     .target(name: "\(Constants.projectName)Core"),
                     .target(name: "\(Constants.projectName)Resources"),
-                    .external(name: "InfomaniakDI")
+                    .external(name: "InfomaniakCore"),
+                    .external(name: "InfomaniakCoreSwiftUI"),
+                    .external(name: "InfomaniakDI"),
+                    .external(name: "NukeUI")
                 ],
                 settings: .settings(base: Constants.baseSettings)),
         .target(name: "\(Constants.projectName)Resources",
