@@ -19,6 +19,7 @@
 import CalendarCalendarListView
 import CalendarCalendarView
 import CalendarCore
+import CalendarResources
 import CalendarSettingsView
 import InfomaniakDI
 @preconcurrency import MultiplatformCalendar
@@ -53,7 +54,7 @@ public struct MainView: View {
                             Button {
                                 isShowingCalendarListView = true
                             } label: {
-                                Image(systemName: "list.bullet")
+                                CalendarResourcesAsset.Images.burger.swiftUIImage
                             }
                         }
                     }
