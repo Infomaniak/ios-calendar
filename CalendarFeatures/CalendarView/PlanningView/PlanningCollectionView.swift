@@ -25,6 +25,7 @@ import UIKit
 
 enum PlanningLayoutMetrics {
     static let dayColumnWidth: CGFloat = 64
+    static let emptyRowHeight: CGFloat = 8
     static let eventRowHeight: CGFloat = 48
     static let eventRowMinHeight: CGFloat = 20
     static let dayHeaderHeight: CGFloat = 64
@@ -131,7 +132,8 @@ struct PlanningCollectionView: UIViewRepresentable {
                                            hasNoEvents: Bool) -> NSCollectionLayoutSection {
             let itemSize = NSCollectionLayoutSize(
                 widthDimension: .fractionalWidth(1),
-                heightDimension: hasNoEvents ? .absolute(8) : .estimated(PlanningLayoutMetrics.eventRowHeight)
+                heightDimension: hasNoEvents ?
+                    .absolute(PlanningLayoutMetrics.emptyRowHeight) : .estimated(PlanningLayoutMetrics.eventRowHeight)
             )
             let item = NSCollectionLayoutItem(layoutSize: itemSize)
             item.contentInsets = NSDirectionalEdgeInsets.zero
