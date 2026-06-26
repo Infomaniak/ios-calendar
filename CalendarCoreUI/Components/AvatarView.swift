@@ -22,16 +22,20 @@ import NukeUI
 import SwiftUI
 
 public struct AvatarView: View {
-    let user: UserProfile
+    let rawAvatarURL: String?
+    let displayName: String
+    let email: String
     let size: CGFloat
 
-    public init(user: UserProfile, size: CGFloat) {
-        self.user = user
+    public init(rawAvatarURL: String?, displayName: String, email: String, size: CGFloat) {
+        self.rawAvatarURL = rawAvatarURL
+        self.displayName = displayName
+        self.email = email
         self.size = size
     }
 
     public var body: some View {
-        if let rawAvatarURL = user.avatar,
+        if let rawAvatarURL,
            let avatarURL = URL(string: rawAvatarURL) {
             LazyImage(request: ImageRequest(url: avatarURL)) { state in
                 if let image = state.image {
@@ -47,8 +51,8 @@ public struct AvatarView: View {
 
     private var initialsView: some View {
         InitialsView(
-            initials: NameFormatter(fullName: user.displayName).initials,
-            backgroundColor: Color.backgroundColor(from: user.email.hash),
+            initials: NameFormatter(fullName: displayName).initials,
+            backgroundColor: Color.backgroundColor(from: email.hash),
             foregroundColor: Color.white,
             size: size
         )

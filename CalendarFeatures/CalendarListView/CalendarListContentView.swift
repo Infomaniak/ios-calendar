@@ -22,7 +22,9 @@ import SwiftUI
 
 struct CalendarListContentView: View {
     @Environment(\.calendarAccounts) private var calendarAccounts
+
     @State private var expandedAccounts: Set<Int> = []
+
     let calendars: [UICalendar]
 
     var body: some View {
@@ -49,7 +51,9 @@ struct CalendarListContentView: View {
                         }
                     }
                 } label: {
-                    AccountCellView(user: account.user)
+                    AccountCellView(rawAvatarURL: account.user.avatar,
+                                    displayName: account.user.displayName,
+                                    email: account.user.email)
                 }
             }
         }
