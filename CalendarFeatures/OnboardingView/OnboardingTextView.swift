@@ -16,7 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import CalendarCoreUI
 import CalendarResources
 import DesignSystem
 import InfomaniakCoreSwiftUI
@@ -41,18 +40,7 @@ enum OnboardingText {
         }
     }
 
-    var subtitle: AttributedString {
-        var result = AttributedString(template(argument))
-        result.font = .CalendarFont.title
-
-        if let argumentRange = result.range(of: argument) {
-            result[argumentRange].font = .CalendarFont.title
-        }
-
-        return result
-    }
-
-    private var argument: String {
+    var subtitle: String {
         switch self {
         case .oneSlide:
             "onboardingOneSubtitleArgument"
@@ -64,19 +52,6 @@ enum OnboardingText {
             "onboardingFourSubtitleArgument"
         }
     }
-
-    private var template: (_ argument: Any) -> String {
-        switch self {
-        case .oneSlide:
-            return { _ in "onboardingOneSubtitleTemplate" }
-        case .twoSlide:
-            return { _ in "onboardingTwoSubtitleTemplate" }
-        case .threeSlide:
-            return { _ in "onboardingThreeSubtitleTemplate" }
-        case .fourSlide:
-            return { _ in "onboardingFourSubtitleTemplate" }
-        }
-    }
 }
 
 struct OnboardingTextView: View {
@@ -85,7 +60,6 @@ struct OnboardingTextView: View {
     var body: some View {
         VStack(spacing: IKPadding.mini) {
             Text(text.title)
-                .font(.CalendarFont.specificTitleLight)
 
             Text(text.subtitle)
         }

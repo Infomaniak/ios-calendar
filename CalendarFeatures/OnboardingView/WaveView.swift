@@ -21,9 +21,7 @@ import InfomaniakOnboarding
 import Lottie
 import SwiftUI
 
-struct CarouselView<BottomView: View>: UIViewControllerRepresentable {
-    @Environment(\.colorScheme) private var colorScheme
-
+struct WaveView<BottomView: View>: UIViewControllerRepresentable {
     @Binding var selectedSlide: Int
 
     let slides: [Slide]
@@ -48,7 +46,7 @@ struct CarouselView<BottomView: View>: UIViewControllerRepresentable {
         let configuration = OnboardingConfiguration(
             headerImage: nil,
             slides: slides,
-            pageIndicatorColor: UIColor.blue,
+            pageIndicatorColor: UIColor.tintColor,
             isScrollEnabled: true,
             dismissHandler: dismissHandler,
             isPageIndicatorHidden: false
@@ -64,26 +62,17 @@ struct CarouselView<BottomView: View>: UIViewControllerRepresentable {
         if uiViewController.pageIndicator.currentPage != selectedSlide {
             uiViewController.setSelectedSlide(index: selectedSlide)
         }
-
-        if colorScheme != context.coordinator.currentColorScheme,
-           let currentSlideViewCell = uiViewController.currentSlideViewCell {
-            context.coordinator.currentColorScheme = context.environment.colorScheme
-            context.coordinator.selectCorrectAnimation(for: currentSlideViewCell, at: selectedSlide)
-        }
     }
 
     func makeCoordinator() -> Coordinator {
-        return Coordinator(parent: self, colorScheme: colorScheme)
+        return Coordinator(parent: self)
     }
 
     class Coordinator: OnboardingViewControllerDelegate {
-        let parent: CarouselView<BottomView>
+        let parent: WaveView<BottomView>
 
-        var currentColorScheme: ColorScheme
-
-        init(parent: CarouselView<BottomView>, colorScheme: ColorScheme) {
+        init(parent: WaveView<BottomView>) {
             self.parent = parent
-            currentColorScheme = colorScheme
         }
 
         func bottomViewForIndex(_ index: Int) -> (any View)? {
@@ -94,23 +83,12 @@ struct CarouselView<BottomView: View>: UIViewControllerRepresentable {
             return index == parent.slides.count - 1
         }
 
-        func willDisplaySlideViewCell(_ slideViewCell: SlideCollectionViewCell, at index: Int) {
-            selectCorrectAnimation(for: slideViewCell, at: index)
-        }
+        func willDisplaySlideViewCell(_ slideViewCell: SlideCollectionViewCell, at index: Int) {}
 
         func currentIndexChanged(newIndex: Int) {
             Task { @MainActor in
                 parent.$selectedSlide.wrappedValue = newIndex
             }
-        }
-
-        func selectCorrectAnimation(for slideViewCell: SlideCollectionViewCell, at index: Int) {
-            guard case .animation(let configuration) = parent.slides[index].content else { return }
-
-            let suffix = currentColorScheme == .dark ? "dark" : "light"
-            let animation = LottieAnimation.named("\(configuration.filename)-\(suffix)", bundle: configuration.bundle)
-            slideViewCell.illustrationAnimationView.animation = animation
-            slideViewCell.illustrationAnimationView.play()
         }
     }
 }

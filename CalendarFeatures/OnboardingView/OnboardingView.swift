@@ -24,27 +24,27 @@ extension Slide {
     static var onboardingSlides: [Slide] {
         return [
             Slide(
-                backgroundImage: UIImage(systemName: "app.background.dotted") ?? UIImage(),
+                backgroundImage: UIImage(),
                 backgroundImageTintColor: nil,
-                content: .illustration(UIImage(systemName: "1.calendar") ?? UIImage()),
+                content: .illustration(UIImage(systemName: "1.calendar")!),
                 bottomView: OnboardingTextView(text: .oneSlide)
             ),
             Slide(
-                backgroundImage: UIImage(systemName: "app.background.dotted") ?? UIImage(),
+                backgroundImage: UIImage(),
                 backgroundImageTintColor: nil,
-                content: .illustration(UIImage(systemName: "2.calendar") ?? UIImage()),
+                content: .illustration(UIImage(systemName: "2.calendar")!),
                 bottomView: OnboardingTextView(text: .twoSlide)
             ),
             Slide(
-                backgroundImage: UIImage(systemName: "app.background.dotted") ?? UIImage(),
+                backgroundImage: UIImage(),
                 backgroundImageTintColor: nil,
-                content: .illustration(UIImage(systemName: "3.calendar") ?? UIImage()),
+                content: .illustration(UIImage(systemName: "3.calendar")!),
                 bottomView: OnboardingTextView(text: .threeSlide)
             ),
             Slide(
-                backgroundImage: UIImage(systemName: "app.background.dotted") ?? UIImage(),
+                backgroundImage: UIImage(),
                 backgroundImageTintColor: nil,
-                content: .illustration(UIImage(systemName: "4.calendar") ?? UIImage()),
+                content: .illustration(UIImage(systemName: "4.calendar")!),
                 bottomView: OnboardingTextView(text: .fourSlide)
             )
         ]
@@ -58,14 +58,13 @@ public struct OnboardingView: View {
     public init() {}
 
     public var body: some View {
-        CarouselView(slides: Slide.onboardingSlides, selectedSlide: $selection) { _ in
+        WaveView(slides: Slide.onboardingSlides, selectedSlide: $selection) { _ in
             OnboardingBottomButtonsView(
                 loginHandler: loginHandler,
                 selection: $selection,
                 slideCount: Slide.onboardingSlides.count
             )
         }
-        .background(Color.secondary)
         .ignoresSafeArea()
         .loginErrorAlert(loginHandler: loginHandler)
     }
