@@ -25,6 +25,7 @@ import UIKit
 enum PlanningLayoutMetrics {
     static let dayColumnWidth: CGFloat = 64
     static let eventRowHeight: CGFloat = 48
+    static let eventRowMinHeight: CGFloat = 20
     static let dayHeaderHeight: CGFloat = 64
     static let weekHeaderHeight: CGFloat = 32
 
@@ -91,7 +92,7 @@ struct PlanningCollectionView: UIViewRepresentable {
         private static func makeDaySection(showsWeekHeader: Bool) -> NSCollectionLayoutSection {
             let itemSize = NSCollectionLayoutSize(
                 widthDimension: .fractionalWidth(1),
-                heightDimension: .absolute(PlanningLayoutMetrics.eventRowHeight)
+                heightDimension: .estimated(PlanningLayoutMetrics.eventRowHeight)
             )
             let item = NSCollectionLayoutItem(layoutSize: itemSize)
             item.contentInsets = NSDirectionalEdgeInsets.zero
@@ -100,9 +101,9 @@ struct PlanningCollectionView: UIViewRepresentable {
             group.contentInsets = NSDirectionalEdgeInsets.zero
 
             let section = NSCollectionLayoutSection(group: group)
-            section.interGroupSpacing = 0
+            section.interGroupSpacing = IKPadding.mini
             section.contentInsets = NSDirectionalEdgeInsets(
-                top: IKPadding.mini,
+                top: 0,
                 leading: PlanningLayoutMetrics.dayColumnWidth,
                 bottom: 0,
                 trailing: IKPadding.mini
@@ -132,7 +133,6 @@ struct PlanningCollectionView: UIViewRepresentable {
                     elementKind: PlanningLayoutMetrics.weekHeaderKind,
                     alignment: .topLeading
                 )
-                weekHeader.extendsBoundary = false
                 weekHeader.zIndex = 2
                 section.boundarySupplementaryItems = [weekHeader, dayHeader]
             } else {
@@ -145,13 +145,24 @@ struct PlanningCollectionView: UIViewRepresentable {
         // MARK: - Data source
 
         func setupDatasource(for collectionView: UICollectionView) {
-            let cellRegistration = UICollectionView.CellRegistration<
+            let allDayCellRegistration = UICollectionView.CellRegistration<
+                UICollectionViewListCell, CalendarCoreUI.UIEvent
+            > { cell, _, event in
+                cell.contentConfiguration = UIHostingConfiguration {
+                    PlanningDayEventView(event: event)
+                }
+                .margins(.all, 0)
+                .minSize(height: PlanningLayoutMetrics.eventRowMinHeight)
+            }
+
+            let eventCellRegistration = UICollectionView.CellRegistration<
                 UICollectionViewListCell, CalendarCoreUI.UIEvent
             > { cell, _, event in
                 cell.contentConfiguration = UIHostingConfiguration {
                     PlanningEventView(event: event)
                 }
                 .margins(.all, 0)
+                .minSize(height: PlanningLayoutMetrics.eventRowMinHeight)
             }
 
             let dayHeaderRegistration = UICollectionView.SupplementaryRegistration<PlanningDayHeaderView>(
@@ -171,7 +182,8 @@ struct PlanningCollectionView: UIViewRepresentable {
             datasource = UICollectionViewDiffableDataSource<Date, CalendarCoreUI.UIEvent>(
                 collectionView: collectionView
             ) { collectionView, indexPath, event in
-                collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: event)
+                let registration = event.isAllDay ? allDayCellRegistration : eventCellRegistration
+                return collectionView.dequeueConfiguredReusableCell(using: registration, for: indexPath, item: event)
             }
 
             datasource?.supplementaryViewProvider = { collectionView, elementKind, indexPath in

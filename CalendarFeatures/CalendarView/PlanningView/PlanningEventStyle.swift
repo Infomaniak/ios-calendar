@@ -20,14 +20,6 @@ import CalendarCoreUI
 import SwiftUI
 
 struct PlanningEventStyle: ViewModifier {
-    /// TO BE REMOVED
-    enum FakeEventColors {
-        static let datavizContainer = Color.white
-        static let onDatavizContainer = Color.purple
-        static let datavizContainerVariant = Color.purple.opacity(0.3)
-        static let onDatavizContainerVariant = Color.purple
-    }
-
     enum Mode: Equatable {
         case `default`
         case maybe
@@ -36,22 +28,25 @@ struct PlanningEventStyle: ViewModifier {
     }
 
     let mode: Mode
+    let colors: CalendarCoreUI.UIEvent.Colors
 
     init(event: CalendarCoreUI.UIEvent) {
+        colors = event.colors
         mode = Self.computeMode(for: event)
     }
 
     // periphery:ignore - Used for #Preview
-    init(mode: Mode) {
+    init(mode: Mode, colors: CalendarCoreUI.UIEvent.Colors = .preview) {
         self.mode = mode
+        self.colors = colors
     }
 
     private var foreground: Color {
         switch mode {
         case .default, .maybe, .declined:
-            return FakeEventColors.onDatavizContainerVariant
+            return colors.onDatavizContainerVariant
         case .pending:
-            return FakeEventColors.onDatavizContainer
+            return colors.onDatavizContainer
         }
     }
 
@@ -59,11 +54,11 @@ struct PlanningEventStyle: ViewModifier {
     private var background: some View {
         switch mode {
         case .default, .declined:
-            FakeEventColors.datavizContainerVariant
+            colors.datavizContainerVariant
         case .maybe:
-            DiagonalStripesView(color: FakeEventColors.datavizContainerVariant)
+            DiagonalStripesView(color: colors.datavizContainerVariant)
         case .pending:
-            FakeEventColors.datavizContainer
+            colors.datavizContainer
         }
     }
 
