@@ -60,11 +60,11 @@ public struct CalendarListView: View {
                 DisclosureGroup("Réglages", isExpanded: $isExpanded) {
                     HStack {
                         CalendarResourcesAsset.Images.productCalendar.swiftUIImage
-                        Text("Paramètres")
+                        Text(CalendarResourcesStrings.settingsTitle)
                     }
                     HStack {
                         CalendarResourcesAsset.Images.headset.swiftUIImage
-                        Text("Centre d'aide")
+                        Text(CalendarResourcesStrings.helpTitle)
                     }
                 }
             }
