@@ -16,7 +16,10 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarCore
 import CalendarCoreUI
+import CalendarResources
+import CalendarSettingsView
 import InfomaniakDI
 import MultiplatformCalendar
 import OSLog
@@ -24,16 +27,39 @@ import SwiftUI
 
 public struct CalendarListView: View {
     @Environment(\.calendarAccounts) private var calendarAccounts
+    @Environment(\.openURL) private var openURL
 
     @State private var calendars = [UICalendar]()
+    @State private var isExpanded = true
 
     public init() {}
 
     public var body: some View {
-        CalendarListContentView(calendars: calendars)
-            .task(id: calendarAccounts) {
-                await observeCalendars()
+        List {
+            CalendarListContentView(calendars: calendars)
+
+            Section {
+                DisclosureGroup("Réglages", isExpanded: $isExpanded) {
+                    NavigationLink(destination: SettingsView()) {
+                        CalendarResourcesAsset.Images.productCalendar.swiftUIImage
+                        Text(CalendarResourcesStrings.settingsTitle)
+                    }
+                    Button {
+                        openURL(URLConstants.helpAndSupportURL)
+                    } label: {
+                        Label {
+                            Text(CalendarResourcesStrings.helpTitle)
+                        } icon: {
+                            CalendarResourcesAsset.Images.headset.swiftUIImage
+                        }
+                    }
+                    .foregroundStyle(.primary)
+                }
             }
+        }
+        .task(id: calendarAccounts) {
+            await observeCalendars()
+        }
     }
 
     private func observeCalendars() async {

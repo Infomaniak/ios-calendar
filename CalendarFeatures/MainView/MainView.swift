@@ -16,8 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import CalendarCalendarListView
-import CalendarCalendarView
 import CalendarCore
 import InfomaniakDI
 @preconcurrency import MultiplatformCalendar
@@ -26,25 +24,21 @@ import SwiftUI
 
 public struct MainView: View {
     @Environment(\.calendarAccounts) private var calendarAccounts
-
-    @State private var isShowingCalendarListView = false
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     public init() {}
 
     public var body: some View {
-        NavigationStack {
-            CalendarView()
-                .toolbar {
-                    Button("Calendars") {
-                        isShowingCalendarListView = true
-                    }
+        if horizontalSizeClass == .regular {
+            RegularMainView()
+                .task(id: calendarAccounts) {
+                    await syncCalendars()
                 }
-        }
-        .task(id: calendarAccounts) {
-            await syncCalendars()
-        }
-        .sheet(isPresented: $isShowingCalendarListView) {
-            CalendarListView()
+        } else {
+            CompactMainView()
+                .task(id: calendarAccounts) {
+                    await syncCalendars()
+                }
         }
     }
 

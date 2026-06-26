@@ -18,6 +18,7 @@ let packageSettings = PackageSettings(
         "InfomaniakLogin": .framework,
         "InterAppLogin": .framework,
         "Nuke": .framework,
+        "NukeUI": .framework,
         "_LottieStub": .framework
     ]
 )

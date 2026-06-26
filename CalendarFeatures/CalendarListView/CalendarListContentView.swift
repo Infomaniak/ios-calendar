@@ -16,23 +16,51 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarCore
 import CalendarCoreUI
 import SwiftUI
 
 struct CalendarListContentView: View {
+    @Environment(\.calendarAccounts) private var calendarAccounts
+
+    @State private var expandedAccounts: Set<Int> = []
+
     let calendars: [UICalendar]
 
     var body: some View {
-        List {
-            ForEach(calendars) { calendar in
-                HStack {
-                    Circle()
-                        .fill(calendar.color)
-                        .frame(width: 8, height: 8)
-                    Text(calendar.displayName)
+        ForEach(calendarAccounts) { account in
+            Section {
+                DisclosureGroup(
+                    isExpanded: Binding(
+                        get: { expandedAccounts.contains(account.id) },
+                        set: { isExpanding in
+                            if isExpanding {
+                                expandedAccounts.insert(account.id)
+                            } else {
+                                expandedAccounts.remove(account.id)
+                            }
+                        }
+                    )
+                ) {
+                    ForEach(calendarsFor(account: account)) { calendar in
+                        HStack {
+                            Circle()
+                                .fill(calendar.color)
+                                .frame(width: 8, height: 8)
+                            Text(calendar.displayName)
+                        }
+                    }
+                } label: {
+                    AccountCellView(rawAvatarURL: account.user.avatar,
+                                    displayName: account.user.displayName,
+                                    email: account.user.email)
                 }
             }
         }
+    }
+
+    private func calendarsFor(account: CalendarAccount) -> [UICalendar] {
+        calendars.filter { $0.accountId == account.id }
     }
 }
 

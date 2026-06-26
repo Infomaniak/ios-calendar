@@ -3,8 +3,8 @@
  * Project: Calendar
  * Locale: sv, Swedish
  * Tagged: ios
- * Exported by: Valentin Perignon
- * Exported at: Thu, 25 Jun 2026 16:08:34 +0200
+ * Exported by: Philippe Weidmann
+ * Exported at: Fri, 26 Jun 2026 16:21:13 +0200
  */
 
 /* loco:6a3d35f26bb2f27bf40b0052 */
@@ -28,11 +28,20 @@
 /* loco:6a203e6bc6a8e2e3c9024e12 */
 "dayTitle" = "Dag";
 
+/* loco:6a3e2023d4ed90a7ed0b19e5 */
+"helpTitle" = "Hjälpcenter";
+
 /* loco:6a2040c0637876be5f0ec2f2 */
 "monthTitle" = "Månad";
 
+/* loco:6a3e37f5bc0f8ca5930a08d3 */
+"openCalendarListTitle" = "Öppna kalenderlistan";
+
 /* loco:6a2041176b9fab94970540c4 */
 "planningTitle" = "Planering";
+
+/* loco:6a3e20aad4ed90a7ed0b19e7 */
+"settingsTitle" = "Inställningar";
 
 /* loco:6a203f703a4a6492b407ce23 */
 "threeDaysTitle" = "Tre dagar";
