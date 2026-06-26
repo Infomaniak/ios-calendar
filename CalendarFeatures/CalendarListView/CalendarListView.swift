@@ -18,7 +18,7 @@
 
 import CalendarCoreUI
 import InfomaniakDI
-import KmpCalendar
+import MultiplatformCalendar
 import OSLog
 import SwiftUI
 
