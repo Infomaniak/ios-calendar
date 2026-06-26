@@ -19,7 +19,7 @@
 import CalendarCoreUI
 import Foundation
 import InfomaniakDI
-import KmpCalendar
+import MultiplatformCalendar
 import SwiftUI
 
 public struct PlanningView: View {
@@ -39,10 +39,13 @@ public struct PlanningView: View {
 
     private func observeEvents() async {
         @InjectService var calendarSDK: CalendarCoreGraph
-        let calendars = await getCalendars()
-        guard let firstCalendar = calendars.first else { return }
 
-        for await events in calendarSDK.calendarManager.observeEvents(calendarId: firstCalendar.idValue) {
+        let oneWeek = Int64(Date(timeIntervalSinceNow: 60 * 60 * 24 * 7).timeIntervalSince1970) * 1000
+
+        for await events in calendarSDK.calendarManager.observeEvents(
+            start: .companion.fromEpochMilliseconds(epochMilliseconds: -oneWeek),
+            end: .companion.fromEpochMilliseconds(epochMilliseconds: oneWeek),
+        ) {
             let uiEvents = events.compactMap { UIEvent(event: $0) }
             let days = PlanningDay.makeContiguousDays(from: uiEvents)
 
@@ -50,14 +53,6 @@ public struct PlanningView: View {
                 planningDays = days
             }
         }
-    }
-
-    private func getCalendars() async -> [KmpCalendar.Calendar] {
-        @InjectService var calendarSDK: CalendarCoreGraph
-        for await calendars in calendarSDK.calendarManager.observeCalendars() {
-            return calendars
-        }
-        return []
     }
 }
 
