@@ -19,11 +19,11 @@
 import CalendarCalendarListView
 import CalendarCalendarView
 import CalendarCore
+import CalendarSettingsView
 import InfomaniakDI
 @preconcurrency import MultiplatformCalendar
 import OSLog
 import SwiftUI
-import CalendarSettingsView
 
 public struct MainView: View {
     @Environment(\.calendarAccounts) private var calendarAccounts
