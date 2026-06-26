@@ -24,13 +24,8 @@ extension Kotlinx_datetimeLocalDate {
         let components = DateComponents(
             calendar: .current,
             year: Int(year),
-            month: Int(month.ordinal),
-            day: Int(day),
-            hour: 0,
-            minute: 0,
-            second: 0,
-            nanosecond: 0,
-            weekday: Int(dayOfWeek.ordinal)
+            month: Int(month.ordinal) + 1,
+            day: Int(day)
         )
         return components.date
     }
