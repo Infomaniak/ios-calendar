@@ -41,6 +41,7 @@ struct PlanningEventStyle: ViewModifier {
         mode = Self.computeMode(for: event)
     }
 
+    // periphery:ignore - Used for #Preview
     init(mode: Mode) {
         self.mode = mode
     }
@@ -104,6 +105,7 @@ extension View {
         modifier(PlanningEventStyle(event: event))
     }
 
+    // periphery:ignore - Used for #Preview
     func planningEventStyle(mode: PlanningEventStyle.Mode) -> some View {
         modifier(PlanningEventStyle(mode: mode))
     }
