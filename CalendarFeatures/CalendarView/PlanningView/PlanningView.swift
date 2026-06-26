@@ -16,9 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import CalendarCoreUI
 import Foundation
-import InfomaniakDI
 import SwiftUI
 
 public struct PlanningView: View {

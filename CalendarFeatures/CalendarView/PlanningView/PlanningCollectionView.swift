@@ -40,7 +40,7 @@ enum PlanningItemId: Hashable {
 }
 
 enum PlanningItemContent: Hashable {
-    case event(CalendarCoreUI.UIEvent)
+    case event
     case empty
 }
 
