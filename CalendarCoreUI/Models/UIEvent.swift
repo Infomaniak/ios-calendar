@@ -18,6 +18,7 @@
 
 import Foundation
 import MultiplatformCalendar
+import SwiftUI
 
 extension Kotlinx_datetimeLocalDate {
     var date: Date? {
@@ -37,16 +38,44 @@ extension KotlinInstant {
     }
 }
 
-public enum UIEventStatus: String, Sendable, Equatable {
-    case confirmed = "CONFIRMED"
-    case tentative = "TENTATIVE"
-    case cancelled = "CANCELLED"
+public extension UIEvent {
+    enum Status: String, Sendable, Equatable {
+        case confirmed = "CONFIRMED"
+        case tentative = "TENTATIVE"
+        case cancelled = "CANCELLED"
+    }
+
+    struct Colors: Sendable, Equatable, Hashable {
+        public let datavizContainer: Color
+        public let onDatavizContainer: Color
+        public let datavizContainerVariant: Color
+        public let onDatavizContainerVariant: Color
+
+        public init(
+            datavizContainer: Color,
+            onDatavizContainer: Color,
+            datavizContainerVariant: Color,
+            onDatavizContainerVariant: Color
+        ) {
+            self.datavizContainer = datavizContainer
+            self.onDatavizContainer = onDatavizContainer
+            self.datavizContainerVariant = datavizContainerVariant
+            self.onDatavizContainerVariant = onDatavizContainerVariant
+        }
+
+        public init(eventColors: EventColors) {
+            datavizContainer = .blue
+            onDatavizContainer = .blue
+            datavizContainerVariant = .blue
+            onDatavizContainerVariant = .blue
+        }
+    }
 }
 
 public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
     public let id: String
     public let title: String
-    public let status: UIEventStatus?
+    public let status: UIEvent.Status?
     public let location: String?
     public let kMeetLink: String? = nil // TODO: Get it from Event
 
@@ -57,16 +86,19 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
     public let user: UIAttendee?
     public let attendees: [UIAttendee]
 
+    public let colors: UIEvent.Colors
+
     public init(
         id: String,
         title: String,
         startDate: Date,
         endDate: Date,
         isAllDay: Bool = false,
-        status: UIEventStatus?,
+        status: UIEvent.Status?,
         location: String? = nil,
         user: UIAttendee? = nil,
-        attendees: [UIAttendee]
+        attendees: [UIAttendee],
+        colors: UIEvent.Colors
     ) {
         self.id = id
         self.title = title
@@ -77,6 +109,7 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
         self.location = location
         self.user = user
         self.attendees = attendees
+        self.colors = colors
     }
 }
 
@@ -84,7 +117,7 @@ public extension UIEvent {
     init?(event: MultiplatformCalendar.Event, userEmail: String?) {
         id = event.idValue
         title = event.title
-        status = UIEventStatus(rawValue: event.status ?? "")
+        status = .init(rawValue: event.status ?? "")
         location = event.location
 
         var user: UIAttendee?
@@ -96,6 +129,8 @@ public extension UIEvent {
             return uiAttendee
         }
         self.user = user
+
+        colors = .preview
 
         switch event.timing {
         case let timed as EventTimingTimed:
@@ -116,6 +151,8 @@ public extension UIEvent {
     }
 }
 
+// MARK: - Previews
+
 public extension UIEvent {
     static let preview = UIEvent(
         id: "0",
@@ -123,7 +160,8 @@ public extension UIEvent {
         startDate: Date(),
         endDate: Date().addingTimeInterval(3600),
         status: .confirmed,
-        attendees: UIAttendee.previews
+        attendees: UIAttendee.previews,
+        colors: .preview
     )
 
     static let shortPreview = UIEvent(
@@ -133,7 +171,8 @@ public extension UIEvent {
         endDate: Date().addingTimeInterval(60 * 15),
         status: .confirmed,
         user: UIAttendee(displayName: "Tim Cook", email: "tim@apple.com", status: .accepted),
-        attendees: UIAttendee.previews
+        attendees: UIAttendee.previews,
+        colors: .preview
     )
     static let mediumPreview = UIEvent(
         id: "2",
@@ -142,7 +181,8 @@ public extension UIEvent {
         endDate: Date().addingTimeInterval(60 * 60 * 2),
         status: .tentative,
         user: UIAttendee(displayName: "Tim Cook", email: "tim@apple.com", status: .needsAction),
-        attendees: []
+        attendees: [],
+        colors: .preview
     )
     static let longPreview = UIEvent(
         id: "3",
@@ -151,7 +191,8 @@ public extension UIEvent {
         endDate: Date().addingTimeInterval(60 * 60 * 24 * 2),
         status: .cancelled,
         user: UIAttendee(displayName: "Tim Cook", email: "tim@apple.com", status: .declined),
-        attendees: UIAttendee.previews
+        attendees: UIAttendee.previews,
+        colors: .preview
     )
 
     static let random100Events: [UIEvent] = (0 ..< 100).map { index in
@@ -164,7 +205,17 @@ public extension UIEvent {
             startDate: randomStartDate,
             endDate: randomEndDate,
             status: .confirmed,
-            attendees: UIAttendee.previews
+            attendees: UIAttendee.previews,
+            colors: .preview
         )
     }
+}
+
+public extension UIEvent.Colors {
+    static let preview = UIEvent.Colors(
+        datavizContainer: Color.white,
+        onDatavizContainer: Color.purple,
+        datavizContainerVariant: Color.purple.opacity(0.2),
+        onDatavizContainerVariant: Color.purple
+    )
 }
