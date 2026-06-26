@@ -30,43 +30,19 @@ public struct MainView: View {
     @Environment(\.calendarAccounts) private var calendarAccounts
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
-    @State private var isShowingCalendarListView = false
-
     public init() {}
 
     public var body: some View {
         if horizontalSizeClass == .regular {
-            NavigationSplitView {
-                CalendarListView()
-            } detail: {
-                NavigationStack {
-                    CalendarView()
+            RegularMainView()
+                .task(id: calendarAccounts) {
+                    await syncCalendars()
                 }
-            }
-            .task(id: calendarAccounts) {
-                await syncCalendars()
-            }
         } else {
-            NavigationStack {
-                CalendarView()
-                    .toolbar {
-                        ToolbarItem(placement: .topBarLeading) {
-                            Button {
-                                isShowingCalendarListView = true
-                            } label: {
-                                CalendarResourcesAsset.Images.burger.swiftUIImage
-                            }
-                        }
-                    }
-            }
-            .task(id: calendarAccounts) {
-                await syncCalendars()
-            }
-            .sheet(isPresented: $isShowingCalendarListView) {
-                NavigationStack {
-                    CalendarListView()
+            CompactMainView()
+                .task(id: calendarAccounts) {
+                    await syncCalendars()
                 }
-            }
         }
     }
 
