@@ -145,22 +145,24 @@ struct PlanningCollectionView: UIViewRepresentable {
         // MARK: - Data source
 
         func setupDatasource(for collectionView: UICollectionView) {
-            let cellRegistration = UICollectionView.CellRegistration<
+            let allDayCellRegistration = UICollectionView.CellRegistration<
                 UICollectionViewListCell, CalendarCoreUI.UIEvent
             > { cell, _, event in
-                if event.isAllDay {
-                    cell.contentConfiguration = UIHostingConfiguration {
-                        PlanningDayEventView(event: event)
-                    }
-                    .margins(.all, 0)
-                    .minSize(height: PlanningLayoutMetrics.eventRowMinHeight)
-                } else {
-                    cell.contentConfiguration = UIHostingConfiguration {
-                        PlanningEventView(event: event)
-                    }
-                    .margins(.all, 0)
-                    .minSize(height: PlanningLayoutMetrics.eventRowMinHeight)
+                cell.contentConfiguration = UIHostingConfiguration {
+                    PlanningDayEventView(event: event)
                 }
+                .margins(.all, 0)
+                .minSize(height: PlanningLayoutMetrics.eventRowMinHeight)
+            }
+
+            let eventCellRegistration = UICollectionView.CellRegistration<
+                UICollectionViewListCell, CalendarCoreUI.UIEvent
+            > { cell, _, event in
+                cell.contentConfiguration = UIHostingConfiguration {
+                    PlanningEventView(event: event)
+                }
+                .margins(.all, 0)
+                .minSize(height: PlanningLayoutMetrics.eventRowMinHeight)
             }
 
             let dayHeaderRegistration = UICollectionView.SupplementaryRegistration<PlanningDayHeaderView>(
@@ -180,7 +182,8 @@ struct PlanningCollectionView: UIViewRepresentable {
             datasource = UICollectionViewDiffableDataSource<Date, CalendarCoreUI.UIEvent>(
                 collectionView: collectionView
             ) { collectionView, indexPath, event in
-                collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: event)
+                let registration = event.isAllDay ? allDayCellRegistration : eventCellRegistration
+                return collectionView.dequeueConfiguredReusableCell(using: registration, for: indexPath, item: event)
             }
 
             datasource?.supplementaryViewProvider = { collectionView, elementKind, indexPath in
