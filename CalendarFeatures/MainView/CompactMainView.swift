@@ -31,7 +31,7 @@ public struct CompactMainView: View {
                         Button {
                             isShowingCalendarListView = true
                         } label: {
-                            CalendarResourcesAsset.Images.burger.swiftUIImage
+                            CalendarResourcesAsset.Images.list.swiftUIImage
                         }
                         .accessibilityLabel(CalendarResourcesStrings.openCalendarListTitle)
                     }
