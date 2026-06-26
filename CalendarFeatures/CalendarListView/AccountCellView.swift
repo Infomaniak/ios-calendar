@@ -23,18 +23,18 @@ import InfomaniakCoreSwiftUI
 import SwiftUI
 
 struct AccountCellView: View {
-    let account: CalendarAccount
+    let user: UserProfile
     let avatarSize: CGFloat = 40
 
     var body: some View {
         HStack {
-            AvatarView(user: account.user, size: avatarSize)
+            AvatarView(user: user, size: avatarSize)
 
             VStack(alignment: .leading, spacing: 0) {
-                Text(account.user.displayName)
+                Text(user.displayName)
                     .font(.body)
                     .fontWeight(.medium)
-                Text(account.user.email)
+                Text(user.email)
                     .font(.body)
                     .foregroundStyle(.gray)
             }

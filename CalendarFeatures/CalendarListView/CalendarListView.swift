@@ -53,7 +53,7 @@ public struct CalendarListView: View {
                     ) {
                         CalendarListContentView(calendars: calendarsFor(account: account))
                     } label: {
-                        AccountCellView(account: account)
+                        AccountCellView(user: account.user)
                     }
                 }
             }
@@ -65,13 +65,12 @@ public struct CalendarListView: View {
                         Text(CalendarResourcesStrings.settingsTitle)
                     }
                     Button {
-                        if let url = URL(string: "https://www.infomaniak.com/en/help") {
-                            openURL(url)
-                        }
+                        openHelpCenter()
                     } label: {
-                        HStack {
-                            CalendarResourcesAsset.Images.headset.swiftUIImage
+                        Label {
                             Text(CalendarResourcesStrings.helpTitle)
+                        } icon: {
+                            CalendarResourcesAsset.Images.headset.swiftUIImage
                         }
                     }
                     .buttonStyle(.plain)
@@ -91,6 +90,12 @@ public struct CalendarListView: View {
         @InjectService var calendarSDK: CalendarCoreGraph
         for await calendars in calendarSDK.calendarManager.observeCalendars() {
             self.calendars = calendars.map { UICalendar(calendar: $0) }
+        }
+    }
+
+    private func openHelpCenter() {
+        if let url = URL(string: "https://www.infomaniak.com/en/help") {
+            openURL(url)
         }
     }
 }
