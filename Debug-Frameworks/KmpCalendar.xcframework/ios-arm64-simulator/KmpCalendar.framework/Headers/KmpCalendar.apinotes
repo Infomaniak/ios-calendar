@@ -3051,14 +3051,24 @@ Classes:
 - Name: "KmpCalendarCalendarManager"
   SwiftName: "CalendarManager"
   Methods:
+  - Selector: "deleteEventEventId:completionHandler:"
+    MethodKind: "Instance"
+    SwiftName: "__deleteEvent(eventId:completionHandler:)"
+    SwiftPrivate: true
+    ResultType: "void"
+    Parameters:
+    - Position: 0
+      Type: "id _Nonnull"
+    - Position: 1
+      Type: "void (^ _Nonnull)(NSError * _Nullable)"
   - Selector: "observeCalendars"
     MethodKind: "Instance"
     SwiftName: "observeCalendars()"
     ResultType: "KmpCalendarSkieKotlinFlow<NSArray<KmpCalendarCalendar *> *> * _Nonnull"
-  - Selector: "observeEventsCalendarId:"
+  - Selector: "observeEventEventId:"
     MethodKind: "Instance"
-    SwiftName: "observeEvents(calendarId:)"
-    ResultType: "KmpCalendarSkieKotlinFlow<NSArray<id<KmpCalendarEvent>> *> * _Nonnull"
+    SwiftName: "observeEvent(eventId:)"
+    ResultType: "KmpCalendarSkieKotlinOptionalFlow<id<KmpCalendarEvent>> * _Nonnull"
     Parameters:
     - Position: 0
       Type: "id _Nonnull"
@@ -3941,9 +3951,21 @@ Classes:
       Type: "id _Nullable"
     - Position: 2
       Type: "KmpCalendarSkie_SuspendHandler * _Nonnull"
-  - Selector: "Skie_Suspend__3__syncCalendarsDispatchReceiver:accountId:suspendHandler:"
+  - Selector: "Skie_Suspend__3__deleteEventDispatchReceiver:eventId:suspendHandler:"
     MethodKind: "Class"
-    SwiftName: "Skie_Suspend__3__syncCalendars(dispatchReceiver:accountId:suspendHandler:)"
+    SwiftName: "Skie_Suspend__3__deleteEvent(dispatchReceiver:eventId:suspendHandler:)"
+    Availability: "nonswift"
+    ResultType: "void"
+    Parameters:
+    - Position: 0
+      Type: "KmpCalendarCalendarManager * _Nonnull"
+    - Position: 1
+      Type: "id _Nonnull"
+    - Position: 2
+      Type: "KmpCalendarSkie_SuspendHandler * _Nonnull"
+  - Selector: "Skie_Suspend__4__syncCalendarsDispatchReceiver:accountId:suspendHandler:"
+    MethodKind: "Class"
+    SwiftName: "Skie_Suspend__4__syncCalendars(dispatchReceiver:accountId:suspendHandler:)"
     Availability: "nonswift"
     ResultType: "void"
     Parameters:
@@ -3953,9 +3975,9 @@ Classes:
       Type: "int64_t"
     - Position: 2
       Type: "KmpCalendarSkie_SuspendHandler * _Nonnull"
-  - Selector: "Skie_Suspend__4__initAccountDispatchReceiver:accountId:credentials:suspendHandler:"
+  - Selector: "Skie_Suspend__5__initAccountDispatchReceiver:accountId:credentials:suspendHandler:"
     MethodKind: "Class"
-    SwiftName: "Skie_Suspend__4__initAccount(dispatchReceiver:accountId:credentials:suspendHandler:)"
+    SwiftName: "Skie_Suspend__5__initAccount(dispatchReceiver:accountId:credentials:suspendHandler:)"
     Availability: "nonswift"
     ResultType: "void"
     Parameters:
@@ -3967,9 +3989,9 @@ Classes:
       Type: "KmpCalendarDavCredentials * _Nonnull"
     - Position: 3
       Type: "KmpCalendarSkie_SuspendHandler * _Nonnull"
-  - Selector: "Skie_Suspend__5__removeAccountDispatchReceiver:accountId:suspendHandler:"
+  - Selector: "Skie_Suspend__6__removeAccountDispatchReceiver:accountId:suspendHandler:"
     MethodKind: "Class"
-    SwiftName: "Skie_Suspend__5__removeAccount(dispatchReceiver:accountId:suspendHandler:)"
+    SwiftName: "Skie_Suspend__6__removeAccount(dispatchReceiver:accountId:suspendHandler:)"
     Availability: "nonswift"
     ResultType: "void"
     Parameters:
@@ -3979,9 +4001,9 @@ Classes:
       Type: "int64_t"
     - Position: 2
       Type: "KmpCalendarSkie_SuspendHandler * _Nonnull"
-  - Selector: "Skie_Suspend__6__retrieveDavCredentialDispatchReceiver:authToken:login:suspendHandler:"
+  - Selector: "Skie_Suspend__7__retrieveDavCredentialDispatchReceiver:authToken:login:suspendHandler:"
     MethodKind: "Class"
-    SwiftName: "Skie_Suspend__6__retrieveDavCredential(dispatchReceiver:authToken:login:suspendHandler:)"
+    SwiftName: "Skie_Suspend__7__retrieveDavCredential(dispatchReceiver:authToken:login:suspendHandler:)"
     Availability: "nonswift"
     ResultType: "void"
     Parameters:
@@ -3993,9 +4015,9 @@ Classes:
       Type: "NSString * _Nullable"
     - Position: 3
       Type: "KmpCalendarSkie_SuspendHandler * _Nonnull"
-  - Selector: "Skie_Suspend__7__retrieveDavCredential__Skie_DefaultArguments__129DispatchReceiver:authToken:suspendHandler:"
+  - Selector: "Skie_Suspend__8__retrieveDavCredential__Skie_DefaultArguments__129DispatchReceiver:authToken:suspendHandler:"
     MethodKind: "Class"
-    SwiftName: "Skie_Suspend__7__retrieveDavCredential__Skie_DefaultArguments__129(dispatchReceiver:authToken:suspendHandler:)"
+    SwiftName: "Skie_Suspend__8__retrieveDavCredential__Skie_DefaultArguments__129(dispatchReceiver:authToken:suspendHandler:)"
     Availability: "nonswift"
     ResultType: "void"
     Parameters:

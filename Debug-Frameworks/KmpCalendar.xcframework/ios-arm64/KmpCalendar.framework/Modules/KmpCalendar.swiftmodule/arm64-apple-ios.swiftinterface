@@ -366,6 +366,8 @@ extension KmpCalendar.Kotlinx_coroutines_coreFlowCollector {
 }
 extension KmpCalendar.CalendarManager {
   @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
+  public func deleteEvent(eventId: Any) async throws
+  @available(iOS 13, macOS 10.15, watchOS 6, tvOS 13, *)
   public func syncCalendars(accountId: Swift.Int64) async throws
 }
 extension KmpCalendar.AccountManager {

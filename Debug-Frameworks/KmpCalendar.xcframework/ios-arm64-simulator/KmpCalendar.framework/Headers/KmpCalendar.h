@@ -1667,8 +1667,14 @@ __attribute__((swift_name("AccountManager")))
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("CalendarManager")))
 @interface KmpCalendarCalendarManager : KmpCalendarBase
+
+/**
+ * @note This method converts instances of CancellationException to errors.
+ * Other uncaught Kotlin exceptions are fatal.
+*/
+- (void)deleteEventEventId:(id)eventId completionHandler:(void (^)(NSError * _Nullable))completionHandler __attribute__((swift_name("deleteEvent(eventId:completionHandler:)")));
 - (id<KmpCalendarKotlinx_coroutines_coreFlow>)observeCalendars __attribute__((swift_name("observeCalendars()")));
-- (id<KmpCalendarKotlinx_coroutines_coreFlow>)observeEventsCalendarId:(id)calendarId __attribute__((swift_name("observeEvents(calendarId:)")));
+- (id<KmpCalendarKotlinx_coroutines_coreFlow>)observeEventEventId:(id)eventId __attribute__((swift_name("observeEvent(eventId:)")));
 
 /** Observe events from all *visible* calendars of the current account overlapping [start, end[. */
 - (id<KmpCalendarKotlinx_coroutines_coreFlow>)observeEventsStart:(KmpCalendarKotlinInstant *)start end:(KmpCalendarKotlinInstant *)end __attribute__((swift_name("observeEvents(start:end:)")));
@@ -1738,11 +1744,12 @@ __attribute__((swift_name("__SkieSuspendWrappersKt")))
 + (void)Skie_Suspend__0__hasNextDispatchReceiver:(KmpCalendarSkieColdFlowIterator<id> *)dispatchReceiver suspendHandler:(KmpCalendarSkie_SuspendHandler *)suspendHandler __attribute__((swift_name("Skie_Suspend__0__hasNext(dispatchReceiver:suspendHandler:)")));
 + (void)Skie_Suspend__1__collectDispatchReceiver:(id<KmpCalendarKotlinx_coroutines_coreFlow>)dispatchReceiver collector:(id<KmpCalendarKotlinx_coroutines_coreFlowCollector>)collector suspendHandler:(KmpCalendarSkie_SuspendHandler *)suspendHandler __attribute__((swift_name("Skie_Suspend__1__collect(dispatchReceiver:collector:suspendHandler:)")));
 + (void)Skie_Suspend__2__emitDispatchReceiver:(id<KmpCalendarKotlinx_coroutines_coreFlowCollector>)dispatchReceiver value:(id _Nullable)value suspendHandler:(KmpCalendarSkie_SuspendHandler *)suspendHandler __attribute__((swift_name("Skie_Suspend__2__emit(dispatchReceiver:value:suspendHandler:)")));
-+ (void)Skie_Suspend__3__syncCalendarsDispatchReceiver:(KmpCalendarCalendarManager *)dispatchReceiver accountId:(int64_t)accountId suspendHandler:(KmpCalendarSkie_SuspendHandler *)suspendHandler __attribute__((swift_name("Skie_Suspend__3__syncCalendars(dispatchReceiver:accountId:suspendHandler:)")));
-+ (void)Skie_Suspend__4__initAccountDispatchReceiver:(KmpCalendarAccountManager *)dispatchReceiver accountId:(int64_t)accountId credentials:(KmpCalendarDavCredentials *)credentials suspendHandler:(KmpCalendarSkie_SuspendHandler *)suspendHandler __attribute__((swift_name("Skie_Suspend__4__initAccount(dispatchReceiver:accountId:credentials:suspendHandler:)")));
-+ (void)Skie_Suspend__5__removeAccountDispatchReceiver:(KmpCalendarAccountManager *)dispatchReceiver accountId:(int64_t)accountId suspendHandler:(KmpCalendarSkie_SuspendHandler *)suspendHandler __attribute__((swift_name("Skie_Suspend__5__removeAccount(dispatchReceiver:accountId:suspendHandler:)")));
-+ (void)Skie_Suspend__6__retrieveDavCredentialDispatchReceiver:(KmpCalendarAccountManager *)dispatchReceiver authToken:(NSString *)authToken login:(NSString * _Nullable)login suspendHandler:(KmpCalendarSkie_SuspendHandler *)suspendHandler __attribute__((swift_name("Skie_Suspend__6__retrieveDavCredential(dispatchReceiver:authToken:login:suspendHandler:)")));
-+ (void)Skie_Suspend__7__retrieveDavCredential__Skie_DefaultArguments__129DispatchReceiver:(KmpCalendarAccountManager *)dispatchReceiver authToken:(NSString *)authToken suspendHandler:(KmpCalendarSkie_SuspendHandler *)suspendHandler __attribute__((swift_name("Skie_Suspend__7__retrieveDavCredential__Skie_DefaultArguments__129(dispatchReceiver:authToken:suspendHandler:)")));
++ (void)Skie_Suspend__3__deleteEventDispatchReceiver:(KmpCalendarCalendarManager *)dispatchReceiver eventId:(id)eventId suspendHandler:(KmpCalendarSkie_SuspendHandler *)suspendHandler __attribute__((swift_name("Skie_Suspend__3__deleteEvent(dispatchReceiver:eventId:suspendHandler:)")));
++ (void)Skie_Suspend__4__syncCalendarsDispatchReceiver:(KmpCalendarCalendarManager *)dispatchReceiver accountId:(int64_t)accountId suspendHandler:(KmpCalendarSkie_SuspendHandler *)suspendHandler __attribute__((swift_name("Skie_Suspend__4__syncCalendars(dispatchReceiver:accountId:suspendHandler:)")));
++ (void)Skie_Suspend__5__initAccountDispatchReceiver:(KmpCalendarAccountManager *)dispatchReceiver accountId:(int64_t)accountId credentials:(KmpCalendarDavCredentials *)credentials suspendHandler:(KmpCalendarSkie_SuspendHandler *)suspendHandler __attribute__((swift_name("Skie_Suspend__5__initAccount(dispatchReceiver:accountId:credentials:suspendHandler:)")));
++ (void)Skie_Suspend__6__removeAccountDispatchReceiver:(KmpCalendarAccountManager *)dispatchReceiver accountId:(int64_t)accountId suspendHandler:(KmpCalendarSkie_SuspendHandler *)suspendHandler __attribute__((swift_name("Skie_Suspend__6__removeAccount(dispatchReceiver:accountId:suspendHandler:)")));
++ (void)Skie_Suspend__7__retrieveDavCredentialDispatchReceiver:(KmpCalendarAccountManager *)dispatchReceiver authToken:(NSString *)authToken login:(NSString * _Nullable)login suspendHandler:(KmpCalendarSkie_SuspendHandler *)suspendHandler __attribute__((swift_name("Skie_Suspend__7__retrieveDavCredential(dispatchReceiver:authToken:login:suspendHandler:)")));
++ (void)Skie_Suspend__8__retrieveDavCredential__Skie_DefaultArguments__129DispatchReceiver:(KmpCalendarAccountManager *)dispatchReceiver authToken:(NSString *)authToken suspendHandler:(KmpCalendarSkie_SuspendHandler *)suspendHandler __attribute__((swift_name("Skie_Suspend__8__retrieveDavCredential__Skie_DefaultArguments__129(dispatchReceiver:authToken:suspendHandler:)")));
 @end
 
 __attribute__((objc_subclassing_restricted))
