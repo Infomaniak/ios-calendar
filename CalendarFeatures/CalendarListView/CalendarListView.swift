@@ -65,7 +65,9 @@ public struct CalendarListView: View {
                         Text(CalendarResourcesStrings.settingsTitle)
                     }
                     Button {
-                        openURL(URL(string: "https://www.infomaniak.com/en/help")!)
+                        if let url = URL(string: "https://www.infomaniak.com/en/help") {
+                            openURL(url)
+                        }
                     } label: {
                         HStack {
                             CalendarResourcesAsset.Images.headset.swiftUIImage

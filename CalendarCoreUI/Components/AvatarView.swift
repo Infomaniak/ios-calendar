@@ -40,6 +40,8 @@ public struct AvatarView: View {
                     initialsView
                 }
             }
+        } else {
+            initialsView
         }
     }
 
