@@ -25,6 +25,7 @@ import UIKit
 enum PlanningLayoutMetrics {
     static let dayColumnWidth: CGFloat = 64
     static let eventRowHeight: CGFloat = 48
+    static let eventRowMinHeight: CGFloat = 20
     static let dayHeaderHeight: CGFloat = 64
     static let weekHeaderHeight: CGFloat = 32
 
@@ -152,13 +153,13 @@ struct PlanningCollectionView: UIViewRepresentable {
                         PlanningDayEventView(event: event)
                     }
                     .margins(.all, 0)
-                    .minSize(height: 20)
+                    .minSize(height: PlanningLayoutMetrics.eventRowMinHeight)
                 } else {
                     cell.contentConfiguration = UIHostingConfiguration {
                         PlanningEventView(event: event)
                     }
                     .margins(.all, 0)
-                    .minSize(height: 20)
+                    .minSize(height: PlanningLayoutMetrics.eventRowMinHeight)
                 }
             }
 
