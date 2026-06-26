@@ -19,18 +19,10 @@
 import CalendarCoreUI
 import Foundation
 import InfomaniakDI
-import KmpCalendar
+import MultiplatformCalendar
 import SwiftUI
 
-public extension Date {
-    var instant: KotlinInstant {
-        KotlinInstant.companion.fromEpochMilliseconds(epochMilliseconds: Int64(timeIntervalSince1970 * 1000))
-    }
-}
-
 public struct PlanningView: View {
-    @Environment(\.calendarAccounts) private var calendarAccounts
-
     @State private var planningDays: [PlanningDay] = []
 
     public init() {}

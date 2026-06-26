@@ -17,7 +17,7 @@
  */
 
 import Foundation
-import KmpCalendar
+import MultiplatformCalendar
 
 public enum UIParticipationStatus: String, Sendable {
     case accepted
@@ -27,7 +27,7 @@ public enum UIParticipationStatus: String, Sendable {
 }
 
 public extension UIParticipationStatus {
-    init(participationStatus: KmpCalendar.ParticipationStatus) {
+    init(participationStatus: MultiplatformCalendar.ParticipationStatus) {
         switch participationStatus {
         case .accepted: self = .accepted
         case .declined: self = .declined
@@ -50,7 +50,7 @@ public struct UIAttendee: Sendable, Equatable, Hashable {
 }
 
 public extension UIAttendee {
-    init(attendee: KmpCalendar.Attendee) {
+    init(attendee: MultiplatformCalendar.Attendee) {
         displayName = attendee.displayName
         email = attendee.email
         status = UIParticipationStatus(participationStatus: attendee.status)
