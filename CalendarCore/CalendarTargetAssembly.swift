@@ -23,7 +23,7 @@ import InfomaniakDeviceCheck
 import InfomaniakDI
 import InfomaniakLogin
 import InterAppLogin
-import KmpCalendar
+import MultiplatformCalendar
 import OSLog
 
 open class CalendarTargetAssembly: TargetAssembly {

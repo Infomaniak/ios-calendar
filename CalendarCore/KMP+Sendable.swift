@@ -17,7 +17,7 @@
  */
 
 import Foundation
-import KmpCalendar
+import MultiplatformCalendar
 
 extension DavCredentials: @unchecked @retroactive Sendable {}
 

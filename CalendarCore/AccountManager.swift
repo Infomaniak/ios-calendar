@@ -21,7 +21,7 @@ import Foundation
 @preconcurrency import InfomaniakCore
 import InfomaniakDI
 import InfomaniakLogin
-@preconcurrency import KmpCalendar
+@preconcurrency import MultiplatformCalendar
 import OSLog
 
 public final class NoOpRefreshTokenDelegate: RefreshTokenDelegate {
