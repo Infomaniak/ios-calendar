@@ -20,7 +20,6 @@ import CalendarCalendarListView
 import SwiftUI
 
 public struct RegularMainView: View {
-    @Environment(\.calendarAccounts) private var calendarAccounts
     public var body: some View {
         NavigationSplitView {
             CalendarListView()

@@ -80,7 +80,6 @@ let mainView = Feature(
         settingsView,
         TargetDependency.target(name: "CalendarResources"),
         TargetDependency.external(name: "InfomaniakDI")
-
     ]
 )
 

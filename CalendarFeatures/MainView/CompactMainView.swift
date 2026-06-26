@@ -21,7 +21,6 @@ import CalendarResources
 import SwiftUI
 
 public struct CompactMainView: View {
-    @Environment(\.calendarAccounts) private var calendarAccounts
     @State private var isShowingCalendarListView = false
     public var body: some View {
         NavigationStack {
