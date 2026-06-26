@@ -19,6 +19,8 @@
 import CalendarCoreUI
 import Collections
 import Foundation
+import InfomaniakDI
+import MultiplatformCalendar
 import UIKit
 
 @MainActor
@@ -28,8 +30,37 @@ class PlanningViewModel: ObservableObject {
     @Published private(set) var planningDays: OrderedDictionary<Date, PlanningDay> = [:]
     @Published var scrollTarget: Date?
 
+    private var currentObserveTask: Task<Void, Never>?
+
     init() {
         planningDays = generatePlanningDaysForWindow(centerDate: Date())
+        guard let startDate = planningDays.keys.first,
+              let endDate = planningDays.keys.last else { return }
+        observeEventsForWindow(startDate: startDate, endDate: endDate)
+    }
+
+    private func observeEventsForWindow(startDate: Date, endDate: Date) {
+        currentObserveTask?.cancel()
+        currentObserveTask = Task.detached { [weak self] in
+            @InjectService var calendarSDK: CalendarCoreGraph
+            for await events in calendarSDK.calendarManager.observeEvents(start: startDate.instant, end: endDate.instant) {
+                guard var planningDays = await self?.planningDays else { return }
+                let uiEvents = events.compactMap { UIEvent(event: $0, userEmail: "") }
+
+                let calendar = Calendar.current
+                let eventsByDay = Dictionary(grouping: uiEvents) { event in
+                    calendar.startOfDay(for: event.startDate)
+                }
+
+                for (dayDate, events) in eventsByDay {
+                    planningDays[dayDate] = PlanningDay(date: dayDate, events: events)
+                }
+
+                Task { @MainActor in
+                    self?.planningDays = planningDays
+                }
+            }
+        }
     }
 
     private func generatePlanningDaysForWindow(centerDate: Date) -> OrderedDictionary<Date, PlanningDay> {
