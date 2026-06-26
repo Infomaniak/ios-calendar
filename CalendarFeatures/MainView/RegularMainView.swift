@@ -17,6 +17,7 @@
  */
 
 import CalendarCalendarListView
+import CalendarCalendarView
 import SwiftUI
 
 public struct RegularMainView: View {
@@ -25,7 +26,7 @@ public struct RegularMainView: View {
             CalendarListView()
         } detail: {
             NavigationStack {
-                Text("MainView")
+                CalendarView()
             }
         }
     }

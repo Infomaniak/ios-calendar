@@ -17,6 +17,7 @@
  */
 
 import CalendarCalendarListView
+import CalendarCalendarView
 import CalendarResources
 import SwiftUI
 
@@ -24,7 +25,7 @@ public struct CompactMainView: View {
     @State private var isShowingCalendarListView = false
     public var body: some View {
         NavigationStack {
-            Text("MainView")
+            CalendarView()
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
                         Button {
