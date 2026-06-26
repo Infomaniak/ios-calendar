@@ -158,8 +158,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getsentry/sentry-cocoa",
       "state" : {
-        "revision" : "43abfbf9a26089ad34604c718ad0935440caf1d4",
-        "version" : "9.18.0"
+        "revision" : "00a2fec32ea665b81e406419e078bb713238e23f",
+        "version" : "9.19.0"
       }
     },
     {
@@ -178,6 +178,15 @@
       "state" : {
         "revision" : "2842e6e84e82eb9a8dac0100ca90d9444b0307f4",
         "version" : "5.7.1"
+      }
+    },
+    {
+      "identity" : "swift-collections",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-collections",
+      "state" : {
+        "revision" : "a0cb0954ecb21e4e31b0070e6ed5674e8556685a",
+        "version" : "1.6.0"
       }
     },
     {
