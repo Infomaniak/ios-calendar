@@ -26,17 +26,23 @@ import UIKit
 @MainActor
 class PlanningViewModel: ObservableObject {
     static let windowSize = 500
+    static let dayCount = 10_000
 
-    @Published private(set) var planningDays: OrderedDictionary<Date, PlanningDay> = [:]
+    @Published private var planningDays: OrderedDictionary<Date, PlanningDay> = [:]
     @Published var scrollTarget: Date?
 
     private var currentObserveTask: Task<Void, Never>?
 
+    private let referenceDate: Date
+
+    var totalDays: Int {
+        // Past - Current Date - Future
+        Self.dayCount + 1 + Self.dayCount
+    }
+
     init() {
-        planningDays = generatePlanningDaysForWindow(centerDate: Date())
-        guard let startDate = planningDays.keys.first,
-              let endDate = planningDays.keys.last else { return }
-        observeEventsForWindow(startDate: startDate, endDate: endDate)
+        referenceDate = Calendar.current.startOfDay(for: Date())
+        //observeEventsForWindow(startDate: startDate, endDate: endDate)
     }
 
     private func observeEventsForWindow(startDate: Date, endDate: Date) {
@@ -63,19 +69,12 @@ class PlanningViewModel: ObservableObject {
         }
     }
 
-    private func generatePlanningDaysForWindow(centerDate: Date) -> OrderedDictionary<Date, PlanningDay> {
-        let calendar = Calendar.current
-        let dayStart = calendar.startOfDay(for: centerDate)
-
-        var days: OrderedDictionary<Date, PlanningDay> = [:]
-        for dayOffset in -Self.windowSize ... Self.windowSize {
-            guard let date = calendar.date(byAdding: .day, value: dayOffset, to: dayStart) else {
-                continue
-            }
-
-            days[date] = PlanningDay(date: date, events: [])
+    func getPlanningDayAtIndex(_ index: Int) -> PlanningDay {
+        let dayOffset = index - Self.dayCount
+        guard let date = Calendar.current.date(byAdding: .day, value: dayOffset, to: referenceDate) else {
+            fatalError("Failed to calculate date for index \(index)")
         }
 
-        return days
+        return PlanningDay(date: date, events: [])
     }
 }
