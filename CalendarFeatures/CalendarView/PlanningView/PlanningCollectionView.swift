@@ -60,8 +60,13 @@ struct PlanningCollectionView: UIViewRepresentable {
         return Coordinator()
     }
 
-    class Coordinator: NSObject, UICollectionViewDelegate {
+    final class Coordinator: NSObject, UICollectionViewDelegate {
         private var datasource: UICollectionViewDiffableDataSource<Date, CalendarCoreUI.UIEvent>?
+
+        private var scrollBaseOffsetY = CGFloat.zero
+        private var scrollProgress = 0.0
+
+        private let threshold: CGFloat = 500
 
         private var planningDays: [PlanningDay] = []
 
@@ -211,6 +216,47 @@ struct PlanningCollectionView: UIViewRepresentable {
                 snapshot.appendItems(day.events, toSection: day.date)
             }
             datasource?.apply(snapshot, animatingDifferences: true)
+        }
+
+        // MARK: - UIScrollViewDelegate
+
+        func scrollViewShouldScrollToTop(_ scrollView: UIScrollView) -> Bool {
+            return false
+        }
+
+        func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+            scrollBaseOffsetY = scrollView.contentOffset.y
+            scrollProgress = 0
+        }
+
+        func scrollViewDidScroll(_ scrollView: UIScrollView) {
+            guard scrollView.isDragging || scrollView.isDecelerating else {
+                scrollBaseOffsetY = scrollView.contentOffset.y
+                return
+            }
+
+            let offsetY = scrollView.contentOffset.y
+            let delta = offsetY - scrollBaseOffsetY
+
+            print("OFFSET", delta)
+
+            let newProgress = scrollProgress + delta / threshold
+            scrollProgress = min(max(newProgress, 0), 1)
+
+            print("Progress", scrollProgress)
+        }
+
+        func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+            guard !decelerate else { return }
+            commitProgressOrReset()
+        }
+
+        func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+            commitProgressOrReset()
+        }
+
+        private func commitProgressOrReset() {
+
         }
     }
 }
