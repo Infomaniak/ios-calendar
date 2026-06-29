@@ -54,8 +54,7 @@ struct PlanningCollectionView: UIViewRepresentable {
             collectionViewLayout: context.coordinator.makeLayout()
         )
         collectionView.delegate = context.coordinator
-
-        context.coordinator.setupDatasource(for: collectionView)
+        collectionView.dataSource = context.coordinator
 
         if #available(iOS 26.0, *) {
             // Remove the effect since we will use a custom header
@@ -67,7 +66,7 @@ struct PlanningCollectionView: UIViewRepresentable {
 
     func updateUIView(_ collectionView: UICollectionView, context: Context) {
         let animated = context.transaction.animation != nil
-        context.coordinator.applySnapshot(animated: animated)
+        context.coordinator.applySnapshot(animated: animated, collectionView: collectionView)
 
         guard let target = planningViewModel.scrollTarget else { return }
         context.coordinator.scrollToStartOfDay(date: target, animated: animated, for: collectionView)
@@ -80,7 +79,7 @@ struct PlanningCollectionView: UIViewRepresentable {
         return Coordinator(planningViewModel: planningViewModel)
     }
 
-    class Coordinator: NSObject, UICollectionViewDelegate {
+    class Coordinator: NSObject, UICollectionViewDelegate, UICollectionViewDataSource {
         private var datasource: UICollectionViewDiffableDataSource<Date, PlanningItemId>?
 
         private let planningViewModel: PlanningViewModel
@@ -88,8 +87,50 @@ struct PlanningCollectionView: UIViewRepresentable {
             return planningViewModel.planningDays
         }
 
+        let dayHeaderRegistration: UICollectionView.SupplementaryRegistration<PlanningDayHeaderView>
+        let weekHeaderRegistration: UICollectionView.SupplementaryRegistration<PlanningWeekHeaderView>
+
+        let emptyCellRegistration: UICollectionView.CellRegistration<UICollectionViewListCell, PlanningItemContent>
+        let allDayCellRegistration: UICollectionView.CellRegistration<UICollectionViewListCell, CalendarCoreUI.UIEvent>
+        let eventCellRegistration: UICollectionView.CellRegistration<UICollectionViewListCell, CalendarCoreUI.UIEvent>
+
         init(planningViewModel: PlanningViewModel) {
             self.planningViewModel = planningViewModel
+
+            dayHeaderRegistration = UICollectionView.SupplementaryRegistration<PlanningDayHeaderView>(
+                elementKind: PlanningLayoutMetrics.dayHeaderKind
+            ) { headerView, _, indexPath in
+                guard indexPath.section < planningViewModel.planningDays.count else { return }
+                headerView.configure(date: planningViewModel.planningDays.keys[indexPath.section])
+            }
+
+            weekHeaderRegistration = UICollectionView.SupplementaryRegistration<PlanningWeekHeaderView>(
+                elementKind: PlanningLayoutMetrics.weekHeaderKind
+            ) { headerView, _, indexPath in
+                guard indexPath.section < planningViewModel.planningDays.count else { return }
+                headerView.configure(date: planningViewModel.planningDays.keys[indexPath.section])
+            }
+
+            emptyCellRegistration = .init { cell, _, _ in
+                cell.contentConfiguration = cell.defaultContentConfiguration()
+            }
+
+            allDayCellRegistration = .init { cell, _, event in
+                cell.contentConfiguration = UIHostingConfiguration {
+                    PlanningDayEventView(event: event)
+                }
+                .margins(.all, 0)
+                .minSize(height: PlanningLayoutMetrics.eventRowMinHeight)
+            }
+
+            eventCellRegistration = .init { cell, _, event in
+                cell.contentConfiguration = UIHostingConfiguration {
+                    PlanningEventView(event: event)
+                }
+                .margins(.all, 0)
+                .minSize(height: PlanningLayoutMetrics.eventRowMinHeight)
+            }
+
             super.init()
         }
 
@@ -191,95 +232,51 @@ struct PlanningCollectionView: UIViewRepresentable {
 
         // MARK: - Data source
 
-        func setupDatasource(for collectionView: UICollectionView) {
-            let emptyCellRegistration = UICollectionView.CellRegistration<
-                UICollectionViewListCell, PlanningItemContent
-            > { cell, _, _ in
-                cell.contentConfiguration = cell.defaultContentConfiguration()
-            }
-
-            let allDayCellRegistration = UICollectionView.CellRegistration<
-                UICollectionViewListCell, CalendarCoreUI.UIEvent
-            > { cell, _, event in
-                cell.contentConfiguration = UIHostingConfiguration {
-                    PlanningDayEventView(event: event)
-                }
-                .margins(.all, 0)
-                .minSize(height: PlanningLayoutMetrics.eventRowMinHeight)
-            }
-
-            let eventCellRegistration = UICollectionView.CellRegistration<
-                UICollectionViewListCell, CalendarCoreUI.UIEvent
-            > { cell, _, event in
-                cell.contentConfiguration = UIHostingConfiguration {
-                    PlanningEventView(event: event)
-                }
-                .margins(.all, 0)
-                .minSize(height: PlanningLayoutMetrics.eventRowMinHeight)
-            }
-
-            let dayHeaderRegistration = UICollectionView.SupplementaryRegistration<PlanningDayHeaderView>(
-                elementKind: PlanningLayoutMetrics.dayHeaderKind
-            ) { [weak self] headerView, _, indexPath in
-                guard let self, indexPath.section < planningDays.count else { return }
-                headerView.configure(date: planningDays.keys[indexPath.section])
-            }
-
-            let weekHeaderRegistration = UICollectionView.SupplementaryRegistration<PlanningWeekHeaderView>(
-                elementKind: PlanningLayoutMetrics.weekHeaderKind
-            ) { [weak self] headerView, _, indexPath in
-                guard let self, indexPath.section < planningDays.count else { return }
-                headerView.configure(date: planningDays.keys[indexPath.section])
-            }
-
-            datasource = UICollectionViewDiffableDataSource<Date, PlanningItemId>(
-                collectionView: collectionView
-            ) { collectionView, indexPath, itemId in
-                switch itemId {
-                case .empty:
-                    return collectionView.dequeueConfiguredReusableCell(
-                        using: emptyCellRegistration,
-                        for: indexPath,
-                        item: .empty
-                    )
-                case .event:
-                    guard let day = self.planningDays[self.planningDays.keys[indexPath.section]] else {
-                        return nil
-                    }
-                    let event = day.events[indexPath.item]
-
-                    let registration = event.isAllDay ? allDayCellRegistration : eventCellRegistration
-                    return collectionView.dequeueConfiguredReusableCell(using: registration, for: indexPath, item: event)
-                }
-            }
-
-            datasource?.supplementaryViewProvider = { collectionView, elementKind, indexPath in
-                switch elementKind {
-                case PlanningLayoutMetrics.weekHeaderKind:
-                    return collectionView.dequeueConfiguredReusableSupplementary(
-                        using: weekHeaderRegistration,
-                        for: indexPath
-                    )
-                default:
-                    return collectionView.dequeueConfiguredReusableSupplementary(
-                        using: dayHeaderRegistration,
-                        for: indexPath
-                    )
-                }
+        func collectionView(
+            _ collectionView: UICollectionView,
+            viewForSupplementaryElementOfKind kind: String,
+            at indexPath: IndexPath
+        ) -> UICollectionReusableView {
+            switch kind {
+            case PlanningLayoutMetrics.weekHeaderKind:
+                return collectionView.dequeueConfiguredReusableSupplementary(
+                    using: weekHeaderRegistration,
+                    for: indexPath
+                )
+            default:
+                return collectionView.dequeueConfiguredReusableSupplementary(
+                    using: dayHeaderRegistration,
+                    for: indexPath
+                )
             }
         }
 
-        func applySnapshot(animated: Bool) {
-            var snapshot = NSDiffableDataSourceSnapshot<Date, PlanningItemId>()
-            for (dayDate, planningDay) in planningViewModel.planningDays {
-                snapshot.appendSections([dayDate])
-                if planningDay.events.isEmpty {
-                    snapshot.appendItems([.empty(dayDate)], toSection: dayDate)
-                } else {
-                    snapshot.appendItems(planningDay.events.map { .event(id: $0.id) }, toSection: dayDate)
-                }
+        func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+            planningDays[planningDays.keys[section]]?.events.count ?? 0
+        }
+
+        func numberOfSections(in collectionView: UICollectionView) -> Int {
+            return planningDays.count
+        }
+
+        func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+            guard let day = planningDays[planningDays.keys[indexPath.section]],
+                  !day.events.isEmpty else {
+                return collectionView.dequeueConfiguredReusableCell(
+                    using: emptyCellRegistration,
+                    for: indexPath,
+                    item: .empty
+                )
             }
-            datasource?.apply(snapshot, animatingDifferences: animated)
+
+            let event = day.events[indexPath.item]
+
+            let registration = event.isAllDay ? allDayCellRegistration : eventCellRegistration
+            return collectionView.dequeueConfiguredReusableCell(using: registration, for: indexPath, item: event)
+        }
+
+        func applySnapshot(animated: Bool, collectionView: UICollectionView) {
+            collectionView.reloadData()
         }
 
         func scrollToStartOfDay(date: Date, animated: Bool, for collectionView: UICollectionView) {
