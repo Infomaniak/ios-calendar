@@ -18,12 +18,25 @@
 
 import CalendarCore
 import CalendarCoreUI
+import InfomaniakDI
+@preconcurrency import MultiplatformCalendar
 import SwiftUI
+
+private extension View {
+    func checkmarkTransition() -> some View {
+        if #available(iOS 26.0, *) {
+            return transition(.symbolEffect(.drawOn))
+        } else {
+            return transition(.opacity)
+        }
+    }
+}
 
 struct CalendarListContentView: View {
     @Environment(\.calendarAccounts) private var calendarAccounts
 
     @State private var expandedAccounts: Set<Int> = []
+    @State private var visibilityOverrides = [String: Bool]()
 
     let calendars: [UICalendar]
 
@@ -43,17 +56,33 @@ struct CalendarListContentView: View {
                     )
                 ) {
                     ForEach(calendarsFor(account: account)) { calendar in
-                        HStack {
-                            Circle()
-                                .fill(calendar.color)
-                                .frame(width: 8, height: 8)
-                            Text(calendar.displayName)
+                        Button {
+                            toggleCalendar(calendar: calendar)
+                        } label: {
+                            HStack(spacing: 8) {
+                                Circle()
+                                    .fill(calendar.color)
+                                    .frame(width: 24, height: 24)
+                                    .overlay {
+                                        if isVisible(calendar) {
+                                            Image(systemName: "checkmark")
+                                                .font(.system(size: 12, weight: .medium))
+                                                .foregroundStyle(.white) // TODO: Use a color that contrasts well with the calendar color
+                                                .checkmarkTransition()
+                                        }
+                                    }
+                                    .accessibilityHidden(true)
+
+                                Text(calendar.displayName)
+                            }
                         }
                     }
                 } label: {
-                    AccountCellView(rawAvatarURL: account.user.avatar,
-                                    displayName: account.user.displayName,
-                                    email: account.user.email)
+                    AccountCellView(
+                        rawAvatarURL: account.user.avatar,
+                        displayName: account.user.displayName,
+                        email: account.user.email
+                    )
                 }
             }
         }
@@ -61,6 +90,29 @@ struct CalendarListContentView: View {
 
     private func calendarsFor(account: CalendarAccount) -> [UICalendar] {
         calendars.filter { $0.accountId == account.id }
+    }
+
+    private func isVisible(_ calendar: UICalendar) -> Bool {
+        visibilityOverrides[calendar.id] ?? calendar.isVisible
+    }
+
+    private func toggleCalendar(calendar: UICalendar) {
+        let previousValue = isVisible(calendar)
+        let newValue = !previousValue
+
+        visibilityOverrides[calendar.id] = newValue
+
+        Task {
+            @InjectService var calendarSDK: CalendarCoreGraph
+            do {
+                try await calendarSDK.calendarManager.updateCalendar(
+                    calendarId: calendar.id,
+                    edit: .init(isVisible: KotlinBoolean(bool: newValue))
+                )
+            } catch {
+                visibilityOverrides[calendar.id] = previousValue
+            }
+        }
     }
 }
 
