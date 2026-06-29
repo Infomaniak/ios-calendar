@@ -38,7 +38,7 @@ struct CalendarListContentView: View {
     @State private var expandedAccounts: Set<Int> = []
     @State private var visibilityOverrides = [String: Bool]()
 
-    let calendars: [UICalendar]
+    let indexedCalendars: [Int: [UICalendar]]
 
     var body: some View {
         ForEach(calendarAccounts) { account in
@@ -55,7 +55,7 @@ struct CalendarListContentView: View {
                         }
                     )
                 ) {
-                    ForEach(calendarsFor(account: account)) { calendar in
+                    ForEach(indexedCalendars[account.id, default: []]) { calendar in
                         Button {
                             toggleCalendar(calendar: calendar)
                         } label: {
@@ -66,7 +66,7 @@ struct CalendarListContentView: View {
                                     .overlay {
                                         if isVisible(calendar) {
                                             Image(systemName: "checkmark")
-                                                .font(.system(size: 12, weight: .medium))
+                                                .font(.system(size: 12, weight: .semibold))
                                                 .foregroundStyle(.white) // TODO: Use a color that contrasts well with the calendar color
                                                 .checkmarkTransition()
                                         }
@@ -86,10 +86,6 @@ struct CalendarListContentView: View {
                 }
             }
         }
-    }
-
-    private func calendarsFor(account: CalendarAccount) -> [UICalendar] {
-        calendars.filter { $0.accountId == account.id }
     }
 
     private func isVisible(_ calendar: UICalendar) -> Bool {
@@ -117,5 +113,5 @@ struct CalendarListContentView: View {
 }
 
 #Preview {
-    CalendarListContentView(calendars: [.preview])
+    CalendarListContentView(indexedCalendars: [0: [.preview]])
 }
