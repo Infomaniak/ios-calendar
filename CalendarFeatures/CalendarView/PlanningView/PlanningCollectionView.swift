@@ -35,6 +35,7 @@ enum PlanningLayoutMetrics {
 
 struct PlanningCollectionView: UIViewRepresentable {
     let planningDays: [PlanningDay]
+    let nextEventCardViewModel: NextEventCardViewModel
 
     func makeUIView(context: Context) -> UICollectionView {
         let collectionView = UICollectionView(
@@ -57,18 +58,25 @@ struct PlanningCollectionView: UIViewRepresentable {
     }
 
     func makeCoordinator() -> Coordinator {
-        return Coordinator()
+        return Coordinator(nextEventCardViewModel: nextEventCardViewModel)
     }
 
     final class Coordinator: NSObject, UICollectionViewDelegate {
         private var datasource: UICollectionViewDiffableDataSource<Date, CalendarCoreUI.UIEvent>?
 
-        private var scrollBaseOffsetY = CGFloat.zero
-        private var scrollProgress = 0.0
+        private let nextEventCardViewModel: NextEventCardViewModel
 
-        private let threshold: CGFloat = 500
+        private var gestureStartOffsetY = CGFloat.zero
+        private var gestureStartProgress: CGFloat = 1.0
+
+        private let fullScrollDistance: CGFloat = 200
+        private let scrollThreshold: CGFloat = 0.5
 
         private var planningDays: [PlanningDay] = []
+
+        init(nextEventCardViewModel: NextEventCardViewModel) {
+            self.nextEventCardViewModel = nextEventCardViewModel
+        }
 
         // MARK: - Layout
 
@@ -225,43 +233,37 @@ struct PlanningCollectionView: UIViewRepresentable {
         }
 
         func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-            scrollBaseOffsetY = scrollView.contentOffset.y
-            scrollProgress = 0
+            gestureStartOffsetY = scrollView.contentOffset.y
+            gestureStartProgress = nextEventCardViewModel.scrollProgress
         }
 
         func scrollViewDidScroll(_ scrollView: UIScrollView) {
             guard scrollView.isDragging || scrollView.isDecelerating else {
-                scrollBaseOffsetY = scrollView.contentOffset.y
                 return
             }
 
-            let offsetY = scrollView.contentOffset.y
-            let delta = offsetY - scrollBaseOffsetY
-
-            print("OFFSET", delta)
-
-            let newProgress = scrollProgress + delta / threshold
-            scrollProgress = min(max(newProgress, 0), 1)
-
-            print("Progress", scrollProgress)
+            let delta = scrollView.contentOffset.y - gestureStartOffsetY
+            let newProgress = gestureStartProgress - delta / fullScrollDistance
+            nextEventCardViewModel.scrollProgress = min(max(newProgress, 0), 1)
         }
 
         func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
             guard !decelerate else { return }
-            commitProgressOrReset()
+            commitScrollProgress()
         }
 
         func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-            commitProgressOrReset()
+            commitScrollProgress()
         }
 
-        private func commitProgressOrReset() {
-
+        private func commitScrollProgress() {
+            let target = nextEventCardViewModel.scrollProgress > scrollThreshold ? 1.0 : 0.0
+            nextEventCardViewModel.scrollProgress = target
         }
     }
 }
 
 #Preview {
-    PlanningCollectionView(planningDays: PlanningDay.preview)
+    PlanningCollectionView(planningDays: PlanningDay.preview, nextEventCardViewModel: NextEventCardViewModel())
         .ignoresSafeArea()
 }
