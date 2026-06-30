@@ -20,6 +20,20 @@ import CalendarCoreUI
 import CalendarResources
 import SwiftUI
 
+public extension CalendarCoreUI.UIEvent {
+    var bottomPadding: CGFloat {
+        let duration = endDate.timeIntervalSince(startDate)
+        let durationInMinutes = duration / 60
+
+        guard durationInMinutes > PlanningEventView.UIConstants.minDuration else { return 0 }
+        guard durationInMinutes < PlanningEventView.UIConstants.maxDuration else { return PlanningEventView.UIConstants.maxSize }
+
+        let ratio = (durationInMinutes - PlanningEventView.UIConstants.minDuration) /
+            (PlanningEventView.UIConstants.maxDuration - PlanningEventView.UIConstants.minDuration)
+        return CGFloat(ratio) * PlanningEventView.UIConstants.maxSize
+    }
+}
+
 struct PlanningEventView: View {
     let event: CalendarCoreUI.UIEvent
 
@@ -33,14 +47,7 @@ struct PlanningEventView: View {
     }
 
     private var bottomPadding: CGFloat {
-        let duration = event.endDate.timeIntervalSince(event.startDate)
-        let durationInMinutes = duration / 60
-
-        guard durationInMinutes > UIConstants.minDuration else { return 0 }
-        guard durationInMinutes < UIConstants.maxDuration else { return UIConstants.maxSize }
-
-        let ratio = (durationInMinutes - UIConstants.minDuration) / (UIConstants.maxDuration - UIConstants.minDuration)
-        return CGFloat(ratio) * UIConstants.maxSize
+        return event.bottomPadding
     }
 
     var body: some View {
@@ -83,7 +90,7 @@ struct PlanningEventView: View {
                 }
             }
         }
-        .padding(.bottom, bottomPadding)
+        .padding(.bottom, event.bottomPadding)
         .planningEventStyle(event: event)
     }
 }

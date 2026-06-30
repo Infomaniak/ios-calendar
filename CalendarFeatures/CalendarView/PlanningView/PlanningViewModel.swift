@@ -26,7 +26,7 @@ import UIKit
 @MainActor
 class PlanningViewModel: ObservableObject {
     static let windowSize = 500
-    static let dayCount = 10_000
+    static let dayCount = 10000
 
     @Published private var planningDays: OrderedDictionary<Date, PlanningDay> = [:]
     @Published var scrollTarget: Date?
@@ -42,7 +42,11 @@ class PlanningViewModel: ObservableObject {
 
     init() {
         referenceDate = Calendar.current.startOfDay(for: Date())
-        //observeEventsForWindow(startDate: startDate, endDate: endDate)
+        guard let startDate = Calendar.current.date(byAdding: .day, value: -Self.windowSize, to: referenceDate),
+              let endDate = Calendar.current.date(byAdding: .day, value: Self.windowSize, to: referenceDate) else {
+            return
+        }
+        observeEventsForWindow(startDate: startDate, endDate: endDate)
     }
 
     private func observeEventsForWindow(startDate: Date, endDate: Date) {
@@ -73,6 +77,10 @@ class PlanningViewModel: ObservableObject {
         let dayOffset = index - Self.dayCount
         guard let date = Calendar.current.date(byAdding: .day, value: dayOffset, to: referenceDate) else {
             fatalError("Failed to calculate date for index \(index)")
+        }
+
+        if let planningDay = planningDays[date] {
+            return planningDay
         }
 
         return PlanningDay(date: date, events: [])

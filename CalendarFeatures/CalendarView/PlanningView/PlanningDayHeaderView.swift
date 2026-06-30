@@ -77,8 +77,7 @@ final class PlanningDayHeaderView: UICollectionReusableView {
 
         NSLayoutConstraint.activate([
             stack.topAnchor.constraint(equalTo: topAnchor, constant: IKPadding.mini),
-            stack.centerXAnchor.constraint(equalTo: centerXAnchor),
-            stack.leadingAnchor.constraint(greaterThanOrEqualTo: leadingAnchor),
+            stack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: IKPadding.mini),
             stack.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor)
         ])
     }

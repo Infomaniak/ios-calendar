@@ -29,10 +29,6 @@ enum PlanningLayoutMetrics {
     static let eventRowHeight: CGFloat = 48
     static let eventRowMinHeight: CGFloat = 20
     static let dayHeaderHeight: CGFloat = 64
-    static let weekHeaderHeight: CGFloat = 32
-
-    static let dayHeaderKind = "PlanningDayHeaderKind"
-    static let weekHeaderKind = "PlanningWeekHeaderKind"
 }
 
 enum PlanningItemId: Hashable {
@@ -79,13 +75,12 @@ struct PlanningCollectionView: UIViewRepresentable {
         return Coordinator(planningViewModel: planningViewModel)
     }
 
-    class Coordinator: NSObject, UICollectionViewDelegate, UICollectionViewDataSource {
+    class Coordinator: NSObject, UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
         private var datasource: UICollectionViewDiffableDataSource<Date, PlanningItemId>?
 
         private let planningViewModel: PlanningViewModel
 
         let dayHeaderRegistration: UICollectionView.SupplementaryRegistration<PlanningDayHeaderView>
-        let weekHeaderRegistration: UICollectionView.SupplementaryRegistration<PlanningWeekHeaderView>
 
         let emptyCellRegistration: UICollectionView.CellRegistration<UICollectionViewListCell, PlanningItemContent>
         let allDayCellRegistration: UICollectionView.CellRegistration<UICollectionViewListCell, CalendarCoreUI.UIEvent>
@@ -94,16 +89,7 @@ struct PlanningCollectionView: UIViewRepresentable {
         init(planningViewModel: PlanningViewModel) {
             self.planningViewModel = planningViewModel
 
-            dayHeaderRegistration = UICollectionView.SupplementaryRegistration<PlanningDayHeaderView>(
-                elementKind: PlanningLayoutMetrics.dayHeaderKind
-            ) { headerView, _, indexPath in
-                guard indexPath.section < planningViewModel.totalDays else { return }
-                headerView.configure(date: planningViewModel.getPlanningDayAtIndex(indexPath.section).date)
-            }
-
-            weekHeaderRegistration = UICollectionView.SupplementaryRegistration<PlanningWeekHeaderView>(
-                elementKind: PlanningLayoutMetrics.weekHeaderKind
-            ) { headerView, _, indexPath in
+            dayHeaderRegistration = .init(elementKind: UICollectionView.elementKindSectionHeader) { headerView, _, indexPath in
                 guard indexPath.section < planningViewModel.totalDays else { return }
                 headerView.configure(date: planningViewModel.getPlanningDayAtIndex(indexPath.section).date)
             }
@@ -133,93 +119,38 @@ struct PlanningCollectionView: UIViewRepresentable {
 
         // MARK: - Layout
 
-        func makeLayout() -> UICollectionViewCompositionalLayout {
-            let configuration = UICollectionViewCompositionalLayoutConfiguration()
-            configuration.interSectionSpacing = 0
-
-            return UICollectionViewCompositionalLayout(
-                section: Coordinator.makeDaySection(
-                    showsWeekHeader: true,
-                    showsDayHeader: true,
-                    hasNoEvents: false
-                ),
-                configuration: configuration
+        func makeLayout() -> UICollectionViewFlowLayout {
+            let layout = UICollectionViewFlowLayout()
+            layout.minimumLineSpacing = IKPadding.mini
+            layout.minimumInteritemSpacing = 0
+            layout.sectionInset = UIEdgeInsets(top: 0, left: PlanningLayoutMetrics.dayColumnWidth, bottom: 0, right: 0)
+            layout.headerReferenceSize = CGSize(
+                width: PlanningLayoutMetrics.dayColumnWidth,
+                height: PlanningLayoutMetrics.dayHeaderHeight
             )
+            layout.sectionHeadersPinToVisibleBounds = true
+            return layout
         }
 
-        private func shouldShowDayHeader(at sectionIndex: Int) -> Bool {
-            return !planningViewModel.getPlanningDayAtIndex(sectionIndex).events.isEmpty
-        }
+        // MARK: - Flow layout delegate
 
-        private func shouldShowWeekHeader(at sectionIndex: Int) -> Bool {
-            guard sectionIndex < planningViewModel.totalDays else { return false }
-            guard sectionIndex > 0 else { return true }
-
-            let currentDate = planningViewModel.getPlanningDayAtIndex(sectionIndex).date
-            let previousDate = planningViewModel.getPlanningDayAtIndex(sectionIndex - 1).date
-            return !Calendar.current.isDate(currentDate, equalTo: previousDate, toGranularity: .weekOfYear)
-        }
-
-        private static func makeDaySection(showsWeekHeader: Bool,
-                                           showsDayHeader: Bool,
-                                           hasNoEvents: Bool) -> NSCollectionLayoutSection {
-            let itemSize = NSCollectionLayoutSize(
-                widthDimension: .fractionalWidth(1),
-                heightDimension: hasNoEvents ?
-                    .absolute(PlanningLayoutMetrics.emptyRowHeight) : .estimated(PlanningLayoutMetrics.eventRowHeight)
-            )
-            let item = NSCollectionLayoutItem(layoutSize: itemSize)
-            item.contentInsets = NSDirectionalEdgeInsets.zero
-
-            let group = NSCollectionLayoutGroup.vertical(layoutSize: itemSize, subitems: [item])
-            group.contentInsets = NSDirectionalEdgeInsets.zero
-
-            let section = NSCollectionLayoutSection(group: group)
-            section.interGroupSpacing = IKPadding.mini
-            section.contentInsets = NSDirectionalEdgeInsets(
-                top: 0,
-                leading: PlanningLayoutMetrics.dayColumnWidth,
-                bottom: 0,
-                trailing: 0
-            )
-
-            var boundarySupplementaryItems = [NSCollectionLayoutBoundarySupplementaryItem]()
-
-            if showsWeekHeader {
-                let weekHeaderSize = NSCollectionLayoutSize(
-                    widthDimension: .fractionalWidth(1),
-                    heightDimension: .estimated(PlanningLayoutMetrics.weekHeaderHeight)
-                )
-                let weekHeader = NSCollectionLayoutBoundarySupplementaryItem(
-                    layoutSize: weekHeaderSize,
-                    elementKind: PlanningLayoutMetrics.weekHeaderKind,
-                    alignment: .topLeading
-                )
-                weekHeader.zIndex = 2
-                boundarySupplementaryItems.append(weekHeader)
+        func collectionView(
+            _ collectionView: UICollectionView,
+            layout collectionViewLayout: UICollectionViewLayout,
+            sizeForItemAt indexPath: IndexPath
+        ) -> CGSize {
+            let day = planningViewModel.getPlanningDayAtIndex(indexPath.section)
+            let width = collectionView.bounds.width - PlanningLayoutMetrics.dayColumnWidth
+            if day.events.isEmpty {
+                return CGSize(width: width, height: PlanningLayoutMetrics.emptyRowHeight)
+            } else {
+                let event = day.events[indexPath.item]
+                if event.isAllDay {
+                    return CGSize(width: width, height: PlanningLayoutMetrics.eventRowHeight)
+                } else {
+                    return CGSize(width: width, height: PlanningLayoutMetrics.eventRowHeight + event.bottomPadding)
+                }
             }
-
-            if showsDayHeader {
-                let dayHeaderSize = NSCollectionLayoutSize(
-                    widthDimension: .absolute(PlanningLayoutMetrics.dayColumnWidth),
-                    heightDimension: .absolute(PlanningLayoutMetrics.dayHeaderHeight)
-                )
-                let dayHeader = NSCollectionLayoutBoundarySupplementaryItem(
-                    layoutSize: dayHeaderSize,
-                    elementKind: PlanningLayoutMetrics.dayHeaderKind,
-                    alignment: .topLeading,
-                    absoluteOffset: CGPoint(x: -PlanningLayoutMetrics.dayColumnWidth, y: 0)
-                )
-                dayHeader.pinToVisibleBounds = true
-                dayHeader.extendsBoundary = false
-                dayHeader.zIndex = 1
-
-                boundarySupplementaryItems.append(dayHeader)
-            }
-
-            section.boundarySupplementaryItems = boundarySupplementaryItems
-
-            return section
         }
 
         // MARK: - Data source
@@ -229,22 +160,19 @@ struct PlanningCollectionView: UIViewRepresentable {
             viewForSupplementaryElementOfKind kind: String,
             at indexPath: IndexPath
         ) -> UICollectionReusableView {
-            switch kind {
-            case PlanningLayoutMetrics.weekHeaderKind:
-                return collectionView.dequeueConfiguredReusableSupplementary(
-                    using: weekHeaderRegistration,
-                    for: indexPath
-                )
-            default:
-                return collectionView.dequeueConfiguredReusableSupplementary(
-                    using: dayHeaderRegistration,
-                    for: indexPath
-                )
-            }
+            return collectionView.dequeueConfiguredReusableSupplementary(
+                using: dayHeaderRegistration,
+                for: indexPath
+            )
         }
 
         func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-            planningViewModel.getPlanningDayAtIndex(section).events.count
+            let eventCount = planningViewModel.getPlanningDayAtIndex(section).events.count
+            if eventCount == 0 {
+                return 1
+            } else {
+                return eventCount
+            }
         }
 
         func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -272,8 +200,8 @@ struct PlanningCollectionView: UIViewRepresentable {
         }
 
         func scrollToStartOfDay(date: Date, animated: Bool, for collectionView: UICollectionView) {
-            /*let indexPath = IndexPath(item: 0, section: planningViewModel.totalDays / 2)
-            collectionView.scrollToItem(at: indexPath, at: .top, animated: animated)*/
+            let indexPath = IndexPath(item: 0, section: planningViewModel.totalDays / 2)
+            collectionView.scrollToItem(at: indexPath, at: .top, animated: animated)
         }
     }
 }
