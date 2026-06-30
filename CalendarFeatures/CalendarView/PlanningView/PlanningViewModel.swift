@@ -66,7 +66,7 @@ class PlanningViewModel: ObservableObject {
                     planningDays[dayDate] = PlanningDay(date: dayDate, events: events)
                 }
 
-                Task { @MainActor in
+                await MainActor.run {
                     self?.planningDays = planningDays
                 }
             }
