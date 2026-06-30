@@ -25,7 +25,6 @@ import UIKit
 
 enum PlanningLayoutMetrics {
     static let dayColumnWidth: CGFloat = 64
-    static let emptyRowHeight: CGFloat = 8
     static let eventRowHeight: CGFloat = 48
     static let eventRowMinHeight: CGFloat = 20
     static let dayHeaderHeight: CGFloat = 64
@@ -35,11 +34,6 @@ enum PlanningLayoutMetrics {
 enum PlanningItemId: Hashable {
     case event(id: String)
     case empty(Date)
-}
-
-enum PlanningItemContent: Hashable {
-    case event
-    case empty
 }
 
 struct PlanningCollectionView: UIViewRepresentable {
@@ -82,7 +76,6 @@ struct PlanningCollectionView: UIViewRepresentable {
         let dayHeaderRegistration: UICollectionView.SupplementaryRegistration<PlanningDayHeaderView>
 
         let weekHeaderCellRegistration: UICollectionView.CellRegistration<PlanningWeekHeaderCell, Date>
-        let emptyCellRegistration: UICollectionView.CellRegistration<UICollectionViewListCell, PlanningItemContent>
         let allDayCellRegistration: UICollectionView.CellRegistration<UICollectionViewListCell, CalendarCoreUI.UIEvent>
         let eventCellRegistration: UICollectionView.CellRegistration<UICollectionViewListCell, CalendarCoreUI.UIEvent>
 
@@ -96,10 +89,6 @@ struct PlanningCollectionView: UIViewRepresentable {
 
             weekHeaderCellRegistration = .init { cell, _, date in
                 cell.configure(date: date)
-            }
-
-            emptyCellRegistration = .init { cell, _, _ in
-                cell.contentConfiguration = cell.defaultContentConfiguration()
             }
 
             allDayCellRegistration = .init { cell, _, event in
@@ -127,16 +116,6 @@ struct PlanningCollectionView: UIViewRepresentable {
             let layout = UICollectionViewFlowLayout()
             layout.minimumLineSpacing = IKPadding.mini
             layout.minimumInteritemSpacing = 0
-            layout.sectionInset = UIEdgeInsets(
-                top: -PlanningLayoutMetrics.dayHeaderHeight,
-                left: PlanningLayoutMetrics.dayColumnWidth,
-                bottom: IKPadding.large,
-                right: IKPadding.mini
-            )
-            layout.headerReferenceSize = CGSize(
-                width: PlanningLayoutMetrics.dayColumnWidth,
-                height: PlanningLayoutMetrics.dayHeaderHeight
-            )
             layout.sectionHeadersPinToVisibleBounds = true
             return layout
         }
@@ -149,23 +128,61 @@ struct PlanningCollectionView: UIViewRepresentable {
             sizeForItemAt indexPath: IndexPath
         ) -> CGSize {
             let day = planningViewModel.getPlanningDayAtIndex(indexPath.section)
-            let sectionInset = (collectionViewLayout as? UICollectionViewFlowLayout)?.sectionInset
-            let width = collectionView.bounds.width - (sectionInset?.right ?? 0) - (sectionInset?.left ?? 0)
+            let inset = sectionInset(for: indexPath.section)
+            let width = collectionView.bounds.width - inset.right - inset.left
 
             if day.isWeekStart, indexPath.item == 0 {
                 return CGSize(width: width, height: PlanningLayoutMetrics.weekHeaderHeight)
             }
 
             let eventIndex = day.isWeekStart ? indexPath.item - 1 : indexPath.item
-            if day.events.isEmpty {
-                return CGSize(width: width, height: PlanningLayoutMetrics.emptyRowHeight)
+            let event = day.events[eventIndex]
+            if event.isAllDay {
+                return CGSize(width: width, height: PlanningLayoutMetrics.eventRowHeight)
             } else {
-                let event = day.events[eventIndex]
-                if event.isAllDay {
-                    return CGSize(width: width, height: PlanningLayoutMetrics.eventRowHeight)
-                } else {
-                    return CGSize(width: width, height: PlanningLayoutMetrics.eventRowHeight + event.bottomPadding)
-                }
+                return CGSize(width: width, height: PlanningLayoutMetrics.eventRowHeight + event.bottomPadding)
+            }
+        }
+
+        func collectionView(
+            _ collectionView: UICollectionView,
+            layout collectionViewLayout: UICollectionViewLayout,
+            referenceSizeForHeaderInSection section: Int
+        ) -> CGSize {
+            let day = planningViewModel.getPlanningDayAtIndex(section)
+            guard !day.events.isEmpty else {
+                return .zero
+            }
+            return CGSize(width: PlanningLayoutMetrics.dayColumnWidth, height: PlanningLayoutMetrics.dayHeaderHeight)
+        }
+
+        func collectionView(
+            _ collectionView: UICollectionView,
+            layout collectionViewLayout: UICollectionViewLayout,
+            insetForSectionAt section: Int
+        ) -> UIEdgeInsets {
+            return sectionInset(for: section)
+        }
+
+        private func sectionInset(for section: Int) -> UIEdgeInsets {
+            let day = planningViewModel.getPlanningDayAtIndex(section)
+
+            if !day.events.isEmpty {
+                return UIEdgeInsets(
+                    top: -PlanningLayoutMetrics.dayHeaderHeight,
+                    left: PlanningLayoutMetrics.dayColumnWidth,
+                    bottom: IKPadding.large,
+                    right: IKPadding.mini
+                )
+            } else if day.isWeekStart {
+                return UIEdgeInsets(
+                    top: 0,
+                    left: PlanningLayoutMetrics.dayColumnWidth,
+                    bottom: IKPadding.large,
+                    right: IKPadding.mini
+                )
+            } else {
+                return .zero
             }
         }
 
@@ -184,10 +201,11 @@ struct PlanningCollectionView: UIViewRepresentable {
 
         func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
             let day = planningViewModel.getPlanningDayAtIndex(section)
-            let eventCount = day.events.count
-            let baseCount = eventCount == 0 ? 1 : eventCount
+            guard !day.events.isEmpty else {
+                return day.isWeekStart ? 1 : 0
+            }
             let weekHeaderCount = day.isWeekStart ? 1 : 0
-            return baseCount + weekHeaderCount
+            return day.events.count + weekHeaderCount
         }
 
         func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -202,14 +220,6 @@ struct PlanningCollectionView: UIViewRepresentable {
                     using: weekHeaderCellRegistration,
                     for: indexPath,
                     item: day.date
-                )
-            }
-
-            guard !day.events.isEmpty else {
-                return collectionView.dequeueConfiguredReusableCell(
-                    using: emptyCellRegistration,
-                    for: indexPath,
-                    item: .empty
                 )
             }
 
