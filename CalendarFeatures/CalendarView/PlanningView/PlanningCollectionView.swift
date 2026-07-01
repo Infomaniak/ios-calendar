@@ -57,7 +57,12 @@ struct PlanningCollectionView: UIViewRepresentable {
 
     func updateUIView(_ collectionView: UICollectionView, context: Context) {
         let animated = context.transaction.animation != nil
-        context.coordinator.applySnapshot(animated: animated, collectionView: collectionView)
+        if let differences = planningViewModel.lastDifference {
+            context.coordinator.applyDifferences(differences, collectionView: collectionView)
+            Task { @MainActor in
+                planningViewModel.lastDifference = nil
+            }
+        }
 
         guard let target = planningViewModel.scrollTarget else { return }
         context.coordinator.scrollToStartOfDay(date: target, animated: animated, for: collectionView)
@@ -230,8 +235,12 @@ struct PlanningCollectionView: UIViewRepresentable {
             return collectionView.dequeueConfiguredReusableCell(using: registration, for: indexPath, item: event)
         }
 
-        func applySnapshot(animated: Bool, collectionView: UICollectionView) {
-            collectionView.reloadData()
+        func applyDifferences(_ differences: PlanningViewDifference, collectionView: UICollectionView) {
+            collectionView.performBatchUpdates {
+                collectionView.deleteItems(at: differences.removed)
+                collectionView.insertItems(at: differences.added)
+                collectionView.reloadItems(at: differences.updated)
+            }
         }
 
         func scrollToStartOfDay(date: Date, animated: Bool, for collectionView: UICollectionView) {

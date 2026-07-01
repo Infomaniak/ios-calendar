@@ -28,7 +28,7 @@ struct PlanningDay: Identifiable, Hashable {
     init(date: Date, events: [CalendarCoreUI.UIEvent]) {
         self.date = date
         self.events = events
-        self.isWeekStart = Calendar.current.component(.weekday, from: date) == Calendar.current.firstWeekday
+        isWeekStart = Calendar.current.component(.weekday, from: date) == Calendar.current.firstWeekday
     }
 
     var id: Date {
