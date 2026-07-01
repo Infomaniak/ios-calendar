@@ -30,10 +30,13 @@ public struct PlanningView: View {
 
     public var body: some View {
         VStack(spacing: 0) {
-            NextEventCardView(model: nextEventCardViewModel)
-
             PlanningCollectionView(planningDays: planningDays, nextEventCardViewModel: nextEventCardViewModel)
                 .ignoresSafeArea()
+                .overlay(alignment: .top) {
+                    NextEventCardView(model: nextEventCardViewModel)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
+                }
         }
         .task {
             await observeEvents()
