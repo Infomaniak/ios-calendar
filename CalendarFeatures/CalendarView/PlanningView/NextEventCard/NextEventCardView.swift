@@ -61,11 +61,22 @@ struct NextEventContentCardView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(16)
-        .background(Material.regular, in: .rect(cornerRadius: 16))
+        .cardBackground()
     }
 
     private func lerp(a: Double, b: Double) -> Double {
         return a * (1 - progress) + b * progress
+    }
+}
+
+private extension View {
+    func cardBackground() -> some View {
+        let shape = RoundedRectangle(cornerRadius: 16)
+        if #available(iOS 26.0, *) {
+            return glassEffect(.regular, in: shape)
+        } else {
+            return background(.regularMaterial, in: shape)
+        }
     }
 }
 
@@ -83,7 +94,7 @@ struct NextEventContentCardView: View {
 
         Spacer()
 
-        Slider(value: $progress, in: 0...1)
+        Slider(value: $progress, in: 0 ... 1)
             .padding()
     }
     .padding()
