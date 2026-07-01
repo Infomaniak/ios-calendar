@@ -69,11 +69,14 @@ struct CalendarListContentView: View {
                                                 .font(.system(size: 12, weight: .semibold))
                                                 .foregroundStyle(.white) // TODO: Use a color that contrasts well with the calendar color
                                                 .checkmarkTransition()
+                                                .animation(.spring(duration: 0.25), value: isVisible(calendar))
                                         }
                                     }
                                     .accessibilityHidden(true)
 
                                 Text(calendar.displayName)
+                                    .lineLimit(1)
+                                    .foregroundStyle(.foreground)
                             }
                         }
                     }
