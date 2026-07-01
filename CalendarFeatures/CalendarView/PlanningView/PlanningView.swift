@@ -23,13 +23,16 @@ import MultiplatformCalendar
 import SwiftUI
 
 public struct PlanningView: View {
+    @StateObject private var nextEventCardViewModel = NextEventCardViewModel()
     @State private var planningDays: [PlanningDay] = []
 
     public init() {}
 
     public var body: some View {
-        VStack {
-            PlanningCollectionView(planningDays: planningDays)
+        VStack(spacing: 0) {
+            NextEventCardView(model: nextEventCardViewModel)
+
+            PlanningCollectionView(planningDays: planningDays, nextEventCardViewModel: nextEventCardViewModel)
                 .ignoresSafeArea()
         }
         .task {
