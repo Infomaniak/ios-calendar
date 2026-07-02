@@ -31,11 +31,6 @@ enum PlanningLayoutMetrics {
     static let weekHeaderHeight: CGFloat = 16
 }
 
-enum PlanningItemId: Hashable {
-    case event(id: String)
-    case empty(Date)
-}
-
 struct PlanningCollectionView: UIViewRepresentable {
     @ObservedObject var planningViewModel: PlanningViewModel
 

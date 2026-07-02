@@ -46,10 +46,6 @@ struct PlanningEventView: View {
         static let maxSize: CGFloat = 50
     }
 
-    private var bottomPadding: CGFloat {
-        return event.bottomPadding
-    }
-
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 0) {
