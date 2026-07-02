@@ -200,12 +200,7 @@ struct PlanningCollectionView: UIViewRepresentable {
         }
 
         func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-            let day = planningViewModel.getPlanningDayAtIndex(section)
-            guard !day.events.isEmpty else {
-                return day.isWeekStart ? 1 : 0
-            }
-            let weekHeaderCount = day.isWeekStart ? 1 : 0
-            return day.events.count + weekHeaderCount
+            return planningViewModel.numberOfItemsInSection(index: section)
         }
 
         func numberOfSections(in collectionView: UICollectionView) -> Int {

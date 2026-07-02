@@ -94,6 +94,15 @@ class PlanningViewModel: ObservableObject {
         return date
     }
 
+    func numberOfItemsInSection(index section: Int) -> Int {
+        let day = getPlanningDayAtIndex(section)
+        guard !day.events.isEmpty else {
+            return day.isWeekStart ? 1 : 0
+        }
+        let weekHeaderCount = day.isWeekStart ? 1 : 0
+        return day.events.count + weekHeaderCount
+    }
+
     func getPlanningDayAtIndex(_ index: Int) -> PlanningDay {
         let date = getPlanningDateAtIndex(index)
 
