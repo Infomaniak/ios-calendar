@@ -135,6 +135,7 @@ public extension UIEvent {
         startDate: Date(),
         endDate: Date().addingTimeInterval(3600),
         status: .confirmed,
+        location: "1 Infinite Loop",
         attendees: UIAttendee.previews,
         colors: .preview
     )
