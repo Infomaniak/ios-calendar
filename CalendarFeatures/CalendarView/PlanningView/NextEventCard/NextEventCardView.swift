@@ -20,6 +20,12 @@ import CalendarCoreUI
 import CalendarResources
 import SwiftUI
 
+enum AnimationHelper {
+    static func lerp(a: Double, b: Double, t: Double) -> Double {
+        return a * (1 - t) + b * t
+    }
+}
+
 final class NextEventCardViewModel: ObservableObject {
     @Published var scrollProgress = 1.0
 }
@@ -38,6 +44,8 @@ struct NextEventCardView: View {
 
 @available(iOS 17.0, *)
 struct NextEventContentCardView: View {
+    @State private var buttonSize = CGSize.zero
+
     let event: CalendarCoreUI.UIEvent
     let progress: Double
 
@@ -50,11 +58,9 @@ struct NextEventContentCardView: View {
             Text(durationLabel.uppercased())
                 .font(.system(size: 12))
                 .foregroundStyle(.tint)
-                .opacity(lerp(a: 0, b: 1))
-                .frame(height: lerp(a: 0, b: 12))
-                .clipped()
-                .blur(radius: lerp(a: 4, b: 0))
+                .animateHide(progress: progress, fullHeight: 12)
                 .padding(.bottom, lerp(a: 0, b: 12))
+                .padding(.trailing, lerp(a: 0, b: buttonSize.width + 4))
                 .lineLimit(1)
 
             VStack(alignment: .leading, spacing: 4) {
@@ -67,10 +73,7 @@ struct NextEventContentCardView: View {
                         CalendarResourcesAsset.Images.clock.swiftUIImage
                             .resizable()
                             .scaledToFit()
-                            .opacity(lerp(a: 0, b: 1))
-                            .frame(width: lerp(a: 0, b: 16), height: lerp(a: 0, b: 16))
-                            .clipped()
-                            .blur(radius: lerp(a: 4, b: 0))
+                            .animateHide(progress: progress, fullHeight: 16)
                             .accessibilityHidden(true)
 
                         Text("08:30 - 09:45")
@@ -86,10 +89,7 @@ struct NextEventContentCardView: View {
 
                             Text(location)
                         }
-                        .opacity(lerp(a: 0, b: 1))
-                        .frame(height: lerp(a: 0, b: 16))
-                        .clipped()
-                        .blur(radius: lerp(a: 4, b: 0))
+                        .animateHide(progress: progress, fullHeight: 16)
                         .padding(.top, lerp(a: 0, b: 4))
                     }
 
@@ -103,10 +103,7 @@ struct NextEventContentCardView: View {
 
                             Text("En Ligne")
                         }
-                        .opacity(lerp(a: 0, b: 1))
-                        .frame(height: lerp(a: 0, b: 16))
-                        .clipped()
-                        .blur(radius: lerp(a: 4, b: 0))
+                        .animateHide(progress: progress, fullHeight: 16)
                         .padding(.top, lerp(a: 0, b: 4))
                     }
                 }
@@ -114,21 +111,19 @@ struct NextEventContentCardView: View {
             }
 
             HStack {
+                // We keep this button in the view hierarchy to reserve space
                 NextEventCardButton(event: event)
                     .opacity(0)
                     .accessibilityHidden(true)
                     .allowsHitTesting(false)
                     .frame(maxWidth: .infinity, alignment: .trailing)
             }
-            .opacity(lerp(a: 0, b: 1))
-            .frame(height: lerp(a: 0, b: 16))
-            .clipped()
-            .blur(radius: lerp(a: 4, b: 0))
+            .animateHide(progress: progress, fullHeight: max(24, buttonSize.height))
             .padding(.top, lerp(a: 0, b: 12))
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .overlay {
-            NextEventCardButtonGeometryView(event: event, progress: progress)
+            NextEventCardButtonGeometryView(size: $buttonSize, event: event, progress: progress)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, lerp(a: 8, b: 16))
@@ -136,11 +131,19 @@ struct NextEventContentCardView: View {
     }
 
     private func lerp(a: Double, b: Double) -> Double {
-        return a * (1 - progress) + b * progress
+        return AnimationHelper.lerp(a: a, b: b, t: progress)
     }
 }
 
 private extension View {
+    func animateHide(progress: Double, fullHeight: CGFloat) -> some View {
+        self
+            .opacity(AnimationHelper.lerp(a: 0, b: 1, t: progress))
+            .frame(height: AnimationHelper.lerp(a: 0, b: fullHeight, t: progress))
+            .clipped()
+            .blur(radius: AnimationHelper.lerp(a: 4, b: 0, t: progress))
+    }
+
     func cardBackground(radius: CGFloat) -> some View {
         let shape = RoundedRectangle(cornerRadius: radius)
         if #available(iOS 26.0, *) {
@@ -161,7 +164,7 @@ private extension View {
         NextEventContentCardView(event: .preview, progress: 1)
 
         NextEventContentCardView(event: .preview, progress: progress)
-            .padding(.vertical)
+            .padding(.top, 32)
 
         Spacer()
 

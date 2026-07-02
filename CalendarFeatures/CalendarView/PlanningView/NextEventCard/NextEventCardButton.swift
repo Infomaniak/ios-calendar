@@ -21,7 +21,7 @@ import CalendarResources
 import SwiftUI
 
 struct NextEventCardButtonGeometryView: View {
-    @State private var size = CGSize.zero
+    @Binding var size: CGSize
 
     let event: CalendarCoreUI.UIEvent
     let progress: Double
@@ -38,7 +38,7 @@ struct NextEventCardButtonGeometryView: View {
     }
 
     private func lerp(a: Double, b: Double) -> Double {
-        return a * (1 - progress) + b * progress
+        AnimationHelper.lerp(a: a, b: b, t: progress)
     }
 }
 
