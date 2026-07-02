@@ -47,16 +47,62 @@ struct NextEventContentCardView: View {
             Text(durationLabel.uppercased())
                 .font(.system(size: 12))
                 .foregroundStyle(.tint)
-                .opacity(progress)
-                .blur(radius: lerp(a: 2, b: 0))
                 .opacity(lerp(a: 0, b: 1))
                 .frame(height: lerp(a: 0, b: 12))
-                .padding(.bottom, lerp(a: 0, b: 12))
                 .clipped()
+                .blur(radius: lerp(a: 4, b: 0))
+                .padding(.bottom, lerp(a: 0, b: 12))
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(event.title)
                     .font(.system(size: lerp(a: 13, b: 16), weight: .bold))
+
+                VStack(alignment: .leading, spacing: 0) {
+                    HStack(spacing: lerp(a: 0, b: 4)) {
+                        CalendarResourcesAsset.Images.clock.swiftUIImage
+                            .resizable()
+                            .scaledToFit()
+                            .opacity(lerp(a: 0, b: 1))
+                            .frame(width: lerp(a: 0, b: 16), height: lerp(a: 0, b: 16))
+                            .clipped()
+                            .blur(radius: lerp(a: 4, b: 0))
+
+                        Text("08:30 - 09:45")
+                    }
+
+                    if let location = event.location {
+                        HStack(spacing: 4) {
+                            CalendarResourcesAsset.Images.mapPin.swiftUIImage
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 16, height: 16)
+
+                            Text(location)
+                        }
+                        .opacity(lerp(a: 0, b: 1))
+                        .frame(height: lerp(a: 0, b: 16))
+                        .clipped()
+                        .blur(radius: lerp(a: 4, b: 0))
+                        .padding(.top, lerp(a: 0, b: 4))
+                    }
+
+                    if event.kMeetLink != nil {
+                        HStack(spacing: 4) {
+                            CalendarResourcesAsset.Images.productKmeet.swiftUIImage
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 16, height: 16)
+
+                            Text("En Ligne")
+                        }
+                        .opacity(lerp(a: 0, b: 1))
+                        .frame(height: lerp(a: 0, b: 16))
+                        .clipped()
+                        .blur(radius: lerp(a: 4, b: 0))
+                        .padding(.top, lerp(a: 0, b: 4))
+                    }
+                }
+                .font(.caption2.bold())
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
