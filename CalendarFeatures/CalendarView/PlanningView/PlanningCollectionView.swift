@@ -239,7 +239,8 @@ struct PlanningCollectionView: UIViewRepresentable {
         }
 
         func scrollToStartOfDay(date: Date, animated: Bool, for collectionView: UICollectionView) {
-            let indexPath = IndexPath(item: 0, section: planningViewModel.totalDays / 2)
+            let dateIndex = planningViewModel.sectionIndex(for: date)
+            let indexPath = IndexPath(item: 0, section: dateIndex)
             collectionView.scrollToItem(at: indexPath, at: .top, animated: animated)
         }
     }
