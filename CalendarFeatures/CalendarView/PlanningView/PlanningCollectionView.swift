@@ -226,10 +226,14 @@ struct PlanningCollectionView: UIViewRepresentable {
         }
 
         func applyDifferences(_ differences: PlanningViewDifference, collectionView: UICollectionView) {
+            // TODO: Real diff with DifferenceKit
+            let modifiedSectionsIndexes = IndexSet(
+                differences.updated.map { $0.section } +
+                    differences.added.map { $0.section } +
+                    differences.removed.map { $0.section }
+            )
             collectionView.performBatchUpdates {
-                collectionView.deleteItems(at: differences.removed)
-                collectionView.insertItems(at: differences.added)
-                collectionView.reloadItems(at: differences.updated)
+                collectionView.reloadSections(modifiedSectionsIndexes)
             }
         }
 
