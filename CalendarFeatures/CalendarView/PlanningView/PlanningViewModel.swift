@@ -56,8 +56,8 @@ class PlanningViewModel: ObservableObject {
             @InjectService var calendarSDK: CalendarCoreGraph
             for await events in calendarSDK.calendarManager.observeEvents(start: startDate.instant, end: endDate.instant) {
                 guard let self else { return }
-                let oldPlanningDays = await planningDays
-                var newPlanningDays = oldPlanningDays
+
+                var newPlanningDays: OrderedDictionary<Date, PlanningDay> = [:]
                 let uiEvents = events.compactMap { UIEvent(event: $0, userEmail: "") }
 
                 let calendar = Calendar.current
@@ -70,6 +70,7 @@ class PlanningViewModel: ObservableObject {
                     newPlanningDays[dayDate] = PlanningDay(date: dayDate, events: sortedEvents)
                 }
 
+                let oldPlanningDays = await planningDays
                 let difference = await computeDifference(from: oldPlanningDays, to: newPlanningDays)
                 await MainActor.run {
                     self.planningDays = newPlanningDays
