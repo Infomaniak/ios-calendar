@@ -30,10 +30,13 @@ struct NextEventCardView: View {
     let event = UIEvent.preview
 
     var body: some View {
-        NextEventContentCardView(event: event, progress: model.scrollProgress)
+        if #available(iOS 17.0, *) {
+            NextEventContentCardView(event: event, progress: model.scrollProgress)
+        }
     }
 }
 
+@available(iOS 17.0, *)
 struct NextEventContentCardView: View {
     let event: CalendarCoreUI.UIEvent
     let progress: Double
@@ -52,10 +55,12 @@ struct NextEventContentCardView: View {
                 .clipped()
                 .blur(radius: lerp(a: 4, b: 0))
                 .padding(.bottom, lerp(a: 0, b: 12))
+                .lineLimit(1)
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(event.title)
                     .font(.system(size: lerp(a: 13, b: 16), weight: .bold))
+                    .lineLimit(1)
 
                 VStack(alignment: .leading, spacing: 0) {
                     HStack(spacing: lerp(a: 0, b: 4)) {
@@ -66,6 +71,7 @@ struct NextEventContentCardView: View {
                             .frame(width: lerp(a: 0, b: 16), height: lerp(a: 0, b: 16))
                             .clipped()
                             .blur(radius: lerp(a: 4, b: 0))
+                            .accessibilityHidden(true)
 
                         Text("08:30 - 09:45")
                     }
@@ -76,6 +82,7 @@ struct NextEventContentCardView: View {
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 16, height: 16)
+                                .accessibilityHidden(true)
 
                             Text(location)
                         }
@@ -92,6 +99,7 @@ struct NextEventContentCardView: View {
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 16, height: 16)
+                                .accessibilityHidden(true)
 
                             Text("En Ligne")
                         }
@@ -104,10 +112,27 @@ struct NextEventContentCardView: View {
                 }
                 .font(.caption2.bold())
             }
+
+            HStack {
+                NextEventCardButton(event: event)
+                    .opacity(0)
+                    .accessibilityHidden(true)
+                    .allowsHitTesting(false)
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+            }
+            .opacity(lerp(a: 0, b: 1))
+            .frame(height: lerp(a: 0, b: 16))
+            .clipped()
+            .blur(radius: lerp(a: 4, b: 0))
+            .padding(.top, lerp(a: 0, b: 12))
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(16)
-        .cardBackground()
+        .overlay {
+            NextEventCardButtonGeometryView(event: event, progress: progress)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, lerp(a: 8, b: 16))
+        .cardBackground(radius: 24)
     }
 
     private func lerp(a: Double, b: Double) -> Double {
@@ -116,8 +141,8 @@ struct NextEventContentCardView: View {
 }
 
 private extension View {
-    func cardBackground() -> some View {
-        let shape = RoundedRectangle(cornerRadius: 16)
+    func cardBackground(radius: CGFloat) -> some View {
+        let shape = RoundedRectangle(cornerRadius: radius)
         if #available(iOS 26.0, *) {
             return glassEffect(.regular, in: shape)
         } else {

@@ -258,7 +258,7 @@ struct PlanningCollectionView: UIViewRepresentable {
 
         private func commitScrollProgress() {
             let target = nextEventCardViewModel.scrollProgress > scrollThreshold ? 1.0 : 0.0
-            withAnimation(.spring(duration: 0.25)) {
+            withAnimation(.spring(duration: 0.2)) {
                 nextEventCardViewModel.scrollProgress = target
             }
         }
