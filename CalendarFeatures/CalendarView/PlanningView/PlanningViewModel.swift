@@ -17,155 +17,122 @@
  */
 
 import CalendarCoreUI
-import Collections
+import DifferenceKit
 import Foundation
 import InfomaniakDI
 import MultiplatformCalendar
-import UIKit
 
 @MainActor
 class PlanningViewModel: ObservableObject {
-    nonisolated static let windowSize = 10
-    nonisolated static let dayCount = 10000
+    /// Number of weeks kept resident in the collection view at any moment.
+    nonisolated static let windowWeeks = 8
+    /// Number of days added/removed each time the window recycles.
+    nonisolated static let shiftDays = 7
+    /// Extra days observed on each side of the window so events are ready before the
+    /// user scrolls them into view.
+    nonisolated static let observeBufferDays = 7
 
-    private var planningDays: OrderedDictionary<Date, PlanningDay> = [:]
+    nonisolated static var windowDays: Int {
+        windowWeeks * 7
+    }
+
+    /// Current snapshot of the visible window, one section per day. The collection
+    /// view diffs its own backing copy against this to animate changes.
+    @Published private(set) var sections: PlanningViewDifference = []
     @Published var scrollTarget: Date?
-    @Published var lastDifference: PlanningViewDifference?
 
+    private let calendar = Calendar.current
+    private var eventsByDay: [Date: [CalendarCoreUI.UIEvent]] = [:]
+    private var days: [PlanningDay] = []
+    private var anchorDate: Date
     private var currentObserveTask: Task<Void, Never>?
 
-    private let referenceDate: Date
-
-    nonisolated var totalDays: Int {
-        // Past - Current Date - Future
-        Self.dayCount + 1 + Self.dayCount
+    init() {
+        let today = Calendar.current.startOfDay(for: Date())
+        anchorDate = Self.centeredAnchor(for: today, calendar: Calendar.current)
+        rebuildSections()
+        observeEvents()
     }
 
-    init() {
-        referenceDate = Calendar.current.startOfDay(for: Date())
-        guard let startDate = Calendar.current.date(byAdding: .day, value: -Self.windowSize, to: referenceDate),
-              let endDate = Calendar.current.date(byAdding: .day, value: Self.windowSize, to: referenceDate) else {
+    // MARK: - Lookups
+
+    /// Section index of `date` within the current window, or `nil` if it is not resident.
+    func sectionIndex(for date: Date) -> Int? {
+        let day = calendar.startOfDay(for: date)
+        return days.firstIndex { $0.date == day }
+    }
+
+    func planningDay(atSection index: Int) -> PlanningDay? {
+        days.indices.contains(index) ? days[index] : nil
+    }
+
+    // MARK: - Recycling
+
+    /// Moves the window one step towards the future (drops the oldest week, appends a new one).
+    func shiftForward() {
+        shiftWindow(byDays: Self.shiftDays)
+    }
+
+    /// Moves the window one step towards the past (drops the newest week, prepends an older one).
+    func shiftBackward() {
+        shiftWindow(byDays: -Self.shiftDays)
+    }
+
+    /// Rebuilds the window centred on `date`. Used when jumping to a date outside the resident range.
+    func reAnchor(around date: Date) {
+        anchorDate = Self.centeredAnchor(for: date, calendar: calendar)
+        rebuildSections()
+        observeEvents()
+    }
+
+    private func shiftWindow(byDays dayOffset: Int) {
+        guard let newAnchor = calendar.date(byAdding: .day, value: dayOffset, to: anchorDate) else { return }
+        anchorDate = newAnchor
+        rebuildSections()
+        observeEvents()
+    }
+
+    // MARK: - Window building
+
+    /// Week-aligned start date that keeps `date` roughly centred in the window.
+    private static func centeredAnchor(for date: Date, calendar: Foundation.Calendar) -> Date {
+        let weekStart = PlanningDay.weekStart(for: date, calendar: calendar)
+        let weeksBefore = windowWeeks / 2
+        return calendar.date(byAdding: .day, value: -weeksBefore * 7, to: weekStart) ?? weekStart
+    }
+
+    private func rebuildSections() {
+        days = PlanningDay.makeWindow(
+            startDate: anchorDate,
+            dayCount: Self.windowDays,
+            eventsByDay: eventsByDay,
+            calendar: calendar
+        )
+        sections = days.map { ArraySection(model: $0, elements: $0.items) }
+    }
+
+    // MARK: - Observation
+
+    private func observeEvents() {
+        guard let start = calendar.date(byAdding: .day, value: -Self.observeBufferDays, to: anchorDate),
+              let end = calendar.date(byAdding: .day, value: Self.windowDays + Self.observeBufferDays, to: anchorDate)
+        else {
             return
         }
-        observeEventsForWindow(startDate: startDate, endDate: endDate)
-    }
 
-    private func observeEventsForWindow(startDate: Date, endDate: Date) {
         currentObserveTask?.cancel()
         currentObserveTask = Task.detached { [weak self] in
             @InjectService var calendarSDK: CalendarCoreGraph
-            for await events in calendarSDK.calendarManager.observeEvents(start: startDate.instant, end: endDate.instant) {
+            for await events in calendarSDK.calendarManager.observeEvents(start: start.instant, end: end.instant) {
                 guard let self else { return }
-
-                var newPlanningDays: OrderedDictionary<Date, PlanningDay> = [:]
-                let uiEvents = events.compactMap { UIEvent(event: $0, userEmail: "") }
-
-                let calendar = Calendar.current
-                let eventsByDay = Dictionary(grouping: uiEvents) { event in
-                    calendar.startOfDay(for: event.startDate)
-                }
-
-                for (dayDate, events) in eventsByDay {
-                    let sortedEvents = events.sorted { $0.startDate < $1.startDate }
-                    newPlanningDays[dayDate] = PlanningDay(date: dayDate, events: sortedEvents)
-                }
-
-                let oldPlanningDays = await planningDays
-                let difference = await computeDifference(from: oldPlanningDays, to: newPlanningDays)
-                await MainActor.run {
-                    self.planningDays = newPlanningDays
-                    self.lastDifference = difference
-                }
+                let uiEvents = events.compactMap { CalendarCoreUI.UIEvent(event: $0, userEmail: "") }
+                await ingest(events: uiEvents)
             }
         }
     }
 
-    nonisolated func sectionIndex(for date: Date) -> Int {
-        let firstIndexPathDate = getPlanningDateAtIndex(0)
-
-        return Calendar.current.dateComponents([.day], from: firstIndexPathDate, to: date).day ?? 0
-    }
-
-    nonisolated func getPlanningDateAtIndex(_ index: Int) -> Date {
-        let dayOffset = index - Self.dayCount
-        guard let date = Calendar.current.date(byAdding: .day, value: dayOffset, to: referenceDate) else {
-            fatalError("Failed to calculate date for index \(index)")
-        }
-
-        return date
-    }
-
-    func numberOfItemsInSection(index section: Int) -> Int {
-        let day = getPlanningDayAtIndex(section)
-        guard !day.events.isEmpty else {
-            return day.isWeekStart ? 1 : 0
-        }
-        let weekHeaderCount = day.isWeekStart ? 1 : 0
-        return day.events.count + weekHeaderCount
-    }
-
-    func getPlanningDayAtIndex(_ index: Int) -> PlanningDay {
-        let date = getPlanningDateAtIndex(index)
-
-        if let planningDay = planningDays[date] {
-            return planningDay
-        }
-
-        return PlanningDay(date: date, events: [])
-    }
-
-    @concurrent
-    private func computeDifference(
-        from oldPlanningDays: OrderedDictionary<Date, PlanningDay>,
-        to newPlanningDays: OrderedDictionary<Date, PlanningDay>
-    ) async -> PlanningViewDifference {
-        var added: [IndexPath] = []
-        var updated: [IndexPath] = []
-        var removed: [IndexPath] = []
-
-        let firstIndexPathDate = getPlanningDateAtIndex(0)
-        let lastIndexPathDate = getPlanningDateAtIndex(totalDays - 1)
-
-        for (date, newDay) in newPlanningDays {
-            guard date >= firstIndexPathDate,
-                  date <= lastIndexPathDate else {
-                continue
-            }
-
-            let sectionIndex = sectionIndex(for: date)
-
-            // Item 0 is reserved for the week header on week-start days, so event indexes are shifted.
-            let itemOffset = newDay.isWeekStart ? 1 : 0
-
-            guard let oldDay = oldPlanningDays[date] else {
-                for eventIndex in newDay.events.indices {
-                    added.append(IndexPath(item: eventIndex + itemOffset, section: sectionIndex))
-                }
-                continue
-            }
-
-            guard oldDay != newDay else {
-                continue
-            }
-
-            for (eventIndex, newEvent) in newDay.events.enumerated() {
-                let indexPath = IndexPath(item: eventIndex + itemOffset, section: sectionIndex)
-                if oldDay.events.count < eventIndex + itemOffset {
-                    let oldEvent = oldDay.events[eventIndex + itemOffset]
-                    if oldEvent != newEvent {
-                        updated.append(indexPath)
-                    }
-                } else {
-                    added.append(indexPath)
-                }
-            }
-
-            for (eventIndex, oldEvent) in oldDay.events.enumerated()
-                where !newDay.events.contains(where: { $0.id == oldEvent.id }) {
-                removed.append(IndexPath(item: eventIndex + itemOffset, section: sectionIndex))
-            }
-        }
-
-        return PlanningViewDifference(added: added, updated: updated, removed: removed)
+    private func ingest(events: [CalendarCoreUI.UIEvent]) {
+        eventsByDay = Dictionary(grouping: events) { calendar.startOfDay(for: $0.startDate) }
+        rebuildSections()
     }
 }

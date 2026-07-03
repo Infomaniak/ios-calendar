@@ -37,7 +37,6 @@ public struct PlanningView: View {
                 }
             }
             .task {
-                try? await Task.sleep(for: .milliseconds(500)) // Workaround to let the view load before scrolling to today
                 planningViewModel.scrollTarget = Date()
             }
     }

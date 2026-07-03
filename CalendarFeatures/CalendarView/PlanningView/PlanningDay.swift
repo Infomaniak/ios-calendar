@@ -37,6 +37,42 @@ struct PlanningDay: Identifiable, Hashable {
 }
 
 extension PlanningDay {
+    /// Rows rendered for this day: an optional week header (on the first weekday of
+    /// the week) followed by the day's events. Empty non-week-start days produce no
+    /// rows, while empty week-start days still surface their week header.
+    var items: [PlanningItem] {
+        var items: [PlanningItem] = []
+        if isWeekStart {
+            items.append(.weekHeader(date))
+        }
+        items.append(contentsOf: events.map(PlanningItem.event))
+        return items
+    }
+
+    /// Start of the week (respecting `Calendar.firstWeekday`) containing `date`.
+    static func weekStart(for date: Date, calendar: Foundation.Calendar = .current) -> Date {
+        calendar.dateInterval(of: .weekOfYear, for: date)?.start ?? calendar.startOfDay(for: date)
+    }
+
+    /// Builds a contiguous window of `dayCount` days starting at `startDate`, filling
+    /// each day with the events found in `eventsByDay` (keyed by start of day).
+    static func makeWindow(
+        startDate: Date,
+        dayCount: Int,
+        eventsByDay: [Date: [CalendarCoreUI.UIEvent]],
+        calendar: Foundation.Calendar = .current
+    ) -> [PlanningDay] {
+        var days: [PlanningDay] = []
+        days.reserveCapacity(dayCount)
+        for offset in 0 ..< dayCount {
+            guard let date = calendar.date(byAdding: .day, value: offset, to: startDate) else { continue }
+            let dayStart = calendar.startOfDay(for: date)
+            let events = (eventsByDay[dayStart] ?? []).sorted { $0.startDate < $1.startDate }
+            days.append(PlanningDay(date: dayStart, events: events))
+        }
+        return days
+    }
+
     static func makeContiguousDays(from events: [CalendarCoreUI.UIEvent]) -> [PlanningDay] {
         let calendar = Calendar.current
         let grouped = Dictionary(grouping: events) { event in

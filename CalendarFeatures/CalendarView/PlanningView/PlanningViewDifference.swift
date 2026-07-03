@@ -16,10 +16,23 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DifferenceKit
 import Foundation
 
-struct PlanningViewDifference {
-    let added: [IndexPath]
-    let updated: [IndexPath]
-    let removed: [IndexPath]
+/// Snapshot of the planning collection view: one `ArraySection` per day, each
+/// holding the rows (`PlanningItem`) to display for that day.
+typealias PlanningViewDifference = [ArraySection<PlanningDay, PlanningItem>]
+
+extension PlanningDay: Differentiable {
+    /// A day is uniquely identified by its date, so shifting the window only ever
+    /// produces section inserts/deletes at the edges (never spurious reloads).
+    var differenceIdentifier: Date {
+        date
+    }
+
+    /// Section-level content only tracks whether the day has a header. Event changes
+    /// are diffed through the section's elements, keeping row-level animations intact.
+    func isContentEqual(to source: PlanningDay) -> Bool {
+        events.isEmpty == source.events.isEmpty && isWeekStart == source.isWeekStart
+    }
 }
