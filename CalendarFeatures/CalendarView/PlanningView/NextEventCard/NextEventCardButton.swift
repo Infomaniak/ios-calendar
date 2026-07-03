@@ -28,12 +28,13 @@ struct NextEventCardButtonGeometryView: View {
 
     var body: some View {
         GeometryReader { proxy in
-            NextEventCardButton(event: event)
+            let x = proxy.size.width - size.width / 2
+            let y = lerp(a: proxy.size.height / 2, b: proxy.size.height - size.height / 2)
+
+            NextEventCardButton(event: event, progress: progress)
                 .onGeometryChange(for: CGSize.self) { $0.size } action: { size = $0 }
-                .position(
-                    x: proxy.size.width - size.width / 2,
-                    y: lerp(a: proxy.size.height / 2, b: proxy.size.height - size.height / 2)
-                )
+                .position(x: x, y: y)
+                .animation(.spring(duration: 0.25), value: x)
         }
     }
 
@@ -43,7 +44,10 @@ struct NextEventCardButtonGeometryView: View {
 }
 
 struct NextEventCardButton: View {
+    @State private var isExpanded = false
+
     let event: CalendarCoreUI.UIEvent
+    let progress: Double
 
     enum CallToActionKind {
         case joinKMeetRoom
@@ -92,12 +96,32 @@ struct NextEventCardButton: View {
                     .frame(width: 16, height: 16)
                     .accessibilityHidden(true)
 
-                Text(kind.label)
-                    .font(.footnote)
+                if isExpanded {
+                    Text(kind.label)
+                        .font(.footnote)
+                        .transition(.slide.combined(with: .opacity).combined(with: .scale))
+                }
             }
+            .geometryGroup()
         }
         .buttonStyle(.borderedProminent)
+        .onAppear {
+            updateExpandState(progress: progress)
+        }
+        .onChange(of: progress) { newValue in
+            withAnimation(.spring(duration: 0.25)) {
+                updateExpandState(progress: newValue)
+            }
+        }
     }
 
     private func didTapAction() {}
+
+    private func updateExpandState(progress: Double) {
+        if progress == 1 {
+            isExpanded = true
+        } else if progress == 0 {
+            isExpanded = false
+        }
+    }
 }

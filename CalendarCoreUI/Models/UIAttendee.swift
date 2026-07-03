@@ -37,7 +37,11 @@ public extension UIParticipationStatus {
     }
 }
 
-public struct UIAttendee: Sendable, Equatable, Hashable {
+public struct UIAttendee: Sendable, Equatable, Hashable, Identifiable {
+    public var id: String {
+        return email
+    }
+
     public let displayName: String?
     public let email: String
     public let status: UIParticipationStatus

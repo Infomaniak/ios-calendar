@@ -111,14 +111,18 @@ struct NextEventContentCardView: View {
             }
 
             HStack {
+                if !event.attendees.isEmpty {
+                    NextEventCardAvatarStackView(attendees: event.attendees, progression: progress)
+                }
+
                 // We keep this button in the view hierarchy to reserve space
-                NextEventCardButton(event: event)
+                NextEventCardButton(event: event, progress: 0)
                     .opacity(0)
                     .accessibilityHidden(true)
                     .allowsHitTesting(false)
                     .frame(maxWidth: .infinity, alignment: .trailing)
             }
-            .animateHide(progress: progress, fullHeight: max(24, buttonSize.height))
+            .animateHide(progress: progress, fullHeight: max(NextEventCardAvatarStackView.height, buttonSize.height))
             .padding(.top, lerp(a: 0, b: 12))
         }
         .frame(maxWidth: .infinity, alignment: .leading)
