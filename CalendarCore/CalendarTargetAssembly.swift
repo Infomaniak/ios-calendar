@@ -36,9 +36,8 @@ open class CalendarTargetAssembly: TargetAssembly {
 
     public static let bundleId = "com.infomaniak.calendar"
     public static let loginConfig = InfomaniakLogin.Config(
-        clientId: "CE011334-F75A-4263-9F9F-45FC5A142F59",
+        clientId: "019ED5E7-47D9-7C02-A0C0-F5EF862DB5A1",
         loginURL: URL(string: "https://login.\(apiEnvironment.host)/")!,
-        redirectURI: "com.infomaniak.sync://oauth2redirect",
         accessType: nil
     )
 
