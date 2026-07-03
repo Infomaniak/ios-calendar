@@ -18,14 +18,27 @@
 
 import CalendarCore
 import CalendarCoreUI
+import InfomaniakDI
+@preconcurrency import MultiplatformCalendar
 import SwiftUI
+
+private extension View {
+    func checkmarkTransition() -> some View {
+        if #available(iOS 26.0, *) {
+            return transition(.symbolEffect(.drawOn))
+        } else {
+            return transition(.opacity)
+        }
+    }
+}
 
 struct CalendarListContentView: View {
     @Environment(\.calendarAccounts) private var calendarAccounts
 
     @State private var expandedAccounts: Set<Int> = []
+    @State private var visibilityOverrides = [String: Bool]()
 
-    let calendars: [UICalendar]
+    let indexedCalendars: [Int: [UICalendar]]
 
     var body: some View {
         ForEach(calendarAccounts) { account in
@@ -42,28 +55,66 @@ struct CalendarListContentView: View {
                         }
                     )
                 ) {
-                    ForEach(calendarsFor(account: account)) { calendar in
-                        HStack {
-                            Circle()
-                                .fill(calendar.color)
-                                .frame(width: 8, height: 8)
-                            Text(calendar.displayName)
+                    ForEach(indexedCalendars[account.id, default: []]) { calendar in
+                        Button {
+                            toggleCalendar(calendar: calendar)
+                        } label: {
+                            HStack(spacing: 8) {
+                                Circle()
+                                    .fill(calendar.color)
+                                    .frame(width: 24, height: 24)
+                                    .overlay {
+                                        if isVisible(calendar) {
+                                            Image(systemName: "checkmark")
+                                                .font(.system(size: 12, weight: .semibold))
+                                                .foregroundStyle(.white) // TODO: Use a color that contrasts well with the calendar color
+                                                .checkmarkTransition()
+                                                .animation(.spring(duration: 0.25), value: isVisible(calendar))
+                                        }
+                                    }
+                                    .accessibilityHidden(true)
+
+                                Text(calendar.displayName)
+                                    .lineLimit(1)
+                                    .foregroundStyle(.foreground)
+                            }
                         }
                     }
                 } label: {
-                    AccountCellView(rawAvatarURL: account.user.avatar,
-                                    displayName: account.user.displayName,
-                                    email: account.user.email)
+                    AccountCellView(
+                        rawAvatarURL: account.user.avatar,
+                        displayName: account.user.displayName,
+                        email: account.user.email
+                    )
                 }
             }
         }
     }
 
-    private func calendarsFor(account: CalendarAccount) -> [UICalendar] {
-        calendars.filter { $0.accountId == account.id }
+    private func isVisible(_ calendar: UICalendar) -> Bool {
+        visibilityOverrides[calendar.id] ?? calendar.isVisible
+    }
+
+    private func toggleCalendar(calendar: UICalendar) {
+        let previousValue = isVisible(calendar)
+        let newValue = !previousValue
+
+        visibilityOverrides[calendar.id] = newValue
+
+        Task {
+            @InjectService var calendarSDK: CalendarCoreGraph
+            do {
+                try await calendarSDK.calendarManager.updateCalendar(
+                    calendarId: calendar.id,
+                    edit: .init(isVisible: KotlinBoolean(bool: newValue))
+                )
+            } catch {
+                visibilityOverrides[calendar.id] = previousValue
+            }
+        }
     }
 }
 
 #Preview {
-    CalendarListContentView(calendars: [.preview])
+    CalendarListContentView(indexedCalendars: [0: [.preview]])
 }

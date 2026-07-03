@@ -25,12 +25,14 @@ public struct UICalendar: Identifiable, Equatable, Hashable, Sendable {
     public let displayName: String
     public let color: Color
     public let accountId: Int
+    public let isVisible: Bool
 
-    public init(id: String, displayName: String, color: Color, accountId: Int) {
+    public init(id: String, displayName: String, color: Color, accountId: Int, isVisible: Bool) {
         self.id = id
         self.displayName = displayName
         self.color = color
         self.accountId = accountId
+        self.isVisible = isVisible
     }
 }
 
@@ -40,9 +42,10 @@ public extension UICalendar {
         displayName = calendar.displayName
         color = Color(argb: calendar.colorValue)
         accountId = Int(calendar.accountIdValue)
+        isVisible = calendar.isVisible
     }
 }
 
 public extension UICalendar {
-    static let preview = UICalendar(id: "0", displayName: "John Appleseed - Personal", color: .red, accountId: 1)
+    static let preview = UICalendar(id: "0", displayName: "John Appleseed - Personal", color: .red, accountId: 1, isVisible: true)
 }

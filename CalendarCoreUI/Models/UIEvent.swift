@@ -20,18 +20,6 @@ import Foundation
 import MultiplatformCalendar
 import SwiftUI
 
-extension Kotlinx_datetimeLocalDate {
-    var date: Date? {
-        let components = DateComponents(
-            calendar: .current,
-            year: Int(year),
-            month: Int(month.ordinal) + 1,
-            day: Int(day)
-        )
-        return components.date
-    }
-}
-
 extension KotlinInstant {
     var date: Date {
         Date(timeIntervalSince1970: TimeInterval(toEpochMilliseconds()) / 1000.0)
@@ -120,6 +108,10 @@ public extension UIEvent {
         status = .init(rawValue: event.status ?? "")
         location = event.location
 
+        startDate = event.timing.start.date
+        endDate = event.timing.end.date
+        isAllDay = event.timing.isAllDay
+
         var user: UIAttendee?
         attendees = event.attendees.map {
             let uiAttendee = UIAttendee(attendee: $0)
@@ -131,23 +123,6 @@ public extension UIEvent {
         self.user = user
 
         colors = .init(eventColors: event.colors)
-
-        switch event.timing {
-        case let timed as EventTimingTimed:
-            startDate = timed.start.date
-            endDate = timed.end.date
-            isAllDay = false
-        case let allDay as EventTimingAllDay:
-            guard let startDate = allDay.startDate.date, let endDate = allDay.endDate.date else {
-                return nil
-            }
-
-            self.startDate = startDate
-            self.endDate = endDate
-            isAllDay = true
-        default:
-            return nil
-        }
     }
 }
 

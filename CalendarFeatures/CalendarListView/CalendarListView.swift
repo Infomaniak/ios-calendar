@@ -29,14 +29,14 @@ public struct CalendarListView: View {
     @Environment(\.calendarAccounts) private var calendarAccounts
     @Environment(\.openURL) private var openURL
 
-    @State private var calendars = [UICalendar]()
+    @State private var indexedCalendars = [Int: [UICalendar]]()
     @State private var isExpanded = true
 
     public init() {}
 
     public var body: some View {
         List {
-            CalendarListContentView(calendars: calendars)
+            CalendarListContentView(indexedCalendars: indexedCalendars)
 
             Section {
                 DisclosureGroup("Réglages", isExpanded: $isExpanded) {
@@ -65,7 +65,7 @@ public struct CalendarListView: View {
     private func observeCalendars() async {
         @InjectService var calendarSDK: CalendarCoreGraph
         for await calendars in calendarSDK.calendarManager.observeCalendars() {
-            self.calendars = calendars.map { UICalendar(calendar: $0) }
+            indexedCalendars = Dictionary(grouping: calendars.map { UICalendar(calendar: $0) }, by: \.accountId)
         }
     }
 }
