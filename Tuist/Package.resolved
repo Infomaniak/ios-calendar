@@ -1,5 +1,5 @@
 {
-  "originHash" : "90c20e8c1a3bccb33a366d15f523018adc045b7b6d7d7d6052f2538c4bdfeaf5",
+  "originHash" : "2e0a17bf136b86fbba1b76788d509bd8ccf674c2633c2c08b057fb0b40653218",
   "pins" : [
     {
       "identity" : "alamofire",
@@ -8,6 +8,15 @@
       "state" : {
         "revision" : "7595cbcf59809f9977c5f6378500de2ad73b7ddb",
         "version" : "5.12.0"
+      }
+    },
+    {
+      "identity" : "differencekit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ra1028/DifferenceKit",
+      "state" : {
+        "revision" : "073b9671ce2b9b5b96398611427a1f929927e428",
+        "version" : "1.3.0"
       }
     },
     {

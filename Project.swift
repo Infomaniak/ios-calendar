@@ -49,6 +49,7 @@ let calendarView = Feature(
     name: "CalendarView",
     additionalDependencies: [
         TargetDependency.target(name: "\(Constants.projectName)Resources"),
+        TargetDependency.external(name: "DifferenceKit"),
         TargetDependency.external(name: "Collections"),
         TargetDependency.external(name: "DesignSystem"),
         TargetDependency.external(name: "InfomaniakDI")

@@ -29,14 +29,15 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/apple/swift-collections", .upToNextMajor(from: "1.6.0")),
         .package(url: "https://github.com/Infomaniak/ios-core", .upToNextMajor(from: "19.0.0")),
-        .package(url: "https://github.com/Infomaniak/ios-core-ui", .upToNextMajor(from: "26.0.0")),
         .package(url: "https://github.com/Infomaniak/ios-core-uikit", .upToNextMajor(from: "2.0.0")),
+        .package(url: "https://github.com/Infomaniak/ios-core-ui", .upToNextMajor(from: "26.0.0")),
         .package(url: "https://github.com/Infomaniak/ios-create-account", .upToNextMajor(from: "25.0.0")),
         .package(url: "https://github.com/Infomaniak/ios-dependency-injection", .upToNextMajor(from: "2.0.6")),
         .package(url: "https://github.com/Infomaniak/ios-device-check", .upToNextMajor(from: "1.1.1")),
         .package(url: "https://github.com/Infomaniak/ios-features", .upToNextMajor(from: "10.0.0")),
         .package(url: "https://github.com/Infomaniak/ios-login", .upToNextMajor(from: "7.8.0")),
         .package(url: "https://github.com/Infomaniak/ios-onboarding", .upToNextMajor(from: "1.1.2")),
-        .package(url: "https://github.com/Infomaniak/multiplatform-calendar", revision: "835a0164e050dadd96f000c5b3d04f06c68837f9")
+        .package(url: "https://github.com/Infomaniak/multiplatform-calendar", revision: "835a0164e050dadd96f000c5b3d04f06c68837f9"),
+        .package(url: "https://github.com/ra1028/DifferenceKit", .upToNextMajor(from: "1.3.0"))
     ]
 )
