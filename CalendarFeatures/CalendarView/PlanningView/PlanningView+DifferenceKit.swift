@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarCoreUI
 import DifferenceKit
 import Foundation
 
@@ -34,5 +35,37 @@ extension PlanningDay: Differentiable {
     /// are diffed through the section's elements, keeping row-level animations intact.
     func isContentEqual(to source: PlanningDay) -> Bool {
         events.isEmpty == source.events.isEmpty && isWeekStart == source.isWeekStart
+    }
+}
+
+/// A single row displayed inside a day section of the planning collection view.
+///
+/// Modeling the week header as a first-class item (instead of computing it on the
+/// fly) lets `DifferenceKit` diff it like any other row, so headers animate in and
+/// out consistently with the events around them.
+enum PlanningItem: Hashable {
+    case weekHeader(Date)
+    case event(CalendarCoreUI.UIEvent)
+}
+
+extension PlanningItem: Differentiable {
+    var differenceIdentifier: String {
+        switch self {
+        case .weekHeader(let date):
+            return "week-\(date.timeIntervalSince1970)"
+        case .event(let event):
+            return "event-\(event.id)"
+        }
+    }
+
+    func isContentEqual(to source: PlanningItem) -> Bool {
+        switch (self, source) {
+        case (.weekHeader(let lhs), .weekHeader(let rhs)):
+            return lhs == rhs
+        case (.event(let lhs), .event(let rhs)):
+            return lhs == rhs
+        default:
+            return false
+        }
     }
 }

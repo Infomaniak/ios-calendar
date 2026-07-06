@@ -82,15 +82,11 @@ struct PlanningCollectionView: UIViewRepresentable {
         /// window recycles. Bump to `3` to start loading earlier at the cost of more
         /// frequent shifts.
         private let edgeTriggerWeeks = 2
-        /// Above this many diff changes, an update is applied via `reloadData` rather
-        /// than animated batch updates (keeps large recycles cheap and jump-free).
-        private let reloadChangeThreshold = 30
+        private let reloadChangeThreshold = 100
 
         private let planningViewModel: PlanningViewModel
 
-        /// Collection-view-owned copy of the window that `DifferenceKit` diffs against.
         private var sections: PlanningViewDifference = []
-        /// Guards against re-entrant scroll callbacks while we mutate content and offset.
         private var isAdjusting = false
 
         let dayHeaderRegistration: UICollectionView.SupplementaryRegistration<PlanningDayHeaderView>
@@ -253,26 +249,6 @@ struct PlanningCollectionView: UIViewRepresentable {
             }
         }
 
-        // MARK: - Infinite scrolling
-
-        func scrollViewDidScroll(_ scrollView: UIScrollView) {
-            guard !isAdjusting, let collectionView = scrollView as? UICollectionView else { return }
-
-            let visibleSections = collectionView.indexPathsForVisibleItems.map(\.section)
-            guard let minSection = visibleSections.min(), let maxSection = visibleSections.max() else { return }
-
-            let triggerDays = edgeTriggerWeeks * 7
-            let lastSection = sections.count - 1
-
-            if maxSection >= lastSection - triggerDays {
-                planningViewModel.shiftForward()
-                applyWithAnchorRestoration(planningViewModel.sections, in: collectionView)
-            } else if minSection <= triggerDays {
-                planningViewModel.shiftBackward()
-                applyWithAnchorRestoration(planningViewModel.sections, in: collectionView)
-            }
-        }
-
         // MARK: - Applying updates
 
         /// Applies `target` to the collection view while keeping the topmost visible day
@@ -348,9 +324,6 @@ struct PlanningCollectionView: UIViewRepresentable {
             collectionView.scrollToItem(at: indexPath, at: .top, animated: animated)
         }
 
-        /// Finds the closest populated row at or before `section` (falling back to a later
-        /// one) so empty days still resolve to a sensible scroll position — typically the
-        /// week header of the target's week.
         private func scrollIndexPath(forSectionContaining section: Int) -> IndexPath? {
             for candidate in stride(from: section, through: max(0, section - 6), by: -1) {
                 if sections.indices.contains(candidate), !sections[candidate].elements.isEmpty {
@@ -361,6 +334,26 @@ struct PlanningCollectionView: UIViewRepresentable {
                 return IndexPath(item: 0, section: candidate)
             }
             return nil
+        }
+
+        // MARK: - Scroll observation
+
+        func scrollViewDidScroll(_ scrollView: UIScrollView) {
+            guard !isAdjusting, let collectionView = scrollView as? UICollectionView else { return }
+
+            let visibleSections = collectionView.indexPathsForVisibleItems.map(\.section)
+            guard let minSection = visibleSections.min(), let maxSection = visibleSections.max() else { return }
+
+            let triggerDays = edgeTriggerWeeks * 7
+            let lastSection = sections.count - 1
+
+            if maxSection >= lastSection - triggerDays {
+                planningViewModel.shiftForward()
+                applyWithAnchorRestoration(planningViewModel.sections, in: collectionView)
+            } else if minSection <= triggerDays {
+                planningViewModel.shiftBackward()
+                applyWithAnchorRestoration(planningViewModel.sections, in: collectionView)
+            }
         }
     }
 }

@@ -28,16 +28,13 @@ class PlanningViewModel {
     nonisolated static let windowWeeks = 8
     /// Number of days added/removed each time the window recycles.
     nonisolated static let shiftDays = 7
-    /// Extra days observed on each side of the window so events are ready before the
-    /// user scrolls them into view.
+    /// Extra days observed on each side of the window so events are ready before the user scrolls them into view.
     nonisolated static let observeBufferDays = 7
 
     nonisolated static var windowDays: Int {
         windowWeeks * 7
     }
 
-    /// Current snapshot of the visible window, one section per day. The collection
-    /// view diffs its own backing copy against this to animate changes.
     private(set) var sections: PlanningViewDifference = []
     var scrollTarget: Date?
 
@@ -54,9 +51,6 @@ class PlanningViewModel {
         observeEvents()
     }
 
-    // MARK: - Lookups
-
-    /// Section index of `date` within the current window, or `nil` if it is not resident.
     func sectionIndex(for date: Date) -> Int? {
         let day = calendar.startOfDay(for: date)
         return days.firstIndex { $0.date == day }
@@ -66,19 +60,14 @@ class PlanningViewModel {
         days.indices.contains(index) ? days[index] : nil
     }
 
-    // MARK: - Recycling
-
-    /// Moves the window one step towards the future (drops the oldest week, appends a new one).
     func shiftForward() {
         shiftWindow(byDays: Self.shiftDays)
     }
 
-    /// Moves the window one step towards the past (drops the newest week, prepends an older one).
     func shiftBackward() {
         shiftWindow(byDays: -Self.shiftDays)
     }
 
-    /// Rebuilds the window centred on `date`. Used when jumping to a date outside the resident range.
     func reAnchor(around date: Date) {
         anchorDate = Self.centeredAnchor(for: date, calendar: calendar)
         rebuildSections()
@@ -92,9 +81,6 @@ class PlanningViewModel {
         observeEvents()
     }
 
-    // MARK: - Window building
-
-    /// Week-aligned start date that keeps `date` roughly centred in the window.
     private static func centeredAnchor(for date: Date, calendar: Foundation.Calendar) -> Date {
         let weekStart = PlanningDay.weekStart(for: date, calendar: calendar)
         let weeksBefore = windowWeeks / 2
@@ -110,8 +96,6 @@ class PlanningViewModel {
         )
         sections = days.map { ArraySection(model: $0, elements: $0.items) }
     }
-
-    // MARK: - Observation
 
     private func observeEvents() {
         guard let start = calendar.date(byAdding: .day, value: -Self.observeBufferDays, to: anchorDate),
