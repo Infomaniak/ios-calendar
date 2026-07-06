@@ -56,10 +56,6 @@ class PlanningViewModel {
         return days.firstIndex { $0.date == day }
     }
 
-    func planningDay(atSection index: Int) -> PlanningDay? {
-        days.indices.contains(index) ? days[index] : nil
-    }
-
     func shiftForward() {
         shiftWindow(byDays: Self.shiftDays)
     }

@@ -86,13 +86,13 @@ struct PlanningCollectionView: UIViewRepresentable {
 
         private let planningViewModel: PlanningViewModel
 
+        private let dayHeaderRegistration: UICollectionView.SupplementaryRegistration<PlanningDayHeaderView>
+        private let weekHeaderCellRegistration: UICollectionView.CellRegistration<PlanningWeekHeaderCell, Date>
+        private let allDayCellRegistration: UICollectionView.CellRegistration<UICollectionViewListCell, CalendarCoreUI.UIEvent>
+        private let eventCellRegistration: UICollectionView.CellRegistration<UICollectionViewListCell, CalendarCoreUI.UIEvent>
+
         private var sections: PlanningViewDifference = []
         private var isAdjusting = false
-
-        let dayHeaderRegistration: UICollectionView.SupplementaryRegistration<PlanningDayHeaderView>
-        let weekHeaderCellRegistration: UICollectionView.CellRegistration<PlanningWeekHeaderCell, Date>
-        let allDayCellRegistration: UICollectionView.CellRegistration<UICollectionViewListCell, CalendarCoreUI.UIEvent>
-        let eventCellRegistration: UICollectionView.CellRegistration<UICollectionViewListCell, CalendarCoreUI.UIEvent>
 
         init(planningViewModel: PlanningViewModel) {
             self.planningViewModel = planningViewModel
