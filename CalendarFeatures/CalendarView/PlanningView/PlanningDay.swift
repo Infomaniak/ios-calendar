@@ -20,6 +20,11 @@ import CalendarCoreUI
 import Foundation
 import MultiplatformCalendar
 
+enum PlanningItem: Hashable {
+    case weekHeader(Date)
+    case event(CalendarCoreUI.UIEvent)
+}
+
 struct PlanningDay: Identifiable, Hashable {
     let date: Date
     let events: [CalendarCoreUI.UIEvent]
@@ -36,20 +41,7 @@ struct PlanningDay: Identifiable, Hashable {
     }
 }
 
-/// A single row displayed inside a day section of the planning collection view.
-///
-/// Modeling the week header as a first-class item (instead of computing it on the
-/// fly) lets the diffable data source treat it like any other row, so headers are
-/// inserted and removed consistently with the events around them.
-enum PlanningItem: Hashable {
-    case weekHeader(Date)
-    case event(CalendarCoreUI.UIEvent)
-}
-
 extension PlanningDay {
-    /// Rows rendered for this day: an optional week header (on the first weekday of
-    /// the week) followed by the day's events. Empty non-week-start days produce no
-    /// rows, while empty week-start days still surface their week header.
     var items: [PlanningItem] {
         var items: [PlanningItem] = []
         if isWeekStart {
@@ -59,18 +51,11 @@ extension PlanningDay {
         return items
     }
 
-    /// Start of the week (respecting `Calendar.firstWeekday`) containing `date`.
-    static func weekStart(for date: Date, calendar: Foundation.Calendar = .current) -> Date {
-        calendar.dateInterval(of: .weekOfYear, for: date)?.start ?? calendar.startOfDay(for: date)
-    }
-
-    /// Builds a contiguous window of `dayCount` days starting at `startDate`, filling
-    /// each day with the events found in `eventsByDay` (keyed by start of day).
     static func makeWindow(
         startDate: Date,
         dayCount: Int,
         eventsByDay: [Date: [CalendarCoreUI.UIEvent]],
-        calendar: Foundation.Calendar = .current
+        calendar: Foundation.Calendar
     ) -> [PlanningDay] {
         var days: [PlanningDay] = []
         days.reserveCapacity(dayCount)
@@ -82,39 +67,4 @@ extension PlanningDay {
         }
         return days
     }
-
-    static func makeContiguousDays(from events: [CalendarCoreUI.UIEvent]) -> [PlanningDay] {
-        let calendar = Calendar.current
-        let grouped = Dictionary(grouping: events) { event in
-            calendar.startOfDay(for: event.startDate)
-        }
-
-        let referenceDate = grouped.keys.min() ?? calendar.startOfDay(for: Date())
-        let upperReferenceDate = grouped.keys.max() ?? referenceDate
-
-        guard let firstWeek = calendar.dateInterval(of: .weekOfYear, for: referenceDate),
-              let lastWeek = calendar.dateInterval(of: .weekOfYear, for: upperReferenceDate) else {
-            return []
-        }
-
-        var days: [PlanningDay] = []
-        var currentDate = firstWeek.start
-        while currentDate < lastWeek.end {
-            let dayStart = calendar.startOfDay(for: currentDate)
-            let sortedEvents = (grouped[dayStart] ?? []).sorted {
-                $0.startDate < $1.startDate
-            }
-            days.append(PlanningDay(date: dayStart, events: sortedEvents))
-
-            guard let nextDate = calendar.date(byAdding: .day, value: 1, to: currentDate) else { break }
-            currentDate = nextDate
-        }
-
-        return days
-    }
-}
-
-extension PlanningDay {
-    // periphery:ignore - False positive, used by preview
-    static let preview: [PlanningDay] = makeContiguousDays(from: UIEvent.random100Events)
 }

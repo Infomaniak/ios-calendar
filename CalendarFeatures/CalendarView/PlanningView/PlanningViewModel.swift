@@ -75,12 +75,6 @@ class PlanningViewModel {
         observeEvents()
     }
 
-    private static func centeredAnchor(for date: Date, calendar: Foundation.Calendar) -> Date {
-        let weekStart = PlanningDay.weekStart(for: date, calendar: calendar)
-        let weeksBefore = windowWeeks / 2
-        return calendar.date(byAdding: .day, value: -weeksBefore * 7, to: weekStart) ?? weekStart
-    }
-
     private func rebuildDays() {
         days = PlanningDay.makeWindow(
             startDate: anchorDate,
@@ -121,5 +115,11 @@ class PlanningViewModel {
             eventsByDay = groupedEvents
             days = newDays
         }
+    }
+
+    private static func centeredAnchor(for date: Date, calendar: Foundation.Calendar) -> Date {
+        let weekStart = calendar.weekStart(for: date)
+        let weeksBefore = windowWeeks / 2
+        return calendar.date(byAdding: .day, value: -weeksBefore * 7, to: weekStart) ?? weekStart
     }
 }
