@@ -103,13 +103,23 @@ class PlanningViewModel {
             for await events in calendarSDK.calendarManager.observeEvents(start: start.instant, end: end.instant) {
                 guard let self else { return }
                 let uiEvents = events.compactMap { CalendarCoreUI.UIEvent(event: $0, userEmail: "") }
-                await ingest(events: uiEvents)
+                await ingest(uiEvents: uiEvents)
             }
         }
     }
 
-    private func ingest(events: [CalendarCoreUI.UIEvent]) {
-        eventsByDay = Dictionary(grouping: events) { calendar.startOfDay(for: $0.startDate) }
-        rebuildDays()
+    @concurrent
+    private func ingest(uiEvents: [CalendarCoreUI.UIEvent]) async {
+        let groupedEvents = Dictionary(grouping: uiEvents) { calendar.startOfDay(for: $0.startDate) }
+        let newDays = await PlanningDay.makeWindow(
+            startDate: anchorDate,
+            dayCount: Self.windowDays,
+            eventsByDay: groupedEvents,
+            calendar: calendar
+        )
+        await MainActor.run {
+            eventsByDay = groupedEvents
+            days = newDays
+        }
     }
 }
