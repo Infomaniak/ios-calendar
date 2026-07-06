@@ -22,8 +22,8 @@ import Foundation
 import InfomaniakDI
 import MultiplatformCalendar
 
-@MainActor
-class PlanningViewModel: ObservableObject {
+@MainActor @Observable
+class PlanningViewModel {
     /// Number of weeks kept resident in the collection view at any moment.
     nonisolated static let windowWeeks = 8
     /// Number of days added/removed each time the window recycles.
@@ -38,14 +38,14 @@ class PlanningViewModel: ObservableObject {
 
     /// Current snapshot of the visible window, one section per day. The collection
     /// view diffs its own backing copy against this to animate changes.
-    @Published private(set) var sections: PlanningViewDifference = []
-    @Published var scrollTarget: Date?
+    private(set) var sections: PlanningViewDifference = []
+    var scrollTarget: Date?
 
     private let calendar = Calendar.current
-    private var eventsByDay: [Date: [CalendarCoreUI.UIEvent]] = [:]
-    private var days: [PlanningDay] = []
-    private var anchorDate: Date
-    private var currentObserveTask: Task<Void, Never>?
+    @ObservationIgnored private var eventsByDay: [Date: [CalendarCoreUI.UIEvent]] = [:]
+    @ObservationIgnored private var days: [PlanningDay] = []
+    @ObservationIgnored private var anchorDate: Date
+    @ObservationIgnored private var currentObserveTask: Task<Void, Never>?
 
     init() {
         let today = Calendar.current.startOfDay(for: Date())

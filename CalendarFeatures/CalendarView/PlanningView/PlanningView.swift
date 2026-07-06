@@ -20,7 +20,7 @@ import Foundation
 import SwiftUI
 
 public struct PlanningView: View {
-    @StateObject private var planningViewModel = PlanningViewModel()
+    @State private var planningViewModel = PlanningViewModel()
 
     public init() {}
 

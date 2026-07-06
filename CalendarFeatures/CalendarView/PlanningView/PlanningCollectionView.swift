@@ -38,7 +38,7 @@ private struct PlanningScrollAnchor {
 }
 
 struct PlanningCollectionView: UIViewRepresentable {
-    @ObservedObject var planningViewModel: PlanningViewModel
+    var planningViewModel: PlanningViewModel
 
     func makeUIView(context: Context) -> UICollectionView {
         let collectionView = UICollectionView(
