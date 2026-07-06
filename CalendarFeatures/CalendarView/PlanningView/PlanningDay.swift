@@ -36,6 +36,16 @@ struct PlanningDay: Identifiable, Hashable {
     }
 }
 
+/// A single row displayed inside a day section of the planning collection view.
+///
+/// Modeling the week header as a first-class item (instead of computing it on the
+/// fly) lets the diffable data source treat it like any other row, so headers are
+/// inserted and removed consistently with the events around them.
+enum PlanningItem: Hashable {
+    case weekHeader(Date)
+    case event(CalendarCoreUI.UIEvent)
+}
+
 extension PlanningDay {
     /// Rows rendered for this day: an optional week header (on the first weekday of
     /// the week) followed by the day's events. Empty non-week-start days produce no

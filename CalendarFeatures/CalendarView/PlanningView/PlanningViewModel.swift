@@ -17,7 +17,6 @@
  */
 
 import CalendarCoreUI
-import DifferenceKit
 import Foundation
 import InfomaniakDI
 import MultiplatformCalendar
@@ -35,19 +34,18 @@ class PlanningViewModel {
         windowWeeks * 7
     }
 
-    private(set) var sections: PlanningViewDifference = []
+    private(set) var days: [PlanningDay] = []
     var scrollTarget: Date?
 
     private let calendar = Calendar.current
     @ObservationIgnored private var eventsByDay: [Date: [CalendarCoreUI.UIEvent]] = [:]
-    @ObservationIgnored private var days: [PlanningDay] = []
     @ObservationIgnored private var anchorDate: Date
     @ObservationIgnored private var currentObserveTask: Task<Void, Never>?
 
     init() {
         let today = Calendar.current.startOfDay(for: Date())
         anchorDate = Self.centeredAnchor(for: today, calendar: Calendar.current)
-        rebuildSections()
+        rebuildDays()
         observeEvents()
     }
 
@@ -66,14 +64,14 @@ class PlanningViewModel {
 
     func reAnchor(around date: Date) {
         anchorDate = Self.centeredAnchor(for: date, calendar: calendar)
-        rebuildSections()
+        rebuildDays()
         observeEvents()
     }
 
     private func shiftWindow(byDays dayOffset: Int) {
         guard let newAnchor = calendar.date(byAdding: .day, value: dayOffset, to: anchorDate) else { return }
         anchorDate = newAnchor
-        rebuildSections()
+        rebuildDays()
         observeEvents()
     }
 
@@ -83,14 +81,13 @@ class PlanningViewModel {
         return calendar.date(byAdding: .day, value: -weeksBefore * 7, to: weekStart) ?? weekStart
     }
 
-    private func rebuildSections() {
+    private func rebuildDays() {
         days = PlanningDay.makeWindow(
             startDate: anchorDate,
             dayCount: Self.windowDays,
             eventsByDay: eventsByDay,
             calendar: calendar
         )
-        sections = days.map { ArraySection(model: $0, elements: $0.items) }
     }
 
     private func observeEvents() {
@@ -113,6 +110,6 @@ class PlanningViewModel {
 
     private func ingest(events: [CalendarCoreUI.UIEvent]) {
         eventsByDay = Dictionary(grouping: events) { calendar.startOfDay(for: $0.startDate) }
-        rebuildSections()
+        rebuildDays()
     }
 }
