@@ -21,7 +21,7 @@ import CalendarResources
 import SwiftUI
 
 public extension CalendarCoreUI.UIEvent {
-    var bottomPadding: CGFloat {
+    var additionalDurationHeight: CGFloat {
         let duration = endDate.timeIntervalSince(startDate)
         let durationInMinutes = duration / 60
 
@@ -44,6 +44,8 @@ struct PlanningEventView: View {
         static let maxDuration: CGFloat = 120
 
         static let maxSize: CGFloat = 50
+
+        static let iconSize: CGFloat = 16
     }
 
     var body: some View {
@@ -67,26 +69,26 @@ struct PlanningEventView: View {
                     CalendarResourcesAsset.Images.mapPin.swiftUIImage
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 16, height: 16)
+                        .frame(width: UIConstants.iconSize, height: UIConstants.iconSize)
                         .accessibilityLabel(Text(CalendarResourcesStrings.contentDescriptionHasLocation))
                 }
                 if event.kMeetLink != nil {
                     CalendarResourcesAsset.Images.productKmeet.swiftUIImage
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 16, height: 16)
+                        .frame(width: UIConstants.iconSize, height: UIConstants.iconSize)
                         .accessibilityLabel(Text(CalendarResourcesStrings.contentDescriptionHasKMeetLink))
                 }
                 if !event.attendees.isEmpty {
                     CalendarResourcesAsset.Images.usersStacked.swiftUIImage
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 16, height: 16)
+                        .frame(width: UIConstants.iconSize, height: UIConstants.iconSize)
                         .accessibilityLabel(Text(CalendarResourcesStrings.contentDescriptionHasAttendees))
                 }
             }
         }
-        .padding(.bottom, event.bottomPadding)
+        .padding(.bottom, event.additionalDurationHeight)
         .planningEventStyle(event: event)
     }
 }

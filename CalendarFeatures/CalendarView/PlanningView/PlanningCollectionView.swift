@@ -48,6 +48,9 @@ struct PlanningCollectionView: UIViewRepresentable {
         collectionView.showsVerticalScrollIndicator = false
         context.coordinator.makeDataSource(for: collectionView)
         context.coordinator.apply(planningViewModel.days, in: collectionView)
+        collectionView.registerForTraitChanges([UITraitPreferredContentSizeCategory.self]) { collectionView, _ in
+            context.coordinator.handleContentSizeCategoryChange(in: collectionView)
+        }
 
         if #available(iOS 26.0, *) {
             // Remove the effect since we will use a custom header
@@ -91,6 +94,8 @@ struct PlanningCollectionView: UIViewRepresentable {
         private var days: [PlanningDay] = []
         private var isAdjusting = false
 
+        private var cellSizeHelper = PlanningCellSizeHelper()
+
         init(planningViewModel: PlanningViewModel) {
             self.planningViewModel = planningViewModel
 
@@ -125,6 +130,11 @@ struct PlanningCollectionView: UIViewRepresentable {
             }
 
             super.init()
+        }
+
+        func handleContentSizeCategoryChange(in collectionView: UICollectionView) {
+            cellSizeHelper = PlanningCellSizeHelper()
+            collectionView.collectionViewLayout.invalidateLayout()
         }
 
         // MARK: - Backing store
@@ -164,9 +174,7 @@ struct PlanningCollectionView: UIViewRepresentable {
             case .weekHeader:
                 return CGSize(width: width, height: PlanningLayoutMetrics.weekHeaderHeight)
             case .event(let event):
-                let height = event.isAllDay
-                    ? PlanningLayoutMetrics.eventRowHeight
-                    : PlanningLayoutMetrics.eventRowHeight + event.bottomPadding
+                let height = cellSizeHelper.heightForCell(event: event)
                 return CGSize(width: width, height: height)
             }
         }
