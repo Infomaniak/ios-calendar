@@ -45,6 +45,7 @@ struct PlanningCollectionView: UIViewRepresentable {
             collectionViewLayout: context.coordinator.makeLayout()
         )
         collectionView.delegate = context.coordinator
+        collectionView.showsVerticalScrollIndicator = false
         context.coordinator.makeDataSource(for: collectionView)
         context.coordinator.apply(planningViewModel.days, in: collectionView)
 
