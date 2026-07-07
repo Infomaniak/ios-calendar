@@ -18,6 +18,7 @@
 
 import CalendarCoreUI
 import CalendarResources
+import ESDSFoundation
 import SwiftUI
 
 enum AnimationHelper {
@@ -44,6 +45,8 @@ struct NextEventCardView: View {
 
 @available(iOS 17.0, *)
 struct NextEventContentCardView: View {
+    @Environment(\.esdsTheme) private var theme
+
     @State private var buttonSize = CGSize.zero
 
     let event: CalendarCoreUI.UIEvent
@@ -53,58 +56,85 @@ struct NextEventContentCardView: View {
         return "DANS 1 MINUTE"
     }
 
+    enum Constants {
+        static let durationFontSize = scaledFontSize(.caption2, size: 12, weight: .semibold)
+
+        static let titleExpandedFontSize = scaledFontSize(.callout, size: 16, weight: .semibold)
+        static let titleCollapsedFontSize = scaledFontSize(.footnote, size: 13, weight: .semibold)
+
+        static let informationIconSize: CGFloat = 16
+        static let informationFontSize = scaledFontSize(.caption2, size: 12, weight: .bold)
+
+        static var informationSize: CGFloat {
+            max(informationIconSize, informationFontSize)
+        }
+
+        private static func scaledFontSize(
+            _ textStyle: UIFont.TextStyle,
+            size: CGFloat,
+            weight: UIFont.Weight = .regular
+        ) -> CGFloat {
+            let metrics = UIFontMetrics(forTextStyle: textStyle)
+            let font = metrics.scaledFont(for: .systemFont(ofSize: size, weight: weight))
+            return font.pointSize
+        }
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             Text(durationLabel.uppercased())
-                .font(.system(size: 12))
+                .font(.system(size: Constants.durationFontSize, weight: .semibold))
                 .foregroundStyle(.tint)
-                .animateHide(progress: progress, fullHeight: 12)
-                .padding(.bottom, lerp(a: 0, b: 12))
+                .animateHide(progress: progress, fullHeight: Constants.durationFontSize)
+                .padding(.bottom, lerp(a: 0, b: theme.spacing.lg))
                 .padding(.trailing, lerp(a: 0, b: buttonSize.width + 4))
                 .lineLimit(1)
 
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: theme.spacing.sm) {
                 Text(event.title)
-                    .font(.system(size: lerp(a: 13, b: 16), weight: .bold))
+                    .font(.system(
+                        size: lerp(a: Constants.titleCollapsedFontSize, b: Constants.titleExpandedFontSize),
+                        weight: .semibold)
+                    )
                     .lineLimit(1)
 
                 VStack(alignment: .leading, spacing: 0) {
-                    HStack(spacing: lerp(a: 0, b: 4)) {
+                    HStack(spacing: lerp(a: 0, b: theme.spacing.sm)) {
                         CalendarResourcesAsset.Images.clock.swiftUIImage
                             .resizable()
                             .scaledToFit()
-                            .animateHide(progress: progress, fullHeight: 16)
+                            .animateHide(progress: progress, fullHeight: Constants.informationSize)
                             .accessibilityHidden(true)
 
                         Text("08:30 - 09:45")
                     }
 
                     if let location = event.location {
-                        HStack(spacing: 4) {
+                        HStack(spacing: theme.spacing.sm) {
                             CalendarResourcesAsset.Images.mapPin.swiftUIImage
                                 .resizable()
                                 .scaledToFit()
-                                .frame(width: 16, height: 16)
+                                .frame(width: Constants.informationIconSize, height: Constants.informationIconSize)
                                 .accessibilityHidden(true)
 
                             Text(location)
                         }
-                        .animateHide(progress: progress, fullHeight: 16)
-                        .padding(.top, lerp(a: 0, b: 4))
+                        .animateHide(progress: progress, fullHeight: Constants.informationSize)
+                        .padding(.top, lerp(a: 0, b: theme.spacing.sm))
                     }
 
                     if event.kMeetLink != nil {
-                        HStack(spacing: 4) {
+                        HStack(spacing: theme.spacing.sm) {
                             CalendarResourcesAsset.Images.productKmeet.swiftUIImage
                                 .resizable()
                                 .scaledToFit()
-                                .frame(width: 16, height: 16)
+                                .frame(width: Constants.informationIconSize, height: Constants.informationIconSize)
                                 .accessibilityHidden(true)
 
                             Text("En Ligne")
                         }
-                        .animateHide(progress: progress, fullHeight: 16)
-                        .padding(.top, lerp(a: 0, b: 4))
+                        .animateHide(progress: progress, fullHeight: Constants.informationSize)
+                        .padding(.top, lerp(a: 0, b: theme.spacing.sm))
                     }
                 }
                 .font(.caption2.bold())
@@ -123,7 +153,7 @@ struct NextEventContentCardView: View {
                     .frame(maxWidth: .infinity, alignment: .trailing)
             }
             .animateHide(progress: progress, fullHeight: max(NextEventCardAvatarStackView.height, buttonSize.height))
-            .padding(.top, lerp(a: 0, b: 12))
+            .padding(.top, lerp(a: 0, b: theme.spacing.lg))
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .overlay {
@@ -141,8 +171,7 @@ struct NextEventContentCardView: View {
 
 private extension View {
     func animateHide(progress: Double, fullHeight: CGFloat) -> some View {
-        self
-            .opacity(AnimationHelper.lerp(a: 0, b: 1, t: progress))
+        opacity(AnimationHelper.lerp(a: 0, b: 1, t: progress))
             .frame(height: AnimationHelper.lerp(a: 0, b: fullHeight, t: progress))
             .clipped()
             .blur(radius: AnimationHelper.lerp(a: 4, b: 0, t: progress))
