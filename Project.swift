@@ -141,7 +141,8 @@ let project = Project(
                 .external(name: "InfomaniakDI"),
                 .external(name: "InfomaniakLogin"),
                 .external(name: "InterAppLogin"),
-                .external(name: "InfomaniakCreateAccount")
+                .external(name: "InfomaniakCreateAccount"),
+                .external(name: "ESDSCalendar")
             ],
             settings: .settings(base: Constants.baseSettings),
             environmentVariables: [
