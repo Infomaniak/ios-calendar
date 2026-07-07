@@ -105,6 +105,10 @@ struct PlanningCollectionView: UIViewRepresentable {
                 }
                 .margins(.all, 0)
                 .minSize(height: PlanningLayoutMetrics.eventRowMinHeight)
+
+                cell.configurationUpdateHandler = { cell, _ in
+                    cell.backgroundConfiguration = .clear()
+                }
             }
 
             eventCellRegistration = .init { cell, _, event in
@@ -113,6 +117,10 @@ struct PlanningCollectionView: UIViewRepresentable {
                 }
                 .margins(.all, 0)
                 .minSize(height: PlanningLayoutMetrics.eventRowMinHeight)
+
+                cell.configurationUpdateHandler = { cell, _ in
+                    cell.backgroundConfiguration = .clear()
+                }
             }
 
             super.init()
