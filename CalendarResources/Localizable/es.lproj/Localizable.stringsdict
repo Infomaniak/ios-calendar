@@ -2,12 +2,29 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <!--
  Loco ios export: Xcode Stringsdict (legacy)
- Project: Authenticator
+ Project: Calendar
  Locale: es, Spanish
- Tagged: Tag not found
- Exported by: Jordan Chapelle
- Exported at: Thu, 29 Jan 2026 09:18:36 +0100
+ Tagged: ios-stringsdict
+ Exported by: Valentin Perignon
+ Exported at: Wed, 08 Jul 2026 10:02:07 +0200
 -->
 <plist version="1.0">
-  <dict></dict>
+  <dict>
+    <key>moreParticipantsLabel</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>+%d participante</string>
+        <key>other</key>
+        <string>+%d participantes</string>
+      </dict>
+    </dict>
+  </dict>
 </plist>

@@ -69,11 +69,11 @@ struct NextEventCardButton: View {
         var label: String {
             switch self {
             case .joinKMeetRoom:
-                return "Rejoindre"
+                return CalendarResourcesStrings.buttonJoin
             case .openMap:
-                return "Itinéraire"
+                return CalendarResourcesStrings.buttonNavigate
             case .showEventDetails:
-                return "Afficher"
+                return CalendarResourcesStrings.buttonShow
             }
         }
     }
@@ -137,4 +137,8 @@ struct NextEventCardButton: View {
             isExpanded = false
         }
     }
+}
+
+#Preview {
+    NextEventCardButton(event: .preview, progress: 1)
 }

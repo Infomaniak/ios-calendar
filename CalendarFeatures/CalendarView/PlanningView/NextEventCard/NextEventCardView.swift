@@ -18,6 +18,7 @@
 
 import CalendarCoreUI
 import CalendarResources
+import DesignSystem
 import ESDSFoundation
 import SwiftUI
 
@@ -37,13 +38,10 @@ struct NextEventCardView: View {
     let event = UIEvent.preview
 
     var body: some View {
-        if #available(iOS 17.0, *) {
-            NextEventContentCardView(event: event, progress: model.scrollProgress)
-        }
+        NextEventContentCardView(event: event, progress: model.scrollProgress)
     }
 }
 
-@available(iOS 17.0, *)
 struct NextEventContentCardView: View {
     @Environment(\.esdsTheme) private var theme
 
@@ -51,10 +49,6 @@ struct NextEventContentCardView: View {
 
     let event: CalendarCoreUI.UIEvent
     let progress: Double
-
-    private var durationLabel: String {
-        return "DANS 1 MINUTE"
-    }
 
     enum Constants {
         static let durationFontSize = scaledFontSize(.caption2, size: 12, weight: .semibold)
@@ -82,20 +76,21 @@ struct NextEventContentCardView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text(durationLabel.uppercased())
+            Text(event.startDate, format: Date.RelativeFormatStyle(presentation: .numeric, unitsStyle: .wide))
+                .textCase(.uppercase)
                 .font(.system(size: Constants.durationFontSize, weight: .semibold))
                 .foregroundStyle(.tint)
                 .animateHide(progress: progress, fullHeight: Constants.durationFontSize)
                 .padding(.bottom, lerp(a: 0, b: theme.spacing.lg))
-                .padding(.trailing, lerp(a: 0, b: buttonSize.width + 4))
+                .padding(.trailing, lerp(a: 0, b: buttonSize.width + IKPadding.micro))
                 .lineLimit(1)
 
             VStack(alignment: .leading, spacing: theme.spacing.sm) {
                 Text(event.title)
                     .font(.system(
                         size: lerp(a: Constants.titleCollapsedFontSize, b: Constants.titleExpandedFontSize),
-                        weight: .semibold)
-                    )
+                        weight: .semibold
+                    ))
                     .lineLimit(1)
 
                 VStack(alignment: .leading, spacing: 0) {
@@ -131,7 +126,7 @@ struct NextEventContentCardView: View {
                                 .frame(width: Constants.informationIconSize, height: Constants.informationIconSize)
                                 .accessibilityHidden(true)
 
-                            Text("En Ligne")
+                            Text(CalendarResourcesStrings.onlineLabel)
                         }
                         .animateHide(progress: progress, fullHeight: Constants.informationSize)
                         .padding(.top, lerp(a: 0, b: theme.spacing.sm))
@@ -139,6 +134,7 @@ struct NextEventContentCardView: View {
                 }
                 .font(.caption2.bold())
             }
+            .foregroundStyle(theme.color.textPrimary)
 
             HStack {
                 if !event.attendees.isEmpty {
@@ -159,8 +155,8 @@ struct NextEventContentCardView: View {
         .overlay {
             NextEventCardButtonGeometryView(size: $buttonSize, event: event, progress: progress)
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, lerp(a: 8, b: 16))
+        .padding(.horizontal, IKPadding.medium)
+        .padding(.vertical, lerp(a: IKPadding.mini, b: IKPadding.medium))
         .cardBackground(radius: 24)
     }
 

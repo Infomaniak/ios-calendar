@@ -3,7 +3,7 @@
 <!--
  Loco ios export: Xcode Stringsdict (legacy)
  Project: Calendar
- Locale: it, Italian
+ Locale: fi, Finnish
  Tagged: ios-stringsdict
  Exported by: Valentin Perignon
  Exported at: Wed, 08 Jul 2026 10:02:07 +0200
@@ -21,9 +21,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>+%d partecipante</string>
+        <string>+%d osallistujaa</string>
         <key>other</key>
-        <string>+%d partecipanti</string>
+        <string>+%d osallistujaa</string>
       </dict>
     </dict>
   </dict>

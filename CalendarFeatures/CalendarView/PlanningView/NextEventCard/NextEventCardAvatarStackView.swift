@@ -18,6 +18,8 @@
  */
 
 import CalendarCoreUI
+import CalendarResources
+import DesignSystem
 import SwiftUI
 
 extension AvatarView {
@@ -32,6 +34,8 @@ extension AvatarView {
 }
 
 struct NextEventCardAvatarStackView: View {
+    @Environment(\.esdsTheme) private var theme
+
     static let height: CGFloat = 24
     static let maxAttendees = 3
 
@@ -47,17 +51,19 @@ struct NextEventCardAvatarStackView: View {
     }
 
     var body: some View {
-        HStack(spacing: 4) {
+        HStack(spacing: IKPadding.micro) {
             HStack(spacing: -Self.height / 3) {
                 ForEach(Array(visibleAttendees.enumerated()), id: \.element) { attendee in
                     AvatarView(attendee: attendee.element, size: Self.height)
-                        .offset(x: Self.height * 2/3 * CGFloat(attendee.offset) * CGFloat(1 - progression) * -1)
+                        .offset(x: Self.height * 2 / 3 * CGFloat(attendee.offset) * CGFloat(1 - progression) * -1)
                 }
             }
             .compositingGroup()
 
             if hiddenAttendeesCount > 0 {
-                Text("+\(hiddenAttendeesCount) participants")
+                Text(CalendarResourcesStrings.moreParticipantsLabel(hiddenAttendeesCount))
+                    .font(.footnote)
+                    .foregroundStyle(theme.color.textTertiary)
             }
         }
     }

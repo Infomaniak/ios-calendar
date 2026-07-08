@@ -3,12 +3,21 @@
  * Project: Calendar
  * Locale: fr, French
  * Tagged: ios
- * Exported by: Philippe Weidmann
- * Exported at: Fri, 26 Jun 2026 16:21:13 +0200
+ * Exported by: Valentin Perignon
+ * Exported at: Wed, 08 Jul 2026 08:23:43 +0200
  */
 
 /* loco:6a3d35f26bb2f27bf40b0052 */
 "allDayLabel" = "Journée";
+
+/* loco:6a4de9659924fbe9f10f1002 */
+"buttonJoin" = "Rejoignez-nous";
+
+/* loco:6a4deaee7855b4f804068862 */
+"buttonNavigate" = "Itinéraire";
+
+/* loco:6a4deb24e064eb69fa065712 */
+"buttonShow" = "Afficher";
 
 /* loco:6a21369c4c1c4427f404f752 */
 "contentDescriptionCreateEvent" = "Créer un évènement";
@@ -33,6 +42,9 @@
 
 /* loco:6a2040c0637876be5f0ec2f2 */
 "monthTitle" = "Mois";
+
+/* loco:6a4dec95c1907081d30570c2 */
+"onlineLabel" = "En ligne";
 
 /* loco:6a3e37f5bc0f8ca5930a08d3 */
 "openCalendarListTitle" = "Ouvrir la liste des calendriers";
