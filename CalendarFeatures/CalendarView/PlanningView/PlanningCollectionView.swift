@@ -66,6 +66,8 @@ struct PlanningCollectionView: UIViewRepresentable {
 
         guard collectionView.bounds.height > 0 else { return }
 
+        coordinator.ensureScrollableContent(in: collectionView)
+
         if let target = planningViewModel.scrollTarget {
             coordinator.scroll(to: target, animated: context.transaction.animation != nil, in: collectionView)
             Task { @MainActor in
@@ -80,7 +82,7 @@ struct PlanningCollectionView: UIViewRepresentable {
 
     @MainActor
     class Coordinator: NSObject, UICollectionViewDelegateFlowLayout {
-        private let edgeTriggerWeeks = 2
+        private let recycleEdgeTrigger: CGFloat = 88
 
         private let planningViewModel: PlanningViewModel
 
@@ -135,6 +137,8 @@ struct PlanningCollectionView: UIViewRepresentable {
         func handleContentSizeCategoryChange(in collectionView: UICollectionView) {
             cellSizeHelper = PlanningCellSizeHelper()
             collectionView.collectionViewLayout.invalidateLayout()
+            collectionView.layoutIfNeeded()
+            ensureScrollableContent(in: collectionView)
         }
 
         // MARK: - Backing store
@@ -289,6 +293,34 @@ struct PlanningCollectionView: UIViewRepresentable {
             }
         }
 
+        func ensureScrollableContent(in collectionView: UICollectionView) {
+            guard collectionView.bounds.height > 0 else { return }
+
+            var iterations = 0
+            while !hasScrollBuffer(collectionView), planningViewModel.growWindow() {
+                applyWithAnchorRestoration(planningViewModel.days, in: collectionView)
+                collectionView.layoutIfNeeded()
+
+                iterations += 1
+                if iterations > PlanningViewModel.maxWindowWeeks {
+                    break
+                }
+            }
+        }
+
+        private func viewportHeight(of collectionView: UICollectionView) -> CGFloat {
+            let insets = collectionView.adjustedContentInset
+            return collectionView.bounds.height - insets.top - insets.bottom
+        }
+
+        private func isScrollable(_ collectionView: UICollectionView) -> Bool {
+            collectionView.contentSize.height > viewportHeight(of: collectionView)
+        }
+
+        private func hasScrollBuffer(_ collectionView: UICollectionView) -> Bool {
+            collectionView.contentSize.height > viewportHeight(of: collectionView) + recycleEdgeTrigger * 2 + 1
+        }
+
         private func captureAnchor(in collectionView: UICollectionView) -> PlanningScrollAnchor? {
             guard let topIndexPath = collectionView.indexPathsForVisibleItems.min(),
                   let day = day(at: topIndexPath.section),
@@ -322,11 +354,13 @@ struct PlanningCollectionView: UIViewRepresentable {
                 apply(planningViewModel.days, in: collectionView)
             }
 
-            guard let section = planningViewModel.sectionIndex(for: date),
-                  let indexPath = scrollIndexPath(forSectionContaining: section) else {
-                return
+            Task { @MainActor in
+                guard let section = planningViewModel.sectionIndex(for: date),
+                      let indexPath = scrollIndexPath(forSectionContaining: section) else {
+                    return
+                }
+                collectionView.scrollToItem(at: indexPath, at: .top, animated: animated)
             }
-            collectionView.scrollToItem(at: indexPath, at: .top, animated: animated)
         }
 
         private func scrollIndexPath(forSectionContaining section: Int) -> IndexPath? {
@@ -345,17 +379,18 @@ struct PlanningCollectionView: UIViewRepresentable {
 
         func scrollViewDidScroll(_ scrollView: UIScrollView) {
             guard !isAdjusting, let collectionView = scrollView as? UICollectionView else { return }
+            guard isScrollable(collectionView) else { return }
 
-            let visibleSections = collectionView.indexPathsForVisibleItems.map(\.section)
-            guard let minSection = visibleSections.min(), let maxSection = visibleSections.max() else { return }
+            let insets = collectionView.adjustedContentInset
+            let offsetFromTop = collectionView.contentOffset.y + insets.top
+            let distanceToBottom = collectionView.contentSize.height
+                - (collectionView.contentOffset.y + collectionView.bounds.height - insets.bottom)
 
-            let triggerDays = edgeTriggerWeeks * 7
-            let lastSection = days.count - 1
-
-            if maxSection >= lastSection - triggerDays {
+            // Recycle toward whichever edge is nearer so both scroll directions can trigger a shift.
+            if distanceToBottom <= recycleEdgeTrigger, distanceToBottom <= offsetFromTop {
                 planningViewModel.shiftForward()
                 applyWithAnchorRestoration(planningViewModel.days, in: collectionView)
-            } else if minSection <= triggerDays {
+            } else if offsetFromTop <= recycleEdgeTrigger {
                 planningViewModel.shiftBackward()
                 applyWithAnchorRestoration(planningViewModel.days, in: collectionView)
             }
