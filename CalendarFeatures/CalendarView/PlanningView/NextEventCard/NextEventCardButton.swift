@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarCore
 import CalendarCoreUI
 import CalendarResources
 import SwiftUI
@@ -51,7 +52,7 @@ struct NextEventCardButton: View {
 
     enum CallToActionKind {
         case joinKMeetRoom
-        case openMap
+        case openMap(String)
         case showEventDetails
 
         var icon: Image {
@@ -80,8 +81,8 @@ struct NextEventCardButton: View {
     private var kind: CallToActionKind {
         if event.kMeetLink != nil {
             return .joinKMeetRoom
-        } else if event.location != nil {
-            return .openMap
+        } else if  let location = event.location {
+            return .openMap(location)
         } else {
             return .showEventDetails
         }
@@ -108,14 +109,26 @@ struct NextEventCardButton: View {
         .onAppear {
             updateExpandState(progress: progress)
         }
-        .onChange(of: progress) { newValue in
+        .onChange(of: progress) { _, newValue in
             withAnimation(.spring(duration: 0.25)) {
                 updateExpandState(progress: newValue)
             }
         }
     }
 
-    private func didTapAction() {}
+    private func didTapAction() {
+        switch kind {
+        case .joinKMeetRoom:
+            // TODO: Join kMeet meeting
+            break
+        case .openMap(let address):
+            guard let url = AppleMapHelper().addressURL(address) else { return }
+            UIApplication.shared.open(url)
+        case .showEventDetails:
+            // TODO: Open event details
+            break
+        }
+    }
 
     private func updateExpandState(progress: Double) {
         if progress == 1 {
