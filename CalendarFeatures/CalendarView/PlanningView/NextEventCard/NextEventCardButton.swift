@@ -81,7 +81,7 @@ struct NextEventCardButton: View {
     private var kind: CallToActionKind {
         if event.kMeetLink != nil {
             return .joinKMeetRoom
-        } else if  let location = event.location {
+        } else if let location = event.location {
             return .openMap(location)
         } else {
             return .showEventDetails

@@ -56,7 +56,7 @@ struct NextEventContentCardView: View {
         static let titleExpandedFontSize = scaledFontSize(.callout, size: 16, weight: .semibold)
         static let titleCollapsedFontSize = scaledFontSize(.footnote, size: 13, weight: .semibold)
 
-        static let informationIconSize: CGFloat = 16
+        static let informationIconSize: CGFloat = IKIconSize.medium.rawValue
         static let informationFontSize = scaledFontSize(.caption2, size: 12, weight: .bold)
 
         static var informationSize: CGFloat {

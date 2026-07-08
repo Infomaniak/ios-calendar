@@ -17,6 +17,7 @@
  */
 
 import CalendarCoreUI
+import DesignSystem
 import Foundation
 import InfomaniakDI
 import MultiplatformCalendar
@@ -34,8 +35,8 @@ public struct PlanningView: View {
                 .ignoresSafeArea()
                 .overlay(alignment: .top) {
                     NextEventCardView(model: nextEventCardViewModel)
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 8)
+                        .padding(.horizontal, IKPadding.medium)
+                        .padding(.vertical, IKPadding.mini)
                 }
         }
         .task {
