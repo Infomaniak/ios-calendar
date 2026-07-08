@@ -356,23 +356,32 @@ struct PlanningCollectionView: UIViewRepresentable {
 
             Task { @MainActor in
                 guard let section = planningViewModel.sectionIndex(for: date),
-                      let indexPath = scrollIndexPath(forSectionContaining: section) else {
+                      let indexPath = scrollIndexPath(forSectionContaining: section, targetDate: date) else {
                     return
                 }
                 collectionView.scrollToItem(at: indexPath, at: .top, animated: animated)
             }
         }
 
-        private func scrollIndexPath(forSectionContaining section: Int) -> IndexPath? {
+        private func scrollIndexPath(forSectionContaining section: Int, targetDate: Date) -> IndexPath? {
             for candidate in stride(from: section, through: max(0, section - 6), by: -1) {
                 if days.indices.contains(candidate), !days[candidate].items.isEmpty {
-                    return IndexPath(item: 0, section: candidate)
+                    return IndexPath(item: itemIndex(in: candidate, forTargetDate: targetDate), section: candidate)
                 }
             }
             for candidate in section ..< days.count where !days[candidate].items.isEmpty {
-                return IndexPath(item: 0, section: candidate)
+                return IndexPath(item: itemIndex(in: candidate, forTargetDate: targetDate), section: candidate)
             }
             return nil
+        }
+
+        private func itemIndex(in section: Int, forTargetDate targetDate: Date) -> Int {
+            let items = days[section].items
+            let matchIndex = items.firstIndex { item in
+                guard case .event(let event) = item else { return false }
+                return event.endDate > targetDate
+            }
+            return matchIndex ?? 0
         }
 
         // MARK: - Scroll observation
