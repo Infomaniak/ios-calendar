@@ -101,7 +101,7 @@ struct NextEventContentCardView: View {
                             .animateHide(progress: progress, fullHeight: Constants.informationSize)
                             .accessibilityHidden(true)
 
-                        Text("08:30 - 09:45")
+                        Text(event.startDate ..< event.endDate, format: .eventTimeBounds)
                     }
 
                     if let location = event.location {
