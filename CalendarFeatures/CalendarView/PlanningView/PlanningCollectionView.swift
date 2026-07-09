@@ -24,7 +24,6 @@ import UIKit
 
 enum PlanningLayoutMetrics {
     static let dayColumnWidth: CGFloat = 64
-    static let eventRowHeight: CGFloat = 48
     static let eventRowMinHeight: CGFloat = 20
     static let dayHeaderHeight: CGFloat = 64
     static let weekHeaderHeight: CGFloat = 16
@@ -69,7 +68,7 @@ struct PlanningCollectionView: UIViewRepresentable {
         coordinator.ensureScrollableContent(in: collectionView)
 
         if let target = planningViewModel.scrollTarget {
-            coordinator.scroll(to: target, animated: context.transaction.animation != nil, in: collectionView)
+            coordinator.scroll(to: target, in: collectionView)
             Task { @MainActor in
                 planningViewModel.scrollTarget = nil
             }
@@ -355,7 +354,7 @@ struct PlanningCollectionView: UIViewRepresentable {
             collectionView.contentOffset.y = min(max(targetY, minOffset), maxOffset)
         }
 
-        func scroll(to date: Date, animated: Bool, in collectionView: UICollectionView) {
+        func scroll(to date: Date, in collectionView: UICollectionView) {
             guard lastScrolledTarget != date else { return }
             lastScrolledTarget = date
 
