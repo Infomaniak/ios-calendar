@@ -95,6 +95,8 @@ struct PlanningCollectionView: UIViewRepresentable {
 
         private var days: [PlanningDay] = []
         private var isAdjusting = false
+        private var lastScrolledTarget: Date?
+        private var pinnedDate: Date?
 
         private var cellSizeHelper = PlanningCellSizeHelper()
 
@@ -274,14 +276,19 @@ struct PlanningCollectionView: UIViewRepresentable {
             guard days != target else { return }
 
             isAdjusting = true
+            defer { isAdjusting = false }
+
+            if let pinnedDate {
+                apply(target, in: collectionView)
+                pin(to: pinnedDate, in: collectionView)
+                return
+            }
+
             let anchor = captureAnchor(in: collectionView)
-
             apply(target, in: collectionView)
-
             if let anchor {
                 restore(anchor: anchor, in: collectionView)
             }
-            isAdjusting = false
         }
 
         func apply(_ target: [PlanningDay], in collectionView: UICollectionView) {
@@ -349,30 +356,61 @@ struct PlanningCollectionView: UIViewRepresentable {
         }
 
         func scroll(to date: Date, animated: Bool, in collectionView: UICollectionView) {
-            if planningViewModel.sectionIndex(for: date) == nil {
-                planningViewModel.reAnchor(around: date)
-                apply(planningViewModel.days, in: collectionView)
+            guard lastScrolledTarget != date else { return }
+            lastScrolledTarget = date
+
+            pinnedDate = date
+            resetAndScroll(to: date, in: collectionView)
+        }
+
+        private func resetAndScroll(to date: Date, in collectionView: UICollectionView) {
+            planningViewModel.reAnchor(around: date)
+
+            isAdjusting = true
+            apply(planningViewModel.days, in: collectionView)
+            isAdjusting = false
+
+            ensureScrollableContent(in: collectionView)
+
+            isAdjusting = true
+            defer { isAdjusting = false }
+            pin(to: date, in: collectionView)
+        }
+
+        private func pin(to date: Date, in collectionView: UICollectionView) {
+            collectionView.layoutIfNeeded()
+            guard let section = planningViewModel.sectionIndex(for: date),
+                  let indexPath = scrollIndexPath(forSectionContaining: section, targetDate: date) else {
+                return
+            }
+            collectionView.scrollToItem(at: indexPath, at: .top, animated: false)
+        }
+
+        private func findIndexPathFor(targetDate: Date, in section: Int) -> IndexPath? {
+            for candidate in max(0, section) ..< days.count where !days[candidate].items.isEmpty {
+                return IndexPath(item: itemIndex(in: candidate, forTargetDate: targetDate), section: candidate)
             }
 
-            Task { @MainActor in
-                guard let section = planningViewModel.sectionIndex(for: date),
-                      let indexPath = scrollIndexPath(forSectionContaining: section, targetDate: date) else {
-                    return
-                }
-                collectionView.scrollToItem(at: indexPath, at: .top, animated: animated)
+            return nil
+        }
+
+        private func findNearestIndexPathFor(targetDate: Date, in section: Int) -> IndexPath? {
+            for candidate in stride(from: section - 1, through: 0, by: -1)
+                where days.indices.contains(candidate) && !days[candidate].items.isEmpty {
+                return IndexPath(item: itemIndex(in: candidate, forTargetDate: targetDate), section: candidate)
             }
+
+            return nil
         }
 
         private func scrollIndexPath(forSectionContaining section: Int, targetDate: Date) -> IndexPath? {
-            for candidate in stride(from: section, through: max(0, section - 6), by: -1) {
-                if days.indices.contains(candidate), !days[candidate].items.isEmpty {
-                    return IndexPath(item: itemIndex(in: candidate, forTargetDate: targetDate), section: candidate)
-                }
+            if let indexPath = findIndexPathFor(targetDate: targetDate, in: section) {
+                return indexPath
+            } else if let indexPath = findNearestIndexPathFor(targetDate: targetDate, in: section) {
+                return indexPath
+            } else {
+                return nil
             }
-            for candidate in section ..< days.count where !days[candidate].items.isEmpty {
-                return IndexPath(item: itemIndex(in: candidate, forTargetDate: targetDate), section: candidate)
-            }
-            return nil
         }
 
         private func itemIndex(in section: Int, forTargetDate targetDate: Date) -> Int {
@@ -386,6 +424,10 @@ struct PlanningCollectionView: UIViewRepresentable {
 
         // MARK: - Scroll observation
 
+        func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+            pinnedDate = nil
+        }
+
         func scrollViewDidScroll(_ scrollView: UIScrollView) {
             guard !isAdjusting, let collectionView = scrollView as? UICollectionView else { return }
             guard isScrollable(collectionView) else { return }
@@ -395,7 +437,6 @@ struct PlanningCollectionView: UIViewRepresentable {
             let distanceToBottom = collectionView.contentSize.height
                 - (collectionView.contentOffset.y + collectionView.bounds.height - insets.bottom)
 
-            // Recycle toward whichever edge is nearer so both scroll directions can trigger a shift.
             if distanceToBottom <= recycleEdgeTrigger, distanceToBottom <= offsetFromTop {
                 planningViewModel.shiftForward()
                 applyWithAnchorRestoration(planningViewModel.days, in: collectionView)
