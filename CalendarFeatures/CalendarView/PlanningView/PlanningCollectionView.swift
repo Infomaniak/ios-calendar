@@ -355,25 +355,26 @@ struct PlanningCollectionView: UIViewRepresentable {
         }
 
         func scroll(to date: Date, in collectionView: UICollectionView) {
-            guard lastScrolledTarget != date else { return }
-            lastScrolledTarget = date
-
-            pinnedDate = date
-            resetAndScroll(to: date, in: collectionView)
+            if let section = planningViewModel.sectionIndex(for: date),
+               let indexPath = scrollIndexPath(forSectionContaining: section, targetDate: date) {
+                collectionView.scrollToItem(at: indexPath, at: .top, animated: true)
+            } else if lastScrolledTarget != date {
+                lastScrolledTarget = date
+                pinnedDate = date
+                scrollToFarAway(date: date, in: collectionView)
+            }
         }
 
-        private func resetAndScroll(to date: Date, in collectionView: UICollectionView) {
+        private func scrollToFarAway(date: Date, in collectionView: UICollectionView) {
             planningViewModel.reAnchor(around: date)
 
             isAdjusting = true
             apply(planningViewModel.days, in: collectionView)
-            isAdjusting = false
 
             ensureScrollableContent(in: collectionView)
 
-            isAdjusting = true
-            defer { isAdjusting = false }
             pin(to: date, in: collectionView)
+            isAdjusting = false
         }
 
         private func pin(to date: Date, in collectionView: UICollectionView) {
@@ -383,6 +384,16 @@ struct PlanningCollectionView: UIViewRepresentable {
                 return
             }
             collectionView.scrollToItem(at: indexPath, at: .top, animated: false)
+        }
+
+        private func scrollIndexPath(forSectionContaining section: Int, targetDate: Date) -> IndexPath? {
+            if let indexPath = findIndexPathFor(targetDate: targetDate, in: section) {
+                return indexPath
+            } else if let indexPath = findNearestIndexPathFor(targetDate: targetDate, in: section) {
+                return indexPath
+            } else {
+                return nil
+            }
         }
 
         private func findIndexPathFor(targetDate: Date, in section: Int) -> IndexPath? {
@@ -400,16 +411,6 @@ struct PlanningCollectionView: UIViewRepresentable {
             }
 
             return nil
-        }
-
-        private func scrollIndexPath(forSectionContaining section: Int, targetDate: Date) -> IndexPath? {
-            if let indexPath = findIndexPathFor(targetDate: targetDate, in: section) {
-                return indexPath
-            } else if let indexPath = findNearestIndexPathFor(targetDate: targetDate, in: section) {
-                return indexPath
-            } else {
-                return nil
-            }
         }
 
         private func itemIndex(in section: Int, forTargetDate targetDate: Date) -> Int {
