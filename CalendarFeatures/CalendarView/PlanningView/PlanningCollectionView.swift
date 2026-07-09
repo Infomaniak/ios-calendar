@@ -429,6 +429,10 @@ struct PlanningCollectionView: UIViewRepresentable {
         }
 
         func scrollViewDidScroll(_ scrollView: UIScrollView) {
+            shiftWindowIfNeededFor(scrollView: scrollView)
+        }
+
+        private func shiftWindowIfNeededFor(scrollView: UIScrollView) {
             guard !isAdjusting, let collectionView = scrollView as? UICollectionView else { return }
             guard isScrollable(collectionView) else { return }
 
