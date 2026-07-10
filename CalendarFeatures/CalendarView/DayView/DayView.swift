@@ -41,28 +41,26 @@ struct DayView: View {
     }
 
     var body: some View {
-        GeometryReader { proxy in
-            TimelineView(.everyMinute) { timeline in
-                ScrollView {
-                    ZStack {
-                        Canvas { context, size in
-                            for hour in hours {
-                                let yPosition = CGFloat(hour) * pointsPerHour
-                                context.stroke(
-                                    Path(CGRect(x: 0, y: yPosition, width: size.width, height: 1)),
-                                    with: .color(.gray.opacity(0.3))
-                                )
+        TimelineView(.everyMinute) { timeline in
+            ScrollView {
+                ZStack {
+                    Canvas { context, size in
+                        for hour in hours {
+                            let yPosition = CGFloat(hour) * pointsPerHour
+                            context.stroke(
+                                Path(CGRect(x: 0, y: yPosition, width: size.width, height: 1)),
+                                with: .color(.gray.opacity(0.3))
+                            )
 
-                                // Add hours
-                            }
+                            // Add hours
                         }
-
-                        // EventsView goes here
                     }
-                    .frame(height: viewHeight)
+
+                    // EventsView goes here
                 }
-                .contentMargins(16, for: .scrollContent)
+                .frame(height: viewHeight)
             }
+            .contentMargins(16, for: .scrollContent)
         }
     }
 }
