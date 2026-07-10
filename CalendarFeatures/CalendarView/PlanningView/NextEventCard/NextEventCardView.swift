@@ -20,6 +20,8 @@ import CalendarCoreUI
 import CalendarResources
 import DesignSystem
 import ESDSFoundation
+import InfomaniakDI
+import MultiplatformCalendar
 import SwiftUI
 
 enum AnimationHelper {
@@ -28,23 +30,94 @@ enum AnimationHelper {
     }
 }
 
-@Observable
+@Observable @MainActor
 final class NextEventCardViewModel {
     var scrollProgress = 1.0
     var size: CGSize = .zero
+    var nextEvent: CalendarCoreUI.UIEvent?
+
+    init() {
+        Task {
+            await observeNextEventsEveryMinute()
+        }
+    }
+
+    @concurrent
+    private func observeNextEventsEveryMinute() async {
+        let clock = SuspendingClock()
+        let calendar = Calendar.current
+
+        while !Task.isCancelled {
+            guard let nextMinute = calendar.nextDate(
+                after: .now,
+                matching: DateComponents(second: 0),
+                matchingPolicy: .nextTime
+            ) else {
+                return
+            }
+
+            let duration = nextMinute.timeIntervalSinceNow
+
+            if duration > 0 {
+                try? await clock.sleep(for: .seconds(duration))
+            }
+
+            guard !Task.isCancelled else { return }
+
+            await observeNextEvent()
+        }
+    }
+
+    @concurrent
+    private func observeNextEvent() async {
+        let start = Calendar.current.startOfDay(for: Date())
+        guard let end = Calendar.current.date(byAdding: .day, value: 2, to: start) else { return }
+
+        @InjectService var calendarSDK: CalendarCoreGraph
+        for await events in calendarSDK.calendarManager.observeEvents(start: start.instant, end: end.instant) {
+            let uiEvents = events.compactMap { CalendarCoreUI.UIEvent(event: $0, userEmail: "") }
+            await updateNextEvent(from: uiEvents)
+        }
+    }
+
+    @concurrent
+    private func updateNextEvent(from uiEvents: [CalendarCoreUI.UIEvent]) async {
+        let now = Date()
+        let nextTimedEvents = uiEvents
+            .filter { !$0.isAllDay && $0.endDate > now }
+            .sorted { $0.startDate < $1.startDate }
+
+        if let nextTimedEvent = nextTimedEvents.first {
+            await MainActor.run {
+                self.nextEvent = nextTimedEvent
+            }
+            return
+        }
+
+        let nextAllDayEvent = uiEvents
+            .filter(\.isAllDay)
+            .sorted { $0.startDate < $1.startDate }
+            .first
+
+        await MainActor.run {
+            self.nextEvent = nextAllDayEvent
+        }
+    }
 }
 
 struct NextEventCardView: View {
     let model: NextEventCardViewModel
-    var event: CalendarCoreUI.UIEvent
 
     var body: some View {
-        NextEventContentCardView(event: event, progress: model.scrollProgress)
-            .onGeometryChange(for: CGSize.self) {
-                $0.size
-            } action: {
-                model.size = $0
-            }
+        if let nextEvent = model.nextEvent {
+            NextEventContentCardView(event: nextEvent, progress: model.scrollProgress)
+                .onGeometryChange(for: CGSize.self) {
+                    $0.size
+                }
+                action: {
+                    model.size = $0
+                }
+        }
     }
 }
 

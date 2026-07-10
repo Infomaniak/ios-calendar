@@ -30,11 +30,9 @@ public struct PlanningView: View {
         PlanningCollectionView(planningViewModel: planningViewModel, nextEventCardViewModel: nextEventCardViewModel)
             .ignoresSafeArea()
             .overlay(alignment: .top) {
-                NextEventTimelineView { nextEvent in
-                    NextEventCardView(model: nextEventCardViewModel, event: nextEvent)
-                        .padding(.horizontal, IKPadding.medium)
-                        .padding(.vertical, IKPadding.mini)
-                }
+                NextEventCardView(model: nextEventCardViewModel)
+                    .padding(.horizontal, IKPadding.medium)
+                    .padding(.vertical, IKPadding.mini)
             }
             .toolbar {
                 ToolbarItem(placement: .bottomBar) {
