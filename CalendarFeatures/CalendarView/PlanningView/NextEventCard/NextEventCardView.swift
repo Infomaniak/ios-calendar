@@ -47,6 +47,7 @@ final class NextEventCardViewModel {
         let clock = SuspendingClock()
         let calendar = Calendar.current
 
+        var initialLaunch = true
         while !Task.isCancelled {
             guard let nextMinute = calendar.nextDate(
                 after: .now,
@@ -58,12 +59,13 @@ final class NextEventCardViewModel {
 
             let duration = nextMinute.timeIntervalSinceNow
 
-            if duration > 0 {
+            if duration > 0 && !initialLaunch {
                 try? await clock.sleep(for: .seconds(duration))
             }
 
             guard !Task.isCancelled else { return }
 
+            initialLaunch = false
             await observeNextEvent()
         }
     }
