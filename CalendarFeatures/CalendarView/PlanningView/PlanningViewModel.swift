@@ -23,25 +23,18 @@ import MultiplatformCalendar
 
 @MainActor @Observable
 class PlanningViewModel {
-    /// Default number of weeks kept resident in the collection view.
     nonisolated static let baseWindowWeeks = 8
-    /// Upper bound the window may grow to when few/no events keep the content shorter than the viewport.
     nonisolated static let maxWindowWeeks = 54
-    /// Number of weeks added on each side of the window every time it grows.
     nonisolated static let growStepWeeks = 2
-    /// Number of days added/removed each time the window recycles.
     nonisolated static let shiftDays = 7
-    /// Extra days observed on each side of the window so events are ready before the user scrolls them into view.
     nonisolated static let observeBufferDays = 7
 
-    /// Current number of weeks resident in the window. Grows when empty ranges would otherwise be too short to scroll.
     private(set) var windowWeeks = baseWindowWeeks
 
     private var windowDays: Int {
         windowWeeks * 7
     }
 
-    /// Whether the window can grow by another step without exceeding ``maxWindowWeeks``.
     var canGrowWindow: Bool {
         windowWeeks + Self.growStepWeeks * 2 <= Self.maxWindowWeeks
     }

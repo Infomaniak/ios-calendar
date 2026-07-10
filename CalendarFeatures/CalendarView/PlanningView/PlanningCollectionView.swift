@@ -29,7 +29,6 @@ enum PlanningLayoutMetrics {
     static let weekHeaderHeight: CGFloat = 16
 }
 
-/// Reference used to keep the topmost visible day pinned across collection view updates.
 private struct PlanningScrollAnchor {
     let date: Date
     let offsetFromTop: CGFloat
