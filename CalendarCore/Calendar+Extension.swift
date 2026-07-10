@@ -17,31 +17,9 @@
  */
 
 import Foundation
-import SwiftUI
 
-public struct PlanningView: View {
-    @State private var planningViewModel = PlanningViewModel()
-
-    public init() {}
-
-    public var body: some View {
-        PlanningCollectionView(planningViewModel: planningViewModel)
-            .ignoresSafeArea()
-            .toolbar {
-                ToolbarItem(placement: .bottomBar) {
-                    Button("Today") {
-                        withAnimation {
-                            planningViewModel.scrollTarget = Date()
-                        }
-                    }
-                }
-            }
-            .task {
-                planningViewModel.scrollTarget = Date()
-            }
+public extension Calendar {
+    func weekStart(for date: Date) -> Date {
+        dateInterval(of: .weekOfYear, for: date)?.start ?? startOfDay(for: date)
     }
-}
-
-#Preview {
-    PlanningView()
 }

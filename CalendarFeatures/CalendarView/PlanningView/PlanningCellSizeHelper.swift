@@ -16,32 +16,19 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarCoreUI
 import Foundation
-import SwiftUI
+import UIKit
 
-public struct PlanningView: View {
-    @State private var planningViewModel = PlanningViewModel()
+struct PlanningCellSizeHelper {
+    private let dateHeight = UIFont.preferredFont(forTextStyle: .caption2).lineHeight
+    private let titleHeight = UIFont.preferredFont(forTextStyle: .caption1).lineHeight
 
-    public init() {}
-
-    public var body: some View {
-        PlanningCollectionView(planningViewModel: planningViewModel)
-            .ignoresSafeArea()
-            .toolbar {
-                ToolbarItem(placement: .bottomBar) {
-                    Button("Today") {
-                        withAnimation {
-                            planningViewModel.scrollTarget = Date()
-                        }
-                    }
-                }
-            }
-            .task {
-                planningViewModel.scrollTarget = Date()
-            }
+    func heightForCell(event: CalendarCoreUI.UIEvent) -> CGFloat {
+        if event.isAllDay {
+            return titleHeight + dateHeight
+        } else {
+            return titleHeight + dateHeight + PlanningEventView.UIConstants.iconSize + event.additionalDurationHeight
+        }
     }
-}
-
-#Preview {
-    PlanningView()
 }

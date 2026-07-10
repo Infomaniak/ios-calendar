@@ -20,9 +20,21 @@ import CalendarCoreUI
 import Foundation
 import MultiplatformCalendar
 
+enum PlanningItem: Hashable {
+    case weekHeader(Date)
+    case event(CalendarCoreUI.UIEvent)
+}
+
 struct PlanningDay: Identifiable, Hashable {
     let date: Date
     let events: [CalendarCoreUI.UIEvent]
+    let isWeekStart: Bool
+
+    init(date: Date, events: [CalendarCoreUI.UIEvent]) {
+        self.date = date
+        self.events = events
+        isWeekStart = Calendar.current.component(.weekday, from: date) == Calendar.current.firstWeekday
+    }
 
     var id: Date {
         date
@@ -30,38 +42,29 @@ struct PlanningDay: Identifiable, Hashable {
 }
 
 extension PlanningDay {
-    static func makeContiguousDays(from events: [CalendarCoreUI.UIEvent]) -> [PlanningDay] {
-        let calendar = Calendar.current
-        let grouped = Dictionary(grouping: events) { event in
-            calendar.startOfDay(for: event.startDate)
+    var items: [PlanningItem] {
+        var items: [PlanningItem] = []
+        if isWeekStart {
+            items.append(.weekHeader(date))
         }
+        items.append(contentsOf: events.map(PlanningItem.event))
+        return items
+    }
 
-        let referenceDate = grouped.keys.min() ?? calendar.startOfDay(for: Date())
-        let upperReferenceDate = grouped.keys.max() ?? referenceDate
-
-        guard let firstWeek = calendar.dateInterval(of: .weekOfYear, for: referenceDate),
-              let lastWeek = calendar.dateInterval(of: .weekOfYear, for: upperReferenceDate) else {
-            return []
-        }
-
+    static func makeWindow(
+        startDate: Date,
+        dayCount: Int,
+        eventsByDay: [Date: [CalendarCoreUI.UIEvent]],
+        calendar: Foundation.Calendar
+    ) -> [PlanningDay] {
         var days: [PlanningDay] = []
-        var currentDate = firstWeek.start
-        while currentDate < lastWeek.end {
-            let dayStart = calendar.startOfDay(for: currentDate)
-            let sortedEvents = (grouped[dayStart] ?? []).sorted {
-                $0.startDate < $1.startDate
-            }
-            days.append(PlanningDay(date: dayStart, events: sortedEvents))
-
-            guard let nextDate = calendar.date(byAdding: .day, value: 1, to: currentDate) else { break }
-            currentDate = nextDate
+        days.reserveCapacity(dayCount)
+        for offset in 0 ..< dayCount {
+            guard let date = calendar.date(byAdding: .day, value: offset, to: startDate) else { continue }
+            let dayStart = calendar.startOfDay(for: date)
+            let events = (eventsByDay[dayStart] ?? []).sorted { $0.startDate < $1.startDate }
+            days.append(PlanningDay(date: dayStart, events: events))
         }
-
         return days
     }
-}
-
-extension PlanningDay {
-    // periphery:ignore - False positive, used by preview
-    static let preview: [PlanningDay] = makeContiguousDays(from: UIEvent.random100Events)
 }
