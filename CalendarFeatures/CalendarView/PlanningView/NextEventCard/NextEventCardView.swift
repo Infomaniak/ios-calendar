@@ -28,17 +28,24 @@ enum AnimationHelper {
     }
 }
 
-final class NextEventCardViewModel: ObservableObject {
-    @Published var scrollProgress = 1.0
+@Observable
+final class NextEventCardViewModel {
+    var scrollProgress = 1.0
+    var size: CGSize = .zero
 }
 
 struct NextEventCardView: View {
-    @ObservedObject var model: NextEventCardViewModel
-
+    let model: NextEventCardViewModel
     let event = UIEvent.preview
 
     var body: some View {
         NextEventContentCardView(event: event, progress: model.scrollProgress)
+            .onGeometryChange(for: CGSize.self) {
+                $0.size
+            } action: {
+                model.size = $0
+            }
+
     }
 }
 

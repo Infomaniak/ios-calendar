@@ -20,6 +20,20 @@ import CalendarCoreUI
 import CalendarResources
 import SwiftUI
 
+public extension CalendarCoreUI.UIEvent {
+    var additionalDurationHeight: CGFloat {
+        let duration = endDate.timeIntervalSince(startDate)
+        let durationInMinutes = duration / 60
+
+        guard durationInMinutes > PlanningEventView.UIConstants.minDuration else { return 0 }
+        guard durationInMinutes < PlanningEventView.UIConstants.maxDuration else { return PlanningEventView.UIConstants.maxSize }
+
+        let ratio = (durationInMinutes - PlanningEventView.UIConstants.minDuration) /
+            (PlanningEventView.UIConstants.maxDuration - PlanningEventView.UIConstants.minDuration)
+        return CGFloat(ratio) * PlanningEventView.UIConstants.maxSize
+    }
+}
+
 struct PlanningEventView: View {
     let event: CalendarCoreUI.UIEvent
 
@@ -28,17 +42,8 @@ struct PlanningEventView: View {
         static let maxDuration: CGFloat = 120
 
         static let maxSize: CGFloat = 50
-    }
 
-    private var bottomPadding: CGFloat {
-        let duration = event.endDate.timeIntervalSince(event.startDate)
-        let durationInMinutes = duration / 60
-
-        guard durationInMinutes > UIConstants.minDuration else { return 0 }
-        guard durationInMinutes < UIConstants.maxDuration else { return UIConstants.maxSize }
-
-        let ratio = (durationInMinutes - UIConstants.minDuration) / (UIConstants.maxDuration - UIConstants.minDuration)
-        return CGFloat(ratio) * UIConstants.maxSize
+        static let iconSize: CGFloat = 16
     }
 
     var body: some View {
@@ -58,26 +63,26 @@ struct PlanningEventView: View {
                     CalendarResourcesAsset.Images.mapPin.swiftUIImage
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 16, height: 16)
+                        .frame(width: UIConstants.iconSize, height: UIConstants.iconSize)
                         .accessibilityLabel(Text(CalendarResourcesStrings.contentDescriptionHasLocation))
                 }
                 if event.kMeetLink != nil {
                     CalendarResourcesAsset.Images.productKmeet.swiftUIImage
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 16, height: 16)
+                        .frame(width: UIConstants.iconSize, height: UIConstants.iconSize)
                         .accessibilityLabel(Text(CalendarResourcesStrings.contentDescriptionHasKMeetLink))
                 }
                 if !event.attendees.isEmpty {
                     CalendarResourcesAsset.Images.usersStacked.swiftUIImage
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 16, height: 16)
+                        .frame(width: UIConstants.iconSize, height: UIConstants.iconSize)
                         .accessibilityLabel(Text(CalendarResourcesStrings.contentDescriptionHasAttendees))
                 }
             }
         }
-        .padding(.bottom, bottomPadding)
+        .padding(.bottom, event.additionalDurationHeight)
         .planningEventStyle(event: event)
     }
 }

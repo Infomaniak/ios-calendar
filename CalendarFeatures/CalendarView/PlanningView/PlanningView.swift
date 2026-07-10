@@ -16,50 +16,36 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import CalendarCoreUI
 import DesignSystem
 import Foundation
-import InfomaniakDI
-import MultiplatformCalendar
 import SwiftUI
 
 public struct PlanningView: View {
-    @StateObject private var nextEventCardViewModel = NextEventCardViewModel()
-    @State private var planningDays: [PlanningDay] = []
+    @State private var planningViewModel = PlanningViewModel()
+    @State private var nextEventCardViewModel = NextEventCardViewModel()
 
     public init() {}
 
     public var body: some View {
-        VStack(spacing: 0) {
-            PlanningCollectionView(planningDays: planningDays, nextEventCardViewModel: nextEventCardViewModel)
-                .ignoresSafeArea()
-                .overlay(alignment: .top) {
-                    NextEventCardView(model: nextEventCardViewModel)
-                        .padding(.horizontal, IKPadding.medium)
-                        .padding(.vertical, IKPadding.mini)
-                }
-        }
-        .task {
-            await observeEvents()
-        }
-    }
-
-    private func observeEvents() async {
-        @InjectService var calendarSDK: CalendarCoreGraph
-
-        let oneWeek = Int64(Date(timeIntervalSinceNow: 60 * 60 * 24 * 7).timeIntervalSince1970) * 1000
-
-        for await events in calendarSDK.calendarManager.observeEvents(
-            start: .companion.fromEpochMilliseconds(epochMilliseconds: -oneWeek),
-            end: .companion.fromEpochMilliseconds(epochMilliseconds: oneWeek),
-        ) {
-            let uiEvents = events.compactMap { UIEvent(event: $0, userEmail: "") }
-            let days = PlanningDay.makeContiguousDays(from: uiEvents)
-
-            withAnimation {
-                planningDays = days
+        PlanningCollectionView(planningViewModel: planningViewModel, nextEventCardViewModel: nextEventCardViewModel)
+            .ignoresSafeArea()
+            .overlay(alignment: .top) {
+                NextEventCardView(model: nextEventCardViewModel)
+                    .padding(.horizontal, IKPadding.medium)
+                    .padding(.vertical, IKPadding.mini)
             }
-        }
+            .toolbar {
+                ToolbarItem(placement: .bottomBar) {
+                    Button("Today") {
+                        withAnimation {
+                            planningViewModel.scrollTarget = Date()
+                        }
+                    }
+                }
+            }
+            .task {
+                planningViewModel.scrollTarget = Date()
+            }
     }
 }
 
