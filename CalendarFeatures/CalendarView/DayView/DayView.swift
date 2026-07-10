@@ -19,11 +19,45 @@
 import SwiftUI
 
 struct DayView: View {
+    enum Constants {
+        enum PointsPerHour {
+            static let minimum: CGFloat = 20
+            static let `default`: CGFloat = 50
+            static let maximum: CGFloat = 80
+        }
+    }
+
+    @State private var pointsPerHour = Constants.PointsPerHour.default
+
+    let date: Date
+
+    private var hours: [Int] {
+        let rangeOfHours = Calendar.current.range(of: .hour, in: .day, for: date) ?? 0..<24
+        return Array(rangeOfHours)
+    }
+
+    private var viewHeight: CGFloat {
+        return CGFloat(hours.count) * pointsPerHour
+    }
+
     var body: some View {
-        Text("Hello, World!")
+        GeometryReader { proxy in
+            TimelineView(.everyMinute) { timeline in
+                ScrollView {
+                    ZStack {
+                        Canvas { context, size in
+                            // Draw the timeline background
+                        }
+
+                        // EventsView goes here
+                    }
+                    .frame(height: viewHeight)
+                }
+            }
+        }
     }
 }
 
 #Preview {
-    DayView()
+    DayView(date: .now)
 }

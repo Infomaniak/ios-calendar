@@ -30,6 +30,8 @@ public struct CalendarView: View {
         switch selectedMode {
         case .planning:
             PlanningView(calendarAccounts: calendarAccounts)
+        case .day:
+            DayView(date: .now)
         case .week:
             WeekView()
         case .month:

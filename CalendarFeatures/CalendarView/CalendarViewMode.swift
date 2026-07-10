@@ -20,6 +20,7 @@ import Foundation
 
 public enum CalendarViewMode: CaseIterable, Sendable {
     case planning
+    case day
     case week
     case month
 }
