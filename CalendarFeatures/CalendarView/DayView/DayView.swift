@@ -21,9 +21,9 @@ import SwiftUI
 struct DayView: View {
     enum Constants {
         enum PointsPerHour {
-            static let minimum: CGFloat = 20
-            static let `default`: CGFloat = 50
-            static let maximum: CGFloat = 80
+            static let minimum: CGFloat = 50
+            static let `default`: CGFloat = 80
+            static let maximum: CGFloat = 150
         }
     }
 
@@ -37,7 +37,7 @@ struct DayView: View {
     }
 
     private var viewHeight: CGFloat {
-        return CGFloat(hours.count) * pointsPerHour
+        return CGFloat(hours.count - 1) * pointsPerHour + 1
     }
 
     var body: some View {
@@ -46,13 +46,22 @@ struct DayView: View {
                 ScrollView {
                     ZStack {
                         Canvas { context, size in
-                            // Draw the timeline background
+                            for hour in hours {
+                                let yPosition = CGFloat(hour) * pointsPerHour
+                                context.stroke(
+                                    Path(CGRect(x: 0, y: yPosition, width: size.width, height: 1)),
+                                    with: .color(.gray.opacity(0.3))
+                                )
+
+                                // Add hours
+                            }
                         }
 
                         // EventsView goes here
                     }
                     .frame(height: viewHeight)
                 }
+                .contentMargins(16, for: .scrollContent)
             }
         }
     }
