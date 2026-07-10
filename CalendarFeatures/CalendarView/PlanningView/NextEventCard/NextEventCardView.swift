@@ -36,7 +36,7 @@ final class NextEventCardViewModel {
 
 struct NextEventCardView: View {
     let model: NextEventCardViewModel
-    let event = UIEvent.preview
+    var event: CalendarCoreUI.UIEvent
 
     var body: some View {
         NextEventContentCardView(event: event, progress: model.scrollProgress)
