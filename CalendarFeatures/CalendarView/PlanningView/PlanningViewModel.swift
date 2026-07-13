@@ -23,89 +23,78 @@ import MultiplatformCalendar
 
 @MainActor @Observable
 class PlanningViewModel {
-    nonisolated static let baseWindowWeeks = 8
-    nonisolated static let maxWindowWeeks = 54
-    nonisolated static let growStepWeeks = 2
-    nonisolated static let shiftDays = 7
+    nonisolated static let daysBeforeToday = 10000
+    nonisolated static let daysAfterToday = 10000
+    nonisolated static let observeRadiusDays = 42
     nonisolated static let observeBufferDays = 7
 
-    private(set) var windowWeeks = baseWindowWeeks
-
-    private var windowDays: Int {
-        windowWeeks * 7
+    nonisolated static var sectionCount: Int {
+        daysBeforeToday + daysAfterToday + 1
     }
 
-    var canGrowWindow: Bool {
-        windowWeeks + Self.growStepWeeks * 2 <= Self.maxWindowWeeks
+    nonisolated static var todayIndex: Int {
+        daysBeforeToday
     }
 
     private(set) var days: [PlanningDay] = []
+    private(set) var hasDeliveredEvents = false
     var scrollTarget: Date?
 
     private let calendar = Calendar.current
+    @ObservationIgnored private let startDate: Date
     @ObservationIgnored private var eventsByDay: [Date: [CalendarCoreUI.UIEvent]] = [:]
-    @ObservationIgnored private var anchorDate: Date
+    @ObservationIgnored private var observeCenterDate: Date
     @ObservationIgnored private var currentObserveTask: Task<Void, Never>?
 
     init() {
-        let today = Calendar.current.startOfDay(for: Date())
-        anchorDate = Self.centeredAnchor(for: today, calendar: Calendar.current)
-        rebuildDays()
-        observeEvents()
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        startDate = calendar.date(byAdding: .day, value: -Self.daysBeforeToday, to: today) ?? today
+        observeCenterDate = today
+        days = PlanningDay.makeWindow(
+            startDate: startDate,
+            dayCount: Self.sectionCount,
+            eventsByDay: eventsByDay,
+            calendar: calendar
+        )
+        observeEvents(around: today)
     }
 
     func sectionIndex(for date: Date) -> Int? {
         let day = calendar.startOfDay(for: date)
-        return days.firstIndex { $0.date == day }
+        guard let offset = calendar.dateComponents([.day], from: startDate, to: day).day,
+              days.indices.contains(offset) else {
+            return nil
+        }
+        return offset
     }
 
-    func shiftForward() {
-        shiftWindow(byDays: Self.shiftDays)
-    }
-
-    func shiftBackward() {
-        shiftWindow(byDays: -Self.shiftDays)
-    }
-
-    func reAnchor(around date: Date) {
-        windowWeeks = Self.baseWindowWeeks
-        anchorDate = Self.centeredAnchor(for: date, calendar: calendar)
-        rebuildDays()
-        observeEvents()
-    }
-
-    @discardableResult
-    func growWindow() -> Bool {
-        guard canGrowWindow,
-              let newAnchor = calendar.date(byAdding: .day, value: -Self.growStepWeeks * 7, to: anchorDate) else {
+    func isWithinObserveWindow(_ date: Date) -> Bool {
+        let day = calendar.startOfDay(for: date)
+        guard let distance = calendar.dateComponents([.day], from: observeCenterDate, to: day).day else {
             return false
         }
-        windowWeeks += Self.growStepWeeks * 2
-        anchorDate = newAnchor
-        rebuildDays()
-        observeEvents()
-        return true
+        return abs(distance) <= Self.observeRadiusDays
     }
 
-    private func shiftWindow(byDays dayOffset: Int) {
-        guard let newAnchor = calendar.date(byAdding: .day, value: dayOffset, to: anchorDate) else { return }
-        anchorDate = newAnchor
-        rebuildDays()
-        observeEvents()
+    func refreshObserveWindowIfNeeded(around date: Date) {
+        let day = calendar.startOfDay(for: date)
+        guard let distance = calendar.dateComponents([.day], from: observeCenterDate, to: day).day else {
+            return
+        }
+        if abs(distance) > Self.observeRadiusDays - Self.observeBufferDays {
+            observeEvents(around: day)
+        }
     }
 
-    private func rebuildDays() {
-        days = PlanningDay.makeWindow(
-            startDate: anchorDate,
-            dayCount: windowDays,
-            eventsByDay: eventsByDay,
-            calendar: calendar
-        )
+    func refreshObserveWindow(around date: Date) {
+        observeEvents(around: calendar.startOfDay(for: date))
     }
 
-    private func observeEvents() {
-        guard let start = calendar.date(byAdding: .day, value: -Self.observeBufferDays, to: anchorDate),
-              let end = calendar.date(byAdding: .day, value: windowDays + Self.observeBufferDays, to: anchorDate)
+    private func observeEvents(around center: Date) {
+        observeCenterDate = center
+        guard let start = calendar.date(byAdding: .day, value: -(Self.observeRadiusDays + Self.observeBufferDays), to: center),
+              let end = calendar.date(byAdding: .day, value: Self.observeRadiusDays + Self.observeBufferDays, to: center)
         else {
             return
         }
@@ -125,20 +114,15 @@ class PlanningViewModel {
     private func ingest(uiEvents: [CalendarCoreUI.UIEvent]) async {
         let groupedEvents = Dictionary(grouping: uiEvents) { calendar.startOfDay(for: $0.startDate) }
         let newDays = await PlanningDay.makeWindow(
-            startDate: anchorDate,
-            dayCount: windowDays,
+            startDate: startDate,
+            dayCount: Self.sectionCount,
             eventsByDay: groupedEvents,
             calendar: calendar
         )
         await MainActor.run {
             eventsByDay = groupedEvents
             days = newDays
+            hasDeliveredEvents = true
         }
-    }
-
-    private static func centeredAnchor(for date: Date, calendar: Foundation.Calendar) -> Date {
-        let weekStart = calendar.weekStart(for: date)
-        let weeksBefore = baseWindowWeeks / 2
-        return calendar.date(byAdding: .day, value: -weeksBefore * 7, to: weekStart) ?? weekStart
     }
 }

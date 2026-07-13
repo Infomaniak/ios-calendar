@@ -44,8 +44,8 @@ struct PlanningCollectionView: UIViewRepresentable {
             collectionViewLayout: context.coordinator.makeLayout()
         )
         collectionView.delegate = context.coordinator
+        collectionView.dataSource = context.coordinator
         collectionView.showsVerticalScrollIndicator = false
-        context.coordinator.makeDataSource(for: collectionView)
         context.coordinator.apply(planningViewModel.days, in: collectionView)
         collectionView.registerForTraitChanges([UITraitPreferredContentSizeCategory.self]) { collectionView, _ in
             context.coordinator.handleContentSizeCategoryChange(in: collectionView)
@@ -60,14 +60,12 @@ struct PlanningCollectionView: UIViewRepresentable {
     }
 
     func updateUIView(_ collectionView: UICollectionView, context: Context) {
-        collectionView.contentInset.top = nextEventCardViewModel.size.height + IKPadding.medium
-
         let coordinator = context.coordinator
+        coordinator.applyContentInsetTop(
+            nextEventCardViewModel.size.height + IKPadding.medium,
+            in: collectionView
+        )
         coordinator.applyWithAnchorRestoration(planningViewModel.days, in: collectionView)
-
-        guard collectionView.bounds.height > 0 else { return }
-
-        coordinator.ensureScrollableContent(in: collectionView)
 
         if let target = planningViewModel.scrollTarget {
             coordinator.scroll(to: target, in: collectionView)
@@ -82,13 +80,9 @@ struct PlanningCollectionView: UIViewRepresentable {
     }
 
     @MainActor
-    class Coordinator: NSObject, UICollectionViewDelegateFlowLayout {
-        private let recycleEdgeTrigger: CGFloat = 88
-
+    class Coordinator: NSObject, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
         private let planningViewModel: PlanningViewModel
         private let nextEventCardViewModel: NextEventCardViewModel
-
-        private var dataSource: UICollectionViewDiffableDataSource<Date, PlanningItem>!
 
         private let dayHeaderRegistration: UICollectionView.SupplementaryRegistration<PlanningDayHeaderView>
         private let weekHeaderCellRegistration: UICollectionView.CellRegistration<PlanningWeekHeaderCell, Date>
@@ -148,7 +142,6 @@ struct PlanningCollectionView: UIViewRepresentable {
             cellSizeHelper = PlanningCellSizeHelper()
             collectionView.collectionViewLayout.invalidateLayout()
             collectionView.layoutIfNeeded()
-            ensureScrollableContent(in: collectionView)
         }
 
         // MARK: - Backing store
@@ -236,49 +229,67 @@ struct PlanningCollectionView: UIViewRepresentable {
 
         // MARK: - Data source
 
-        func makeDataSource(for collectionView: UICollectionView) {
-            let dataSource = UICollectionViewDiffableDataSource<Date, PlanningItem>(
-                collectionView: collectionView
-            ) { [weak self] collectionView, indexPath, item in
-                guard let self else { return UICollectionViewCell() }
-                switch item {
-                case .weekHeader(let date):
-                    return collectionView.dequeueConfiguredReusableCell(
-                        using: weekHeaderCellRegistration,
-                        for: indexPath,
-                        item: date
-                    )
-                case .event(let event):
-                    let registration = event.isAllDay ? allDayCellRegistration : eventCellRegistration
-                    return collectionView.dequeueConfiguredReusableCell(using: registration, for: indexPath, item: event)
-                }
-            }
-
-            dataSource.supplementaryViewProvider = { [weak self] collectionView, _, indexPath in
-                guard let self else { return nil }
-                let header = collectionView.dequeueConfiguredReusableSupplementary(
-                    using: dayHeaderRegistration,
-                    for: indexPath
-                )
-                if let date = day(at: indexPath.section)?.date {
-                    header.configure(date: date)
-                }
-                return header
-            }
-
-            self.dataSource = dataSource
+        func numberOfSections(in collectionView: UICollectionView) -> Int {
+            days.count
         }
 
-        private func makeSnapshot(from days: [PlanningDay]) -> NSDiffableDataSourceSnapshot<Date, PlanningItem> {
-            var snapshot = NSDiffableDataSourceSnapshot<Date, PlanningItem>()
-            snapshot.appendSections(days.map(\.date))
-            for day in days {
-                snapshot.appendItems(day.items, toSection: day.date)
+        func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+            day(at: section)?.items.count ?? 0
+        }
+
+        func collectionView(
+            _ collectionView: UICollectionView,
+            cellForItemAt indexPath: IndexPath
+        ) -> UICollectionViewCell {
+            guard let item = item(at: indexPath) else { return UICollectionViewCell() }
+            switch item {
+            case .weekHeader(let date):
+                return collectionView.dequeueConfiguredReusableCell(
+                    using: weekHeaderCellRegistration,
+                    for: indexPath,
+                    item: date
+                )
+            case .event(let event):
+                let registration = event.isAllDay ? allDayCellRegistration : eventCellRegistration
+                return collectionView.dequeueConfiguredReusableCell(using: registration, for: indexPath, item: event)
             }
-            return snapshot
+        }
+
+        func collectionView(
+            _ collectionView: UICollectionView,
+            viewForSupplementaryElementOfKind kind: String,
+            at indexPath: IndexPath
+        ) -> UICollectionReusableView {
+            let header = collectionView.dequeueConfiguredReusableSupplementary(
+                using: dayHeaderRegistration,
+                for: indexPath
+            )
+            if let date = day(at: indexPath.section)?.date {
+                header.configure(date: date)
+            }
+            return header
         }
 
         // MARK: - Applying updates
+
+        func applyContentInsetTop(_ newTop: CGFloat, in collectionView: UICollectionView) {
+            guard collectionView.contentInset.top != newTop else { return }
+
+            isAdjusting = true
+            defer { isAdjusting = false }
+
+            if let pinnedDate {
+                collectionView.contentInset.top = newTop
+                pin(to: pinnedDate, in: collectionView)
+                return
+            }
+
+            let anchor = captureAnchor(in: collectionView)
+            collectionView.contentInset.top = newTop
+            if let anchor {
+                restore(anchor: anchor, in: collectionView)
+            }
+        }
 
         func applyWithAnchorRestoration(_ target: [PlanningDay], in collectionView: UICollectionView) {
             guard days != target else { return }
@@ -300,40 +311,26 @@ struct PlanningCollectionView: UIViewRepresentable {
         }
 
         func apply(_ target: [PlanningDay], in collectionView: UICollectionView) {
+            let previousDays = days
             days = target
-            let snapshot = makeSnapshot(from: target)
+
+            guard collectionView.numberOfSections == target.count, previousDays.count == target.count else {
+                collectionView.reloadData()
+                collectionView.layoutIfNeeded()
+                return
+            }
+
+            var changedSections = IndexSet()
+            for index in target.indices where previousDays[index] != target[index] {
+                changedSections.insert(index)
+            }
+
+            guard !changedSections.isEmpty else { return }
+
             UIView.performWithoutAnimation {
-                dataSource.apply(snapshot, animatingDifferences: false)
+                collectionView.reloadSections(changedSections)
                 collectionView.layoutIfNeeded()
             }
-        }
-
-        func ensureScrollableContent(in collectionView: UICollectionView) {
-            guard collectionView.bounds.height > 0 else { return }
-
-            var iterations = 0
-            while !hasScrollBuffer(collectionView), planningViewModel.growWindow() {
-                applyWithAnchorRestoration(planningViewModel.days, in: collectionView)
-                collectionView.layoutIfNeeded()
-
-                iterations += 1
-                if iterations > PlanningViewModel.maxWindowWeeks {
-                    break
-                }
-            }
-        }
-
-        private func viewportHeight(of collectionView: UICollectionView) -> CGFloat {
-            let insets = collectionView.adjustedContentInset
-            return collectionView.bounds.height - insets.top - insets.bottom
-        }
-
-        private func isScrollable(_ collectionView: UICollectionView) -> Bool {
-            collectionView.contentSize.height > viewportHeight(of: collectionView)
-        }
-
-        private func hasScrollBuffer(_ collectionView: UICollectionView) -> Bool {
-            collectionView.contentSize.height > viewportHeight(of: collectionView) + recycleEdgeTrigger * 2 + 1
         }
 
         private func captureAnchor(in collectionView: UICollectionView) -> PlanningScrollAnchor? {
@@ -364,7 +361,9 @@ struct PlanningCollectionView: UIViewRepresentable {
         }
 
         func scroll(to date: Date, in collectionView: UICollectionView) {
-            if let section = planningViewModel.sectionIndex(for: date),
+            if planningViewModel.hasDeliveredEvents,
+               planningViewModel.isWithinObserveWindow(date),
+               let section = planningViewModel.sectionIndex(for: date),
                let indexPath = scrollIndexPath(forSectionContaining: section, targetDate: date) {
                 collectionView.scrollToItem(at: indexPath, at: .top, animated: true)
             } else if lastScrolledTarget != date {
@@ -375,13 +374,9 @@ struct PlanningCollectionView: UIViewRepresentable {
         }
 
         private func scrollToFarAway(date: Date, in collectionView: UICollectionView) {
-            planningViewModel.reAnchor(around: date)
+            planningViewModel.refreshObserveWindow(around: date)
 
             isAdjusting = true
-            apply(planningViewModel.days, in: collectionView)
-
-            ensureScrollableContent(in: collectionView)
-
             pin(to: date, in: collectionView)
             isAdjusting = false
         }
@@ -445,7 +440,7 @@ struct PlanningCollectionView: UIViewRepresentable {
         }
 
         func scrollViewDidScroll(_ scrollView: UIScrollView) {
-            shiftWindowIfNeededFor(scrollView: scrollView)
+            updateObserveWindowIfNeeded(scrollView: scrollView)
             computeScrollProgress(scrollView: scrollView)
         }
 
@@ -475,22 +470,13 @@ struct PlanningCollectionView: UIViewRepresentable {
             nextEventCardViewModel.scrollProgress = min(max(newProgress, 0), 1)
         }
 
-        private func shiftWindowIfNeededFor(scrollView: UIScrollView) {
+        private func updateObserveWindowIfNeeded(scrollView: UIScrollView) {
             guard !isAdjusting, let collectionView = scrollView as? UICollectionView else { return }
-            guard isScrollable(collectionView) else { return }
-
-            let insets = collectionView.adjustedContentInset
-            let offsetFromTop = collectionView.contentOffset.y + insets.top
-            let distanceToBottom = collectionView.contentSize.height
-                - (collectionView.contentOffset.y + collectionView.bounds.height - insets.bottom)
-
-            if distanceToBottom <= recycleEdgeTrigger, distanceToBottom <= offsetFromTop {
-                planningViewModel.shiftForward()
-                applyWithAnchorRestoration(planningViewModel.days, in: collectionView)
-            } else if offsetFromTop <= recycleEdgeTrigger {
-                planningViewModel.shiftBackward()
-                applyWithAnchorRestoration(planningViewModel.days, in: collectionView)
+            guard let topIndexPath = collectionView.indexPathsForVisibleItems.min(),
+                  let topDate = day(at: topIndexPath.section)?.date else {
+                return
             }
+            planningViewModel.refreshObserveWindowIfNeeded(around: topDate)
         }
     }
 }
