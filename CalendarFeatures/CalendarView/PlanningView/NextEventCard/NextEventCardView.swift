@@ -45,7 +45,6 @@ struct NextEventCardView: View {
             } action: {
                 model.size = $0
             }
-
     }
 }
 
