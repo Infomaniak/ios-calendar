@@ -19,15 +19,18 @@
 import Foundation
 
 public struct AppleMapsHelper: Sendable {
-    let searchURL = "https://maps.apple.com/?q="
+    private let scheme = "https"
+    private let host = "maps.apple.com"
 
     public init() {}
 
     public func addressURL(_ address: String) -> URL? {
-        guard let encodedAddress = address.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
-            return nil
-        }
-
-        return URL(string: searchURL + encodedAddress)
+        var components = URLComponents()
+        components.scheme = scheme
+        components.host = host
+        components.queryItems = [
+            URLQueryItem(name: "q", value: address)
+        ]
+        return components.url
     }
 }
