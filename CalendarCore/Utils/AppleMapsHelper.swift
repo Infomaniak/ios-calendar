@@ -18,7 +18,7 @@
 
 import Foundation
 
-public struct AppleMapHelper: Sendable {
+public struct AppleMapsHelper: Sendable {
     let searchURL = "https://maps.apple.com/?q="
 
     public init() {}

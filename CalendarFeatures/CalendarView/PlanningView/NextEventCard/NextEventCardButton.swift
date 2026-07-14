@@ -122,7 +122,7 @@ struct NextEventCardButton: View {
             // TODO: Join kMeet meeting
             break
         case .openMap(let address):
-            guard let url = AppleMapHelper().addressURL(address) else { return }
+            guard let url = AppleMapsHelper().addressURL(address) else { return }
             UIApplication.shared.open(url)
         case .showEventDetails:
             // TODO: Open event details
