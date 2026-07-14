@@ -16,17 +16,24 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import Foundation
 import SwiftUI
 
 public struct PlanningView: View {
     @State private var planningViewModel = PlanningViewModel()
+    @State private var nextEventCardViewModel = NextEventCardViewModel()
 
     public init() {}
 
     public var body: some View {
-        PlanningCollectionView(planningViewModel: planningViewModel)
+        PlanningCollectionView(planningViewModel: planningViewModel, nextEventCardViewModel: nextEventCardViewModel)
             .ignoresSafeArea()
+            .overlay(alignment: .top) {
+                NextEventCardView(model: nextEventCardViewModel)
+                    .padding(.horizontal, IKPadding.medium)
+                    .padding(.vertical, IKPadding.mini)
+            }
             .toolbar {
                 ToolbarItem(placement: .bottomBar) {
                     Button("Today") {

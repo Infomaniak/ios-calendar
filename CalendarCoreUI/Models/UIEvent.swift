@@ -138,9 +138,10 @@ public extension UIEvent {
     static let preview = UIEvent(
         id: "0",
         title: "Event Title",
-        startDate: Date(),
-        endDate: Date().addingTimeInterval(3600),
+        startDate: Date().addingTimeInterval(3600),
+        endDate: Date().addingTimeInterval(7200),
         status: .confirmed,
+        location: "1 Infinite Loop",
         attendees: UIAttendee.previews,
         colors: .preview
     )

@@ -37,8 +37,6 @@ public extension CalendarCoreUI.UIEvent {
 struct PlanningEventView: View {
     let event: CalendarCoreUI.UIEvent
 
-    private let dateFormat = Date.FormatStyle.dateTime.hour().minute()
-
     enum UIConstants {
         static let minDuration: CGFloat = 15
         static let maxDuration: CGFloat = 120
@@ -51,13 +49,9 @@ struct PlanningEventView: View {
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 0) {
-                HStack {
-                    Text(event.startDate, format: dateFormat)
-                    Text("-")
-                    Text(event.endDate, format: dateFormat)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .font(.caption2)
+                Text(event.startDate ..< event.endDate, format: .eventTimeBounds)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .font(.caption2)
 
                 Text(event.title)
                     .lineLimit(1)

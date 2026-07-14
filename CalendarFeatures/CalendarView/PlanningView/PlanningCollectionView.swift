@@ -36,6 +36,7 @@ private struct PlanningScrollAnchor {
 
 struct PlanningCollectionView: UIViewRepresentable {
     var planningViewModel: PlanningViewModel
+    let nextEventCardViewModel: NextEventCardViewModel
 
     func makeUIView(context: Context) -> UICollectionView {
         let collectionView = UICollectionView(
@@ -59,6 +60,8 @@ struct PlanningCollectionView: UIViewRepresentable {
     }
 
     func updateUIView(_ collectionView: UICollectionView, context: Context) {
+        collectionView.contentInset.top = nextEventCardViewModel.size.height + IKPadding.medium
+
         let coordinator = context.coordinator
         coordinator.applyWithAnchorRestoration(planningViewModel.days, in: collectionView)
 
@@ -75,7 +78,7 @@ struct PlanningCollectionView: UIViewRepresentable {
     }
 
     func makeCoordinator() -> Coordinator {
-        return Coordinator(planningViewModel: planningViewModel)
+        return Coordinator(planningViewModel: planningViewModel, nextEventCardViewModel: nextEventCardViewModel)
     }
 
     @MainActor
@@ -83,6 +86,7 @@ struct PlanningCollectionView: UIViewRepresentable {
         private let recycleEdgeTrigger: CGFloat = 88
 
         private let planningViewModel: PlanningViewModel
+        private let nextEventCardViewModel: NextEventCardViewModel
 
         private var dataSource: UICollectionViewDiffableDataSource<Date, PlanningItem>!
 
@@ -91,6 +95,11 @@ struct PlanningCollectionView: UIViewRepresentable {
         private let allDayCellRegistration: UICollectionView.CellRegistration<UICollectionViewListCell, CalendarCoreUI.UIEvent>
         private let eventCellRegistration: UICollectionView.CellRegistration<UICollectionViewListCell, CalendarCoreUI.UIEvent>
 
+        private var gestureStartOffsetY = CGFloat.zero
+        private var gestureStartProgress: CGFloat = 1.0
+        private let fullScrollDistance: CGFloat = 200
+        private let scrollThreshold: CGFloat = 0.5
+
         private var days: [PlanningDay] = []
         private var isAdjusting = false
         private var lastScrolledTarget: Date?
@@ -98,8 +107,9 @@ struct PlanningCollectionView: UIViewRepresentable {
 
         private var cellSizeHelper = PlanningCellSizeHelper()
 
-        init(planningViewModel: PlanningViewModel) {
+        init(planningViewModel: PlanningViewModel, nextEventCardViewModel: NextEventCardViewModel) {
             self.planningViewModel = planningViewModel
+            self.nextEventCardViewModel = nextEventCardViewModel
 
             dayHeaderRegistration = .init(elementKind: UICollectionView.elementKindSectionHeader) { _, _, _ in }
 
@@ -421,14 +431,48 @@ struct PlanningCollectionView: UIViewRepresentable {
             return matchIndex ?? 0
         }
 
-        // MARK: - Scroll observation
+        // MARK: - UIScrollViewDelegate
+
+        func scrollViewShouldScrollToTop(_ scrollView: UIScrollView) -> Bool {
+            return false
+        }
 
         func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
             pinnedDate = nil
+
+            gestureStartOffsetY = scrollView.contentOffset.y
+            gestureStartProgress = nextEventCardViewModel.scrollProgress
         }
 
         func scrollViewDidScroll(_ scrollView: UIScrollView) {
             shiftWindowIfNeededFor(scrollView: scrollView)
+            computeScrollProgress(scrollView: scrollView)
+        }
+
+        func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+            guard !decelerate else { return }
+            commitScrollProgress()
+        }
+
+        func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+            commitScrollProgress()
+        }
+
+        private func commitScrollProgress() {
+            let target = nextEventCardViewModel.scrollProgress > scrollThreshold ? 1.0 : 0.0
+            withAnimation(.spring(duration: 0.2)) {
+                nextEventCardViewModel.scrollProgress = target
+            }
+        }
+
+        private func computeScrollProgress(scrollView: UIScrollView) {
+            guard scrollView.isDragging || scrollView.isDecelerating else {
+                return
+            }
+
+            let delta = scrollView.contentOffset.y - gestureStartOffsetY
+            let newProgress = gestureStartProgress - delta / fullScrollDistance
+            nextEventCardViewModel.scrollProgress = min(max(newProgress, 0), 1)
         }
 
         private func shiftWindowIfNeededFor(scrollView: UIScrollView) {
@@ -452,6 +496,9 @@ struct PlanningCollectionView: UIViewRepresentable {
 }
 
 #Preview {
-    PlanningCollectionView(planningViewModel: PlanningViewModel())
-        .ignoresSafeArea()
+    PlanningCollectionView(
+        planningViewModel: PlanningViewModel(),
+        nextEventCardViewModel: NextEventCardViewModel()
+    )
+    .ignoresSafeArea()
 }
