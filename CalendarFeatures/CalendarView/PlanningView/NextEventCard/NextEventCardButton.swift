@@ -45,6 +45,8 @@ struct NextEventCardButtonGeometryView: View {
 }
 
 struct NextEventCardButton: View {
+    @Environment(\.openURL) private var openURL
+
     @State private var isExpanded = false
 
     let event: CalendarCoreUI.UIEvent
@@ -123,7 +125,7 @@ struct NextEventCardButton: View {
             break
         case .openMap(let address):
             guard let url = AppleMapsHelper().addressURL(address) else { return }
-            UIApplication.shared.open(url)
+            openURL(url)
         case .showEventDetails:
             // TODO: Open event details
             break
