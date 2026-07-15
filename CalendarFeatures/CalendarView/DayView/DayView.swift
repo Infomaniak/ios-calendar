@@ -16,23 +16,27 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
+import ESDSFoundation
 import SwiftUI
 
 struct DayView: View {
     enum Constants {
         enum PointsPerHour {
-            static let minimum: CGFloat = 50
-            static let `default`: CGFloat = 80
-            static let maximum: CGFloat = 150
+            static let minimum: CGFloat = 20
+            static let `default`: CGFloat = 60
+            static let maximum: CGFloat = 100
         }
     }
 
-    @State private var pointsPerHour = Constants.PointsPerHour.default
+    @Environment(\.esdsTheme) private var theme
+
+    @ScaledMetric private var pointsPerHour = Constants.PointsPerHour.default
 
     let date: Date
 
     private var hours: [Int] {
-        let rangeOfHours = Calendar.current.range(of: .hour, in: .day, for: date) ?? 0..<24
+        let rangeOfHours = Calendar.current.range(of: .hour, in: .day, for: date) ?? 0 ..< 24
         return Array(rangeOfHours)
     }
 
@@ -45,14 +49,49 @@ struct DayView: View {
             ScrollView {
                 ZStack {
                     Canvas { context, size in
+                        var indexedSymbols = [Int: GraphicsContext.ResolvedSymbol]()
+                        var largestSymbolSize: CGSize = .zero
                         for hour in hours {
-                            let yPosition = CGFloat(hour) * pointsPerHour
+                            guard let symbol = context.resolveSymbol(id: hour) else {
+                                continue
+                            }
+                            indexedSymbols[hour] = symbol
+
+                            if symbol.size.width > largestSymbolSize.width || symbol.size.height > largestSymbolSize.height {
+                                largestSymbolSize = symbol.size
+                            }
+                        }
+
+                        for hour in hours {
+                            let yHourOffset = largestSymbolSize.height / 2
+                            let xHourOffset = largestSymbolSize.width + 16
+
+                            let yPosition = CGFloat(hour) * pointsPerHour + yHourOffset
                             context.stroke(
-                                Path(CGRect(x: 0, y: yPosition, width: size.width, height: 1)),
+                                Path(CGRect(x: xHourOffset, y: yPosition, width: size.width, height: 1)),
                                 with: .color(.gray.opacity(0.3))
                             )
 
-                            // Add hours
+                            if let hourSymbol = indexedSymbols[hour] {
+                                let centeredXPosition = largestSymbolSize.width / 2 - hourSymbol.size.width / 2
+
+                                context.draw(
+                                    hourSymbol,
+                                    in: CGRect(
+                                        x: centeredXPosition,
+                                        y: yPosition - yHourOffset,
+                                        width: hourSymbol.size.width,
+                                        height: hourSymbol.size.height
+                                    )
+                                )
+                            }
+                        }
+                    } symbols: {
+                        ForEach(hours, id: \.self) { hour in
+                            Text("\(hour):00")
+                                .font(.caption2.weight(.semibold))
+                                .foregroundStyle(theme.color.textSecondary)
+                                .tag(hour)
                         }
                     }
 
@@ -60,7 +99,7 @@ struct DayView: View {
                 }
                 .frame(height: viewHeight)
             }
-            .contentMargins(16, for: .scrollContent)
+            .contentMargins(IKPadding.medium, for: .scrollContent)
         }
     }
 }
