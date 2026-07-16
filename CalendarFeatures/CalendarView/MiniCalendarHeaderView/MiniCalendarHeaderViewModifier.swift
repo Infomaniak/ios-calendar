@@ -28,15 +28,15 @@ struct MiniCalendarHeaderViewModifier: ViewModifier {
                 content
                     .safeAreaBar(edge: .top) {
                         MiniCalendarHeaderView(displayedRange: $displayedRange)
-                            .frame(height: 72)
-                            .padding(.bottom, IKPadding.medium)
+                            .frame(height: 54)
+                            .padding(.bottom, IKPadding.mini)
                     }
             } else {
                 content
                     .safeAreaInset(edge: .top) {
                         MiniCalendarHeaderView(displayedRange: $displayedRange)
-                            .frame(height: 72)
-                            .padding(.bottom, IKPadding.medium)
+                            .frame(height: 54)
+                            .padding(.bottom, IKPadding.mini)
                             .background(Material.bar)
                             .onAppear {
                                 let navBarAppearance = UINavigationBarAppearance()
