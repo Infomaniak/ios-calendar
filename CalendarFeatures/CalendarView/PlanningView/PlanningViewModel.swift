@@ -32,10 +32,6 @@ class PlanningViewModel {
         daysBeforeToday + daysAfterToday + 1
     }
 
-    nonisolated static var todayIndex: Int {
-        daysBeforeToday
-    }
-
     private(set) var days: [PlanningDay] = []
     private(set) var hasDeliveredEvents = false
     var scrollTarget: Date?

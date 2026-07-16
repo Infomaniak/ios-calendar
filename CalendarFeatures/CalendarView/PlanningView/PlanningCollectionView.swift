@@ -146,14 +146,13 @@ struct PlanningCollectionView: UIViewRepresentable {
 
         // MARK: - Backing store
 
-        private func day(at section: Int) -> PlanningDay? {
-            days.indices.contains(section) ? days[section] : nil
+        private func day(at section: Int) -> PlanningDay {
+            days[section]
         }
 
-        private func item(at indexPath: IndexPath) -> PlanningItem? {
-            guard days.indices.contains(indexPath.section) else { return nil }
+        private func item(at indexPath: IndexPath) -> PlanningItem {
             let items = days[indexPath.section].items
-            return items.indices.contains(indexPath.item) ? items[indexPath.item] : nil
+            return items[indexPath.item]
         }
 
         // MARK: - Layout
@@ -173,7 +172,7 @@ struct PlanningCollectionView: UIViewRepresentable {
             layout collectionViewLayout: UICollectionViewLayout,
             sizeForItemAt indexPath: IndexPath
         ) -> CGSize {
-            guard let item = item(at: indexPath) else { return .zero }
+            let item = item(at: indexPath)
             let inset = sectionInset(for: indexPath.section)
             let width = collectionView.bounds.width - inset.right - inset.left
 
@@ -191,7 +190,8 @@ struct PlanningCollectionView: UIViewRepresentable {
             layout collectionViewLayout: UICollectionViewLayout,
             referenceSizeForHeaderInSection section: Int
         ) -> CGSize {
-            guard let day = day(at: section), !day.events.isEmpty else {
+            let day = day(at: section)
+            guard !day.events.isEmpty else {
                 return .zero
             }
             return CGSize(width: PlanningLayoutMetrics.dayColumnWidth, height: PlanningLayoutMetrics.dayHeaderHeight)
@@ -206,7 +206,7 @@ struct PlanningCollectionView: UIViewRepresentable {
         }
 
         private func sectionInset(for section: Int) -> UIEdgeInsets {
-            guard let day = day(at: section) else { return .zero }
+            let day = day(at: section)
 
             if !day.events.isEmpty {
                 return UIEdgeInsets(
@@ -234,14 +234,14 @@ struct PlanningCollectionView: UIViewRepresentable {
         }
 
         func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-            day(at: section)?.items.count ?? 0
+            day(at: section).items.count
         }
 
         func collectionView(
             _ collectionView: UICollectionView,
             cellForItemAt indexPath: IndexPath
         ) -> UICollectionViewCell {
-            guard let item = item(at: indexPath) else { return UICollectionViewCell() }
+            let item = item(at: indexPath)
             switch item {
             case .weekHeader(let date):
                 return collectionView.dequeueConfiguredReusableCell(
@@ -264,9 +264,8 @@ struct PlanningCollectionView: UIViewRepresentable {
                 using: dayHeaderRegistration,
                 for: indexPath
             )
-            if let date = day(at: indexPath.section)?.date {
-                header.configure(date: date)
-            }
+            let date = day(at: indexPath.section).date
+            header.configure(date: date)
             return header
         }
 
@@ -335,11 +334,11 @@ struct PlanningCollectionView: UIViewRepresentable {
 
         private func captureAnchor(in collectionView: UICollectionView) -> PlanningScrollAnchor? {
             guard let topIndexPath = collectionView.indexPathsForVisibleItems.min(),
-                  let day = day(at: topIndexPath.section),
                   let attributes = collectionView.layoutAttributesForItem(at: IndexPath(item: 0, section: topIndexPath.section))
             else {
                 return nil
             }
+            let day = day(at: topIndexPath.section)
             return PlanningScrollAnchor(date: day.date, offsetFromTop: attributes.frame.minY - collectionView.contentOffset.y)
         }
 
@@ -472,10 +471,10 @@ struct PlanningCollectionView: UIViewRepresentable {
 
         private func updateObserveWindowIfNeeded(scrollView: UIScrollView) {
             guard !isAdjusting, let collectionView = scrollView as? UICollectionView else { return }
-            guard let topIndexPath = collectionView.indexPathsForVisibleItems.min(),
-                  let topDate = day(at: topIndexPath.section)?.date else {
+            guard let topIndexPath = collectionView.indexPathsForVisibleItems.min() else {
                 return
             }
+            let topDate = day(at: topIndexPath.section).date
             planningViewModel.refreshObserveWindowIfNeeded(around: topDate)
         }
     }
