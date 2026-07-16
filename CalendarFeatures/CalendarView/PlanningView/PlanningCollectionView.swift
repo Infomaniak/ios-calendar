@@ -59,8 +59,7 @@ struct PlanningCollectionView: UIViewRepresentable {
         }
 
         if #available(iOS 26.0, *) {
-            // Remove the effect since we will use a custom header
-            collectionView.topEdgeEffect.isHidden = true
+            collectionView.topEdgeEffect.style = .hard
         }
 
         return collectionView
@@ -69,7 +68,7 @@ struct PlanningCollectionView: UIViewRepresentable {
     func updateUIView(_ collectionView: UICollectionView, context: Context) {
         let coordinator = context.coordinator
         coordinator.applyContentInsetTop(
-            nextEventCardViewModel.size.height + IKPadding.medium,
+            200 + nextEventCardViewModel.size.height + IKPadding.medium,
             in: collectionView
         )
         coordinator.applyWithAnchorRestoration(planningViewModel.days, in: collectionView)

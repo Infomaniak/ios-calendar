@@ -22,6 +22,8 @@ import Foundation
 import SwiftUI
 
 public struct PlanningView: View {
+    @State private var displayedRange = Calendar.current.dateInterval(of: .weekOfYear, for: Date())!
+
     @State private var planningViewModel: PlanningViewModel
     @State private var nextEventCardViewModel = NextEventCardViewModel()
 
@@ -40,6 +42,7 @@ public struct PlanningView: View {
                     .padding(.horizontal, IKPadding.medium)
                     .padding(.vertical, IKPadding.mini)
             }
+            .modifier(MiniCalendarHeaderViewModifier(displayedRange: $displayedRange))
             .toolbar {
                 ToolbarItem(placement: .bottomBar) {
                     Button("Today") {
@@ -57,5 +60,12 @@ public struct PlanningView: View {
 }
 
 #Preview {
-    PlanningView(calendarAccounts: [:])
+    NavigationStack {
+    	PlanningView(calendarAccounts: [:])
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button("Menu", systemImage: "sidebar.left") {}
+                }
+            }
+    }
 }
