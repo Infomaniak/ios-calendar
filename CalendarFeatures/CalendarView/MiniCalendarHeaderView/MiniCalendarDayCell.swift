@@ -17,7 +17,7 @@
  */
 
 import DesignSystem
-import ESDSCalendar
+import ESDSFoundation
 import SwiftUI
 import UIKit
 
@@ -32,19 +32,16 @@ struct MiniCalendarDayCellView: View {
     }
 
     var body: some View {
-        VStack(spacing: IKPadding.small) {
+        VStack(spacing: IKPadding.micro) {
             Text(date, format: .dateTime.weekday(.narrow))
-                .font(.body.weight(.semibold))
-                .foregroundColor(isToday ? Color.accentColor : theme.color.textPrimary)
+                .font(.caption)
+                .foregroundColor(theme.color.textPrimary)
 
             Text(date, format: .dateTime.day())
-                .font(.title3)
+                .font(.body.weight(.semibold))
                 .foregroundColor(theme.color.textPrimary)
                 .padding(value: .mini)
-                .background {
-                    Circle()
-                        .fill(isToday ? Color.accentColor : Color.clear)
-                }
+                .background(isToday ? Color.accentColor : Color.clear, in: .circle)
         }
     }
 }
