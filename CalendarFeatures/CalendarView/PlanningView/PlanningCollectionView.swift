@@ -97,7 +97,7 @@ struct PlanningCollectionView: UIViewRepresentable {
 
         private var gestureStartOffsetY = CGFloat.zero
         private var gestureStartProgress: CGFloat = 1.0
-        private let fullScrollDistance: CGFloat = 200
+        private let fullScrollDistance: CGFloat = 100
         private let scrollThreshold: CGFloat = 0.5
 
         private var days: [PlanningDay] = []
