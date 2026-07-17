@@ -36,6 +36,7 @@ class PlanningViewModel {
     private(set) var days: [PlanningDay] = []
     private(set) var hasDeliveredEvents = false
     var scrollTarget: Date?
+    var suppressScrollTargetSync = false
 
     private let calendar = Calendar.current
     @ObservationIgnored private let startDate: Date

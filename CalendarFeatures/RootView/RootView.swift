@@ -25,6 +25,8 @@ import SwiftUI
 public struct RootView: View {
     @EnvironmentObject private var rootViewState: RootViewState
 
+    @State private var mainViewState = MainViewState()
+
     public init() {}
 
     public var body: some View {
@@ -33,6 +35,7 @@ public struct RootView: View {
             case .mainView(let accounts):
                 MainView()
                     .environment(\.calendarAccounts, accounts)
+                    .environment(mainViewState)
             case .onboarding:
                 OnboardingView()
             case .preloading:

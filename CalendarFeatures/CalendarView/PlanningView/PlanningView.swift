@@ -17,12 +17,13 @@
  */
 
 import CalendarCore
+import CalendarCoreUI
 import DesignSystem
 import Foundation
 import SwiftUI
 
 public struct PlanningView: View {
-    @State private var displayedRange = Calendar.current.dateInterval(of: .weekOfYear, for: Date())!
+    @Environment(MainViewState.self) private var mainViewState: MainViewState
 
     @State private var planningViewModel: PlanningViewModel
     @State private var nextEventCardViewModel = NextEventCardViewModel()
@@ -35,37 +36,47 @@ public struct PlanningView: View {
     }
 
     public var body: some View {
-        PlanningCollectionView(planningViewModel: planningViewModel, nextEventCardViewModel: nextEventCardViewModel)
-            .ignoresSafeArea()
-            .overlay(alignment: .top) {
-                NextEventCardView(model: nextEventCardViewModel)
-                    .padding(.horizontal, IKPadding.medium)
-                    .padding(.vertical, IKPadding.mini)
-            }
-            .modifier(MiniCalendarHeaderViewModifier(displayedRange: $displayedRange))
-            .toolbar {
-                ToolbarItem(placement: .bottomBar) {
-                    Button("Today") {
-                        withAnimation {
-                            planningViewModel.scrollTarget = Date()
-                        }
+        @Bindable var mainViewState = mainViewState
+        PlanningCollectionView(
+            planningViewModel: planningViewModel,
+            nextEventCardViewModel: nextEventCardViewModel,
+            mainViewState: mainViewState
+        )
+        .ignoresSafeArea()
+        .overlay(alignment: .top) {
+            NextEventCardView(model: nextEventCardViewModel)
+                .padding(.horizontal, IKPadding.medium)
+                .padding(.vertical, IKPadding.mini)
+        }
+        .modifier(MiniCalendarHeaderViewModifier(selectedDate: $mainViewState.selectedDate))
+        .toolbar {
+            ToolbarItem(placement: .bottomBar) {
+                Button("Today") {
+                    withAnimation {
+                        mainViewState.selectedDate = Calendar.current.startOfDay(for: Date())
                     }
                 }
             }
-            .task {
-                planningViewModel.scrollTarget = Date()
+        }
+        .onChange(of: mainViewState.selectedDate, initial: true) { _, newValue in
+            guard !planningViewModel.suppressScrollTargetSync else {
+                planningViewModel.suppressScrollTargetSync = false
+                return
             }
-            .id(calendarAccounts)
+            planningViewModel.scrollTarget = newValue
+        }
+        .id(calendarAccounts)
     }
 }
 
 #Preview {
     NavigationStack {
-    	PlanningView(calendarAccounts: [:])
+        PlanningView(calendarAccounts: [:])
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button("Menu", systemImage: "sidebar.left") {}
                 }
             }
     }
+    .environment(MainViewState())
 }
