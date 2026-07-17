@@ -43,7 +43,7 @@ struct MiniCalendarDayCellView: View {
                     .opacity(0)
                 Text(date, format: .dateTime.day())
             }
-            .padding(value: .mini)
+            .padding(value: .micro)
             .monospacedDigit()
             .font(.body.weight(.semibold))
             .foregroundColor(theme.color.textPrimary)
