@@ -116,6 +116,7 @@ public struct MiniCalendarHeaderView: UIViewRepresentable {
                 }
                 .margins(.all, 0)
                 .background(.clear)
+                cell.backgroundConfiguration = .clear()
             }
 
             super.init()
@@ -208,6 +209,13 @@ public struct MiniCalendarHeaderView: UIViewRepresentable {
         public func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
             guard let collectionView = scrollView as? UICollectionView else { return }
             handlePagingSettled(collectionView)
+        }
+
+        public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+            collectionView.deselectItem(at: indexPath, animated: false)
+            let date = days[indexPath.item]
+            guard !calendar.isDate(date, inSameDayAs: selectedDate.wrappedValue) else { return }
+            selectedDate.wrappedValue = date
         }
 
         // MARK: - Data source
