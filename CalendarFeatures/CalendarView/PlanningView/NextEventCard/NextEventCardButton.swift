@@ -35,7 +35,7 @@ struct NextEventCardButtonGeometryView: View {
             NextEventCardButton(event: event, progress: progress)
                 .onGeometryChange(for: CGSize.self) { $0.size } action: { size = $0 }
                 .position(x: x, y: y)
-                .animation(.spring(duration: 0.25), value: x)
+                .animation(.spring(duration: 0.2), value: x)
         }
     }
 
@@ -102,17 +102,15 @@ struct NextEventCardButton: View {
                 if isExpanded {
                     Text(kind.label)
                         .font(.footnote)
-                        .transition(.slide.combined(with: .opacity).combined(with: .scale))
+                        .transition(.opacity)
                 }
             }
             .geometryGroup()
         }
         .buttonStyle(.borderedProminent)
-        .onAppear {
-            updateExpandState(progress: progress)
-        }
+        .onAppear { updateExpandState(progress: progress) }
         .onChange(of: progress) { _, newValue in
-            withAnimation(.spring(duration: 0.25)) {
+            withAnimation(.interactiveSpring(duration: 0.2)) {
                 updateExpandState(progress: newValue)
             }
         }
