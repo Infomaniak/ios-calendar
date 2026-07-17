@@ -38,16 +38,21 @@ struct MiniCalendarDayCellView: View {
                 .font(.caption)
                 .foregroundColor(theme.color.textPrimary)
 
-            Text(date, format: .dateTime.day())
-                .font(.body.weight(.semibold))
-                .foregroundColor(theme.color.textPrimary)
-                .padding(value: .mini)
-                .background(isToday ? Color.accentColor : Color.clear, in: .circle)
-                .overlay {
-                    if isSelected, !isToday {
-                        Circle().stroke(Color.accentColor, lineWidth: 1)
-                    }
+            ZStack {
+                Text("00")
+                    .opacity(0)
+                Text(date, format: .dateTime.day())
+            }
+            .padding(value: .mini)
+            .monospacedDigit()
+            .font(.body.weight(.semibold))
+            .foregroundColor(theme.color.textPrimary)
+            .background(isToday ? Color.accentColor : Color.clear, in: .circle)
+            .overlay {
+                if isSelected, !isToday {
+                    Circle().stroke(Color.accentColor, lineWidth: 1)
                 }
+            }
         }
     }
 }
