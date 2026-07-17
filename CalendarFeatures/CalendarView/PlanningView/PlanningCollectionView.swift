@@ -37,6 +37,7 @@ private struct PlanningScrollAnchor {
 struct PlanningCollectionView: UIViewRepresentable {
     var planningViewModel: PlanningViewModel
     let nextEventCardViewModel: NextEventCardViewModel
+    let mainViewState: MainViewState
 
     func makeUIView(context: Context) -> UICollectionView {
         let collectionView = UICollectionView(
@@ -75,13 +76,18 @@ struct PlanningCollectionView: UIViewRepresentable {
     }
 
     func makeCoordinator() -> Coordinator {
-        return Coordinator(planningViewModel: planningViewModel, nextEventCardViewModel: nextEventCardViewModel)
+        return Coordinator(
+            planningViewModel: planningViewModel,
+            nextEventCardViewModel: nextEventCardViewModel,
+            mainViewState: mainViewState
+        )
     }
 
     @MainActor
     class Coordinator: NSObject, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
         private let planningViewModel: PlanningViewModel
         private let nextEventCardViewModel: NextEventCardViewModel
+        private let mainViewState: MainViewState
 
         private let dayHeaderRegistration: UICollectionView.SupplementaryRegistration<PlanningDayHeaderView>
         private let weekHeaderCellRegistration: UICollectionView.CellRegistration<PlanningWeekHeaderCell, Date>
@@ -100,9 +106,10 @@ struct PlanningCollectionView: UIViewRepresentable {
 
         private var cellSizeHelper = PlanningCellSizeHelper()
 
-        init(planningViewModel: PlanningViewModel, nextEventCardViewModel: NextEventCardViewModel) {
+        init(planningViewModel: PlanningViewModel, nextEventCardViewModel: NextEventCardViewModel, mainViewState: MainViewState) {
             self.planningViewModel = planningViewModel
             self.nextEventCardViewModel = nextEventCardViewModel
+            self.mainViewState = mainViewState
 
             dayHeaderRegistration = .init(elementKind: UICollectionView.elementKindSectionHeader) { _, _, _ in }
 
@@ -440,12 +447,14 @@ struct PlanningCollectionView: UIViewRepresentable {
         func scrollViewDidScroll(_ scrollView: UIScrollView) {
             updateObserveWindowIfNeeded(scrollView: scrollView)
             computeScrollProgress(scrollView: scrollView)
+            syncSelectedDateToVisibleDay(scrollView)
         }
 
         func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
             guard !decelerate else { return }
             commitScrollProgress()
         }
+        
 
         func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
             commitScrollProgress()
@@ -476,13 +485,25 @@ struct PlanningCollectionView: UIViewRepresentable {
             let topDate = day(at: topIndexPath.section).date
             planningViewModel.refreshObserveWindowIfNeeded(around: topDate)
         }
+
+        private func syncSelectedDateToVisibleDay(_ scrollView: UIScrollView) {
+            guard !isAdjusting, let collectionView = scrollView as? UICollectionView,
+                  let topIndexPath = collectionView.indexPathsForVisibleItems.min() else {
+                return
+            }
+            let topDate = day(at: topIndexPath.section).date
+            guard mainViewState.selectedDate != topDate else { return }
+            planningViewModel.suppressScrollTargetSync = true
+            mainViewState.selectedDate = topDate
+        }
     }
 }
 
 #Preview {
     PlanningCollectionView(
         planningViewModel: PlanningViewModel(),
-        nextEventCardViewModel: NextEventCardViewModel()
+        nextEventCardViewModel: NextEventCardViewModel(),
+        mainViewState: MainViewState()
     )
     .ignoresSafeArea()
 }

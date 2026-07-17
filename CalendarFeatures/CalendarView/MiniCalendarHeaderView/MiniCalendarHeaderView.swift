@@ -20,10 +20,10 @@ import SwiftUI
 import UIKit
 
 public struct MiniCalendarHeaderView: UIViewRepresentable {
-    @Binding var displayedRange: DateInterval
+    @Binding var selectedDate: Date
 
-    public init(displayedRange: Binding<DateInterval>) {
-        _displayedRange = displayedRange
+    public init(selectedDate: Binding<Date>) {
+        _selectedDate = selectedDate
     }
 
     public func makeUIView(context: Context) -> UICollectionView {
@@ -48,19 +48,19 @@ public struct MiniCalendarHeaderView: UIViewRepresentable {
 
     public func updateUIView(_ collectionView: UICollectionView, context: Context) {
         let coordinator = context.coordinator
-        coordinator.displayedRange = $displayedRange
+        coordinator.selectedDate = $selectedDate
 
         guard collectionView.bounds.width > 0 else { return }
 
         if !coordinator.hasCenteredInitially {
             coordinator.centerInitially(in: collectionView)
         } else {
-            coordinator.syncWithExternalRange(displayedRange, in: collectionView)
+            coordinator.syncWithExternalDate(selectedDate, in: collectionView)
         }
     }
 
     public func makeCoordinator() -> Coordinator {
-        Coordinator(displayedRange: $displayedRange)
+        Coordinator(selectedDate: $selectedDate)
     }
 
     private static func makeLayout() -> UICollectionViewLayout {
@@ -89,27 +89,30 @@ public struct MiniCalendarHeaderView: UIViewRepresentable {
 
     @MainActor
     public final class Coordinator: NSObject, UICollectionViewDataSource, UICollectionViewDelegate {
-        private static let windowRadius = 2
+        private static let windowRadius = 10
 
-        var displayedRange: Binding<DateInterval>
+        var selectedDate: Binding<Date>
         weak var collectionView: UICollectionView?
         private(set) var hasCenteredInitially = false
 
         private let calendar = Calendar.current
-        private var currentWeekStart: Date
+        private var renderedWeekStart: Date
+        private var renderedSelectedDate: Date
+
         private var days: [Date] = []
         private var isRecentering = false
 
         private let cellRegistration: UICollectionView.CellRegistration<UICollectionViewListCell, Date>
 
-        init(displayedRange: Binding<DateInterval>) {
-            self.displayedRange = displayedRange
+        init(selectedDate: Binding<Date>) {
+            self.selectedDate = selectedDate
             let calendar = Calendar.current
-            currentWeekStart = calendar.startOfWeek(for: displayedRange.wrappedValue.start)
-
+            renderedWeekStart = calendar.startOfWeek(for: selectedDate.wrappedValue)
+            renderedSelectedDate = selectedDate.wrappedValue
             cellRegistration = .init { cell, _, date in
+                let isSelected = calendar.isDate(date, inSameDayAs: selectedDate.wrappedValue)
                 cell.contentConfiguration = UIHostingConfiguration {
-                    MiniCalendarDayCellView(date: date)
+                    MiniCalendarDayCellView(date: date, isSelected: isSelected)
                 }
                 .margins(.all, 0)
                 .background(.clear)
@@ -123,7 +126,7 @@ public struct MiniCalendarHeaderView: UIViewRepresentable {
 
         private func rebuildWindow() {
             days = (-Self.windowRadius ... Self.windowRadius).flatMap { weekOffset -> [Date] in
-                guard let weekStart = calendar.date(byAdding: .weekOfYear, value: weekOffset, to: currentWeekStart) else {
+                guard let weekStart = calendar.date(byAdding: .weekOfYear, value: weekOffset, to: renderedWeekStart) else {
                     return []
                 }
                 return (0 ..< 7).compactMap { calendar.date(byAdding: .day, value: $0, to: weekStart) }
@@ -140,14 +143,20 @@ public struct MiniCalendarHeaderView: UIViewRepresentable {
             collectionView.reloadData()
             collectionView.layoutIfNeeded()
             collectionView.setContentOffset(CGPoint(x: centerOffsetX, y: 0), animated: false)
-            updateDisplayedWeek()
         }
 
-        func syncWithExternalRange(_ range: DateInterval, in collectionView: UICollectionView) {
-            let targetWeekStart = calendar.startOfWeek(for: range.start)
-            guard targetWeekStart != currentWeekStart else { return }
+        func syncWithExternalDate(_ date: Date, in collectionView: UICollectionView) {
+            let targetWeekStart = calendar.startOfWeek(for: date)
+            guard targetWeekStart != renderedWeekStart else {
+                if !calendar.isDate(date, inSameDayAs: renderedSelectedDate) {
+                    renderedSelectedDate = date
+                    collectionView.reloadData()
+                }
+                return
+            }
 
-            currentWeekStart = targetWeekStart
+            renderedSelectedDate = date
+            renderedWeekStart = targetWeekStart
             rebuildWindow()
             recenter(collectionView)
         }
@@ -160,15 +169,6 @@ public struct MiniCalendarHeaderView: UIViewRepresentable {
             isRecentering = false
         }
 
-        private func updateDisplayedWeek() {
-            guard let range = calendar.dateInterval(of: .weekOfYear, for: currentWeekStart) else { return }
-            Task { @MainActor in
-                if displayedRange.wrappedValue != range {
-                    displayedRange.wrappedValue = range
-                }
-            }
-        }
-
         // MARK: - Paging
 
         private func handlePagingSettled(_ collectionView: UICollectionView) {
@@ -177,17 +177,27 @@ public struct MiniCalendarHeaderView: UIViewRepresentable {
             let width = collectionView.bounds.width
             let page = Int((collectionView.contentOffset.x / width).rounded())
             let delta = page - Self.windowRadius
+            guard delta != 0 else { return }
 
-            if delta != 0 {
-                currentWeekStart = calendar.date(
-                    byAdding: .weekOfYear,
-                    value: delta,
-                    to: currentWeekStart
-                ) ?? currentWeekStart
-                rebuildWindow()
-                recenter(collectionView)
-            }
-            updateDisplayedWeek()
+            let newWeekStart = calendar.date(
+                byAdding: .weekOfYear,
+                value: delta,
+                to: renderedWeekStart
+            ) ?? renderedWeekStart
+
+            let weekStartOfSelected = calendar.startOfWeek(for: selectedDate.wrappedValue)
+            let dayOffset = calendar.dateComponents(
+                [.day],
+                from: weekStartOfSelected,
+                to: selectedDate.wrappedValue
+            ).day ?? 0
+            let newSelectedDate = calendar.date(byAdding: .day, value: dayOffset, to: newWeekStart) ?? newWeekStart
+
+            renderedWeekStart = newWeekStart
+            renderedSelectedDate = newSelectedDate
+            selectedDate.wrappedValue = newSelectedDate
+            rebuildWindow()
+            recenter(collectionView)
         }
 
         public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
@@ -227,14 +237,13 @@ private extension Calendar {
 }
 
 #Preview {
-    @Previewable @State var displayedRange = Calendar.current.dateInterval(of: .weekOfYear, for: Date())
-        ?? DateInterval(start: Date(), duration: 7 * 24 * 60 * 60)
+    @Previewable @State var selectedDate = Date()
 
     VStack(spacing: 16) {
-        MiniCalendarHeaderView(displayedRange: $displayedRange)
+        MiniCalendarHeaderView(selectedDate: $selectedDate)
             .frame(height: 64)
 
-        Text(displayedRange.start, format: .dateTime.day().month().year())
+        Text(selectedDate, format: .dateTime.day().month().year())
             .font(.footnote)
             .foregroundStyle(.secondary)
     }

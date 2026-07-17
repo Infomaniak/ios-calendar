@@ -20,21 +20,21 @@ import DesignSystem
 import SwiftUI
 
 struct MiniCalendarHeaderViewModifier: ViewModifier {
-    @Binding var displayedRange: DateInterval
+    @Binding var selectedDate: Date
 
     func body(content: Content) -> some View {
         Group {
             if #available(iOS 26.0, *) {
                 content
                     .safeAreaBar(edge: .top) {
-                        MiniCalendarHeaderView(displayedRange: $displayedRange)
+                        MiniCalendarHeaderView(selectedDate: $selectedDate)
                             .frame(height: 54)
                             .padding(.bottom, IKPadding.mini)
                     }
             } else {
                 content
                     .safeAreaInset(edge: .top) {
-                        MiniCalendarHeaderView(displayedRange: $displayedRange)
+                        MiniCalendarHeaderView(selectedDate: $selectedDate)
                             .frame(height: 54)
                             .padding(.bottom, IKPadding.mini)
                             .background(Material.bar)
@@ -52,7 +52,7 @@ struct MiniCalendarHeaderViewModifier: ViewModifier {
                 ToolbarItem(placement: .principal) {
                     Button {} label: {
                         HStack {
-                            Text(displayedRange.start, format: .dateTime.year().month(.wide))
+                            Text(selectedDate, format: .dateTime.year().month(.wide))
                             Image(systemName: "chevron.down")
                         }
                     }
@@ -67,7 +67,7 @@ struct MiniCalendarHeaderViewModifier: ViewModifier {
 
             } else {
                 ToolbarItem(placement: .topBarLeading) {
-                    Text(displayedRange.start, format: .dateTime.year().month(.wide))
+                    Text(selectedDate, format: .dateTime.year().month(.wide))
                 }
             }
 

@@ -26,6 +26,7 @@ struct MiniCalendarDayCellView: View {
     @Environment(\.esdsTheme) private var theme
 
     let date: Date
+    var isSelected = false
 
     var isToday: Bool {
         return calendar.isDateInToday(date)
@@ -42,6 +43,11 @@ struct MiniCalendarDayCellView: View {
                 .foregroundColor(theme.color.textPrimary)
                 .padding(value: .mini)
                 .background(isToday ? Color.accentColor : Color.clear, in: .circle)
+                .overlay {
+                    if isSelected, !isToday {
+                        Circle().stroke(Color.accentColor, lineWidth: 1)
+                    }
+                }
         }
     }
 }
@@ -49,6 +55,6 @@ struct MiniCalendarDayCellView: View {
 #Preview {
     HStack {
         MiniCalendarDayCellView(date: Date())
-        MiniCalendarDayCellView(date: Date(timeIntervalSinceNow: -86400))
+        MiniCalendarDayCellView(date: Date(timeIntervalSinceNow: -86400), isSelected: true)
     }
 }
