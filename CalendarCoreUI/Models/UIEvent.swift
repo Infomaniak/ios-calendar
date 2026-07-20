@@ -108,8 +108,8 @@ public extension UIEvent {
         status = event.status
         location = event.location
 
-        startDate = event.timing.start.date
-        endDate = event.timing.end.date
+        startDate = event.timing.startInstantLocal().date
+        endDate = event.timing.endInstantLocal().date
         isAllDay = event.timing.isAllDay
 
         var user: UIAttendee?
