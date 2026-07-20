@@ -17,18 +17,8 @@
  */
 
 import Foundation
-import MultiplatformCalendar
 
-final class SentryKMPWrapper: CrashReport {
-    func addBreadcrumb(
-        message: String,
-        category: String,
-        level: MultiplatformCalendar.CrashReportLevel,
-        type: MultiplatformCalendar.BreadcrumbType,
-        data: [String: String]?
-    ) {}
-
-    func capture(message: String, exception: KotlinThrowable, data: [String: String]?) {}
-
-    func capture(message: String, data: [String: String]?, level: MultiplatformCalendar.CrashReportLevel?) {}
+public enum DefaultPreferences {
+    public static let matomoAuthorized = true
+    public static let sentryAuthorized = true
 }

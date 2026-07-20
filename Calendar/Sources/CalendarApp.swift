@@ -26,6 +26,8 @@ import SwiftUI
 
 @main
 struct CalendarApp: App {
+    // periphery:ignore - Making sure the Sentry is initialized at a very early stage of the app launch.
+    private let crashReportService = CrashReportService.shared
     // periphery:ignore - Making sure the DI is registered at a very early stage of the app launch.
     private let dependencyInjectionHook = CalendarTargetAssembly()
 

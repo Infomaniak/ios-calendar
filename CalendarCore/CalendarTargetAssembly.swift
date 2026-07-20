@@ -58,7 +58,7 @@ open class CalendarTargetAssembly: TargetAssembly {
 
                 return CalendarSDKProvider().sdk(
                     databasePath: appGroupPath.realmRootURL.appending(path: "calendars.db").path(),
-                    crashReport: SentryKMPWrapper()
+                    crashReport: CrashReportService.shared
                 )
             },
             Factory(type: AccountManager.self) { _, _ in
