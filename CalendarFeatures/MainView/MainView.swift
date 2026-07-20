@@ -45,12 +45,10 @@ public struct MainView: View {
     private func syncCalendars() async {
         @InjectService var calendarSDK: CalendarCoreGraph
 
-        for calendarAccount in calendarAccounts {
-            do {
-                try await calendarSDK.calendarManager.syncCalendars(accountId: Int64(calendarAccount.id))
-            } catch {
-                Logger.view.error("Failed to sync calendars for account \(calendarAccount.id): \(error.localizedDescription)")
-            }
+        do {
+            try await calendarSDK.calendarManager.syncEvents()
+        } catch {
+            Logger.view.error("Failed to sync calendars: \(error.localizedDescription)")
         }
     }
 }
