@@ -102,15 +102,17 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
 }
 
 public extension UIEvent {
-    init?(event: MultiplatformCalendar.Event, userEmail: String?) {
-        id = event.idValue
+    init?(eventDaySlice: MultiplatformCalendar.EventDaySlice, userEmail: String?) {
+        let event = eventDaySlice.event
+
+        id = "\(eventDaySlice.position.index)-\(event.idValue)"
         title = event.title
         status = event.status
         location = event.location
 
-        startDate = event.timing.startInstantLocal().date
-        endDate = event.timing.endInstantLocal().date
-        isAllDay = event.timing.isAllDay
+        startDate = eventDaySlice.displayStartInstant().date
+        endDate = eventDaySlice.displayEndInstant().date
+        isAllDay = eventDaySlice.isAllDay
 
         var user: UIAttendee?
         attendees = event.attendees.map {
