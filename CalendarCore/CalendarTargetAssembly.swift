@@ -56,7 +56,10 @@ open class CalendarTargetAssembly: TargetAssembly {
                     resolver: resolver
                 )
 
-                return CalendarSDKProvider().sdk(databasePath: appGroupPath.realmRootURL.appending(path: "calendars.db").path())
+                return CalendarSDKProvider().sdk(
+                    databasePath: appGroupPath.realmRootURL.appending(path: "calendars.db").path(),
+                    crashReport: CrashReportService.shared
+                )
             },
             Factory(type: AccountManager.self) { _, _ in
                 AccountManager()

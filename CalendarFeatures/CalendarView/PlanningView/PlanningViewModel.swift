@@ -98,9 +98,13 @@ class PlanningViewModel {
         currentObserveTask?.cancel()
         currentObserveTask = Task.detached { [weak self] in
             @InjectService var calendarSDK: CalendarCoreGraph
-            for await events in calendarSDK.calendarManager.observeEvents(start: start.instant, end: end.instant) {
+            for await daySlices in calendarSDK.calendarManager.observeDaySlices(start: start.instant, end: end.instant) {
                 guard let self else { return }
-                let uiEvents = events.compactMap { CalendarCoreUI.UIEvent(event: $0, userEmail: "") }
+                let uiEvents = daySlices.values.flatMap { eventDaySlices in
+                    eventDaySlices.compactMap {
+                        CalendarCoreUI.UIEvent(eventDaySlice: $0, userEmail: "")
+                    }
+                }
                 await ingest(uiEvents: uiEvents)
             }
         }

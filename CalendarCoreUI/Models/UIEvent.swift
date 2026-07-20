@@ -33,12 +33,6 @@ extension KotlinInstant {
 }
 
 public extension UIEvent {
-    enum Status: String, Sendable, Equatable {
-        case confirmed = "CONFIRMED"
-        case tentative = "TENTATIVE"
-        case cancelled = "CANCELLED"
-    }
-
     struct Colors: Sendable, Equatable, Hashable {
         public let datavizContainer: Color
         public let onDatavizContainer: Color
@@ -69,7 +63,7 @@ public extension UIEvent {
 public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
     public let id: String
     public let title: String
-    public let status: UIEvent.Status?
+    public let status: EventStatus?
     public let location: String?
     public let kMeetLink: String? = nil // TODO: Get it from Event
 
@@ -88,7 +82,7 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
         startDate: Date,
         endDate: Date,
         isAllDay: Bool = false,
-        status: UIEvent.Status?,
+        status: EventStatus?,
         location: String? = nil,
         user: UIAttendee? = nil,
         attendees: [UIAttendee],
@@ -108,15 +102,17 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
 }
 
 public extension UIEvent {
-    init?(event: MultiplatformCalendar.Event, userEmail: String?) {
-        id = event.idValue
+    init?(eventDaySlice: MultiplatformCalendar.EventDaySlice, userEmail: String?) {
+        let event = eventDaySlice.event
+
+        id = "\(eventDaySlice.position.index)-\(event.idValue)"
         title = event.title
-        status = .init(rawValue: event.status ?? "")
+        status = event.status
         location = event.location
 
-        startDate = event.timing.start.date
-        endDate = event.timing.end.date
-        isAllDay = event.timing.isAllDay
+        startDate = eventDaySlice.displayStartInstant().date
+        endDate = eventDaySlice.displayEndInstant().date
+        isAllDay = eventDaySlice.isAllDay
 
         var user: UIAttendee?
         attendees = event.attendees.map {

@@ -40,7 +40,7 @@ public extension UICalendar {
     init(calendar: MultiplatformCalendar.Calendar) {
         id = calendar.idValue
         displayName = calendar.displayName
-        color = Color(argb: calendar.colorValue)
+        color = Color(argb: calendar.colors.calendarSourceColor)
         accountId = Int(calendar.accountIdValue)
         isVisible = calendar.isVisible
     }

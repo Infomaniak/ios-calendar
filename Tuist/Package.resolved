@@ -1,5 +1,5 @@
 {
-  "originHash" : "619d9fa04d497d4dbb8dde071d0359e7fa11ce6596a1e74bae792e9764568508",
+  "originHash" : "334424c6e85303ecca9c7a5badcc2564be2b8cd19b01a7b68c58b41ce3da4aa9",
   "pins" : [
     {
       "identity" : "alamofire",
@@ -15,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core",
       "state" : {
-        "revision" : "bb803247827328de9dcb5431fa599992ba6e67cd",
-        "version" : "19.0.0"
+        "revision" : "c0bb8aec024f40da9d5f8698ce9d2b463d8c7b4f",
+        "version" : "19.1.1"
       }
     },
     {
@@ -24,8 +24,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core-ui",
       "state" : {
-        "revision" : "7086862e9622fec617d2a2d0bc1c70ab0a21fee9",
-        "version" : "26.0.0"
+        "revision" : "7309ad76dcf0427df51386cf924dfc33e77dd474",
+        "version" : "26.0.1"
       }
     },
     {
@@ -78,8 +78,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-features",
       "state" : {
-        "revision" : "63710f4ededd74f1e894f1b8d5edf31462893db2",
-        "version" : "10.0.0"
+        "revision" : "08b0a7d9a6b8debff6ab8f2f6f525cfb1f0d1caa",
+        "version" : "10.1.2"
       }
     },
     {
@@ -123,7 +123,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/multiplatform-calendar",
       "state" : {
-        "revision" : "835a0164e050dadd96f000c5b3d04f06c68837f9"
+        "revision" : "8e3bb78a5c06eb0b48be6336183b4f08fc6f3c1a",
+        "version" : "0.3.0"
       }
     },
     {
@@ -142,6 +143,15 @@
       "state" : {
         "revision" : "fa5164afc8ef56c3069728629647f140c03933f5",
         "version" : "1.0.2"
+      }
+    },
+    {
+      "identity" : "qrcode",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/dagronf/QRCode",
+      "state" : {
+        "revision" : "a8b8a5166e072156baf66ec2fff0850aa14b5297",
+        "version" : "28.1.0"
       }
     },
     {
@@ -167,8 +177,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getsentry/sentry-cocoa",
       "state" : {
-        "revision" : "43abfbf9a26089ad34604c718ad0935440caf1d4",
-        "version" : "9.18.0"
+        "revision" : "67310f115f3fc1e5e1f2e262f9009c64bb387e3f",
+        "version" : "9.22.0"
       }
     },
     {
@@ -190,12 +200,30 @@
       }
     },
     {
+      "identity" : "swift-qrcode-generator",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/dagronf/swift-qrcode-generator",
+      "state" : {
+        "revision" : "2b1980b825f08a81ccc762b0c4d17fcde9d5e953",
+        "version" : "2.0.2"
+      }
+    },
+    {
+      "identity" : "swiftimagereadwrite",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/dagronf/SwiftImageReadWrite",
+      "state" : {
+        "revision" : "42ace2412279f18bc264bc306e96b51c36e12a33",
+        "version" : "1.9.2"
+      }
+    },
+    {
       "identity" : "swiftui-introspect",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/siteline/SwiftUI-Introspect",
       "state" : {
-        "revision" : "aead9358a55f635d62d885aeb9105752c0213aec",
-        "version" : "27.0.0-beta.1"
+        "revision" : "469f9e8becd1b229b9c2056a4bd80dcce3b65a69",
+        "version" : "27.0.0-beta.2"
       }
     }
   ],

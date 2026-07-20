@@ -39,7 +39,7 @@ extension Color {
         #endif
     }
 
-    init(eventColor: EventColor) {
+    init(eventColor: ThemedColor) {
         self.init(light: Color(argb: eventColor.light), dark: Color(argb: eventColor.dark))
     }
 }
