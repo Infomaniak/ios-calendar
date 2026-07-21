@@ -27,6 +27,13 @@ enum PlanningLayoutMetrics {
     static let eventRowMinHeight: CGFloat = 20
     static let dayHeaderHeight: CGFloat = 64
     static let weekHeaderHeight: CGFloat = 16
+
+    static let sectionInsets = UIEdgeInsets(
+        top: -PlanningLayoutMetrics.dayHeaderHeight,
+        left: PlanningLayoutMetrics.dayColumnWidth,
+        bottom: IKPadding.huge,
+        right: IKPadding.mini
+    )
 }
 
 private struct PlanningScrollAnchor {
@@ -173,6 +180,7 @@ struct PlanningCollectionView: UIViewRepresentable {
             layout.minimumLineSpacing = IKPadding.mini
             layout.minimumInteritemSpacing = 0
             layout.sectionHeadersPinToVisibleBounds = true
+            layout.sectionInset = PlanningLayoutMetrics.sectionInsets
             return layout
         }
 
@@ -184,7 +192,7 @@ struct PlanningCollectionView: UIViewRepresentable {
             sizeForItemAt indexPath: IndexPath
         ) -> CGSize {
             let item = item(at: indexPath)
-            let inset = sectionInset(for: indexPath.section)
+            let inset = PlanningLayoutMetrics.sectionInsets
             let width = collectionView.bounds.width - inset.right - inset.left
 
             switch item {
@@ -204,34 +212,6 @@ struct PlanningCollectionView: UIViewRepresentable {
             referenceSizeForHeaderInSection section: Int
         ) -> CGSize {
             return CGSize(width: PlanningLayoutMetrics.dayColumnWidth, height: PlanningLayoutMetrics.dayHeaderHeight)
-        }
-
-        func collectionView(
-            _ collectionView: UICollectionView,
-            layout collectionViewLayout: UICollectionViewLayout,
-            insetForSectionAt section: Int
-        ) -> UIEdgeInsets {
-            return sectionInset(for: section)
-        }
-
-        private func sectionInset(for section: Int) -> UIEdgeInsets {
-            let day = day(at: section)
-
-            if day.isWeekStart {
-                return UIEdgeInsets(
-                    top: 0,
-                    left: PlanningLayoutMetrics.dayColumnWidth,
-                    bottom: IKPadding.large,
-                    right: IKPadding.mini
-                )
-            } else {
-                return UIEdgeInsets(
-                    top: -PlanningLayoutMetrics.dayHeaderHeight,
-                    left: PlanningLayoutMetrics.dayColumnWidth,
-                    bottom: IKPadding.huge,
-                    right: IKPadding.mini
-                )
-            }
         }
 
         // MARK: - Data source
