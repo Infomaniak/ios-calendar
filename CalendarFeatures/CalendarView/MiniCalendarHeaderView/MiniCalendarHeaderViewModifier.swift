@@ -27,14 +27,14 @@ struct MiniCalendarHeaderViewModifier: ViewModifier {
             if #available(iOS 26.0, *) {
                 content
                     .safeAreaBar(edge: .top) {
-                        MiniCalendarView()
+                        MiniCalendarView(selectedDate: $selectedDate)
                             .frame(height: 54)
                             .padding(.bottom, IKPadding.mini)
                     }
             } else {
                 content
                     .safeAreaInset(edge: .top) {
-                        MiniCalendarView()
+                        MiniCalendarView(selectedDate: $selectedDate)
                             .frame(height: 54)
                             .padding(.bottom, IKPadding.mini)
                             .background(Material.bar)
