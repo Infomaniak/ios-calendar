@@ -23,7 +23,7 @@ import SwiftUI
 struct DayView: View {
     enum Constants {
         enum PointsPerHour {
-            static let minimum: CGFloat = 20
+            static let minimum: CGFloat = 30
             static let `default`: CGFloat = 60
             static let maximum: CGFloat = 100
         }
@@ -34,6 +34,10 @@ struct DayView: View {
     @ScaledMetric private var pointsPerHour = Constants.PointsPerHour.default
 
     let date: Date
+
+    private var verticalOffset: CGFloat {
+        return UIFont.scaledFontSize(.caption2, size: 11)
+    }
 
     private var hours: [Int] {
         let rangeOfHours = Calendar.current.range(of: .hour, in: .day, for: date) ?? 0 ..< 24

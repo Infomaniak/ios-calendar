@@ -137,26 +137,16 @@ struct NextEventContentCardView: View {
     let progress: Double
 
     enum Constants {
-        static let durationFontSize = scaledFontSize(.caption2, size: 12, weight: .semibold)
+        static let durationFontSize = UIFont.scaledFontSize(.caption2, size: 12, weight: .semibold)
 
-        static let titleExpandedFontSize = scaledFontSize(.callout, size: 16, weight: .semibold)
-        static let titleCollapsedFontSize = scaledFontSize(.footnote, size: 13, weight: .semibold)
+        static let titleExpandedFontSize = UIFont.scaledFontSize(.callout, size: 16, weight: .semibold)
+        static let titleCollapsedFontSize = UIFont.scaledFontSize(.footnote, size: 13, weight: .semibold)
 
         static let informationIconSize: CGFloat = IKIconSize.medium.rawValue
-        static let informationFontSize = scaledFontSize(.caption2, size: 12, weight: .bold)
+        static let informationFontSize = UIFont.scaledFontSize(.caption2, size: 12, weight: .bold)
 
         static var informationSize: CGFloat {
             max(informationIconSize, informationFontSize)
-        }
-
-        private static func scaledFontSize(
-            _ textStyle: UIFont.TextStyle,
-            size: CGFloat,
-            weight: UIFont.Weight = .regular
-        ) -> CGFloat {
-            let metrics = UIFontMetrics(forTextStyle: textStyle)
-            let font = metrics.scaledFont(for: .systemFont(ofSize: size, weight: weight))
-            return font.pointSize
         }
     }
 
