@@ -146,7 +146,7 @@ struct PlanningCollectionView: UIViewRepresentable {
             emptyEventCellRegistration = .init { cell, _, _ in
                 cell.contentConfiguration = UIHostingConfiguration { NoEventsCellView() }
                     .margins(.all, 0)
-                    .minSize(height: PlanningLayoutMetrics.eventRowMinHeight)
+                    .minSize(height: PlanningLayoutMetrics.dayHeaderHeight)
 
                 cell.configurationUpdateHandler = { cell, _ in
                     cell.backgroundConfiguration = .clear()
@@ -199,7 +199,7 @@ struct PlanningCollectionView: UIViewRepresentable {
             case .weekHeader:
                 return CGSize(width: width, height: PlanningLayoutMetrics.weekHeaderHeight)
             case .empty:
-                return CGSize(width: width, height: PlanningLayoutMetrics.eventRowMinHeight)
+                return CGSize(width: width, height: PlanningLayoutMetrics.dayHeaderHeight)
             case .event(let event):
                 let height = cellSizeHelper.heightForCell(event: event)
                 return CGSize(width: width, height: height)
