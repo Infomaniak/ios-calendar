@@ -32,6 +32,7 @@ enum ScrollDirection {
 struct MiniCalendarView: View {
     private static let pageWindow = 3
     private static let moveWindowThreshold = 10
+    private static let adjustWindowThreshold: CGFloat = 100
 
     @Environment(\.calendar) private var calendar
 
@@ -64,37 +65,13 @@ struct MiniCalendarView: View {
                 let containerWidth = geometry.containerSize.width
                 return ScrollInfo(offsetX: offsetX, contentWidth: contentWidth, containerWidth: containerWidth)
             } action: { _, newValue in
-                guard newValue.contentWidth > 0, !isProgrammaticallyScrolling else { return }
-
-                let threshold: CGFloat = 100
-                let offsetX = newValue.offsetX
-                let contentWidth = newValue.contentWidth
-                let frameWidth = newValue.containerWidth
-
-                if offsetX > (contentWidth - frameWidth - threshold) && adjustingWindowDirection != .future {
-                    adjustWindowFuture()
-                }
-
-                if offsetX < threshold && adjustingWindowDirection != .past {
-                    adjustWindowPast()
-                }
+                adjustWindowIfNeeded(newValue)
             }
             .onAppear {
                 weeks = generateWeeks(from: Date(), range: -Self.pageWindow ... Self.pageWindow)
             }
             .onChange(of: selectedDate) { _, newValue in
-                guard let selectedDateWeekStart = calendar.dateInterval(of: .weekOfYear, for: newValue)?.start,
-                      selectedDateWeekStart != scrollPosition.viewID as? Date else {
-                    return
-                }
-
-                isProgrammaticallyScrolling = true
-                if !weeks.contains(where: { $0 == selectedDateWeekStart }) {
-                    weeks = generateWeeks(from: selectedDateWeekStart, range: -Self.pageWindow ... Self.pageWindow)
-                }
-
-                scrollPosition.scrollTo(id: selectedDateWeekStart)
-                isProgrammaticallyScrolling = false
+                scrollToSelectedDateIfNeeded(newValue)
             }
         }
     }
@@ -106,6 +83,35 @@ struct MiniCalendarView: View {
 
         return range.compactMap { offset in
             calendar.date(byAdding: .weekOfYear, value: offset, to: currentWeekStart)
+        }
+    }
+
+    private func scrollToSelectedDateIfNeeded(_ date: Date) {
+        guard let selectedDateWeekStart = calendar.dateInterval(of: .weekOfYear, for: date)?.start,
+              selectedDateWeekStart != scrollPosition.viewID as? Date else {
+            return
+        }
+
+        isProgrammaticallyScrolling = true
+        if !weeks.contains(where: { $0 == selectedDateWeekStart }) {
+            weeks = generateWeeks(from: selectedDateWeekStart, range: -Self.pageWindow ... Self.pageWindow)
+        }
+
+        scrollPosition.scrollTo(id: selectedDateWeekStart)
+        isProgrammaticallyScrolling = false
+    }
+
+    private func adjustWindowIfNeeded(_ scrollInfo: ScrollInfo) {
+        guard scrollInfo.contentWidth > 0, !isProgrammaticallyScrolling else { return }
+
+        let offsetX = scrollInfo.offsetX
+        let contentWidth = scrollInfo.contentWidth
+        let containerWidth = scrollInfo.containerWidth
+
+        if offsetX > (contentWidth - containerWidth - Self.adjustWindowThreshold) && adjustingWindowDirection != .future {
+            adjustWindowFuture()
+        } else if offsetX < Self.adjustWindowThreshold && adjustingWindowDirection != .past {
+            adjustWindowPast()
         }
     }
 
