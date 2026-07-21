@@ -93,11 +93,13 @@ struct MiniCalendarView: View {
         }
 
         isProgrammaticallyScrolling = true
-        if !weeks.contains(where: { $0 == selectedDateWeekStart }) {
-            weeks = generateWeeks(from: selectedDateWeekStart, range: -Self.pageWindow ... Self.pageWindow)
-        }
+        withAnimation {
+            if !weeks.contains(where: { $0 == selectedDateWeekStart }) {
+                weeks = generateWeeks(from: selectedDateWeekStart, range: -Self.pageWindow ... Self.pageWindow)
+            }
 
-        scrollPosition.scrollTo(id: selectedDateWeekStart)
+            scrollPosition.scrollTo(id: selectedDateWeekStart)
+        }
         isProgrammaticallyScrolling = false
     }
 
