@@ -25,8 +25,11 @@ public struct PlanningView: View {
     @State private var planningViewModel: PlanningViewModel
     @State private var nextEventCardViewModel = NextEventCardViewModel()
 
+    let calendarAccounts: [CalendarAccount.ID: CalendarAccount]
+
     public init(calendarAccounts: [CalendarAccount.ID: CalendarAccount]) {
-        _planningViewModel = State(initialValue: PlanningViewModel(calendarAccounts: calendarAccounts))
+        self.calendarAccounts = calendarAccounts
+        _planningViewModel = State(wrappedValue: PlanningViewModel(calendarAccounts: calendarAccounts))
     }
 
     public var body: some View {
@@ -49,6 +52,7 @@ public struct PlanningView: View {
             .task {
                 planningViewModel.scrollTarget = Date()
             }
+            .id(calendarAccounts)
     }
 }
 
