@@ -88,6 +88,7 @@ struct PlanningCollectionView: UIViewRepresentable {
         private let weekHeaderCellRegistration: UICollectionView.CellRegistration<PlanningWeekHeaderCell, Date>
         private let allDayCellRegistration: UICollectionView.CellRegistration<UICollectionViewListCell, CalendarCoreUI.UIEvent>
         private let eventCellRegistration: UICollectionView.CellRegistration<UICollectionViewListCell, CalendarCoreUI.UIEvent>
+        private let emptyEventCellRegistration: UICollectionView.CellRegistration<UICollectionViewListCell, Date>
 
         private var gestureStartOffsetY = CGFloat.zero
         private var gestureStartProgress: CGFloat = 1.0
@@ -129,6 +130,16 @@ struct PlanningCollectionView: UIViewRepresentable {
                 }
                 .margins(.all, 0)
                 .minSize(height: PlanningLayoutMetrics.eventRowMinHeight)
+
+                cell.configurationUpdateHandler = { cell, _ in
+                    cell.backgroundConfiguration = .clear()
+                }
+            }
+
+            emptyEventCellRegistration = .init { cell, _, _ in
+                cell.contentConfiguration = UIHostingConfiguration { NoEventsCellView() }
+                    .margins(.all, 0)
+                    .minSize(height: PlanningLayoutMetrics.eventRowMinHeight)
 
                 cell.configurationUpdateHandler = { cell, _ in
                     cell.backgroundConfiguration = .clear()
@@ -179,6 +190,8 @@ struct PlanningCollectionView: UIViewRepresentable {
             switch item {
             case .weekHeader:
                 return CGSize(width: width, height: PlanningLayoutMetrics.weekHeaderHeight)
+            case .empty:
+                return CGSize(width: width, height: PlanningLayoutMetrics.eventRowMinHeight)
             case .event(let event):
                 let height = cellSizeHelper.heightForCell(event: event)
                 return CGSize(width: width, height: height)
@@ -190,10 +203,6 @@ struct PlanningCollectionView: UIViewRepresentable {
             layout collectionViewLayout: UICollectionViewLayout,
             referenceSizeForHeaderInSection section: Int
         ) -> CGSize {
-            let day = day(at: section)
-            guard !day.events.isEmpty else {
-                return .zero
-            }
             return CGSize(width: PlanningLayoutMetrics.dayColumnWidth, height: PlanningLayoutMetrics.dayHeaderHeight)
         }
 
@@ -208,14 +217,7 @@ struct PlanningCollectionView: UIViewRepresentable {
         private func sectionInset(for section: Int) -> UIEdgeInsets {
             let day = day(at: section)
 
-            if !day.events.isEmpty {
-                return UIEdgeInsets(
-                    top: -PlanningLayoutMetrics.dayHeaderHeight,
-                    left: PlanningLayoutMetrics.dayColumnWidth,
-                    bottom: IKPadding.large,
-                    right: IKPadding.mini
-                )
-            } else if day.isWeekStart {
+            if day.isWeekStart {
                 return UIEdgeInsets(
                     top: 0,
                     left: PlanningLayoutMetrics.dayColumnWidth,
@@ -223,7 +225,12 @@ struct PlanningCollectionView: UIViewRepresentable {
                     right: IKPadding.mini
                 )
             } else {
-                return .zero
+                return UIEdgeInsets(
+                    top: -PlanningLayoutMetrics.dayHeaderHeight,
+                    left: PlanningLayoutMetrics.dayColumnWidth,
+                    bottom: IKPadding.huge,
+                    right: IKPadding.mini
+                )
             }
         }
 
@@ -246,6 +253,12 @@ struct PlanningCollectionView: UIViewRepresentable {
             case .weekHeader(let date):
                 return collectionView.dequeueConfiguredReusableCell(
                     using: weekHeaderCellRegistration,
+                    for: indexPath,
+                    item: date
+                )
+            case .empty(let date):
+                return collectionView.dequeueConfiguredReusableCell(
+                    using: emptyEventCellRegistration,
                     for: indexPath,
                     item: date
                 )
