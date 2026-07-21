@@ -21,6 +21,23 @@ import ESDSFoundation
 import SwiftUI
 import UIKit
 
+struct MiniCalendarWeekView: View {
+    let weekStartDate: Date
+
+    var body: some View {
+        HStack(spacing: 0) {
+            ForEach(0 ..< 7) { dayOffset in
+                ZStack {
+                    if let dayDate = Calendar.current.date(byAdding: .day, value: dayOffset, to: weekStartDate) {
+                        MiniCalendarDayCellView(date: dayDate)
+                    }
+                }
+                .frame(maxWidth: .infinity)
+            }
+        }
+    }
+}
+
 struct MiniCalendarDayCellView: View {
     @Environment(\.calendar) private var calendar
     @Environment(\.esdsTheme) private var theme
