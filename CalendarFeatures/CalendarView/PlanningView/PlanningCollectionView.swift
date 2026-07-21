@@ -482,7 +482,7 @@ struct PlanningCollectionView: UIViewRepresentable {
 
 #Preview {
     PlanningCollectionView(
-        planningViewModel: PlanningViewModel(),
+        planningViewModel: PlanningViewModel(calendarAccounts: [:]),
         nextEventCardViewModel: NextEventCardViewModel()
     )
     .ignoresSafeArea()

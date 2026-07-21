@@ -24,11 +24,11 @@ import SwiftUI
 
 public extension EnvironmentValues {
     @Entry
-    var calendarAccounts: [CalendarAccount] = []
+    var calendarAccounts: [CalendarAccount.ID: CalendarAccount] = [:]
 }
 
 public enum RootViewType: Equatable {
-    case mainView(accounts: [CalendarAccount])
+    case mainView(accounts: [CalendarAccount.ID: CalendarAccount])
     case onboarding
     case preloading
 }
@@ -58,7 +58,8 @@ public final class RootViewState: ObservableObject {
 
     public func transitionToMainViewIfPossible(calendarAccounts: [CalendarAccount]) {
         if !calendarAccounts.isEmpty {
-            state = .mainView(accounts: calendarAccounts)
+            let indexedAccounts = Dictionary(uniqueKeysWithValues: calendarAccounts.map { ($0.id, $0) })
+            state = .mainView(accounts: indexedAccounts)
         } else {
             state = .onboarding
         }
@@ -66,7 +67,7 @@ public final class RootViewState: ObservableObject {
 }
 
 public extension RootViewState {
-    static let previewMainView = RootViewState(state: .mainView(accounts: []))
+    static let previewMainView = RootViewState(state: .mainView(accounts: [:]))
     static let previewPreloading = RootViewState(state: .preloading)
     static let previewOnboarding = RootViewState(state: .onboarding)
 }

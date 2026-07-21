@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarCore
 import CalendarCoreUI
 import Foundation
 import InfomaniakDI
@@ -42,7 +43,11 @@ class PlanningViewModel {
     @ObservationIgnored private var observeCenterDate: Date
     @ObservationIgnored private var currentObserveTask: Task<Void, Never>?
 
-    init() {
+    private let calendarAccounts: [CalendarAccount.ID: CalendarAccount]
+
+    init(calendarAccounts: [CalendarAccount.ID: CalendarAccount]) {
+        self.calendarAccounts = calendarAccounts
+
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: Date())
         startDate = calendar.date(byAdding: .day, value: -Self.daysBeforeToday, to: today) ?? today
@@ -102,7 +107,8 @@ class PlanningViewModel {
                 guard let self else { return }
                 let uiEvents = daySlices.values.flatMap { eventDaySlices in
                     eventDaySlices.compactMap {
-                        CalendarCoreUI.UIEvent(eventDaySlice: $0, userEmail: "")
+                        let account = self.calendarAccounts[Int($0.event.accountIdValue)]
+                        return CalendarCoreUI.UIEvent(eventDaySlice: $0, userEmail: account?.user.email ?? "")
                     }
                 }
                 await ingest(uiEvents: uiEvents)
@@ -113,7 +119,7 @@ class PlanningViewModel {
     @concurrent
     private func ingest(uiEvents: [CalendarCoreUI.UIEvent]) async {
         let groupedEvents = Dictionary(grouping: uiEvents) { calendar.startOfDay(for: $0.startDate) }
-        let newDays = await PlanningDay.makeWindow(
+        let newDays = PlanningDay.makeWindow(
             startDate: startDate,
             dayCount: Self.sectionCount,
             eventsByDay: groupedEvents,

@@ -22,7 +22,9 @@ import InfomaniakLogin
 import MultiplatformCalendar
 
 public struct CalendarAccount: Identifiable, Equatable, Hashable, Sendable {
-    public var id: Int {
+    public typealias ID = Int
+
+    public var id: CalendarAccount.ID {
         token.userId
     }
 

@@ -16,15 +16,21 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarCore
 import DesignSystem
 import Foundation
 import SwiftUI
 
 public struct PlanningView: View {
-    @State private var planningViewModel = PlanningViewModel()
+    @State private var planningViewModel: PlanningViewModel
     @State private var nextEventCardViewModel = NextEventCardViewModel()
 
-    public init() {}
+    let calendarAccounts: [CalendarAccount.ID: CalendarAccount]
+
+    public init(calendarAccounts: [CalendarAccount.ID: CalendarAccount]) {
+        self.calendarAccounts = calendarAccounts
+        _planningViewModel = State(wrappedValue: PlanningViewModel(calendarAccounts: calendarAccounts))
+    }
 
     public var body: some View {
         PlanningCollectionView(planningViewModel: planningViewModel, nextEventCardViewModel: nextEventCardViewModel)
@@ -46,9 +52,10 @@ public struct PlanningView: View {
             .task {
                 planningViewModel.scrollTarget = Date()
             }
+            .id(calendarAccounts)
     }
 }
 
 #Preview {
-    PlanningView()
+    PlanningView(calendarAccounts: [:])
 }
