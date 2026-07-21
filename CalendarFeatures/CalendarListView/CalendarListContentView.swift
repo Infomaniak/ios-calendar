@@ -41,7 +41,7 @@ struct CalendarListContentView: View {
     let indexedCalendars: [Int: [UICalendar]]
 
     var body: some View {
-        ForEach(calendarAccounts) { account in
+        ForEach(Array(calendarAccounts.values)) { account in
             Section {
                 DisclosureGroup(
                     isExpanded: Binding(

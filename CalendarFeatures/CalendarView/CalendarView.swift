@@ -16,9 +16,12 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarCore
 import SwiftUI
 
 public struct CalendarView: View {
+    @Environment(\.calendarAccounts) private var calendarAccounts
+
     @State private var selectedMode: CalendarViewMode = .planning
 
     public init() {}
@@ -26,7 +29,7 @@ public struct CalendarView: View {
     public var body: some View {
         switch selectedMode {
         case .planning:
-            PlanningView()
+            PlanningView(calendarAccounts: calendarAccounts)
         case .week:
             WeekView()
         case .month:
