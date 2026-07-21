@@ -39,63 +39,79 @@ struct DayView: View {
         return UIFont.scaledFontSize(.caption2, size: 11)
     }
 
-    private var hours: [Int] {
-        let rangeOfHours = Calendar.current.range(of: .hour, in: .day, for: date) ?? 0 ..< 24
-        return Array(rangeOfHours)
+    private var hourMarks: [Date] {
+        let startOfDay = Calendar.current.startOfDay(for: date)
+        guard let startOfNextDay = Calendar.current.date(byAdding: .day, value: 1, to: startOfDay) else {
+            return []
+        }
+
+        var marks = [Date]()
+        var currentMark = startOfDay
+        while currentMark < startOfNextDay {
+            marks.append(currentMark)
+            guard let nextMark = Calendar.current.date(byAdding: .hour, value: 1, to: currentMark) else { break }
+            currentMark = nextMark
+        }
+
+        marks.append(startOfNextDay)
+
+        return marks
     }
 
     private var viewHeight: CGFloat {
-        return CGFloat(hours.count - 1) * pointsPerHour + 1
+        return CGFloat(hourMarks.count - 1) * pointsPerHour + verticalOffset * 2
     }
 
     var body: some View {
-        TimelineView(.everyMinute) { timeline in
+        TimelineView(.everyMinute) { _ in
             ScrollView {
                 ZStack {
-                    Canvas { context, size in
-                        var indexedSymbols = [Int: GraphicsContext.ResolvedSymbol]()
-                        var largestSymbolSize: CGSize = .zero
-                        for hour in hours {
-                            guard let symbol = context.resolveSymbol(id: hour) else {
-                                continue
+                    TimelineView(.everyMinute) { _ in
+                        Canvas { context, size in
+                            var indexedSymbols = [Date: GraphicsContext.ResolvedSymbol]()
+                            var largestSymbolSize: CGSize = .zero
+                            for mark in hourMarks {
+                                guard let symbol = context.resolveSymbol(id: mark) else {
+                                    continue
+                                }
+                                indexedSymbols[mark] = symbol
+
+                                if symbol.size.width > largestSymbolSize.width || symbol.size.height > largestSymbolSize.height {
+                                    largestSymbolSize = symbol.size
+                                }
                             }
-                            indexedSymbols[hour] = symbol
 
-                            if symbol.size.width > largestSymbolSize.width || symbol.size.height > largestSymbolSize.height {
-                                largestSymbolSize = symbol.size
-                            }
-                        }
+                            for (index, mark) in hourMarks.enumerated() {
+                                let yHourOffset = largestSymbolSize.height / 2
+                                let xHourOffset = largestSymbolSize.width + 16
 
-                        for hour in hours {
-                            let yHourOffset = largestSymbolSize.height / 2
-                            let xHourOffset = largestSymbolSize.width + 16
-
-                            let yPosition = CGFloat(hour) * pointsPerHour + yHourOffset
-                            context.stroke(
-                                Path(CGRect(x: xHourOffset, y: yPosition, width: size.width, height: 1)),
-                                with: .color(.gray.opacity(0.3))
-                            )
-
-                            if let hourSymbol = indexedSymbols[hour] {
-                                let centeredXPosition = largestSymbolSize.width / 2 - hourSymbol.size.width / 2
-
-                                context.draw(
-                                    hourSymbol,
-                                    in: CGRect(
-                                        x: centeredXPosition,
-                                        y: yPosition - yHourOffset,
-                                        width: hourSymbol.size.width,
-                                        height: hourSymbol.size.height
-                                    )
+                                let yPosition = CGFloat(index) * pointsPerHour + yHourOffset
+                                context.stroke(
+                                    Path(CGRect(x: xHourOffset, y: yPosition, width: size.width, height: 1)),
+                                    with: .color(.gray.opacity(0.3))
                                 )
+
+                                if let hourSymbol = indexedSymbols[mark] {
+                                    let centeredXPosition = largestSymbolSize.width / 2 - hourSymbol.size.width / 2
+
+                                    context.draw(
+                                        hourSymbol,
+                                        in: CGRect(
+                                            x: centeredXPosition,
+                                            y: yPosition - yHourOffset,
+                                            width: hourSymbol.size.width,
+                                            height: hourSymbol.size.height
+                                        )
+                                    )
+                                }
                             }
-                        }
-                    } symbols: {
-                        ForEach(hours, id: \.self) { hour in
-                            Text("\(hour):00")
-                                .font(.caption2.weight(.semibold))
-                                .foregroundStyle(theme.color.textSecondary)
-                                .tag(hour)
+                        } symbols: {
+                            ForEach(hourMarks, id: \.self) { mark in
+                                Text(mark, format: .dateTime.hour().minute())
+                                    .font(.caption2.weight(.semibold))
+                                    .foregroundStyle(theme.color.textSecondary)
+                                    .tag(mark)
+                            }
                         }
                     }
 
