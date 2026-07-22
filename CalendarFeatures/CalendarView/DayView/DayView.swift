@@ -23,7 +23,7 @@ import SwiftUI
 struct DayView: View {
     enum Constants {
         enum PointsPerHour {
-            static let minimum: CGFloat = 30
+            static let minimum: CGFloat = 40
             static let `default`: CGFloat = 60
             static let maximum: CGFloat = 100
         }
@@ -31,7 +31,10 @@ struct DayView: View {
 
     @Environment(\.esdsTheme) private var theme
 
-    @ScaledMetric private var pointsPerHour = Constants.PointsPerHour.default
+    @State private var scrollPosition = ScrollPosition()
+
+    @State private var pointsPerHour = Constants.PointsPerHour.default
+    @State private var currentMagnification: CGFloat = 1.0
 
     let date: Date
 
@@ -58,8 +61,12 @@ struct DayView: View {
         return marks
     }
 
+    private var effectivePointsPerHour: CGFloat {
+        return clampedPointsPerHour(pointsPerHour * currentMagnification)
+    }
+
     private var viewHeight: CGFloat {
-        return CGFloat(hourMarks.count - 1) * pointsPerHour + verticalOffset * 2
+        return CGFloat(hourMarks.count - 1) * effectivePointsPerHour + verticalOffset * 2
     }
 
     var body: some View {
@@ -85,7 +92,7 @@ struct DayView: View {
                                 let yHourOffset = largestSymbolSize.height / 2
                                 let xHourOffset = largestSymbolSize.width + 16
 
-                                let yPosition = CGFloat(index) * pointsPerHour + yHourOffset
+                                let yPosition = CGFloat(index) * effectivePointsPerHour + yHourOffset
                                 context.stroke(
                                     Path(CGRect(x: xHourOffset, y: yPosition, width: size.width, height: 1)),
                                     with: .color(.gray.opacity(0.3))
@@ -120,7 +127,22 @@ struct DayView: View {
                 .frame(height: viewHeight)
             }
             .contentMargins(IKPadding.medium, for: .scrollContent)
+            .scrollPosition($scrollPosition)
+            .simultaneousGesture(
+                MagnifyGesture()
+                    .onChanged { value in
+                        currentMagnification = value.magnification
+                    }
+                    .onEnded { value in
+                        pointsPerHour = clampedPointsPerHour(pointsPerHour * value.magnification)
+                        currentMagnification = 1.0
+                    }
+            )
         }
+    }
+
+    private func clampedPointsPerHour(_ value: CGFloat) -> CGFloat {
+        return min(max(value, Constants.PointsPerHour.minimum), Constants.PointsPerHour.maximum)
     }
 }
 
