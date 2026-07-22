@@ -22,6 +22,7 @@ import MultiplatformCalendar
 
 enum PlanningItem: Hashable {
     case weekHeader(Date)
+    case empty(Date)
     case event(CalendarCoreUI.UIEvent)
 }
 
@@ -47,7 +48,13 @@ extension PlanningDay {
         if isWeekStart {
             items.append(.weekHeader(date))
         }
-        items.append(contentsOf: events.map(PlanningItem.event))
+
+        let events = events.map(PlanningItem.event)
+        if events.isEmpty {
+            items.append(.empty(date))
+        } else {
+            items.append(contentsOf: events)
+        }
         return items
     }
 

@@ -1,12 +1,3 @@
-/*
- * Loco ios export: Xcode Strings (legacy)
- * Project: Calendar
- * Locale: it, Italian
- * Tagged: ios
- * Exported by: Valentin Perignon
- * Exported at: Wed, 08 Jul 2026 08:23:43 +0200
- */
-
 /* loco:6a3d35f26bb2f27bf40b0052 */
 "allDayLabel" = "Tutto il giorno";
 
@@ -49,6 +40,9 @@
 /* loco:6a3e37f5bc0f8ca5930a08d3 */
 "openCalendarListTitle" = "Apri l’elenco dei calendari";
 
+/* loco:6a4ba692c3d7c4ef7f0aede2 */
+"planningNothingPlanned" = "Niente di programmato";
+
 /* loco:6a2041176b9fab94970540c4 */
 "planningTitle" = "Pianificazione";
 
@@ -57,9 +51,6 @@
 
 /* loco:6a203f703a4a6492b407ce23 */
 "threeDaysTitle" = "Tre giorni";
-
-/* loco:6a33b6af70169a248e0094d6 */
-"weekHeaderDateRange" = "%d–%d %s %d";
 
 /* loco:6a33b6883afea93d8b078502 */
 "weekHeaderWeekNumber" = "S%d";
