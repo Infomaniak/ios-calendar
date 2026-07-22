@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<!--
- Loco ios export: Xcode Stringsdict (legacy)
- Project: Calendar
- Locale: da, Danish
- Tagged: ios-stringsdict
- Exported by: Valentin Perignon
- Exported at: Wed, 08 Jul 2026 10:02:07 +0200
--->
+
 <plist version="1.0">
   <dict>
     <key>moreParticipantsLabel</key>
