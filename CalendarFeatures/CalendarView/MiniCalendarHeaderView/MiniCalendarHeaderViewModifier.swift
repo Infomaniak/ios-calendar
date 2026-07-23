@@ -20,6 +20,8 @@ import DesignSystem
 import SwiftUI
 
 struct MiniCalendarHeaderViewModifier: ViewModifier {
+    @State private var displayMode: MiniCalendarView.DisplayMode = .week
+
     @Binding var selectedDate: Date
 
     func body(content: Content) -> some View {
@@ -27,15 +29,15 @@ struct MiniCalendarHeaderViewModifier: ViewModifier {
             if #available(iOS 26.0, *) {
                 content
                     .safeAreaBar(edge: .top) {
-                        MiniCalendarView(selectedDate: $selectedDate)
-                            .frame(height: 54)
+                        MiniCalendarView(displayMode: $displayMode, selectedDate: $selectedDate)
+                            .frame(height: displayMode == .week ? 54 : 154)
                             .padding(.bottom, IKPadding.mini)
                     }
             } else {
                 content
                     .safeAreaInset(edge: .top) {
-                        MiniCalendarView(selectedDate: $selectedDate)
-                            .frame(height: 54)
+                        MiniCalendarView(displayMode: $displayMode, selectedDate: $selectedDate)
+                            .frame(height: displayMode == .week ? 54 : 154)
                             .padding(.bottom, IKPadding.mini)
                             .background(Material.bar)
                             .onAppear {
@@ -50,7 +52,7 @@ struct MiniCalendarHeaderViewModifier: ViewModifier {
         .toolbar {
             if #available(iOS 26.0, *) {
                 ToolbarItem(placement: .principal) {
-                    Button {} label: {
+                    Button(action: switchDisplayMode) {
                         HStack {
                             Text(selectedDate, format: .dateTime.year().month(.wide))
                             Image(systemName: "chevron.down")
@@ -72,11 +74,17 @@ struct MiniCalendarHeaderViewModifier: ViewModifier {
             }
 
             ToolbarItem(placement: .topBarTrailing) {
-                Button {} label: {
+                Button(action: switchDisplayMode) {
                     Image(systemName: "magnifyingglass")
                 }
             }
         }
         .navigationBarTitleDisplayMode(.inline)
+    }
+
+    private func switchDisplayMode() {
+        withAnimation {
+            displayMode = displayMode == .month ? .week : .month
+        }
     }
 }

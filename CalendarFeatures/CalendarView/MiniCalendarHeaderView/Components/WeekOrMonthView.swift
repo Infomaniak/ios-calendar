@@ -26,13 +26,8 @@ struct WeekOrMonthView: View {
 
     @Environment(\.calendar) private var calendar
 
-    enum DisplayMode {
-        case month
-        case week
-    }
-
     let startDate: Date
-    let displayMode: DisplayMode
+    let displayMode: MiniCalendarView.DisplayMode
 
     private var monthStart: Date {
         calendar.monthStart(for: startDate)
@@ -96,7 +91,7 @@ struct WeekOrMonthView: View {
 }
 
 #Preview {
-    @Previewable @State var displayMode: WeekOrMonthView.DisplayMode = .week
+    @Previewable @State var displayMode: MiniCalendarView.DisplayMode = .week
     @Previewable @State var startDate: Date = Calendar.current.weekStart(for: Date())
     VStack {
         WeekOrMonthView(startDate: startDate, displayMode: displayMode)

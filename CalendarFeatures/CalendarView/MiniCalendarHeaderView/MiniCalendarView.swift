@@ -31,6 +31,11 @@ enum ScrollDirection {
 }
 
 struct MiniCalendarView: View {
+    enum DisplayMode {
+        case month
+        case week
+    }
+
     private static let pageWindow = 3
     private static let moveWindowThreshold = 10
     private static let adjustWindowThreshold: CGFloat = 100
@@ -43,6 +48,7 @@ struct MiniCalendarView: View {
     @State private var adjustingWindowDirection: ScrollDirection?
     @State private var isProgrammaticallyScrolling = false
 
+    @Binding var displayMode: DisplayMode
     @Binding var selectedDate: Date
 
     var body: some View {
@@ -52,7 +58,7 @@ struct MiniCalendarView: View {
                 ScrollView(.horizontal) {
                     LazyHStack(spacing: 0) {
                         ForEach(weeks, id: \.self) { week in
-                            WeekOrMonthView(startDate: week, displayMode: .week)
+                            WeekOrMonthView(startDate: week, displayMode: displayMode)
                                 .frame(width: proxy.size.width)
                         }
                     }
@@ -165,6 +171,7 @@ struct MiniCalendarView: View {
 }
 
 #Preview {
+    @Previewable @State var displayMode: MiniCalendarView.DisplayMode = .week
     @Previewable @State var selectedDate = Date()
-    MiniCalendarView(selectedDate: $selectedDate)
+    MiniCalendarView(displayMode: $displayMode, selectedDate: $selectedDate)
 }
