@@ -17,7 +17,7 @@
  */
 
 import CalendarResources
-import ESDSCalendar
+import ESDSFoundation
 import SwiftUI
 
 struct NoEventsCellView: View {

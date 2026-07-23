@@ -73,56 +73,7 @@ struct DayView: View {
         TimelineView(.everyMinute) { _ in
             ScrollView {
                 ZStack {
-                    TimelineView(.everyMinute) { _ in
-                        Canvas { context, size in
-                            var indexedSymbols = [Date: GraphicsContext.ResolvedSymbol]()
-                            var largestSymbolSize: CGSize = .zero
-                            for mark in hourMarks {
-                                guard let symbol = context.resolveSymbol(id: mark) else {
-                                    continue
-                                }
-                                indexedSymbols[mark] = symbol
-
-                                if symbol.size.width > largestSymbolSize.width || symbol.size.height > largestSymbolSize.height {
-                                    largestSymbolSize = symbol.size
-                                }
-                            }
-
-                            for (index, mark) in hourMarks.enumerated() {
-                                let yHourOffset = largestSymbolSize.height / 2
-                                let xHourOffset = largestSymbolSize.width + 16
-
-                                let yPosition = CGFloat(index) * effectivePointsPerHour + yHourOffset
-                                context.stroke(
-                                    Path(CGRect(x: xHourOffset, y: yPosition, width: size.width, height: 1)),
-                                    with: .color(.gray.opacity(0.3))
-                                )
-
-                                if let hourSymbol = indexedSymbols[mark] {
-                                    let centeredXPosition = largestSymbolSize.width / 2 - hourSymbol.size.width / 2
-
-                                    context.draw(
-                                        hourSymbol,
-                                        in: CGRect(
-                                            x: centeredXPosition,
-                                            y: yPosition - yHourOffset,
-                                            width: hourSymbol.size.width,
-                                            height: hourSymbol.size.height
-                                        )
-                                    )
-                                }
-                            }
-                        } symbols: {
-                            ForEach(hourMarks, id: \.self) { mark in
-                                Text(mark, format: .dateTime.hour().minute())
-                                    .font(.caption2.weight(.semibold))
-                                    .foregroundStyle(theme.color.textSecondary)
-                                    .tag(mark)
-                            }
-                        }
-                    }
-
-                    // EventsView goes here
+                    DayTimelineView(date: date, pointsPerHour: effectivePointsPerHour)
                 }
                 .frame(height: viewHeight)
             }
