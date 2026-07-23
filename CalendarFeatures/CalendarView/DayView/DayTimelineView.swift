@@ -75,8 +75,9 @@ struct DayTimelineView: View {
 
                     let yPosition = CGFloat(index) * pointsPerHour + hourSymbol.size.height / 2
                     context.stroke(
-                        Path(CGRect(x: leadingOffset, y: yPosition, width: size.width, height: 1)),
-                        with: .color(.gray.opacity(0.3))
+                        Path(CGRect(x: leadingOffset, y: yPosition - 0.5, width: size.width, height: 0.5)),
+                        with: .color(theme.color.borderDim2Default),
+                        style: .init(lineWidth: 0.5)
                     )
 
                     context.draw(
