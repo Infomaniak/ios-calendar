@@ -50,16 +50,17 @@ final class PlanningDayHeaderView: UICollectionReusableView {
         dayLabel.text = Self.dayFormatter.string(from: date)
 
         if Calendar.current.isDateInToday(date) {
-            weekdayLabel.font = .preferredFont(forTextStyle: .caption1) // TODO: Should be bolder
+            weekdayLabel.font = .preferredFont(forTextStyle: .caption1)
             weekdayLabel.textColor = .tintColor
 
-            dayLabel.font = .preferredFont(forTextStyle: .title2) // TODO: Should be bolder
+            let preferredFont = UIFont.preferredFont(forTextStyle: .title3)
+            dayLabel.font = .systemFont(ofSize: preferredFont.pointSize, weight: .semibold)
             dayLabel.textColor = .tintColor
         } else {
             weekdayLabel.font = .preferredFont(forTextStyle: .caption1)
-            weekdayLabel.textColor = .secondaryLabel
+            weekdayLabel.textColor = .label
 
-            dayLabel.font = .preferredFont(forTextStyle: .title2)
+            dayLabel.font = .preferredFont(forTextStyle: .title3)
             dayLabel.textColor = .label
         }
     }
