@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarCoreUI
 import DesignSystem
 import ESDSFoundation
 import SwiftUI
@@ -37,9 +38,22 @@ struct DayView: View {
     @State private var currentMagnification: CGFloat = 1.0
 
     let date: Date
+    let events: [CalendarCoreUI.UIEvent]
 
     private var verticalOffset: CGFloat {
         return UIFont.scaledFontSize(.caption2, size: 11)
+    }
+
+    private var leadingOffset: CGFloat {
+        let font = UIFont.systemFont(
+            ofSize: UIFont.scaledFontSize(.caption2, size: 11, weight: .semibold),
+            weight: .semibold
+        )
+        let largestLabelWidth = hourMarks.map { mark in
+            mark.formatted(.dateTime.hour().minute()).size(withAttributes: [.font: font]).width
+        }.max() ?? CGFloat.zero
+
+        return largestLabelWidth.rounded(.up) + DayTimelineView.Constants.labelSpacing
     }
 
     private var hourMarks: [Date] {
@@ -73,7 +87,14 @@ struct DayView: View {
         TimelineView(.everyMinute) { _ in
             ScrollView {
                 ZStack {
-                    DayTimelineView(date: date, pointsPerHour: effectivePointsPerHour)
+                    DayTimelineView(date: date, pointsPerHour: effectivePointsPerHour, leadingOffset: leadingOffset)
+
+                    VStack(spacing: 0) {
+                        ForEach(events) { event in
+                            DayEventView(event: event, pointsPerHour: effectivePointsPerHour)
+                        }
+                    }
+                    .padding(.leading, leadingOffset)
                 }
                 .frame(height: viewHeight)
             }
@@ -98,5 +119,5 @@ struct DayView: View {
 }
 
 #Preview {
-    DayView(date: .now)
+    DayView(date: .now, events: [.preview, .preview])
 }

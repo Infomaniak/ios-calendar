@@ -19,7 +19,7 @@
 import CalendarCoreUI
 import SwiftUI
 
-struct PlanningEventStyle: ViewModifier {
+struct EventCellStyle: ViewModifier {
     enum Mode: Equatable {
         case `default`
         case maybe
@@ -96,29 +96,29 @@ struct PlanningEventStyle: ViewModifier {
 }
 
 extension View {
-    func planningEventStyle(event: CalendarCoreUI.UIEvent) -> some View {
-        modifier(PlanningEventStyle(event: event))
+    func eventCellStyle(event: CalendarCoreUI.UIEvent) -> some View {
+        modifier(EventCellStyle(event: event))
     }
 
     // periphery:ignore - Used for #Preview
-    func planningEventStyle(mode: PlanningEventStyle.Mode) -> some View {
-        modifier(PlanningEventStyle(mode: mode))
+    func eventCellStyle(mode: EventCellStyle.Mode) -> some View {
+        modifier(EventCellStyle(mode: mode))
     }
 }
 
 #Preview {
     VStack {
         Text("Default")
-            .planningEventStyle(mode: .default)
+            .eventCellStyle(mode: .default)
 
         Text("Maybe")
-            .planningEventStyle(mode: .maybe)
+            .eventCellStyle(mode: .maybe)
 
         Text("Declined")
-            .planningEventStyle(mode: .declined)
+            .eventCellStyle(mode: .declined)
 
         Text("Pending")
-            .planningEventStyle(mode: .pending)
+            .eventCellStyle(mode: .pending)
     }
     .padding()
     .background(Color.gray.opacity(0.1))

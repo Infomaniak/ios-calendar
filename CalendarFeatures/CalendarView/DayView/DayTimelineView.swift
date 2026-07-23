@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarCoreUI
 import ESDSFoundation
 import SwiftUI
 
@@ -24,6 +25,25 @@ struct DayTimelineView: View {
 
     let date: Date
     let pointsPerHour: CGFloat
+    let leadingOffset: CGFloat
+
+    enum Constants {
+        static let labelSpacing: CGFloat = 16
+    }
+
+    static func leadingOffset(for hourMarks: [Date]) -> CGFloat {
+        let font = UIFont.systemFont(
+            ofSize: UIFont.scaledFontSize(.caption2, size: 11, weight: .semibold),
+            weight: .semibold
+        )
+        let largestLabelWidth = hourMarks
+            .map { mark in
+                mark.formatted(.dateTime.hour().minute()).size(withAttributes: [.font: font]).width
+            }
+            .max() ?? CGFloat.zero
+
+        return largestLabelWidth.rounded(.up) + Constants.labelSpacing
+    }
 
     private var hourMarks: [Date] {
         let startOfDay = Calendar.current.startOfDay(for: date)
@@ -47,42 +67,26 @@ struct DayTimelineView: View {
     var body: some View {
         TimelineView(.everyMinute) { _ in
             Canvas { context, size in
-                var indexedSymbols = [Date: GraphicsContext.ResolvedSymbol]()
-                var largestSymbolSize: CGSize = .zero
-                for mark in hourMarks {
-                    guard let symbol = context.resolveSymbol(id: mark) else {
-                        continue
-                    }
-                    indexedSymbols[mark] = symbol
-
-                    if symbol.size.width > largestSymbolSize.width || symbol.size.height > largestSymbolSize.height {
-                        largestSymbolSize = symbol.size
-                    }
-                }
+                let labelAreaWidth = leadingOffset - Constants.labelSpacing
 
                 for (index, mark) in hourMarks.enumerated() {
-                    let yHourOffset = largestSymbolSize.height / 2
-                    let xHourOffset = largestSymbolSize.width + 16
+                    guard let hourSymbol = context.resolveSymbol(id: mark) else { continue }
 
-                    let yPosition = CGFloat(index) * pointsPerHour + yHourOffset
+                    let yPosition = CGFloat(index) * pointsPerHour + hourSymbol.size.height / 2
                     context.stroke(
-                        Path(CGRect(x: xHourOffset, y: yPosition, width: size.width, height: 1)),
+                        Path(CGRect(x: leadingOffset, y: yPosition, width: size.width, height: 1)),
                         with: .color(.gray.opacity(0.3))
                     )
 
-                    if let hourSymbol = indexedSymbols[mark] {
-                        let centeredXPosition = largestSymbolSize.width / 2 - hourSymbol.size.width / 2
-
-                        context.draw(
-                            hourSymbol,
-                            in: CGRect(
-                                x: centeredXPosition,
-                                y: yPosition - yHourOffset,
-                                width: hourSymbol.size.width,
-                                height: hourSymbol.size.height
-                            )
+                    context.draw(
+                        hourSymbol,
+                        in: CGRect(
+                            x: (labelAreaWidth - hourSymbol.size.width) / 2,
+                            y: CGFloat(index) * pointsPerHour,
+                            width: hourSymbol.size.width,
+                            height: hourSymbol.size.height
                         )
-                    }
+                    )
                 }
             } symbols: {
                 ForEach(hourMarks, id: \.self) { mark in
@@ -97,5 +101,5 @@ struct DayTimelineView: View {
 }
 
 #Preview {
-    DayTimelineView(date: .now, pointsPerHour: 50)
+    DayTimelineView(date: .now, pointsPerHour: 50, leadingOffset: 50)
 }
