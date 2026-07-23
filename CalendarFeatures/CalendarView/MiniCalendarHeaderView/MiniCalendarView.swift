@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import SwiftUI
 
 struct ScrollInfo: Equatable {
@@ -46,14 +47,17 @@ struct MiniCalendarView: View {
 
     var body: some View {
         GeometryReader { proxy in
-            ScrollView(.horizontal) {
-                LazyHStack(spacing: 0) {
-                    ForEach(weeks, id: \.self) { week in
-                        MiniCalendarWeekView(weekStartDate: week)
-                            .frame(width: proxy.size.width)
+            VStack(spacing: IKPadding.micro) {
+                MiniCalendarDayOfWeekView()
+                ScrollView(.horizontal) {
+                    LazyHStack(spacing: 0) {
+                        ForEach(weeks, id: \.self) { week in
+                            MiniCalendarWeekView(weekStartDate: week)
+                                .frame(width: proxy.size.width)
+                        }
                     }
+                    .scrollTargetLayout()
                 }
-                .scrollTargetLayout()
             }
             .scrollIndicators(.hidden)
             .scrollTargetBehavior(.paging)
