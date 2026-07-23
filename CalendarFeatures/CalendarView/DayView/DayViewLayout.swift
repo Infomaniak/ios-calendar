@@ -40,7 +40,7 @@ struct DayViewLayout: Layout {
             let preferredSize = subview.sizeThatFits(.unspecified)
             subview.place(
                 at: CGPoint(x: leadingInset, y: offsetY),
-                proposal: .init(width: proposal.width, height: preferredSize.height)
+                proposal: .init(width: (proposal.width ?? 100) - leadingInset, height: preferredSize.height)
             )
         }
     }
