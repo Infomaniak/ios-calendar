@@ -52,7 +52,7 @@ struct WeekOrMonthView: View {
             ForEach(0 ..< rowCount, id: \.self) { row in
                 let weekStartDay = calendar.date(byAdding: .day, value: row * 7, to: gridStart)
                 GridRow {
-                    HStack {
+                    HStack(spacing: 0) {
                         ForEach(0 ..< 7, id: \.self) { column in
                             let dayIndex = row * 7 + column
 
