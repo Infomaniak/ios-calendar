@@ -22,22 +22,90 @@ import SwiftUI
 import UIKit
 
 struct WeekOrMonthView: View {
-    let weekStartDate: Date
+    @Namespace private var weeksOrMonthViewNamespace
+
+    @Environment(\.calendar) private var calendar
+
+    enum DisplayMode {
+        case month
+        case week
+    }
+
+    let startDate: Date
+    let displayMode: DisplayMode
+
+    private var monthStart: Date {
+        calendar.monthStart(for: startDate)
+    }
+
+    private var gridStart: Date {
+        displayMode == .week ? startDate : calendar.weekStart(for: monthStart)
+    }
+
+    private var rowCount: Int {
+        guard displayMode == .month,
+              let monthEnd = calendar.dateInterval(of: .month, for: monthStart)?.end else {
+            return 1
+        }
+
+        let dayCount = calendar.dateComponents([.day], from: gridStart, to: monthEnd).day ?? 0
+        return min(max((dayCount + 6) / 7, 4), 6)
+    }
 
     var body: some View {
-        HStack(spacing: 0) {
-            ForEach(0 ..< 7) { dayOffset in
-                ZStack {
-                    if let dayDate = Calendar.current.date(byAdding: .day, value: dayOffset, to: weekStartDate) {
-                        DayCellView(date: dayDate)
+        Grid(horizontalSpacing: 0, verticalSpacing: 0) {
+            ForEach(0 ..< rowCount, id: \.self) { row in
+                let weekStartDay = calendar.date(byAdding: .day, value: row * 7, to: gridStart)
+                GridRow {
+                    HStack {
+                        ForEach(0 ..< 7, id: \.self) { column in
+                            let dayIndex = row * 7 + column
+
+                            ZStack {
+                                if let dayDate = calendar.date(byAdding: .day, value: dayIndex, to: gridStart) {
+                                    if displayMode == .week || calendar.isDate(
+                                        dayDate,
+                                        equalTo: monthStart,
+                                        toGranularity: .month
+                                    ) {
+                                        DayCellView(date: dayDate)
+                                    } else {
+                                        DayCellView(date: dayDate)
+                                            .opacity(0.5)
+                                    }
+                                }
+                            }
+                            .frame(maxWidth: .infinity)
+                        }
                     }
+                    .geometryGroup()
+                    .matchedGeometryEffect(id: weekStartDay, in: weeksOrMonthViewNamespace)
                 }
-                .frame(maxWidth: .infinity)
             }
         }
+        .frame(maxWidth: .infinity)
     }
 }
 
 #Preview {
-    WeekOrMonthView(weekStartDate: Calendar.current.weekStart(for: Date()))
+    WeekOrMonthView(startDate: Calendar.current.weekStart(for: Date()), displayMode: .week)
+}
+
+#Preview {
+    WeekOrMonthView(startDate: Calendar.current.monthStart(for: Date()), displayMode: .month)
+}
+
+#Preview {
+    @Previewable @State var displayMode: WeekOrMonthView.DisplayMode = .week
+    @Previewable @State var startDate: Date = Calendar.current.weekStart(for: Date())
+    VStack {
+        WeekOrMonthView(startDate: startDate, displayMode: displayMode)
+        Button("Toggle Display Mode") {
+            withAnimation {
+                displayMode = (displayMode == .week) ? .month : .week
+                startDate = (displayMode == .week) ? Calendar.current.weekStart(for: Date()) : Calendar.current
+                    .monthStart(for: Date())
+            }
+        }
+    }
 }

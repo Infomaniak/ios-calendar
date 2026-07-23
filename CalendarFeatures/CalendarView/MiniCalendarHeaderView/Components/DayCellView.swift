@@ -48,6 +48,7 @@ struct DayCellView: View {
                 Circle().stroke(Color.accentColor, lineWidth: 1)
             }
         }
+        .geometryGroup()
     }
 }
 

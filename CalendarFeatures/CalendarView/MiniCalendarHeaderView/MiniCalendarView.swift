@@ -52,7 +52,7 @@ struct MiniCalendarView: View {
                 ScrollView(.horizontal) {
                     LazyHStack(spacing: 0) {
                         ForEach(weeks, id: \.self) { week in
-                            WeekOrMonthView(weekStartDate: week)
+                            WeekOrMonthView(startDate: week, displayMode: .week)
                                 .frame(width: proxy.size.width)
                         }
                     }

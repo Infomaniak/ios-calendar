@@ -22,4 +22,8 @@ public extension Calendar {
     func weekStart(for date: Date) -> Date {
         dateInterval(of: .weekOfYear, for: date)?.start ?? startOfDay(for: date)
     }
+
+    func monthStart(for date: Date) -> Date {
+        dateInterval(of: .month, for: date)?.start ?? startOfDay(for: date)
+    }
 }
