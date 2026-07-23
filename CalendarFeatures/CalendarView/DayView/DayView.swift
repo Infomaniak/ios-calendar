@@ -23,6 +23,18 @@ import SwiftUI
 
 struct DayView: View {
     enum Constants {
+        static let verticalInset = DayTimelineView.Constants.labelFontSize / 2
+
+        static let leadingInset: CGFloat = {
+            let font = UIFont.systemFont(
+                ofSize: DayTimelineView.Constants.labelFontSize,
+                weight: .semibold
+            )
+            let largestLabelWidth = "00:00".size(withAttributes: [.font: font]).width
+
+            return largestLabelWidth.rounded(.up) + DayTimelineView.Constants.labelSpacing
+        }()
+
         enum PointsPerHour {
             static let minimum: CGFloat = 40
             static let `default`: CGFloat = 60
@@ -39,22 +51,6 @@ struct DayView: View {
 
     let date: Date
     let events: [CalendarCoreUI.UIEvent]
-
-    private var verticalOffset: CGFloat {
-        return UIFont.scaledFontSize(.caption2, size: 11) / 2
-    }
-
-    private var leadingOffset: CGFloat {
-        let font = UIFont.systemFont(
-            ofSize: UIFont.scaledFontSize(.caption2, size: 11, weight: .semibold),
-            weight: .semibold
-        )
-        let largestLabelWidth = hourMarks.map { mark in
-            mark.formatted(.dateTime.hour().minute()).size(withAttributes: [.font: font]).width
-        }.max() ?? CGFloat.zero
-
-        return largestLabelWidth.rounded(.up) + DayTimelineView.Constants.labelSpacing
-    }
 
     private var hourMarks: [Date] {
         let startOfDay = Calendar.current.startOfDay(for: date)
@@ -80,18 +76,18 @@ struct DayView: View {
     }
 
     private var viewHeight: CGFloat {
-        return CGFloat(hourMarks.count - 1) * effectivePointsPerHour + verticalOffset * 2
+        return CGFloat(hourMarks.count - 1) * effectivePointsPerHour + Self.Constants.verticalInset * 2
     }
 
     var body: some View {
         TimelineView(.everyMinute) { _ in
             ScrollView {
                 ZStack(alignment: .top) {
-                    DayTimelineView(date: date, pointsPerHour: effectivePointsPerHour, leadingOffset: leadingOffset)
+                    DayTimelineView(date: date, pointsPerHour: effectivePointsPerHour, leadingOffset: Self.Constants.leadingInset)
 
                     DayViewLayout(
-                        verticalInset: verticalOffset,
-                        leadingInset: leadingOffset,
+                        verticalInset: Self.Constants.verticalInset,
+                        leadingInset: Self.Constants.leadingInset,
                         pointsPerHour: effectivePointsPerHour
                     ) {
                         ForEach(events) { event in
@@ -99,7 +95,6 @@ struct DayView: View {
                                 .tag(event.startDate)
                         }
                     }
-                    .padding(.leading, leadingOffset)
                 }
                 .frame(height: viewHeight)
             }

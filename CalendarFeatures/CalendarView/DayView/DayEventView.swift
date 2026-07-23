@@ -16,8 +16,8 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import DesignSystem
 import CalendarCoreUI
+import DesignSystem
 import SwiftUI
 
 struct DayEventView: View {

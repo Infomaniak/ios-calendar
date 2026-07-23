@@ -28,6 +28,7 @@ struct DayTimelineView: View {
     let leadingOffset: CGFloat
 
     enum Constants {
+        static let labelFontSize = UIFont.scaledFontSize(.caption2, size: 11)
         static let labelSpacing: CGFloat = 16
     }
 

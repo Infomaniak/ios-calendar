@@ -1,4 +1,3 @@
-//
 /*
  Infomaniak Calendar - iOS App
  Copyright (C) 2026 Infomaniak Network SA
@@ -39,7 +38,10 @@ struct DayViewLayout: Layout {
             let offsetY = (CGFloat(hour) + CGFloat(minutes) / 60) * pointsPerHour + verticalInset
 
             let preferredSize = subview.sizeThatFits(.unspecified)
-            subview.place(at: CGPoint(x: leadingInset, y: offsetY), proposal: .init(width: proposal.width, height: preferredSize.height))
+            subview.place(
+                at: CGPoint(x: leadingInset, y: offsetY),
+                proposal: .init(width: proposal.width, height: preferredSize.height)
+            )
         }
     }
 }

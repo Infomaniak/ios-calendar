@@ -1,4 +1,3 @@
-//
 /*
  Infomaniak Calendar - iOS App
  Copyright (C) 2026 Infomaniak Network SA
@@ -54,7 +53,7 @@ struct DaysView: View {
         for await daySlices in calendarSDK.calendarManager.observeDaySlices(start: startDate.instant, end: endDate.instant) {
             let uiEvents = daySlices.values.flatMap { eventDaySlices in
                 eventDaySlices.compactMap {
-                    let account = self.calendarAccounts[Int($0.event.accountIdValue)]
+                    let account = calendarAccounts[Int($0.event.accountIdValue)]
                     return CalendarCoreUI.UIEvent(eventDaySlice: $0, userEmail: account?.user.email ?? "")
                 }
             }
