@@ -16,16 +16,72 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarCoreUI
+import DesignSystem
 import SwiftUI
 
 public struct EventDetailsView: View {
-    public init() {}
+
+    private let event: CalendarCoreUI.UIEvent
+    private var calendar: UICalendar?
+
+    public init(
+        event: CalendarCoreUI.UIEvent,
+        calendar: UICalendar? = nil
+    ) {
+        self.event = event
+        self.calendar = calendar
+    }
 
     public var body: some View {
-        EmptyView()
+        Form {
+            EventSectionView(event: event)
+
+            CalendarSectionView(calendar: calendar, event: event)
+
+            ParticipantsSectionView(event: event)
+           
+        }
+    }
+}
+
+struct AttendeeRow: View {
+    let attendee: UIAttendee
+    let isOrganizer: Bool
+
+    var body: some View {
+        HStack(spacing: IKPadding.medium) {
+            AvatarView(
+                rawAvatarURL: nil,
+                displayName: attendee.displayName ?? attendee.email,
+                email: attendee.email,
+                size: 24
+            )
+
+            VStack(alignment: .leading, spacing: IKPadding.micro) {
+                HStack(spacing: IKPadding.mini) {
+                    Text(attendee.displayName ?? attendee.email)
+
+                    if isOrganizer {
+                        Text("Organisateur")
+                            .font(.caption2)
+                            .padding(.horizontal, IKPadding.mini)
+                            .padding(.vertical, 2)
+                            .background(.secondary.opacity(0.15))
+                            .clipShape(Capsule())
+                    }
+                }
+
+                if attendee.displayName != nil {
+                    Text(attendee.email)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+            }
+        }
     }
 }
 
 #Preview {
-    EventDetailsView()
+    EventDetailsView(event: CalendarCoreUI.UIEvent.preview, calendar: UICalendar.preview)
 }
