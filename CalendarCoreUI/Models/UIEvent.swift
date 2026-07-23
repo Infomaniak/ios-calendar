@@ -71,8 +71,11 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
     public let endDate: Date
     public let isAllDay: Bool
 
+    public let calendarId: String
+
     public let user: UIAttendee?
     public let attendees: [UIAttendee]
+    public let organizer: UIAttendee?
 
     public let colors: UIEvent.Colors
 
@@ -84,8 +87,10 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
         isAllDay: Bool = false,
         status: EventStatus?,
         location: String? = nil,
+        calendarId: String,
         user: UIAttendee? = nil,
         attendees: [UIAttendee],
+        organizer: UIAttendee? = nil,
         colors: UIEvent.Colors
     ) {
         self.id = id
@@ -95,8 +100,10 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
         self.isAllDay = isAllDay
         self.status = status
         self.location = location
+        self.calendarId = calendarId
         self.user = user
         self.attendees = attendees
+        self.organizer = organizer
         self.colors = colors
     }
 }
@@ -113,6 +120,10 @@ public extension UIEvent {
         startDate = eventDaySlice.displayStartInstant().date
         endDate = eventDaySlice.displayEndInstant().date
         isAllDay = eventDaySlice.isAllDay
+
+        organizer = if let organizer = event.organizer { UIAttendee(attendee: organizer) } else { nil }
+        
+        calendarId = event.calendarIdValue
 
         var user: UIAttendee?
         attendees = event.attendees.map {
@@ -138,7 +149,9 @@ public extension UIEvent {
         endDate: Date().addingTimeInterval(7200),
         status: .confirmed,
         location: "1 Infinite Loop",
+        calendarId: "0",
         attendees: UIAttendee.previews,
+        organizer: UIAttendee(displayName: "Tim Cook", email: "tim@apple.com", status: .accepted),
         colors: .preview
     )
 
@@ -148,6 +161,7 @@ public extension UIEvent {
         startDate: Date(),
         endDate: Date().addingTimeInterval(60 * 15),
         status: .confirmed,
+        calendarId: "0",
         user: UIAttendee(displayName: "Tim Cook", email: "tim@apple.com", status: .accepted),
         attendees: UIAttendee.previews,
         colors: .preview
@@ -158,6 +172,7 @@ public extension UIEvent {
         startDate: Date(),
         endDate: Date().addingTimeInterval(60 * 60 * 2),
         status: .tentative,
+        calendarId: "0",
         user: UIAttendee(displayName: "Tim Cook", email: "tim@apple.com", status: .needsAction),
         attendees: [],
         colors: .preview
@@ -168,6 +183,7 @@ public extension UIEvent {
         startDate: Date(),
         endDate: Date().addingTimeInterval(60 * 60 * 24 * 2),
         status: .cancelled,
+        calendarId: "0",
         user: UIAttendee(displayName: "Tim Cook", email: "tim@apple.com", status: .declined),
         attendees: UIAttendee.previews,
         colors: .preview
@@ -183,6 +199,7 @@ public extension UIEvent {
             startDate: randomStartDate,
             endDate: randomEndDate,
             status: .confirmed,
+            calendarId: "0",
             attendees: UIAttendee.previews,
             colors: .preview
         )

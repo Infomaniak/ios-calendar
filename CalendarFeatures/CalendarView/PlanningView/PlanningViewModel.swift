@@ -59,6 +59,8 @@ class PlanningViewModel {
             eventsByDay: eventsByDay,
             calendar: calendar
         )
+
+        observeCalendars()
         observeEvents(around: today)
     }
 
@@ -131,5 +133,26 @@ class PlanningViewModel {
             days = newDays
             hasDeliveredEvents = true
         }
+    }
+
+    private func observeCalendars() {
+        Task {
+            @InjectService var calendarSDK: CalendarCoreGraph
+
+            for await calendars in calendarSDK.calendarManager.observeCalendars() {
+                calendarsById = Dictionary(
+                    uniqueKeysWithValues: calendars.map {
+                        let calendar = UICalendar(calendar: $0)
+                        return (calendar.id, calendar)
+                    }
+                )
+            }
+        }
+    }
+
+    private(set) var calendarsById: [String: UICalendar] = [:]
+
+    func calendar(for event: CalendarCoreUI.UIEvent) -> UICalendar? {
+        calendarsById[event.calendarId]
     }
 }

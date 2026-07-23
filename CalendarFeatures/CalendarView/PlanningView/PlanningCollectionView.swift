@@ -17,6 +17,7 @@
  */
 
 import CalendarCoreUI
+import CalendarEventDetailsView
 import DesignSystem
 import Foundation
 import SwiftUI
@@ -134,7 +135,15 @@ struct PlanningCollectionView: UIViewRepresentable {
 
             allDayCellRegistration = .init { cell, _, event in
                 cell.contentConfiguration = UIHostingConfiguration {
-                    PlanningDayEventView(event: event)
+                    NavigationLink {
+                        EventDetailsView(
+                            event: event,
+                            calendar: planningViewModel.calendar(for: event)
+                        )
+                    } label: {
+                        PlanningDayEventView(event: event)
+                    }
+                    .buttonStyle(.plain)
                 }
                 .margins(.all, 0)
                 .minSize(height: PlanningLayoutMetrics.eventRowMinHeight)
@@ -146,7 +155,15 @@ struct PlanningCollectionView: UIViewRepresentable {
 
             eventCellRegistration = .init { cell, _, event in
                 cell.contentConfiguration = UIHostingConfiguration {
-                    PlanningEventView(event: event)
+                    NavigationLink {
+                        EventDetailsView(
+                            event: event,
+                            calendar: planningViewModel.calendar(for: event)
+                        )
+                    } label: {
+                        PlanningEventView(event: event)
+                    }
+                    .buttonStyle(.plain)
                 }
                 .margins(.all, 0)
                 .minSize(height: PlanningLayoutMetrics.eventRowMinHeight)
