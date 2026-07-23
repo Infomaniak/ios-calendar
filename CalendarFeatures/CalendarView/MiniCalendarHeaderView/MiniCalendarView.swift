@@ -48,11 +48,11 @@ struct MiniCalendarView: View {
     var body: some View {
         GeometryReader { proxy in
             VStack(spacing: IKPadding.micro) {
-                MiniCalendarDayOfWeekView()
+                DayOfWeekView()
                 ScrollView(.horizontal) {
                     LazyHStack(spacing: 0) {
                         ForEach(weeks, id: \.self) { week in
-                            MiniCalendarWeekView(weekStartDate: week)
+                            WeekOrMonthView(weekStartDate: week)
                                 .frame(width: proxy.size.width)
                         }
                     }

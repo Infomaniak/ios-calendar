@@ -16,9 +16,10 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import ESDSFoundation
 import SwiftUI
 
-struct MiniCalendarDayOfWeekView: View {
+struct DayOfWeekView: View {
     @Environment(\.calendar) private var calendar
     @Environment(\.esdsTheme) private var theme
 
@@ -43,5 +44,5 @@ struct MiniCalendarDayOfWeekView: View {
 }
 
 #Preview {
-    MiniCalendarDayOfWeekView()
+    DayOfWeekView()
 }

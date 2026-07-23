@@ -21,7 +21,7 @@ import ESDSFoundation
 import SwiftUI
 import UIKit
 
-struct MiniCalendarWeekView: View {
+struct WeekOrMonthView: View {
     let weekStartDate: Date
 
     var body: some View {
@@ -29,7 +29,7 @@ struct MiniCalendarWeekView: View {
             ForEach(0 ..< 7) { dayOffset in
                 ZStack {
                     if let dayDate = Calendar.current.date(byAdding: .day, value: dayOffset, to: weekStartDate) {
-                        MiniCalendarDayCellView(date: dayDate)
+                        DayCellView(date: dayDate)
                     }
                 }
                 .frame(maxWidth: .infinity)
@@ -38,39 +38,6 @@ struct MiniCalendarWeekView: View {
     }
 }
 
-struct MiniCalendarDayCellView: View {
-    @Environment(\.calendar) private var calendar
-    @Environment(\.esdsTheme) private var theme
-
-    let date: Date
-    var isSelected = false
-
-    var isToday: Bool {
-        return calendar.isDateInToday(date)
-    }
-
-    var body: some View {
-        ZStack {
-            Text("00")
-                .opacity(0)
-            Text(date, format: .dateTime.day())
-        }
-        .padding(value: .micro)
-        .monospacedDigit()
-        .font(.body.weight(.semibold))
-        .foregroundColor(theme.color.textPrimary)
-        .background(isToday ? Color.accentColor : Color.clear, in: .circle)
-        .overlay {
-            if isSelected, !isToday {
-                Circle().stroke(Color.accentColor, lineWidth: 1)
-            }
-        }
-    }
-}
-
 #Preview {
-    HStack {
-        MiniCalendarDayCellView(date: Date())
-        MiniCalendarDayCellView(date: Date(timeIntervalSinceNow: -86400), isSelected: true)
-    }
+    WeekOrMonthView(weekStartDate: Calendar.current.weekStart(for: Date()))
 }
