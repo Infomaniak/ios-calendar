@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import CalendarCoreUI
 import SwiftUI
 
@@ -52,8 +53,9 @@ struct DayEventView: View {
 
             EventIconsView(event: event)
         }
+        .padding(IKPadding.mini)
         .frame(height: height, alignment: .top)
-        .eventCellStyle(event: event)
+        .eventCellStyle(event: event, padding: 0)
     }
 }
 
