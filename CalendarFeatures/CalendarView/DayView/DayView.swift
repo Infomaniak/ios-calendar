@@ -41,7 +41,7 @@ struct DayView: View {
     let events: [CalendarCoreUI.UIEvent]
 
     private var verticalOffset: CGFloat {
-        return UIFont.scaledFontSize(.caption2, size: 11)
+        return UIFont.scaledFontSize(.caption2, size: 11) / 2
     }
 
     private var leadingOffset: CGFloat {
@@ -86,12 +86,17 @@ struct DayView: View {
     var body: some View {
         TimelineView(.everyMinute) { _ in
             ScrollView {
-                ZStack {
+                ZStack(alignment: .top) {
                     DayTimelineView(date: date, pointsPerHour: effectivePointsPerHour, leadingOffset: leadingOffset)
 
-                    VStack(spacing: 0) {
+                    DayViewLayout(
+                        verticalInset: verticalOffset,
+                        leadingInset: leadingOffset,
+                        pointsPerHour: effectivePointsPerHour
+                    ) {
                         ForEach(events) { event in
                             DayEventView(event: event, pointsPerHour: effectivePointsPerHour)
+                                .tag(event.startDate)
                         }
                     }
                     .padding(.leading, leadingOffset)
