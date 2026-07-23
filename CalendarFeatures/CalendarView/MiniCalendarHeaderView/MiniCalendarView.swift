@@ -52,37 +52,36 @@ struct MiniCalendarView: View {
     @Binding var selectedDate: Date
 
     var body: some View {
-        GeometryReader { proxy in
-            VStack(spacing: IKPadding.micro) {
-                DayOfWeekView()
-                ScrollView(.horizontal) {
-                    LazyHStack(spacing: 0) {
-                        ForEach(weeks, id: \.self) { week in
-                            WeekOrMonthView(startDate: week, displayMode: displayMode)
-                                .frame(width: proxy.size.width)
-                        }
+        VStack(spacing: IKPadding.micro) {
+            DayOfWeekView()
+            ScrollView(.horizontal) {
+                LazyHStack(spacing: 0) {
+                    ForEach(weeks, id: \.self) { week in
+                        WeekOrMonthView(startDate: week, displayMode: displayMode)
+                            .containerRelativeFrame(.horizontal)
                     }
-                    .scrollTargetLayout()
                 }
+                .scrollTargetLayout()
             }
-            .scrollIndicators(.hidden)
-            .scrollTargetBehavior(.paging)
-            .scrollPosition($scrollPosition)
-            .defaultScrollAnchor(.center)
-            .onScrollGeometryChange(for: ScrollInfo.self) { geometry in
-                let offsetX = geometry.contentOffset.x + geometry.contentInsets.leading
-                let contentWidth = geometry.contentSize.width
-                let containerWidth = geometry.containerSize.width
-                return ScrollInfo(offsetX: offsetX, contentWidth: contentWidth, containerWidth: containerWidth)
-            } action: { _, newValue in
-                adjustWindowIfNeeded(newValue)
-            }
-            .onAppear {
-                weeks = generateWeeks(from: Date(), range: -Self.pageWindow ... Self.pageWindow)
-            }
-            .onChange(of: selectedDate) { _, newValue in
-                scrollToSelectedDateIfNeeded(newValue)
-            }
+            .fixedSize(horizontal: false, vertical: true)
+        }
+        .scrollIndicators(.hidden)
+        .scrollTargetBehavior(.paging)
+        .scrollPosition($scrollPosition)
+        .defaultScrollAnchor(.center)
+        .onScrollGeometryChange(for: ScrollInfo.self) { geometry in
+            let offsetX = geometry.contentOffset.x + geometry.contentInsets.leading
+            let contentWidth = geometry.contentSize.width
+            let containerWidth = geometry.containerSize.width
+            return ScrollInfo(offsetX: offsetX, contentWidth: contentWidth, containerWidth: containerWidth)
+        } action: { _, newValue in
+            adjustWindowIfNeeded(newValue)
+        }
+        .onAppear {
+            weeks = generateWeeks(from: Date(), range: -Self.pageWindow ... Self.pageWindow)
+        }
+        .onChange(of: selectedDate) { _, newValue in
+            scrollToSelectedDateIfNeeded(newValue)
         }
     }
 

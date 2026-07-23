@@ -30,14 +30,12 @@ struct MiniCalendarHeaderViewModifier: ViewModifier {
                 content
                     .safeAreaBar(edge: .top) {
                         MiniCalendarView(displayMode: $displayMode, selectedDate: $selectedDate)
-                            .frame(height: displayMode == .week ? 54 : 154)
                             .padding(.bottom, IKPadding.mini)
                     }
             } else {
                 content
                     .safeAreaInset(edge: .top) {
                         MiniCalendarView(displayMode: $displayMode, selectedDate: $selectedDate)
-                            .frame(height: displayMode == .week ? 54 : 154)
                             .padding(.bottom, IKPadding.mini)
                             .background(Material.bar)
                             .onAppear {
