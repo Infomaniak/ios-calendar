@@ -42,7 +42,7 @@ struct MiniCalendarView: View {
 
     @Environment(\.calendar) private var calendar
 
-    @State private var weeks = [Date]()
+    @State private var referenceDates = [Date]()
     @State private var scrollPosition: ScrollPosition = .init(idType: Date.self)
 
     @State private var adjustingWindowDirection: ScrollDirection?
@@ -56,8 +56,8 @@ struct MiniCalendarView: View {
             DayOfWeekView()
             ScrollView(.horizontal) {
                 LazyHStack(spacing: 0) {
-                    ForEach(weeks, id: \.self) { week in
-                        WeekOrMonthView(startDate: week, displayMode: displayMode)
+                    ForEach(referenceDates, id: \.self) { referenceDate in
+                        WeekOrMonthView(startDate: referenceDate, displayMode: displayMode)
                             .containerRelativeFrame(.horizontal)
                     }
                 }
@@ -78,14 +78,14 @@ struct MiniCalendarView: View {
             adjustWindowIfNeeded(newValue)
         }
         .onAppear {
-            weeks = generateWeeks(from: Date(), range: -Self.pageWindow ... Self.pageWindow)
+            referenceDates = generateReferenceDates(from: Date(), range: -Self.pageWindow ... Self.pageWindow)
         }
         .onChange(of: selectedDate) { _, newValue in
             scrollToSelectedDateIfNeeded(newValue)
         }
     }
 
-    private func generateWeeks(from date: Date, range: ClosedRange<Int>) -> [Date] {
+    private func generateReferenceDates(from date: Date, range: ClosedRange<Int>) -> [Date] {
         guard let currentWeekStart = calendar.dateInterval(of: .weekOfYear, for: date)?.start else {
             return []
         }
@@ -103,8 +103,8 @@ struct MiniCalendarView: View {
 
         isProgrammaticallyScrolling = true
         withAnimation {
-            if !weeks.contains(where: { $0 == selectedDateWeekStart }) {
-                weeks = generateWeeks(from: selectedDateWeekStart, range: -Self.pageWindow ... Self.pageWindow)
+            if !referenceDates.contains(where: { $0 == selectedDateWeekStart }) {
+                referenceDates = generateReferenceDates(from: selectedDateWeekStart, range: -Self.pageWindow ... Self.pageWindow)
             }
 
             scrollPosition.scrollTo(id: selectedDateWeekStart)
@@ -127,11 +127,11 @@ struct MiniCalendarView: View {
     }
 
     private func adjustWindowFuture() {
-        guard let lastWeekStart = weeks.last else { return }
+        guard let lastWeekStart = referenceDates.last else { return }
         adjustingWindowDirection = .future
 
-        let additionalWeeks = generateWeeks(from: lastWeekStart, range: 1 ... Self.pageWindow)
-        weeks.append(contentsOf: additionalWeeks)
+        let additionalWeeks = generateReferenceDates(from: lastWeekStart, range: 1 ... Self.pageWindow)
+        referenceDates.append(contentsOf: additionalWeeks)
 
         resizeWindowIfNeeded(direction: adjustingWindowDirection)
 
@@ -141,11 +141,11 @@ struct MiniCalendarView: View {
     }
 
     private func adjustWindowPast() {
-        guard let firstWeekStart = weeks.first else { return }
+        guard let firstWeekStart = referenceDates.first else { return }
         adjustingWindowDirection = .past
 
-        let additionalWeeks = generateWeeks(from: firstWeekStart, range: -Self.pageWindow ... -1)
-        weeks.insert(contentsOf: additionalWeeks, at: 0)
+        let additionalWeeks = generateReferenceDates(from: firstWeekStart, range: -Self.pageWindow ... -1)
+        referenceDates.insert(contentsOf: additionalWeeks, at: 0)
 
         resizeWindowIfNeeded(direction: adjustingWindowDirection)
 
@@ -155,15 +155,15 @@ struct MiniCalendarView: View {
     }
 
     private func resizeWindowIfNeeded(direction: ScrollDirection?) {
-        guard weeks.count > Self.moveWindowThreshold else { return }
+        guard referenceDates.count > Self.moveWindowThreshold else { return }
 
         var transaction = Transaction()
         transaction.scrollPositionUpdatePreservesVelocity = true
         withTransaction(transaction) {
             if direction == .future {
-                weeks.removeFirst(Self.pageWindow)
+                referenceDates.removeFirst(Self.pageWindow)
             } else if direction == .past {
-                weeks.removeLast(Self.pageWindow)
+                referenceDates.removeLast(Self.pageWindow)
             }
         }
     }
