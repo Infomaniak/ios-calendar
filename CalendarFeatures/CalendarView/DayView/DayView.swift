@@ -108,35 +108,19 @@ struct DayView: View {
                         }
                     }
 
-                    let startOfDay = Calendar.current.startOfDay(for: timeline.date)
-                    let elapsedHours = timeline.date.timeIntervalSince(startOfDay) / 3600
-
-                    HStack(spacing: theme.spacing.twoXs) {
-                        Text(timeline.date.formatted(DayTimelineView.Constants.dateFormater))
-                            .font(DayTimelineView.Constants.labelFont)
-                            .padding(.horizontal, theme.spacing.xs)
-                            .padding(.vertical, theme.spacing.twoXs)
-                            .foregroundStyle(.white) // TODO: Use Red - On Dataviz when available
-                            .background(.red, in: .capsule) // TODO: Use Red - Background Dataviz when available
-
-                        HStack(spacing: 0) {
-                            Circle()
-                                .fill(.red) // TODO: Use Red - On Dataviz when available
-                                .frame(width: 8, height: 8)
-
-                            Divider()
-                                .frame(height: 1)
-                                .frame(maxWidth: .infinity)
-                                .background(.red) // TODO: Use Red - On Dataviz when available
-                        }
-                    }
-                    .offset(y: elapsedHours * effectivePointsPerHour)
-                    .accessibilityHidden(true)
+                    TimelineIndicatorView(date: timeline.date, pointsPerHour: effectivePointsPerHour)
                 }
                 .frame(height: viewHeight)
             }
             .contentMargins(IKPadding.medium, for: .scrollContent)
             .scrollPosition($scrollPosition)
+            .onAppear {
+                let now = Date.now
+                let elapsedTime = now.timeIntervalSince(calendar.startOfDay(for: now)) / 3600
+
+                let currentTimePosition = elapsedTime * effectivePointsPerHour + Self.Constants.verticalInset
+                scrollPosition.scrollTo(y: currentTimePosition - IKPadding.huge)
+            }
             .simultaneousGesture(
                 MagnifyGesture()
                     .onChanged { value in
