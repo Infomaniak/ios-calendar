@@ -21,8 +21,17 @@ import CalendarResources
 import DesignSystem
 import SwiftUI
 
+private extension Image {
+    func resizableIcon(_ accessibilityLabel: String) -> some View {
+        return resizable()
+            .scaledToFit()
+            .frame(maxWidth: EventIconsView.iconSize, maxHeight: EventIconsView.iconSize)
+            .accessibilityLabel(Text(accessibilityLabel))
+    }
+}
+
 struct EventIconsView: View {
-    static let iconSize: CGFloat = IKIconSize.medium.rawValue
+    nonisolated static let iconSize: CGFloat = IKIconSize.medium.rawValue
 
     let hasLocation: Bool
     let hasKMeetLink: Bool
@@ -38,24 +47,15 @@ struct EventIconsView: View {
         HStack(spacing: IKPadding.micro) {
             if hasLocation {
                 CalendarResourcesAsset.Images.mapPin.swiftUIImage
-                    .resizable()
-                    .scaledToFit()
-                    .frame(maxWidth: Self.iconSize, maxHeight: Self.iconSize)
-                    .accessibilityLabel(Text(CalendarResourcesStrings.contentDescriptionHasLocation))
+                    .resizableIcon(CalendarResourcesStrings.contentDescriptionHasLocation)
             }
             if hasKMeetLink {
                 CalendarResourcesAsset.Images.productKmeet.swiftUIImage
-                    .resizable()
-                    .scaledToFit()
-                    .frame(maxWidth: Self.iconSize, maxHeight: Self.iconSize)
-                    .accessibilityLabel(Text(CalendarResourcesStrings.contentDescriptionHasKMeetLink))
+                    .resizableIcon(CalendarResourcesStrings.contentDescriptionHasKMeetLink)
             }
             if !hasAttendees {
                 CalendarResourcesAsset.Images.usersStacked.swiftUIImage
-                    .resizable()
-                    .scaledToFit()
-                    .frame(maxWidth: Self.iconSize, maxHeight: Self.iconSize)
-                    .accessibilityLabel(Text(CalendarResourcesStrings.contentDescriptionHasAttendees))
+                    .resizableIcon(CalendarResourcesStrings.contentDescriptionHasAttendees)
             }
         }
     }
