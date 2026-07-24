@@ -19,6 +19,7 @@
 import CalendarCoreUI
 import DesignSystem
 import SwiftUI
+import CalendarResources
 
 public struct EventDetailsView: View {
     @Environment(\.dismiss) private var dismiss
@@ -46,10 +47,12 @@ public struct EventDetailsView: View {
                     Button {
                         dismiss()
                     } label: {
-                        Label("close", systemImage: "xmark")
+                        Label(CalendarResourcesStrings.closeLabel, systemImage: "xmark")
                     }
                 }
             }
+            .navigationTitle(CalendarResourcesStrings.eventTitle)
+            .navigationBarTitleDisplayMode(.inline)
         }
     }
 }

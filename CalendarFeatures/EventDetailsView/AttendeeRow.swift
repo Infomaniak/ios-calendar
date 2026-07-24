@@ -20,6 +20,7 @@
 import CalendarCoreUI
 import DesignSystem
 import SwiftUI
+import CalendarResources
 
 struct AttendeeRow: View {
     let attendee: UIAttendee
@@ -47,7 +48,7 @@ struct AttendeeRow: View {
                     Text(displayName)
 
                     if isOrganizer {
-                        Text("Organisateur")
+                        Text(CalendarResourcesStrings.sectionOrganizerHeader)
                             .font(.caption2)
                             .padding(.horizontal, IKPadding.mini)
                             .padding(.vertical, 2)
