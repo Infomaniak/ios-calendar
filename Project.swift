@@ -51,8 +51,8 @@ let eventDetailsView = Feature(
         TargetDependency.target(name: "\(Constants.projectName)Resources"),
         TargetDependency.external(name: "DesignSystem"),
         TargetDependency.external(name: "ESDSCalendar"),
-        TargetDependency.external(name: "InfomaniakDI"),
-        TargetDependency.external(name: "InfomaniakCoreSwiftUI")
+        TargetDependency.external(name: "InfomaniakCoreSwiftUI"),
+        TargetDependency.external(name: "InfomaniakDI")
     ]
 )
 

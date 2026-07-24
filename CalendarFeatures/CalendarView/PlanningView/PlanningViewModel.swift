@@ -138,10 +138,11 @@ class PlanningViewModel {
     }
 
     private func observeCalendars() {
-        Task {
+        Task { [weak self] in
             @InjectService var calendarSDK: CalendarCoreGraph
 
             for await calendars in calendarSDK.calendarManager.observeCalendars() {
+                guard let self else { return }
                 calendarsById = Dictionary(
                     uniqueKeysWithValues: calendars.map {
                         let calendar = UICalendar(calendar: $0)
