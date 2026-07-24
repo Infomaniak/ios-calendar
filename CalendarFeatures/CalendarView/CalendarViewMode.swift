@@ -18,7 +18,7 @@
 
 import Foundation
 
-public enum CalendarViewMode: CaseIterable, Sendable {
+public enum CalendarViewMode: String, CaseIterable, Sendable {
     case planning
     case day
     case week

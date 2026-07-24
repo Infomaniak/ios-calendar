@@ -19,23 +19,63 @@
 import CalendarCore
 import SwiftUI
 
+extension CalendarViewMode {
+    var iconName: String {
+        switch self {
+        case .planning:
+            return "rectangle.split.1x2"
+        case .day:
+            return "distribute.vertical"
+        case .week:
+            return "distribute.vertical"
+        case .month:
+            return "distribute.vertical"
+        }
+    }
+}
+
 public struct CalendarView: View {
     @Environment(\.calendarAccounts) private var calendarAccounts
 
-    @State private var selectedMode: CalendarViewMode = .day
+    @SceneStorage("SelectedMode") private var selectedMode: CalendarViewMode = .day
 
     public init() {}
 
     public var body: some View {
-        switch selectedMode {
-        case .planning:
-            PlanningView(calendarAccounts: calendarAccounts)
-        case .day:
-            DaysView()
-        case .week:
-            WeekView()
-        case .month:
-            MonthView()
+        Group {
+            switch selectedMode {
+            case .planning:
+                PlanningView(calendarAccounts: calendarAccounts)
+            case .day:
+                DaysView()
+            case .week:
+                WeekView()
+            case .month:
+                MonthView()
+            }
+        }
+        .toolbar {
+            ToolbarItem(placement: .bottomBar) {
+                Picker(selection: $selectedMode) {
+                    Label("Planning", systemImage: "rectangle.split.1x2")
+                        .tag(CalendarViewMode.planning)
+                    Label("Day", systemImage: "distribute.vertical")
+                        .tag(CalendarViewMode.day)
+                } label: {
+                    Label("Calendar layout", systemImage: selectedMode.iconName)
+                }
+                .labelsHidden()
+                .pickerStyle(.menu)
+            }
+
+            if #available(iOS 26.0, *) {
+                ToolbarSpacer(.flexible, placement: .bottomBar)
+            }
+
+            ToolbarItem(placement: .bottomBar) {
+                Button("New", systemImage: "plus") {}
+                    .buttonStyle(.bordered)
+            }
         }
     }
 }
