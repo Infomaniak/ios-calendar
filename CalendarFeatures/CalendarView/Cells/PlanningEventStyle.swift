@@ -105,7 +105,7 @@ extension View {
     }
 
     // periphery:ignore - Used for #Preview
-    func eventCellStyle(mode: EventCellStyle.Mode, padding: CGFloat = IKPadding.mini) -> some View {
+    func eventCellStyle(mode: EventCellStyle.Mode) -> some View {
         modifier(EventCellStyle(mode: mode))
     }
 }

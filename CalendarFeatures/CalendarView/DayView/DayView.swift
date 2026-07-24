@@ -47,7 +47,6 @@ struct DayView: View {
     }
 
     @Environment(\.calendar) private var calendar
-    @Environment(\.esdsTheme) private var theme
 
     @State private var scrollPosition = ScrollPosition()
 
