@@ -92,7 +92,7 @@ struct PlanningCollectionView: UIViewRepresentable {
         private let nextEventCardViewModel: NextEventCardViewModel
 
         private let dayHeaderRegistration: UICollectionView.SupplementaryRegistration<PlanningDayHeaderView>
-        private let weekHeaderCellRegistration: UICollectionView.CellRegistration<PlanningWeekHeaderCell, Date>
+        private let weekHeaderCellRegistration: UICollectionView.CellRegistration<UICollectionViewListCell, Date>
         private let allDayCellRegistration: UICollectionView.CellRegistration<UICollectionViewListCell, CalendarCoreUI.UIEvent>
         private let eventCellRegistration: UICollectionView.CellRegistration<UICollectionViewListCell, CalendarCoreUI.UIEvent>
         private let emptyEventCellRegistration: UICollectionView.CellRegistration<UICollectionViewListCell, Date>
@@ -116,7 +116,14 @@ struct PlanningCollectionView: UIViewRepresentable {
             dayHeaderRegistration = .init(elementKind: UICollectionView.elementKindSectionHeader) { _, _, _ in }
 
             weekHeaderCellRegistration = .init { cell, _, date in
-                cell.configure(date: date)
+                cell.contentConfiguration = UIHostingConfiguration {
+                    PlanningWeekHeaderView(date: date)
+                }
+                .margins(.all, 0)
+
+                cell.configurationUpdateHandler = { cell, _ in
+                    cell.backgroundConfiguration = .clear()
+                }
             }
 
             allDayCellRegistration = .init { cell, _, event in
