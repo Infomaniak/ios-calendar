@@ -47,6 +47,7 @@ struct DayView: View {
     }
 
     @Environment(\.calendar) private var calendar
+    @Environment(\.esdsTheme) private var theme
 
     @State private var scrollPosition = ScrollPosition()
 
@@ -85,7 +86,7 @@ struct DayView: View {
     }
 
     var body: some View {
-        TimelineView(.everyMinute) { _ in
+        TimelineView(.everyMinute) { timeline in
             ScrollView {
                 ZStack(alignment: .top) {
                     DayTimelineView(date: date, pointsPerHour: effectivePointsPerHour, leadingOffset: Self.Constants.leadingInset)
@@ -107,7 +108,29 @@ struct DayView: View {
                         }
                     }
 
-                    // TODO: Add indicator
+                    let startOfDay = Calendar.current.startOfDay(for: timeline.date)
+                    let elapsedHours = timeline.date.timeIntervalSince(startOfDay) / 3600
+
+                    HStack(spacing: theme.spacing.twoXs) {
+                        Text(timeline.date.formatted(DayTimelineView.Constants.dateFormater))
+                            .font(DayTimelineView.Constants.labelFont)
+                            .padding(.horizontal, theme.spacing.xs)
+                            .padding(.vertical, theme.spacing.twoXs)
+                            .foregroundStyle(.white) // TODO: Use Red - On Dataviz when available
+                            .background(.red, in: .capsule) // TODO: Use Red - Background Dataviz when available
+
+                        HStack(spacing: 0) {
+                            Circle()
+                                .fill(.red) // TODO: Use Red - On Dataviz when available
+                                .frame(width: 8, height: 8)
+
+                            Divider()
+                                .frame(height: 1)
+                                .frame(maxWidth: .infinity)
+                                .background(.red) // TODO: Use Red - On Dataviz when available
+                        }
+                    }
+                    .position(x: 0, y: elapsedHours * effectivePointsPerHour + Self.Constants.verticalInset)
                 }
                 .frame(height: viewHeight)
             }
