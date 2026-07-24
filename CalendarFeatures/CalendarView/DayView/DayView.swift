@@ -30,19 +30,21 @@ struct DayView: View {
                 ofSize: DayTimelineView.Constants.labelFontSize,
                 weight: .semibold
             )
-            let largestLabelWidth = "00:00".size(withAttributes: [.font: font]).width
 
-            return largestLabelWidth.rounded(.up) + DayTimelineView.Constants.labelSpacing
+            let fakeDate = Calendar.current.date(from: DateComponents(hour: 12, minute: 0)) ?? .now
+            let labelWidth = fakeDate.formatted(DayTimelineView.Constants.dateFormater)
+                .size(withAttributes: [.font: font]).width
+
+            return labelWidth.rounded(.up) + DayTimelineView.Constants.labelSpacing
         }()
 
+        // swiftlint:disable:next nesting
         enum PointsPerHour {
             static let minimum: CGFloat = 40
             static let `default`: CGFloat = 60
             static let maximum: CGFloat = 100
         }
     }
-
-    @Environment(\.esdsTheme) private var theme
 
     @State private var scrollPosition = ScrollPosition()
 
@@ -95,6 +97,8 @@ struct DayView: View {
                                 .tag(event.startDate)
                         }
                     }
+
+                    // TODO: Add indicator
                 }
                 .frame(height: viewHeight)
             }

@@ -26,7 +26,7 @@ struct EventIconsView: View {
     let hasKMeetLink: Bool
     let hasAttendees: Bool
 
-    static let iconSize: CGFloat = 16
+    static let iconSize: CGFloat = IKIconSize.medium.rawValue
 
     init(event: CalendarCoreUI.UIEvent) {
         hasLocation = event.location != nil

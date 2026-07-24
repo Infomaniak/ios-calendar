@@ -17,6 +17,7 @@
  */
 
 import CalendarCoreUI
+import DesignSystem
 import ESDSFoundation
 import SwiftUI
 
@@ -29,21 +30,9 @@ struct DayTimelineView: View {
 
     enum Constants {
         static let labelFontSize = UIFont.scaledFontSize(.caption2, size: 11)
-        static let labelSpacing: CGFloat = 16
-    }
+        static let labelSpacing: CGFloat = IKPadding.medium
 
-    static func leadingOffset(for hourMarks: [Date]) -> CGFloat {
-        let font = UIFont.systemFont(
-            ofSize: UIFont.scaledFontSize(.caption2, size: 11, weight: .semibold),
-            weight: .semibold
-        )
-        let largestLabelWidth = hourMarks
-            .map { mark in
-                mark.formatted(.dateTime.hour().minute()).size(withAttributes: [.font: font]).width
-            }
-            .max() ?? CGFloat.zero
-
-        return largestLabelWidth.rounded(.up) + Constants.labelSpacing
+        static let dateFormater: Date.FormatStyle = .dateTime.hour().minute()
     }
 
     private var hourMarks: [Date] {
@@ -92,7 +81,7 @@ struct DayTimelineView: View {
                 }
             } symbols: {
                 ForEach(hourMarks, id: \.self) { mark in
-                    Text(mark, format: .dateTime.hour().minute())
+                    Text(mark, format: Self.Constants.dateFormater)
                         .font(.caption2.weight(.semibold))
                         .foregroundStyle(theme.color.textSecondary)
                         .tag(mark)

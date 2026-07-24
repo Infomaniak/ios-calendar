@@ -32,10 +32,10 @@ struct DayViewLayout: Layout {
         for subview in subviews {
             let tag = subview.containerValues.tag(for: Date.self) ?? .now
 
-            let hour = Calendar.current.component(.hour, from: tag)
-            let minutes = Calendar.current.component(.minute, from: tag)
+            let startOfDay = Calendar.current.startOfDay(for: tag)
+            let elapsedHours = tag.timeIntervalSince(startOfDay) / 3600
 
-            let offsetY = (CGFloat(hour) + CGFloat(minutes) / 60) * pointsPerHour + verticalInset
+            let offsetY = CGFloat(elapsedHours) * pointsPerHour + verticalInset
 
             let preferredSize = subview.sizeThatFits(.unspecified)
             subview.place(
