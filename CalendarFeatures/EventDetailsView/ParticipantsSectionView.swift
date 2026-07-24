@@ -77,12 +77,12 @@ struct ParticipantsSectionView: View {
                     }
                 } label: {
                     HStack(spacing: IKPadding.micro) {
-                        HStack(spacing: -24 / 3) {
+                        HStack(spacing: -IKIconSize.medium.rawValue / 3) {
                             ForEach(Array(visibleAttendees.enumerated()), id: \.element) { attendee in
                                 AvatarView(rawAvatarURL: nil,
                                            displayName: attendee.element.displayName ?? attendee.element.email,
                                            email: attendee.element.email,
-                                           size: 24)
+                                           size: IKIconSize.medium.rawValue)
                             }
                         }
                         .compositingGroup()

@@ -51,11 +51,11 @@ struct CalendarSectionView: View {
                         width: IKIconSize.medium.rawValue,
                         height: IKIconSize.medium.rawValue
                     )
-                    .accessibilityHidden(true)
 
             } label: {
                 Text(CalendarResourcesStrings.eventColorLabel)
             }
+            .accessibilityHidden(true)
         } header: {
             Text(CalendarResourcesStrings.sectionCalendarHeader)
         }
