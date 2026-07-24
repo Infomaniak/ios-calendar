@@ -17,13 +17,21 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import SwiftUI
 import CalendarCoreUI
 import DesignSystem
+import SwiftUI
 
 struct AttendeeRow: View {
     let attendee: UIAttendee
     let isOrganizer: Bool
+
+    private var displayName: String {
+        attendee.displayName ?? attendee.email
+    }
+
+    private var shouldShowEmail: Bool {
+        displayName != attendee.email
+    }
 
     var body: some View {
         HStack(spacing: IKPadding.medium) {
@@ -36,7 +44,7 @@ struct AttendeeRow: View {
 
             VStack(alignment: .leading, spacing: IKPadding.micro) {
                 HStack(spacing: IKPadding.mini) {
-                    Text(attendee.displayName ?? attendee.email)
+                    Text(displayName)
 
                     if isOrganizer {
                         Text("Organisateur")
@@ -48,10 +56,10 @@ struct AttendeeRow: View {
                     }
                 }
 
-                if attendee.displayName != nil {
+                if shouldShowEmail {
                     Text(attendee.email)
                         .font(.caption)
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                 }
             }
         }

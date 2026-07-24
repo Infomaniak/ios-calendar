@@ -21,10 +21,9 @@ import CalendarCoreUI
 import SwiftUI
 
 struct CalendarSectionView: View {
-    
     let calendar: UICalendar?
     let event: CalendarCoreUI.UIEvent
-    
+
     var body: some View {
         Section {
             if let calendar {
@@ -33,6 +32,7 @@ struct CalendarSectionView: View {
                         Circle()
                             .fill(calendar.color)
                             .frame(width: 8, height: 8)
+                            .accessibilityHidden(true)
 
                         Text(calendar.displayName)
                     }
@@ -43,11 +43,11 @@ struct CalendarSectionView: View {
             }
 
             LabeledContent {
-                HStack {
-                    Circle()
-                        .fill(event.colors.onDatavizContainerVariant)
-                        .frame(width: 16, height: 16)
-                }
+                Circle()
+                    .fill(event.colors.onDatavizContainerVariant)
+                    .frame(width: 16, height: 16)
+                    .accessibilityHidden(true)
+
             } label: {
                 Text("Couleur de l'évènement")
             }

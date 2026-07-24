@@ -22,7 +22,7 @@ import SwiftUI
 
 public struct EventDetailsView: View {
     private let event: CalendarCoreUI.UIEvent
-    private var calendar: UICalendar?
+    private let calendar: UICalendar?
 
     public init(
         event: CalendarCoreUI.UIEvent,
@@ -35,9 +35,7 @@ public struct EventDetailsView: View {
     public var body: some View {
         Form {
             EventSectionView(event: event)
-
             CalendarSectionView(calendar: calendar, event: event)
-
             ParticipantsSectionView(event: event)
         }
     }

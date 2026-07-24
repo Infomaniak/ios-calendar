@@ -18,11 +18,11 @@
  */
 
 import CalendarCoreUI
-import SwiftUI
 import DesignSystem
+import SwiftUI
 
 struct ParticipantsSectionView: View {
-    @State private var attendeesListIsOpen = true
+    @State private var attendeesListIsOpen = false
 
     let event: CalendarCoreUI.UIEvent
 
@@ -69,30 +69,25 @@ struct ParticipantsSectionView: View {
             }
         }
 
-        if !event.attendees.isEmpty {
+        if !uniqueAttendees.isEmpty {
             Section {
-                List {
-                    DisclosureGroup(isExpanded: $attendeesListIsOpen) {
-                        ForEach(uniqueAttendees) { attendee in
-                            AttendeeRow(
-                                attendee: attendee,
-                                isOrganizer: isOrganizer(attendee)
-                            )
-                        }
-                    } label: {
-                        HStack(spacing: IKPadding.micro) {
-                            HStack(spacing: -24 / 3) {
-                                ForEach(Array(visibleAttendees.enumerated()), id: \.element) { attendee in
-                                    AvatarView(rawAvatarURL: nil,
-                                               displayName: attendee.element.displayName ?? attendee.element.email,
-                                               email: attendee.element.email,
-                                               size: 24)
-                                }
+                DisclosureGroup(isExpanded: $attendeesListIsOpen) {
+                    ForEach(uniqueAttendees) { attendee in
+                        AttendeeRow(attendee: attendee, isOrganizer: isOrganizer(attendee))
+                    }
+                } label: {
+                    HStack(spacing: IKPadding.micro) {
+                        HStack(spacing: -24 / 3) {
+                            ForEach(Array(visibleAttendees.enumerated()), id: \.element) { attendee in
+                                AvatarView(rawAvatarURL: nil,
+                                           displayName: attendee.element.displayName ?? attendee.element.email,
+                                           email: attendee.element.email,
+                                           size: 24)
                             }
-                            .compositingGroup()
-
-                            Text("\(uniqueAttendees.count) Personnes participent")
                         }
+                        .compositingGroup()
+
+                        Text("\(uniqueAttendees.count) personnes participent")
                     }
                 }
             } header: {
