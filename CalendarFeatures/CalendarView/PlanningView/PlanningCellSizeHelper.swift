@@ -28,7 +28,7 @@ struct PlanningCellSizeHelper {
         if event.isAllDay {
             return titleHeight + dateHeight
         } else {
-            return titleHeight + dateHeight + PlanningEventView.UIConstants.iconSize + event.additionalDurationHeight
+            return titleHeight + dateHeight + EventIconsView.iconSize + event.additionalDurationHeight
         }
     }
 }

@@ -16,11 +16,27 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Foundation
+import CalendarCoreUI
+import CalendarResources
+import SwiftUI
 
-public enum CalendarViewMode: CaseIterable, Sendable {
-    case planning
-    case day
-    case week
-    case month
+struct PlanningDayEventView: View {
+    let event: CalendarCoreUI.UIEvent
+
+    var body: some View {
+        HStack {
+            Text(event.title)
+                .lineLimit(1)
+                .font(.caption.bold())
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            Text(CalendarResourcesStrings.allDayLabel)
+                .font(.caption2)
+        }
+        .eventCellStyle(event: event)
+    }
+}
+
+#Preview {
+    PlanningDayEventView(event: CalendarCoreUI.UIEvent.preview)
 }

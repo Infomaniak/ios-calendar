@@ -22,7 +22,7 @@ import SwiftUI
 public struct CalendarView: View {
     @Environment(\.calendarAccounts) private var calendarAccounts
 
-    @State private var selectedMode: CalendarViewMode = .planning
+    @State private var selectedMode: CalendarViewMode = .day
 
     public init() {}
 
@@ -30,6 +30,8 @@ public struct CalendarView: View {
         switch selectedMode {
         case .planning:
             PlanningView(calendarAccounts: calendarAccounts)
+        case .day:
+            DaysView()
         case .week:
             WeekView()
         case .month:

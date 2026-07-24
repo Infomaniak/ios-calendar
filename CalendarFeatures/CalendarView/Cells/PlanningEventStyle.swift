@@ -17,9 +17,10 @@
  */
 
 import CalendarCoreUI
+import DesignSystem
 import SwiftUI
 
-struct PlanningEventStyle: ViewModifier {
+struct EventCellStyle: ViewModifier {
     enum Mode: Equatable {
         case `default`
         case maybe
@@ -29,9 +30,11 @@ struct PlanningEventStyle: ViewModifier {
 
     let mode: Mode
     let colors: CalendarCoreUI.UIEvent.Colors
+    let padding: CGFloat
 
-    init(event: CalendarCoreUI.UIEvent) {
+    init(event: CalendarCoreUI.UIEvent, padding: CGFloat) {
         colors = event.colors
+        self.padding = padding
         mode = Self.computeMode(for: event)
     }
 
@@ -39,6 +42,7 @@ struct PlanningEventStyle: ViewModifier {
     init(mode: Mode, colors: CalendarCoreUI.UIEvent.Colors = .preview) {
         self.mode = mode
         self.colors = colors
+        padding = IKPadding.mini
     }
 
     private var foreground: Color {
@@ -66,7 +70,7 @@ struct PlanningEventStyle: ViewModifier {
         content
             .opacity(mode == .declined ? 0.5 : 1)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(8)
+            .padding(padding)
             .foregroundStyle(foreground)
             .background(background)
             .strikethrough(mode == .declined)
@@ -96,29 +100,29 @@ struct PlanningEventStyle: ViewModifier {
 }
 
 extension View {
-    func planningEventStyle(event: CalendarCoreUI.UIEvent) -> some View {
-        modifier(PlanningEventStyle(event: event))
+    func eventCellStyle(event: CalendarCoreUI.UIEvent, padding: CGFloat = IKPadding.mini) -> some View {
+        modifier(EventCellStyle(event: event, padding: padding))
     }
 
     // periphery:ignore - Used for #Preview
-    func planningEventStyle(mode: PlanningEventStyle.Mode) -> some View {
-        modifier(PlanningEventStyle(mode: mode))
+    func eventCellStyle(mode: EventCellStyle.Mode) -> some View {
+        modifier(EventCellStyle(mode: mode))
     }
 }
 
 #Preview {
     VStack {
         Text("Default")
-            .planningEventStyle(mode: .default)
+            .eventCellStyle(mode: .default)
 
         Text("Maybe")
-            .planningEventStyle(mode: .maybe)
+            .eventCellStyle(mode: .maybe)
 
         Text("Declined")
-            .planningEventStyle(mode: .declined)
+            .eventCellStyle(mode: .declined)
 
         Text("Pending")
-            .planningEventStyle(mode: .pending)
+            .eventCellStyle(mode: .pending)
     }
     .padding()
     .background(Color.gray.opacity(0.1))

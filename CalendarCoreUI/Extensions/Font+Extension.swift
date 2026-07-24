@@ -16,27 +16,29 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import CalendarCoreUI
-import CalendarResources
 import SwiftUI
+import UIKit
 
-struct PlanningDayEventView: View {
-    let event: CalendarCoreUI.UIEvent
+// MARK: - Emphasized weight
 
-    var body: some View {
-        HStack {
-            Text(event.title)
-                .lineLimit(1)
-                .font(.caption.bold())
-                .frame(maxWidth: .infinity, alignment: .leading)
-
-            Text(CalendarResourcesStrings.allDayLabel)
-                .font(.caption2)
-        }
-        .planningEventStyle(event: event)
-    }
+public extension Font.Weight {
+    static let emphasized = Font.Weight.semibold
 }
 
-#Preview {
-    PlanningDayEventView(event: CalendarCoreUI.UIEvent.preview)
+public extension UIFont.Weight {
+    static let emphasized = UIFont.Weight.semibold
+}
+
+// MARK: - Utils
+
+public extension UIFont {
+    static func scaledFontSize(
+        _ textStyle: UIFont.TextStyle,
+        size: CGFloat,
+        weight: UIFont.Weight = .regular
+    ) -> CGFloat {
+        let metrics = UIFontMetrics(forTextStyle: textStyle)
+        let font = metrics.scaledFont(for: .systemFont(ofSize: size, weight: weight))
+        return font.pointSize
+    }
 }

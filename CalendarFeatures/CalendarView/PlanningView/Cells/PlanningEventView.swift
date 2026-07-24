@@ -18,6 +18,7 @@
 
 import CalendarCoreUI
 import CalendarResources
+import DesignSystem
 import SwiftUI
 
 public extension CalendarCoreUI.UIEvent {
@@ -42,8 +43,6 @@ struct PlanningEventView: View {
         static let maxDuration: CGFloat = 120
 
         static let maxSize: CGFloat = 50
-
-        static let iconSize: CGFloat = 16
     }
 
     var body: some View {
@@ -58,32 +57,10 @@ struct PlanningEventView: View {
                     .font(.caption.bold())
             }
 
-            HStack(spacing: 4) {
-                if event.location != nil {
-                    CalendarResourcesAsset.Images.mapPin.swiftUIImage
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: UIConstants.iconSize, height: UIConstants.iconSize)
-                        .accessibilityLabel(Text(CalendarResourcesStrings.contentDescriptionHasLocation))
-                }
-                if event.kMeetLink != nil {
-                    CalendarResourcesAsset.Images.productKmeet.swiftUIImage
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: UIConstants.iconSize, height: UIConstants.iconSize)
-                        .accessibilityLabel(Text(CalendarResourcesStrings.contentDescriptionHasKMeetLink))
-                }
-                if !event.attendees.isEmpty {
-                    CalendarResourcesAsset.Images.usersStacked.swiftUIImage
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: UIConstants.iconSize, height: UIConstants.iconSize)
-                        .accessibilityLabel(Text(CalendarResourcesStrings.contentDescriptionHasAttendees))
-                }
-            }
+            EventIconsView(event: event)
         }
         .padding(.bottom, event.additionalDurationHeight)
-        .planningEventStyle(event: event)
+        .eventCellStyle(event: event)
     }
 }
 
