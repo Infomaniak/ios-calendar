@@ -20,6 +20,7 @@
 import CalendarCoreUI
 import DesignSystem
 import SwiftUI
+import CalendarResources
 
 struct ParticipantsSectionView: View {
     @State private var attendeesListIsOpen = false
@@ -65,7 +66,7 @@ struct ParticipantsSectionView: View {
             Section {
                 AttendeeRow(attendee: organizer, isOrganizer: true)
             } header: {
-                Text("Organisateur")
+                Text(CalendarResourcesStrings.sectionOrganizerHeader)
             }
         }
 
@@ -87,11 +88,11 @@ struct ParticipantsSectionView: View {
                         }
                         .compositingGroup()
 
-                        Text("\(uniqueAttendees.count) personnes participent")
+                        Text(CalendarResourcesStrings.participantsLabel(uniqueAttendees.count))
                     }
                 }
             } header: {
-                Text("Participants")
+                Text(CalendarResourcesStrings.sectionParticipantsHeader)
             }
         }
     }

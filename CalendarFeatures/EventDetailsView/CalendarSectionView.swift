@@ -19,6 +19,7 @@
 
 import CalendarCoreUI
 import SwiftUI
+import CalendarResources
 
 struct CalendarSectionView: View {
     let calendar: UICalendar?
@@ -38,7 +39,7 @@ struct CalendarSectionView: View {
                     }
                     .frame(maxWidth: 250, alignment: .trailing)
                 } label: {
-                    Text("Calendrier")
+                    Text(CalendarResourcesStrings.sectionCalendarHeader)
                 }
             }
 
@@ -49,10 +50,10 @@ struct CalendarSectionView: View {
                     .accessibilityHidden(true)
 
             } label: {
-                Text("Couleur de l'évènement")
+                Text(CalendarResourcesStrings.eventColorLabel)
             }
         } header: {
-            Text("Calendrier")
+            Text(CalendarResourcesStrings.sectionCalendarHeader)
         }
     }
 }

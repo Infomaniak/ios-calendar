@@ -18,6 +18,7 @@
  */
 
 import CalendarCoreUI
+import CalendarResources
 import SwiftUI
 
 struct EventSectionView: View {
@@ -25,14 +26,12 @@ struct EventSectionView: View {
 
     var body: some View {
         Section {
-            LabeledContent("Titre", value: event.title)
-            LabeledContent("Lieu ou salle", value: event.location ?? "...")
-            Toggle("Toute la journée", isOn: .constant(event.isAllDay))
+            LabeledContent(CalendarResourcesStrings.titleLabel, value: event.title)
+            LabeledContent(CalendarResourcesStrings.locationOrRoomLabel, value: event.location ?? "...")
+            Toggle(CalendarResourcesStrings.allDayLabel, isOn: .constant(event.isAllDay))
                 .disabled(true)
-            LabeledContent("Début", value: event.startDate, format: .dateTime)
-            LabeledContent("Fin", value: event.endDate, format: .dateTime)
-        } header: {
-            Text("Évènement")
+            LabeledContent(CalendarResourcesStrings.startLabel, value: event.startDate, format: .dateTime)
+            LabeledContent(CalendarResourcesStrings.endLabel, value: event.endDate, format: .dateTime)
         }
     }
 }
