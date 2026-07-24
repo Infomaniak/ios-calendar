@@ -22,11 +22,11 @@ import DesignSystem
 import SwiftUI
 
 struct EventIconsView: View {
+    static let iconSize: CGFloat = IKIconSize.medium.rawValue
+
     let hasLocation: Bool
     let hasKMeetLink: Bool
     let hasAttendees: Bool
-
-    static let iconSize: CGFloat = IKIconSize.medium.rawValue
 
     init(event: CalendarCoreUI.UIEvent) {
         hasLocation = event.location != nil

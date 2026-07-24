@@ -46,6 +46,9 @@ struct DayView: View {
         }
     }
 
+    @Environment(\.calendar) private var calendar
+    @Environment(\.esdsTheme) private var theme
+
     @State private var scrollPosition = ScrollPosition()
 
     @State private var pointsPerHour = Constants.PointsPerHour.default
@@ -88,6 +91,7 @@ struct DayView: View {
                     DayTimelineView(date: date, pointsPerHour: effectivePointsPerHour, leadingOffset: Self.Constants.leadingInset)
 
                     DayViewLayout(
+                        calendar: calendar,
                         verticalInset: Self.Constants.verticalInset,
                         leadingInset: Self.Constants.leadingInset,
                         pointsPerHour: effectivePointsPerHour

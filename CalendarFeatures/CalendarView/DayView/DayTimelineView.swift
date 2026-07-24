@@ -22,6 +22,7 @@ import ESDSFoundation
 import SwiftUI
 
 struct DayTimelineView: View {
+    @Environment(\.calendar) private var calendar
     @Environment(\.esdsTheme) private var theme
 
     let date: Date
@@ -36,8 +37,8 @@ struct DayTimelineView: View {
     }
 
     private var hourMarks: [Date] {
-        let startOfDay = Calendar.current.startOfDay(for: date)
-        guard let startOfNextDay = Calendar.current.date(byAdding: .day, value: 1, to: startOfDay) else {
+        let startOfDay = calendar.startOfDay(for: date)
+        guard let startOfNextDay = calendar.date(byAdding: .day, value: 1, to: startOfDay) else {
             return []
         }
 
@@ -45,7 +46,7 @@ struct DayTimelineView: View {
         var currentMark = startOfDay
         while currentMark < startOfNextDay {
             marks.append(currentMark)
-            guard let nextMark = Calendar.current.date(byAdding: .hour, value: 1, to: currentMark) else { break }
+            guard let nextMark = calendar.date(byAdding: .hour, value: 1, to: currentMark) else { break }
             currentMark = nextMark
         }
 

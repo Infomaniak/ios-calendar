@@ -19,6 +19,8 @@
 import SwiftUI
 
 struct DayViewLayout: Layout {
+    let calendar: Calendar
+
     let verticalInset: CGFloat
     let leadingInset: CGFloat
 
@@ -32,7 +34,7 @@ struct DayViewLayout: Layout {
         for subview in subviews {
             let tag = subview.containerValues.tag(for: Date.self) ?? .now
 
-            let startOfDay = Calendar.current.startOfDay(for: tag)
+            let startOfDay = calendar.startOfDay(for: tag)
             let elapsedHours = tag.timeIntervalSince(startOfDay) / 3600
 
             let offsetY = CGFloat(elapsedHours) * pointsPerHour + verticalInset
