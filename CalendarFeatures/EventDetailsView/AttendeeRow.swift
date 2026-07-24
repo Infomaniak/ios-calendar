@@ -1,4 +1,3 @@
-//
 /*
  Infomaniak Calendar - iOS App
  Copyright (C) 2026 Infomaniak Network SA
@@ -18,9 +17,10 @@
  */
 
 import CalendarCoreUI
-import DesignSystem
-import SwiftUI
 import CalendarResources
+import DesignSystem
+import InfomaniakCoreSwiftUI
+import SwiftUI
 
 struct AttendeeRow: View {
     let attendee: UIAttendee
@@ -40,7 +40,7 @@ struct AttendeeRow: View {
                 rawAvatarURL: nil,
                 displayName: attendee.displayName ?? attendee.email,
                 email: attendee.email,
-                size: 24
+                size: IKIconSize.large.rawValue
             )
 
             VStack(alignment: .leading, spacing: IKPadding.micro) {
@@ -51,7 +51,7 @@ struct AttendeeRow: View {
                         Text(CalendarResourcesStrings.sectionOrganizerHeader)
                             .font(.caption2)
                             .padding(.horizontal, IKPadding.mini)
-                            .padding(.vertical, 2)
+                            .padding(.vertical, IKPadding.micro)
                             .background(.secondary.opacity(0.15))
                             .clipShape(Capsule())
                     }
