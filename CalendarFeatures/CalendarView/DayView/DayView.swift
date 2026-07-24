@@ -130,7 +130,8 @@ struct DayView: View {
                                 .background(.red) // TODO: Use Red - On Dataviz when available
                         }
                     }
-                    .position(x: 0, y: elapsedHours * effectivePointsPerHour + Self.Constants.verticalInset)
+                    .offset(y: elapsedHours * effectivePointsPerHour)
+                    .accessibilityHidden(true)
                 }
                 .frame(height: viewHeight)
             }
