@@ -45,6 +45,8 @@ class PlanningViewModel {
 
     private let calendarAccounts: [CalendarAccount.ID: CalendarAccount]
 
+    var selectedEvent: CalendarCoreUI.UIEvent?
+
     init(calendarAccounts: [CalendarAccount.ID: CalendarAccount]) {
         self.calendarAccounts = calendarAccounts
 

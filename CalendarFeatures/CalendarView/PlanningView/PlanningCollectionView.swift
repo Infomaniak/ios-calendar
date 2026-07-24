@@ -129,11 +129,8 @@ struct PlanningCollectionView: UIViewRepresentable {
 
             allDayCellRegistration = .init { cell, _, event in
                 cell.contentConfiguration = UIHostingConfiguration {
-                    NavigationLink {
-                        EventDetailsView(
-                            event: event,
-                            calendar: planningViewModel.calendar(for: event)
-                        )
+                    Button {
+                        planningViewModel.selectedEvent = event
                     } label: {
                         PlanningDayEventView(event: event)
                     }
@@ -149,11 +146,8 @@ struct PlanningCollectionView: UIViewRepresentable {
 
             eventCellRegistration = .init { cell, _, event in
                 cell.contentConfiguration = UIHostingConfiguration {
-                    NavigationLink {
-                        EventDetailsView(
-                            event: event,
-                            calendar: planningViewModel.calendar(for: event)
-                        )
+                    Button {
+                        planningViewModel.selectedEvent = event
                     } label: {
                         PlanningEventView(event: event)
                     }

@@ -17,6 +17,7 @@
  */
 
 import CalendarCore
+import CalendarEventDetailsView
 import DesignSystem
 import Foundation
 import SwiftUI
@@ -39,6 +40,12 @@ public struct PlanningView: View {
                 NextEventCardView(model: nextEventCardViewModel)
                     .padding(.horizontal, IKPadding.medium)
                     .padding(.vertical, IKPadding.mini)
+            }
+            .sheet(item: $planningViewModel.selectedEvent) { event in
+                EventDetailsView(
+                    event: event,
+                    calendar: planningViewModel.calendar(for: event)
+                )
             }
             .toolbar {
                 ToolbarItem(placement: .bottomBar) {
