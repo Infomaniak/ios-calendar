@@ -21,27 +21,18 @@ import CalendarCoreUI
 import SwiftUI
 
 struct EventSectionView: View {
-    @State private var isAllDay: Bool
-    
     let event: CalendarCoreUI.UIEvent
-    
-    public init(
-        event: CalendarCoreUI.UIEvent
-    ) {
-        self.event = event
-        isAllDay = event.isAllDay
-    }
 
     var body: some View {
         Section {
             LabeledContent("Titre", value: event.title)
             LabeledContent("Lieu ou salle", value: event.location ?? "...")
-            Toggle("Toute la journée", isOn: $isAllDay)
+            Toggle("Toute la journée", isOn: .constant(event.isAllDay))
                 .disabled(true)
             LabeledContent("Début", value: event.startDate, format: .dateTime)
             LabeledContent("Fin", value: event.endDate, format: .dateTime)
         } header: {
-            Text("Évenèment")
+            Text("Évènement")
         }
     }
 }
