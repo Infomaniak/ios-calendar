@@ -17,9 +17,9 @@
  */
 
 import CalendarCoreUI
+import CalendarResources
 import DesignSystem
 import SwiftUI
-import CalendarResources
 
 public struct EventDetailsView: View {
     @Environment(\.dismiss) private var dismiss
@@ -44,10 +44,12 @@ public struct EventDetailsView: View {
             }
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button {
-                        dismiss()
-                    } label: {
-                        Label(CalendarResourcesStrings.closeLabel, systemImage: "xmark")
+                    if #available(iOS 26.0, *) {
+                        Button(role: .close, action: dismiss.callAsFunction)
+                    } else {
+                        Button(action: dismiss.callAsFunction) {
+                            Label(CalendarResourcesStrings.closeLabel, systemImage: "xmark")
+                        }
                     }
                 }
             }

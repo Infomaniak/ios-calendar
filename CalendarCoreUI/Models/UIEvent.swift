@@ -121,8 +121,6 @@ public extension UIEvent {
         endDate = eventDaySlice.displayEndInstant().date
         isAllDay = eventDaySlice.isAllDay
 
-        organizer = if let organizer = event.organizer { UIAttendee(attendee: organizer) } else { nil }
-        
         calendarId = event.calendarIdValue
 
         var user: UIAttendee?
@@ -134,6 +132,8 @@ public extension UIEvent {
             return uiAttendee
         }
         self.user = user
+
+        organizer = event.organizer.map { UIAttendee(attendee: $0) }
 
         colors = .init(eventColors: event.colors)
     }
