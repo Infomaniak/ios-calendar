@@ -21,6 +21,8 @@ import DesignSystem
 import SwiftUI
 
 public struct EventDetailsView: View {
+    @Environment(\.dismiss) private var dismiss
+
     private let event: CalendarCoreUI.UIEvent
     private let calendar: UICalendar?
 
@@ -33,10 +35,21 @@ public struct EventDetailsView: View {
     }
 
     public var body: some View {
-        Form {
-            EventSectionView(event: event)
-            CalendarSectionView(calendar: calendar, event: event)
-            ParticipantsSectionView(event: event)
+        NavigationStack {
+            Form {
+                EventSectionView(event: event)
+                CalendarSectionView(calendar: calendar, event: event)
+                ParticipantsSectionView(event: event)
+            }
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Label("close", systemImage: "xmark")
+                    }
+                }
+            }
         }
     }
 }
