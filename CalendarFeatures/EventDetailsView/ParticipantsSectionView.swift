@@ -1,4 +1,3 @@
-//
 /*
  Infomaniak Calendar - iOS App
  Copyright (C) 2026 Infomaniak Network SA
@@ -18,9 +17,9 @@
  */
 
 import CalendarCoreUI
+import CalendarResources
 import DesignSystem
 import SwiftUI
-import CalendarResources
 
 struct ParticipantsSectionView: View {
     @State private var attendeesListIsOpen = false

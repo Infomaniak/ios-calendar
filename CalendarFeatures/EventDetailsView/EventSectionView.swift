@@ -1,4 +1,3 @@
-//
 /*
  Infomaniak Calendar - iOS App
  Copyright (C) 2026 Infomaniak Network SA
@@ -27,7 +26,9 @@ struct EventSectionView: View {
     var body: some View {
         Section {
             LabeledContent(CalendarResourcesStrings.titleLabel, value: event.title)
-            LabeledContent(CalendarResourcesStrings.locationOrRoomLabel, value: event.location ?? "...")
+            if let location = event.location, !location.isEmpty {
+                LabeledContent(CalendarResourcesStrings.locationOrRoomLabel, value: location)
+            }
             Toggle(CalendarResourcesStrings.allDayLabel, isOn: .constant(event.isAllDay))
                 .disabled(true)
             LabeledContent(CalendarResourcesStrings.startLabel, value: event.startDate, format: .dateTime)

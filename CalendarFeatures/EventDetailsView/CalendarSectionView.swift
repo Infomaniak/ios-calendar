@@ -1,4 +1,3 @@
-//
 /*
  Infomaniak Calendar - iOS App
  Copyright (C) 2026 Infomaniak Network SA
@@ -18,8 +17,10 @@
  */
 
 import CalendarCoreUI
-import SwiftUI
 import CalendarResources
+import DesignSystem
+import InfomaniakCoreSwiftUI
+import SwiftUI
 
 struct CalendarSectionView: View {
     let calendar: UICalendar?
@@ -36,8 +37,8 @@ struct CalendarSectionView: View {
                             .accessibilityHidden(true)
 
                         Text(calendar.displayName)
+                            .lineLimit(1)
                     }
-                    .frame(maxWidth: 250, alignment: .trailing)
                 } label: {
                     Text(CalendarResourcesStrings.sectionCalendarHeader)
                 }
@@ -46,7 +47,10 @@ struct CalendarSectionView: View {
             LabeledContent {
                 Circle()
                     .fill(event.colors.onDatavizContainerVariant)
-                    .frame(width: 16, height: 16)
+                    .frame(
+                        width: IKIconSize.medium.rawValue,
+                        height: IKIconSize.medium.rawValue
+                    )
                     .accessibilityHidden(true)
 
             } label: {

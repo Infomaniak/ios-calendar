@@ -17,7 +17,6 @@
  */
 
 import CalendarCoreUI
-import CalendarEventDetailsView
 import DesignSystem
 import Foundation
 import SwiftUI
