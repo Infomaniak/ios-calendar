@@ -36,7 +36,7 @@ struct OnboardingBottomButtonsView: View {
         selection == slideCount - 1
     }
 
-    private var shouldUseWithAccounts: Bool {
+    private var shouldDisplayInterAppLogin: Bool {
         #if DEBUG
         if ApiEnvironment.current == .prod {
             return false
@@ -53,7 +53,7 @@ struct OnboardingBottomButtonsView: View {
                         isLoading: loginHandler.isLoading,
                         excludingUserIds: [],
                         allowsMultipleSelection: false,
-                        shouldUseWithAccounts: shouldUseWithAccounts
+                        shouldDisplayInterAppLogin: shouldDisplayInterAppLogin
                     ) {
                         loginPressed()
                     } onLoginWithAccountsPressed: { accounts in

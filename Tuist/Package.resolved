@@ -1,5 +1,5 @@
 {
-  "originHash" : "f8638a853ea0e27596839148978279835035173e7c8d386fc520420d2e685c9f",
+  "originHash" : "37f6e4ee71394e5441365054c28ccbbe0d677c747f2110ef2a826cd07dac4ca3",
   "pins" : [
     {
       "identity" : "alamofire",
@@ -78,8 +78,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-features",
       "state" : {
-        "branch" : "feat/Add-parameter-to-not-use-withAccounts",
-        "revision" : "5a18a4d6ec1c8e41ed48d0697d70e74f7868c60d"
+        "revision" : "7f852f0076d08cfcf9186060463f59f4aabb575c",
+        "version" : "10.2.0"
       }
     },
     {
