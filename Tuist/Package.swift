@@ -34,7 +34,7 @@ let package = Package(
         .package(url: "https://github.com/Infomaniak/ios-create-account", .upToNextMajor(from: "25.0.0")),
         .package(url: "https://github.com/Infomaniak/ios-dependency-injection", .upToNextMajor(from: "2.0.6")),
         .package(url: "https://github.com/Infomaniak/ios-device-check", .upToNextMajor(from: "1.1.1")),
-        .package(url: "https://github.com/Infomaniak/ios-features", .upToNextMajor(from: "10.0.0")),
+        .package(url: "https://github.com/Infomaniak/ios-features", branch: "feat/Add-parameter-to-not-use-withAccounts"),
         .package(url: "https://github.com/Infomaniak/ios-login", .upToNextMajor(from: "7.8.0")),
         .package(url: "https://github.com/Infomaniak/ios-onboarding", .upToNextMajor(from: "1.1.2")),
         .package(url: "https://github.com/Infomaniak/multiplatform-calendar", .upToNextMajor(from: "0.3.0")),
