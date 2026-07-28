@@ -25,21 +25,18 @@ public struct EventDetailsView: View {
     @Environment(\.dismiss) private var dismiss
 
     private let event: CalendarCoreUI.UIEvent
-    private let calendar: UICalendar?
 
     public init(
-        event: CalendarCoreUI.UIEvent,
-        calendar: UICalendar? = nil
+        event: CalendarCoreUI.UIEvent
     ) {
         self.event = event
-        self.calendar = calendar
     }
 
     public var body: some View {
         NavigationStack {
             Form {
                 EventSectionView(event: event)
-                CalendarSectionView(calendar: calendar, event: event)
+                CalendarSectionView(event: event)
                 ParticipantsSectionView(event: event)
             }
             .toolbar {
@@ -60,5 +57,5 @@ public struct EventDetailsView: View {
 }
 
 #Preview {
-    EventDetailsView(event: CalendarCoreUI.UIEvent.preview, calendar: UICalendar.preview)
+    EventDetailsView(event: CalendarCoreUI.UIEvent.preview)
 }
