@@ -37,7 +37,7 @@ public struct EventDetailsView: View {
     public var body: some View {
         NavigationStack {
             Form {
-                EventSectionView(event: event)
+                EventSectionView(event: event, color: $color)
                 CalendarSectionView(event: event, color: $color)
                 ParticipantsSectionView(event: event)
             }
