@@ -17,12 +17,15 @@
  */
 
 import CalendarCoreUI
+import CalendarCreateEditEventView
 import CalendarResources
 import DesignSystem
 import SwiftUI
 
 public struct EventDetailsView: View {
     @Environment(\.dismiss) private var dismiss
+
+    @State private var path: NavigationPath = .init()
 
     private let event: CalendarCoreUI.UIEvent
     @State private var color: Color
@@ -38,7 +41,7 @@ public struct EventDetailsView: View {
     }
 
     public var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             Form {
                 EventSectionView(
                     event: event,
@@ -50,6 +53,11 @@ public struct EventDetailsView: View {
                 AlertsSectionView(event: event)
                 ParticipantsSectionView(event: event)
             }
+            .navigationDestination(for: CalendarCoreUI.UIEvent.self) { event in
+                CreateEditEventView(event: event)
+            }
+            .navigationTitle(CalendarResourcesStrings.eventTitle)
+            .navigationBarTitleDisplayMode(.inline)
             .sheet(isPresented: $isColorPickerPresented) {
                 ColorSelectionView(selection: $color)
                     .presentationDetents([.medium])
@@ -65,9 +73,15 @@ public struct EventDetailsView: View {
                         }
                     }
                 }
+
+                ToolbarItem(placement: .primaryAction) {
+                    Button {
+                        path.append(event)
+                    } label: {
+                        Text("Edit")
+                    }
+                }
             }
-            .navigationTitle(CalendarResourcesStrings.eventTitle)
-            .navigationBarTitleDisplayMode(.inline)
         }
     }
 }
