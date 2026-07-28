@@ -20,23 +20,27 @@ import CalendarCoreUI
 import CalendarResources
 import DesignSystem
 import InfomaniakCoreSwiftUI
+import InfomaniakDI
+@preconcurrency import MultiplatformCalendar
 import SwiftUI
 
 struct CalendarSectionView: View {
-    let calendar: UICalendar?
-    let event: CalendarCoreUI.UIEvent
+    @State private var selectedCalendar: UICalendar?
+    @State private var availableCalendars: [UICalendar] = []
+
+    let event: CalendarCoreUI.UIEvent?
 
     var body: some View {
         Section {
-            if let calendar {
+            if let selectedCalendar {
                 LabeledContent {
                     HStack {
                         Circle()
-                            .fill(calendar.color)
+                            .fill(selectedCalendar.color)
                             .frame(width: 8, height: 8)
                             .accessibilityHidden(true)
 
-                        Text(calendar.displayName)
+                        Text(selectedCalendar.displayName)
                             .lineLimit(1)
                     }
                 } label: {
@@ -46,7 +50,7 @@ struct CalendarSectionView: View {
 
             LabeledContent {
                 Circle()
-                    .fill(event.colors.onDatavizContainerVariant)
+                    .fill(event?.colors.onDatavizContainerVariant ?? .gray)
                     .frame(
                         width: IKIconSize.medium.rawValue,
                         height: IKIconSize.medium.rawValue
@@ -59,5 +63,24 @@ struct CalendarSectionView: View {
         } header: {
             Text(CalendarResourcesStrings.sectionCalendarHeader)
         }
+        .task {
+            await observeCalendars()
+        }
     }
+
+    private func observeCalendars() async {
+        @InjectService var calendarSDK: CalendarCoreGraph
+        for await calendars in calendarSDK.calendarManager.observeCalendars() {
+            let uiCalendars = calendars.map { UICalendar(calendar: $0) }
+            availableCalendars = uiCalendars
+
+            if let event {
+                selectedCalendar = uiCalendars.first { $0.id == event.calendarId }
+            }
+        }
+    }
+}
+
+#Preview {
+    CalendarSectionView(event: UIEvent.preview)
 }
