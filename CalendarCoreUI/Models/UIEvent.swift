@@ -72,6 +72,7 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
     public let isAllDay: Bool
 
     public let calendarId: String
+    public let alarms: [UIEventAlarm]
 
     public let user: UIAttendee?
     public let attendees: [UIAttendee]
@@ -88,6 +89,7 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
         status: EventStatus?,
         location: String? = nil,
         calendarId: String,
+        alarms: [UIEventAlarm] = [],
         user: UIAttendee? = nil,
         attendees: [UIAttendee],
         organizer: UIAttendee? = nil,
@@ -101,6 +103,7 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
         self.status = status
         self.location = location
         self.calendarId = calendarId
+        self.alarms = alarms
         self.user = user
         self.attendees = attendees
         self.organizer = organizer
@@ -123,6 +126,11 @@ public extension UIEvent {
 
         calendarId = event.calendarIdValue
 
+        alarms = event.alarms.map {
+            // TODO: Keep my alarms (user.email in attendees)
+            UIEventAlarm(sdk: $0)
+        }
+
         var user: UIAttendee?
         attendees = event.attendees.map {
             let uiAttendee = UIAttendee(attendee: $0)
@@ -142,6 +150,19 @@ public extension UIEvent {
 // MARK: - Previews
 
 public extension UIEvent {
+    static let alarmsPreview = UIEvent(
+        id: "0",
+        title: "Event Title",
+        startDate: Date().addingTimeInterval(3600),
+        endDate: Date().addingTimeInterval(7200),
+        status: .confirmed,
+        location: "1 Infinite Loop, Cupertino",
+        calendarId: "0",
+        alarms: UIEventAlarm.previews,
+        attendees: UIAttendee.previews,
+        colors: .preview
+    )
+
     static let preview = UIEvent(
         id: "0",
         title: "Event Title",
