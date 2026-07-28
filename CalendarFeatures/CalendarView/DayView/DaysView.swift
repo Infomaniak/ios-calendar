@@ -18,6 +18,7 @@
 
 import CalendarCore
 import CalendarCoreUI
+import CalendarEventDetailsView
 import InfomaniakDI
 import MultiplatformCalendar
 import SwiftUI
@@ -27,6 +28,7 @@ struct DaysView: View {
     @Environment(\.calendarAccounts) private var calendarAccounts
 
     @State private var events: [Date: [CalendarCoreUI.UIEvent]] = [:]
+    @State private var selectedEvent: CalendarCoreUI.UIEvent?
 
     private var dates: [Date] {
         return [mainViewState.selectedDate]
@@ -35,11 +37,14 @@ struct DaysView: View {
     var body: some View {
         ScrollView(.horizontal) {
             ForEach(dates, id: \.self) { date in
-                DayView(date: date, events: events[date] ?? [])
+                DayView(onSelectEvent: { selectedEvent = $0 }, date: date, events: events[date] ?? [])
                     .containerRelativeFrame(.horizontal)
             }
         }
         .scrollTargetBehavior(.paging)
+        .sheet(item: $selectedEvent) { event in
+            EventDetailsView(event: event)
+        }
         .task {
             await observeCalendars()
         }
