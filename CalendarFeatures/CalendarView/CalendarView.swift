@@ -17,6 +17,7 @@
  */
 
 import CalendarCore
+import CalendarCreateEditEventView
 import CalendarResources
 import SwiftUI
 
@@ -56,6 +57,7 @@ public struct CalendarView: View {
     @Environment(\.calendarAccounts) private var calendarAccounts
 
     @SceneStorage("SelectedMode") private var selectedMode: CalendarViewMode = .day
+    @State private var isShowingAddEventView = false
 
     public init() {}
 
@@ -66,7 +68,19 @@ public struct CalendarView: View {
                 PlanningView(calendarAccounts: calendarAccounts)
             case .day:
                 DaysView()
-            case .week:
+					.sheet(isPresented: $isShowingAddEventView) {
+                    NavigationStack {
+                        CreateEditEventView(event: nil)
+                    }
+                }
+                .toolbar {
+                    ToolbarItem(placement: .bottomBar) {
+                        Button("add event") {
+                            isShowingAddEventView = true
+                        }
+                    }
+                }
+			case .week:
                 WeekView()
             case .threeDays:
                 Text("Three Days View")
