@@ -25,18 +25,20 @@ public struct EventDetailsView: View {
     @Environment(\.dismiss) private var dismiss
 
     private let event: CalendarCoreUI.UIEvent
+    @State private var color: Color
 
     public init(
         event: CalendarCoreUI.UIEvent
     ) {
         self.event = event
+        _color = State(initialValue: Color(event.colors.datavizContainer))
     }
 
     public var body: some View {
         NavigationStack {
             Form {
                 EventSectionView(event: event)
-                CalendarSectionView(event: event)
+                CalendarSectionView(event: event, color: $color)
                 ParticipantsSectionView(event: event)
             }
             .toolbar {
