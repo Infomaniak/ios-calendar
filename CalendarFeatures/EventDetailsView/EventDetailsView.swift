@@ -39,6 +39,7 @@ public struct EventDetailsView: View {
             Form {
                 EventSectionView(event: event, color: $color)
                 CalendarSectionView(event: event, color: $color)
+                AlertsSectionView(event: event)
                 ParticipantsSectionView(event: event)
             }
             .toolbar {
