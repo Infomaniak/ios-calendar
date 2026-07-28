@@ -45,9 +45,19 @@ let preloadingView = Feature(
     ]
 )
 
+let createEditEventView = Feature(
+    name: "CreateEditEventView",
+    additionalDependencies: [
+    TargetDependency.target(name: "\(Constants.projectName)Resources"),
+    TargetDependency.external(name: "DesignSystem"),
+    TargetDependency.external(name: "ESDSCalendar"),
+    TargetDependency.external(name: "InfomaniakDI")
+])
+
 let eventDetailsView = Feature(
     name: "EventDetailsView",
     additionalDependencies: [
+        createEditEventView,
         TargetDependency.target(name: "\(Constants.projectName)Resources"),
         TargetDependency.external(name: "DesignSystem"),
         TargetDependency.external(name: "ESDSCalendar"),
@@ -59,6 +69,7 @@ let eventDetailsView = Feature(
 let calendarView = Feature(
     name: "CalendarView",
     additionalDependencies: [
+        createEditEventView,
         eventDetailsView,
         TargetDependency.target(name: "\(Constants.projectName)Resources"),
         TargetDependency.external(name: "DesignSystem"),
@@ -66,8 +77,6 @@ let calendarView = Feature(
         TargetDependency.external(name: "ESDSCalendar")
     ]
 )
-
-let createEditEventView = Feature(name: "CreateEditEventView", additionalDependencies: [])
 
 let settingsView = Feature(name: "SettingsView", additionalDependencies: [])
 
