@@ -16,16 +16,211 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarCoreUI
+import CoreLocationUI
+import DesignSystem
+import InfomaniakDI
+@preconcurrency import MultiplatformCalendar
 import SwiftUI
 
 public struct CreateEditEventView: View {
-    public init() {}
+    @Environment(\.dismiss) private var dismiss
+
+    @State private var title: String
+    @State private var colors: [Color] = [.gray, .red, .orange, .yellow, .green, .blue, .purple]
+    @State private var color: Color = .gray
+    @State private var startDate: Date
+    @State private var endDate: Date
+    @State private var location: String
+    @State private var selectedCalendar: UICalendar?
+    @State private var availableCalendars: [UICalendar] = []
+    @State private var alarmOffsets: [AlarmOffset] = []
+    @State private var attendeesListIsOpen = true
+
+    let event: CalendarCoreUI.UIEvent?
+
+    private var uniqueAttendees: [UIAttendee] {
+        guard let event = event else { return [] }
+        var seenEmails = Set<String>()
+
+        return event.attendees.filter { attendee in
+            seenEmails.insert(normalizedEmail(attendee.email)).inserted
+        }
+    }
+
+    private var visibleAttendees: [UIAttendee] {
+        Array(uniqueAttendees.prefix(3))
+    }
+
+    private func normalizedEmail(_ email: String) -> String {
+        email.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+    }
+
+    private var navigationTitle: String {
+        if let event = event {
+            return "Edit Event: \(event.title)"
+        } else {
+            return "Create Event"
+        }
+    }
+
+    public init(event: CalendarCoreUI.UIEvent? = nil) {
+        self.event = event
+        _title = State(initialValue: event?.title ?? "")
+        _startDate = State(initialValue: event?.startDate ?? Date())
+        _endDate = State(initialValue: event?.endDate ?? Date() + 3600)
+        _location = State(initialValue: event?.location ?? "")
+        _color = State(initialValue: event?.colors.datavizContainer ?? .gray)
+        _alarmOffsets = State(initialValue: (event?.alarms ?? []).map {
+            AlarmOffset(trigger: $0.trigger)
+        })
+    }
 
     public var body: some View {
-        EmptyView()
+        Form {
+            HStack {
+                RoundedRectangle(cornerRadius: 4)
+                    .fill(color)
+                    .frame(width: 8, height: 32)
+                TextField("Title", text: $title)
+                    .font(.title2)
+                    .fontWeight(.semibold)
+            }
+
+            Section {
+                DatePicker("Start Date", selection: $startDate, displayedComponents: [.date, .hourAndMinute])
+                DatePicker("End Date", selection: $endDate, displayedComponents: [.date, .hourAndMinute])
+                TextField("Location Or Room", text: $location)
+                    .textContentType(.fullStreetAddress)
+            } header: {
+                Text("Date & Location")
+            }
+
+            Section {
+                Picker("Calendar", selection: $selectedCalendar) {
+                    ForEach(availableCalendars) { calendar in
+                        HStack {
+                            Circle()
+                                .fill(calendar.color)
+                                .frame(width: 8, height: 8)
+                            Text(calendar.displayName)
+                        }
+                        .tag(UICalendar?.some(calendar))
+                    }
+                }
+
+                LabeledContent("Event Color") {
+                    HStack(spacing: 8) {
+                        ForEach(colors, id: \.self) { paletteColor in
+                            Circle()
+                                .fill(paletteColor)
+                                .frame(width: 16, height: 16)
+                                .overlay {
+                                    if paletteColor == color {
+                                        Circle().stroke(.primary, lineWidth: 2).padding(-3)
+                                    }
+                                }
+                                .onTapGesture { color = paletteColor }
+                        }
+                    }
+                }
+
+            } header: {
+                Text("Calendar & Color")
+            }
+
+            Section {
+                ForEach(alarmOffsets.indices, id: \.self) { index in
+                    Picker("Alarm \(index + 1)", selection: $alarmOffsets[index]) {
+                        ForEach(AlarmOffset.allCases) { offset in
+                            Text(offset.rawValue).tag(offset)
+                        }
+                    }
+                }
+                .onDelete { indexSet in
+                    alarmOffsets.remove(atOffsets: indexSet)
+                }
+
+                Button {
+                    alarmOffsets.append(.none)
+                } label: {
+                    Label("Add alarm", systemImage: "plus.circle.fill")
+                }
+            } header: {
+                Text("Alerts")
+            }
+
+            Section {
+                List {
+                    DisclosureGroup(isExpanded: $attendeesListIsOpen) {
+                        ForEach(uniqueAttendees) { attendee in
+                            HStack {
+                                Text(attendee.displayName ?? attendee.email)
+                                Spacer()
+                            }
+                        }
+                    } label: {
+                        HStack(spacing: IKPadding.micro) {
+                            HStack(spacing: -24 / 3) {
+                                ForEach(Array(visibleAttendees.enumerated()), id: \.element) { attendee in
+                                    AvatarView(rawAvatarURL: nil,
+                                               displayName: attendee.element.displayName ?? attendee.element.email,
+                                               email: attendee.element.email,
+                                               size: 24)
+                                }
+                            }
+                            .compositingGroup()
+
+                            Text("\(uniqueAttendees.count) Personnes participent")
+                        }
+                    }
+                }
+            } header: {
+                Text("Participants")
+            }
+        }
+        .navigationTitle(navigationTitle)
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                if #available(iOS 26.0, *) {
+                    Button(role: .close, action: dismiss.callAsFunction)
+                } else {
+                    Button(action: dismiss.callAsFunction) {
+                        Label("close", systemImage: "xmark")
+                    }
+                }
+            }
+            ToolbarItem(placement: .confirmationAction) {
+                Button("Save", action: save)
+            }
+        }
+
+        .task {
+            await observeCalendars()
+        }
+    }
+
+    private func observeCalendars() async {
+        @InjectService var calendarSDK: CalendarCoreGraph
+        for await calendars in calendarSDK.calendarManager.observeCalendars() {
+            let uiCalendars = calendars.map { UICalendar(calendar: $0) }
+            availableCalendars = uiCalendars
+
+            if let event {
+                selectedCalendar = uiCalendars.first { $0.id == event.calendarId }
+            }
+        }
+    }
+
+    private func save() {
+        let triggerDates = alarmOffsets.compactMap { $0.triggerDate(for: startDate) }
+        print("Alarms trigger dates:", triggerDates)
+        dismiss()
     }
 }
 
 #Preview {
-    CreateEditEventView()
+    // Edit Event Preview
+    CreateEditEventView(event: UIEvent.kykyPreview)
 }
