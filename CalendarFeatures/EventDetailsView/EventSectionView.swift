@@ -23,16 +23,59 @@ import SwiftUI
 struct EventSectionView: View {
     let event: CalendarCoreUI.UIEvent
 
-    var body: some View {
-        Section {
-            LabeledContent(CalendarResourcesStrings.titleLabel, value: event.title)
-            if let location = event.location, !location.isEmpty {
-                LabeledContent(CalendarResourcesStrings.locationOrRoomLabel, value: location)
-            }
-            Toggle(CalendarResourcesStrings.allDayLabel, isOn: .constant(event.isAllDay))
-                .disabled(true)
-            LabeledContent(CalendarResourcesStrings.startLabel, value: event.startDate, format: .dateTime)
-            LabeledContent(CalendarResourcesStrings.endLabel, value: event.endDate, format: .dateTime)
+    private let title: String
+    private let location: String?
+    private let isAllDay: Bool
+    private let startDate: Date
+    private let endDate: Date
+
+    @Binding private var color: Color
+
+    init(event: CalendarCoreUI.UIEvent, color: Binding<Color> = .constant(.gray)) {
+        self.event = event
+        title = event.title
+        location = event.location
+        isAllDay = event.isAllDay
+        startDate = event.startDate
+        endDate = event.endDate
+        _color = color
+    }
+
+    private var displayedComponents: DatePickerComponents {
+        if isAllDay {
+            return [.date]
+        } else {
+            return [.date, .hourAndMinute]
         }
     }
+
+    var body: some View {
+        HStack {
+            RoundedRectangle(cornerRadius: 4)
+                .fill(color)
+                .frame(width: 8, height: 32)
+            Text(title)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .font(.title2)
+                .fontWeight(.semibold)
+        }
+
+        Section {
+            Toggle(CalendarResourcesStrings.allDayLabel, isOn: .constant(isAllDay))
+                .disabled(true)
+            DatePicker("Start Date", selection: .constant(startDate), displayedComponents: displayedComponents)
+                .disabled(true)
+            DatePicker("End Date", selection: .constant(endDate), displayedComponents: displayedComponents)
+                .disabled(true)
+            if let location = location, !location.isEmpty {
+                LabeledContent(CalendarResourcesStrings.locationOrRoomLabel, value: location)
+            }
+        } header: {
+            Text("Date & Location")
+        }
+    }
+}
+
+#Preview {
+    EventSectionView(event: UIEvent.preview)
 }
