@@ -19,34 +19,22 @@
 import DesignSystem
 import SwiftUI
 
-struct ScrollInfo: Equatable {
-    let offsetX: CGFloat
-    let contentWidth: CGFloat
-    let containerWidth: CGFloat
-}
-
-enum ScrollDirection {
-    case past
-    case future
-}
-
 struct MiniCalendarView: View {
+    @Namespace private var weeksOrMonthViewNamespace
+
     enum DisplayMode {
         case month
         case week
+
+        var referenceDateInterval: Calendar.Component {
+            switch self {
+            case .month:
+                return .month
+            case .week:
+                return .weekOfYear
+            }
+        }
     }
-
-    private static let pageWindow = 3
-    private static let moveWindowThreshold = 10
-    private static let adjustWindowThreshold: CGFloat = 100
-
-    @Environment(\.calendar) private var calendar
-
-    @State private var referenceDates = [Date]()
-    @State private var scrollPosition: ScrollPosition = .init(idType: Date.self)
-
-    @State private var adjustingWindowDirection: ScrollDirection?
-    @State private var isProgrammaticallyScrolling = false
 
     @Binding var displayMode: DisplayMode
     @Binding var selectedDate: Date
@@ -54,116 +42,8 @@ struct MiniCalendarView: View {
     var body: some View {
         VStack(spacing: IKPadding.micro) {
             DayOfWeekView()
-            ScrollView(.horizontal) {
-                LazyHStack(spacing: 0) {
-                    ForEach(referenceDates, id: \.self) { referenceDate in
-                        WeekOrMonthView(startDate: referenceDate, displayMode: displayMode)
-                            .containerRelativeFrame(.horizontal)
-                    }
-                }
-                .scrollTargetLayout()
-            }
-            .fixedSize(horizontal: false, vertical: true)
-        }
-        .scrollIndicators(.hidden)
-        .scrollTargetBehavior(.paging)
-        .scrollPosition($scrollPosition)
-        .defaultScrollAnchor(.center)
-        .onScrollGeometryChange(for: ScrollInfo.self) { geometry in
-            let offsetX = geometry.contentOffset.x + geometry.contentInsets.leading
-            let contentWidth = geometry.contentSize.width
-            let containerWidth = geometry.containerSize.width
-            return ScrollInfo(offsetX: offsetX, contentWidth: contentWidth, containerWidth: containerWidth)
-        } action: { _, newValue in
-            adjustWindowIfNeeded(newValue)
-        }
-        .onAppear {
-            referenceDates = generateReferenceDates(from: Date(), range: -Self.pageWindow ... Self.pageWindow)
-        }
-        .onChange(of: selectedDate) { _, newValue in
-            scrollToSelectedDateIfNeeded(newValue)
-        }
-    }
-
-    private func generateReferenceDates(from date: Date, range: ClosedRange<Int>) -> [Date] {
-        guard let currentWeekStart = calendar.dateInterval(of: .weekOfYear, for: date)?.start else {
-            return []
-        }
-
-        return range.compactMap { offset in
-            calendar.date(byAdding: .weekOfYear, value: offset, to: currentWeekStart)
-        }
-    }
-
-    private func scrollToSelectedDateIfNeeded(_ date: Date) {
-        guard let selectedDateWeekStart = calendar.dateInterval(of: .weekOfYear, for: date)?.start,
-              selectedDateWeekStart != scrollPosition.viewID as? Date else {
-            return
-        }
-
-        isProgrammaticallyScrolling = true
-        withAnimation {
-            if !referenceDates.contains(where: { $0 == selectedDateWeekStart }) {
-                referenceDates = generateReferenceDates(from: selectedDateWeekStart, range: -Self.pageWindow ... Self.pageWindow)
-            }
-
-            scrollPosition.scrollTo(id: selectedDateWeekStart)
-        }
-        isProgrammaticallyScrolling = false
-    }
-
-    private func adjustWindowIfNeeded(_ scrollInfo: ScrollInfo) {
-        guard scrollInfo.contentWidth > 0, !isProgrammaticallyScrolling else { return }
-
-        let offsetX = scrollInfo.offsetX
-        let contentWidth = scrollInfo.contentWidth
-        let containerWidth = scrollInfo.containerWidth
-
-        if offsetX > (contentWidth - containerWidth - Self.adjustWindowThreshold) && adjustingWindowDirection != .future {
-            adjustWindowFuture()
-        } else if offsetX < Self.adjustWindowThreshold && adjustingWindowDirection != .past {
-            adjustWindowPast()
-        }
-    }
-
-    private func adjustWindowFuture() {
-        guard let lastWeekStart = referenceDates.last else { return }
-        adjustingWindowDirection = .future
-
-        let additionalWeeks = generateReferenceDates(from: lastWeekStart, range: 1 ... Self.pageWindow)
-        referenceDates.append(contentsOf: additionalWeeks)
-
-        resizeWindowIfNeeded(direction: adjustingWindowDirection)
-
-        Task { @MainActor in
-            adjustingWindowDirection = nil
-        }
-    }
-
-    private func adjustWindowPast() {
-        guard let firstWeekStart = referenceDates.first else { return }
-        adjustingWindowDirection = .past
-
-        let additionalWeeks = generateReferenceDates(from: firstWeekStart, range: -Self.pageWindow ... -1)
-        referenceDates.insert(contentsOf: additionalWeeks, at: 0)
-
-        resizeWindowIfNeeded(direction: adjustingWindowDirection)
-
-        Task { @MainActor in
-            adjustingWindowDirection = nil
-        }
-    }
-
-    private func resizeWindowIfNeeded(direction: ScrollDirection?) {
-        guard referenceDates.count > Self.moveWindowThreshold else { return }
-
-        var transaction = Transaction()
-        transaction.scrollPositionUpdatePreservesVelocity = true
-        withTransaction(transaction) {
-            if direction == .future {
-                referenceDates.removeFirst(Self.pageWindow)
-            } else if direction == .past {
-                referenceDates.removeLast(Self.pageWindow)
+            InfiniteScrollView(referenceDateInterval: displayMode.referenceDateInterval, selectedDate: $selectedDate) { date in
+                WeekOrMonthView(startDate: date, displayMode: displayMode, animationNamespace: weeksOrMonthViewNamespace)
             }
         }
     }

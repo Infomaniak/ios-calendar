@@ -19,15 +19,13 @@
 import DesignSystem
 import ESDSFoundation
 import SwiftUI
-import UIKit
 
 struct WeekOrMonthView: View {
-    @Namespace private var weeksOrMonthViewNamespace
-
     @Environment(\.calendar) private var calendar
 
     let startDate: Date
     let displayMode: MiniCalendarView.DisplayMode
+    let animationNamespace: Namespace.ID
 
     private var monthStart: Date {
         calendar.monthStart(for: startDate)
@@ -74,7 +72,7 @@ struct WeekOrMonthView: View {
                         }
                     }
                     .geometryGroup()
-                    .matchedGeometryEffect(id: weekStartDay, in: weeksOrMonthViewNamespace)
+                    .matchedGeometryEffect(id: weekStartDay, in: animationNamespace)
                 }
             }
         }
@@ -83,18 +81,26 @@ struct WeekOrMonthView: View {
 }
 
 #Preview {
-    WeekOrMonthView(startDate: Calendar.current.weekStart(for: Date()), displayMode: .week)
+    WeekOrMonthView(
+        startDate: Calendar.current.weekStart(for: Date()),
+        displayMode: .week,
+        animationNamespace: Namespace().wrappedValue
+    )
 }
 
 #Preview {
-    WeekOrMonthView(startDate: Calendar.current.monthStart(for: Date()), displayMode: .month)
+    WeekOrMonthView(
+        startDate: Calendar.current.monthStart(for: Date()),
+        displayMode: .month,
+        animationNamespace: Namespace().wrappedValue
+    )
 }
 
 #Preview {
     @Previewable @State var displayMode: MiniCalendarView.DisplayMode = .week
     @Previewable @State var startDate: Date = Calendar.current.weekStart(for: Date())
     VStack {
-        WeekOrMonthView(startDate: startDate, displayMode: displayMode)
+        WeekOrMonthView(startDate: startDate, displayMode: displayMode, animationNamespace: Namespace().wrappedValue)
         Button("Toggle Display Mode") {
             withAnimation {
                 displayMode = (displayMode == .week) ? .month : .week
