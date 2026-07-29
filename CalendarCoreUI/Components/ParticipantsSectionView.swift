@@ -16,17 +16,22 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import CalendarCoreUI
 import CalendarResources
 import DesignSystem
 import SwiftUI
 
-struct ParticipantsSectionView: View {
+public struct ParticipantsSectionView: View {
     @State private var attendeesListIsOpen = false
 
-    let event: CalendarCoreUI.UIEvent
+    let event: CalendarCoreUI.UIEvent?
+
+    private var organizer: UIAttendee? {
+        guard let event else { return nil }
+        return event.organizer
+    }
 
     private var uniqueAttendees: [UIAttendee] {
+        guard let event else { return [] }
         var seenEmails = Set<String>()
 
         return event.attendees.filter { attendee in
@@ -46,7 +51,12 @@ struct ParticipantsSectionView: View {
         email.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
     }
 
-    var body: some View {
+    public init(event: CalendarCoreUI.UIEvent?) {
+        self.event = event
+    }
+
+    public var body: some View {
+
         if !uniqueAttendees.isEmpty {
             Section {
                 DisclosureGroup(isExpanded: $attendeesListIsOpen) {

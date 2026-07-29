@@ -126,34 +126,7 @@ public struct CreateEditEventView: View {
                 Text("Alerts")
             }
 
-            Section {
-                List {
-                    DisclosureGroup(isExpanded: $attendeesListIsOpen) {
-                        ForEach(uniqueAttendees) { attendee in
-                            HStack {
-                                Text(attendee.displayName ?? attendee.email)
-                                Spacer()
-                            }
-                        }
-                    } label: {
-                        HStack(spacing: IKPadding.micro) {
-                            HStack(spacing: -24 / 3) {
-                                ForEach(Array(visibleAttendees.enumerated()), id: \.element) { attendee in
-                                    AvatarView(rawAvatarURL: nil,
-                                               displayName: attendee.element.displayName ?? attendee.element.email,
-                                               email: attendee.element.email,
-                                               size: 24)
-                                }
-                            }
-                            .compositingGroup()
-
-                            Text("\(uniqueAttendees.count) Personnes participent")
-                        }
-                    }
-                }
-            } header: {
-                Text("Participants")
-            }
+            ParticipantsSectionView(event: event)
         }
         .sheet(isPresented: $isColorPickerPresented) {
             ColorSelectionView(selection: $color)

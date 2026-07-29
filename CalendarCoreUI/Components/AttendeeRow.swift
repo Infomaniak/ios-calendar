@@ -16,13 +16,12 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import CalendarCoreUI
 import CalendarResources
 import DesignSystem
 import InfomaniakCoreSwiftUI
 import SwiftUI
 
-struct AttendeeRow: View {
+public struct AttendeeRow: View {
     let attendee: UIAttendee
     let isOrganizer: Bool
 
@@ -34,7 +33,7 @@ struct AttendeeRow: View {
         displayName != attendee.email
     }
 
-    var body: some View {
+    public var body: some View {
         HStack(spacing: IKPadding.medium) {
             AvatarView(
                 rawAvatarURL: nil,
