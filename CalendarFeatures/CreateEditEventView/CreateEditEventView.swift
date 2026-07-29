@@ -98,38 +98,12 @@ public struct CreateEditEventView: View {
                 isColorPickerPresented: $isColorPickerPresented
             )
 
-            Section {
-                Picker("Calendar", selection: $selectedCalendar) {
-                    ForEach(availableCalendars) { calendar in
-                        HStack {
-                            Circle()
-                                .fill(calendar.color)
-                                .frame(width: 8, height: 8)
-                            Text(calendar.displayName)
-                        }
-                        .tag(UICalendar?.some(calendar))
-                    }
-                }
-
-                LabeledContent("Event Color") {
-                    HStack(spacing: 8) {
-                        ForEach(colors, id: \.self) { paletteColor in
-                            Circle()
-                                .fill(paletteColor)
-                                .frame(width: 16, height: 16)
-                                .overlay {
-                                    if paletteColor == color {
-                                        Circle().stroke(.primary, lineWidth: 2).padding(-3)
-                                    }
-                                }
-                                .onTapGesture { color = paletteColor }
-                        }
-                    }
-                }
-
-            } header: {
-                Text("Calendar & Color")
-            }
+            CalendarSectionView(
+                event: event,
+                isEditableView: true,
+                color: $color,
+                calendarColor: $calendarColor
+            )
 
             Section {
                 ForEach(alarmOffsets.indices, id: \.self) { index in

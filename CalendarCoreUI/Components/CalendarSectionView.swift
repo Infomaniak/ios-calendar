@@ -16,7 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import CalendarCoreUI
 import CalendarResources
 import DesignSystem
 import InfomaniakCoreSwiftUI
@@ -24,36 +23,60 @@ import InfomaniakDI
 @preconcurrency import MultiplatformCalendar
 import SwiftUI
 
-struct CalendarSectionView: View {
+public struct CalendarSectionView: View {
     @State private var selectedCalendar: UICalendar?
     @State private var availableCalendars: [UICalendar] = []
+    @Binding private var color: Color
     @Binding private var calendarColor: Color
 
     let event: CalendarCoreUI.UIEvent?
+    let isEditableView: Bool
 
-    init(
+    public init(
         event: CalendarCoreUI.UIEvent?,
+        isEditableView: Bool = false,
+        color: Binding<Color> = .constant(.gray),
         calendarColor: Binding<Color> = .constant(.gray)
     ) {
         self.event = event
+        self.isEditableView = isEditableView
+        _color = color
         _calendarColor = calendarColor
     }
 
-    var body: some View {
+    public var body: some View {
         Section {
-            if let selectedCalendar {
-                LabeledContent {
-                    HStack {
+            if isEditableView {
+                HStack(spacing: 8) {
+                    Picker(CalendarResourcesStrings.sectionCalendarHeader, selection: $selectedCalendar) {
                         Circle()
-                            .fill(selectedCalendar.color)
+                            .fill(calendarColor)
                             .frame(width: 12, height: 12)
                             .accessibilityHidden(true)
 
-                        Text(selectedCalendar.displayName)
-                            .lineLimit(1)
+                        ForEach(availableCalendars) { calendar in
+                            Text(calendar.displayName)
+                                .lineLimit(1)
+                                .tag(UICalendar?.some(calendar))
+                        }
                     }
-                } label: {
-                    Text(CalendarResourcesStrings.sectionCalendarHeader)
+                }
+            } else {
+                if let selectedCalendar {
+                    LabeledContent {
+                        HStack(spacing: 8) {
+                            Circle()
+                                .fill(selectedCalendar.color)
+                                .frame(width: 12, height: 12)
+                                .accessibilityHidden(true)
+
+                            Text(selectedCalendar.displayName)
+                                .lineLimit(1)
+                        }
+
+                    } label: {
+                        Text(CalendarResourcesStrings.sectionCalendarHeader)
+                    }
                 }
             }
         } header: {
@@ -62,18 +85,27 @@ struct CalendarSectionView: View {
         .task {
             await observeCalendars()
         }
+        .onChange(of: selectedCalendar) { _, newValue in
+            color = newValue?.color ?? .gray
+            calendarColor = newValue?.color ?? .gray
+        }
     }
 
     private func observeCalendars() async {
         @InjectService var calendarSDK: CalendarCoreGraph
+        var didSetInitialSelection = false
+
         for await calendars in calendarSDK.calendarManager.observeCalendars() {
             let uiCalendars = calendars.map { UICalendar(calendar: $0) }
             availableCalendars = uiCalendars
 
-            if let event {
-                selectedCalendar = uiCalendars.first { $0.id == event.calendarId }
+            if !didSetInitialSelection {
+                if let event {
+                    selectedCalendar = uiCalendars.first { $0.id == event.calendarId }
+                }
+                calendarColor = selectedCalendar?.color ?? .gray
+                didSetInitialSelection = true
             }
-            calendarColor = selectedCalendar?.color ?? .gray
         }
     }
 }
