@@ -25,15 +25,6 @@ struct MiniCalendarView: View {
     enum DisplayMode {
         case month
         case week
-
-        var referenceDateInterval: Calendar.Component {
-            switch self {
-            case .month:
-                return .month
-            case .week:
-                return .weekOfYear
-            }
-        }
     }
 
     @Binding var displayMode: DisplayMode
@@ -42,10 +33,17 @@ struct MiniCalendarView: View {
     var body: some View {
         VStack(spacing: IKPadding.micro) {
             DayOfWeekView()
-            InfiniteScrollView(referenceDateInterval: displayMode.referenceDateInterval, selectedDate: $selectedDate) { date in
-                WeekOrMonthView(startDate: date, displayMode: displayMode, animationNamespace: weeksOrMonthViewNamespace)
+            if displayMode == .week {
+                InfiniteScrollView(referenceDateInterval: .weekOfYear, selectedDate: $selectedDate) { date in
+                    WeekHeaderView(startDate: date)
+                }
+            } else {
+                InfiniteScrollView(referenceDateInterval: .month, selectedDate: $selectedDate) { date in
+                    MonthHeaderView(startDate: date)
+                }
             }
         }
+        .fixedSize(horizontal: false, vertical: true)
     }
 }
 

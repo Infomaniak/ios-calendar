@@ -61,7 +61,6 @@ struct InfiniteScrollView<ContentView: View>: View {
             }
             .scrollTargetLayout()
         }
-        .fixedSize(horizontal: false, vertical: true)
         .scrollIndicators(.hidden)
         .scrollTargetBehavior(.paging)
         .scrollPosition($scrollPosition)
@@ -176,6 +175,6 @@ struct InfiniteScrollView<ContentView: View>: View {
 #Preview {
     @Previewable @State var selectedDate = Date()
     InfiniteScrollView(referenceDateInterval: .weekOfYear, selectedDate: $selectedDate) { date in
-        WeekOrMonthView(startDate: date, displayMode: .week, animationNamespace: Namespace().wrappedValue)
+        WeekHeaderView(startDate: date)
     }
 }
