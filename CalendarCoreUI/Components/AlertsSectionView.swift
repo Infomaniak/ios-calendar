@@ -22,28 +22,42 @@ import DesignSystem
 import InfomaniakCoreSwiftUI
 import SwiftUI
 
-struct AlertsSectionView: View {
-    private let event: CalendarCoreUI.UIEvent
-    @State private var alarmOffsets: [AlarmOffset] = []
+public struct AlertsSectionView: View {
+    let isEditableView: Bool
+    let event: CalendarCoreUI.UIEvent?
+    @State private var alarmOffsets: [AlarmOffset]
 
-    init(event: CalendarCoreUI.UIEvent) {
+    public init(
+        event: CalendarCoreUI.UIEvent?,
+        isEditableView: Bool = false
+    ) {
         self.event = event
-        _alarmOffsets = State(initialValue: (event.alarms).map {
+        self.isEditableView = isEditableView
+        _alarmOffsets = State(initialValue: (event?.alarms)?.map {
             AlarmOffset(trigger: $0.trigger)
-        })
+        } ?? [])
     }
 
-    var body: some View {
+    public var body: some View {
         if !alarmOffsets.isEmpty {
             Section {
                 ForEach(alarmOffsets.indices, id: \.self) { index in
-                    Picker("Alarm \(index + 1)", selection: $alarmOffsets[index]) {
-                        ForEach(AlarmOffset.allCases) { offset in
-                            Text(offset.rawValue).tag(offset)
+                    if isEditableView {
+                        Picker("Alarm \(index + 1)", selection: $alarmOffsets[index]) {
+                            ForEach(AlarmOffset.allCases) { offset in
+                                Text(offset.rawValue).tag(offset)
+                            }
+                        }
+                    } else {
+                        HStack {
+                            Text("Alarm \(index + 1)")
+
+                            Text(AlarmOffset.allCases.first { $0 == alarmOffsets[index] }?.rawValue ?? "")
+                                .frame(maxWidth: .infinity, alignment: .trailing)
                         }
                     }
-                    .disabled(true)
                 }
+
             } header: {
                 Text("Alerts")
             }
