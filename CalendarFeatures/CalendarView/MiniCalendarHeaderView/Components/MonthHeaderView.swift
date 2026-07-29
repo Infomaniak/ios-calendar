@@ -25,6 +25,8 @@ struct MonthHeaderView: View {
 
     let startDate: Date
 
+    private let maximumRowCount = 6
+
     private var monthStart: Date {
         calendar.monthStart(for: startDate)
     }
@@ -39,18 +41,22 @@ struct MonthHeaderView: View {
         }
 
         let dayCount = calendar.dateComponents([.day], from: gridStart, to: monthEnd).day ?? 0
-        return min(max((dayCount + 6) / 7, 4), 6)
+        return min(max((dayCount + 6) / 7, 4), maximumRowCount)
     }
 
     var body: some View {
         Grid(horizontalSpacing: IKPadding.micro, verticalSpacing: IKPadding.micro) {
-            ForEach(0 ..< rowCount, id: \.self) { row in
+            ForEach(0 ..< maximumRowCount, id: \.self) { row in
                 GridRow {
                     ForEach(0 ..< 7, id: \.self) { column in
                         let dayIndex = row * 7 + column
 
                         ZStack {
-                            if let dayDate = calendar.date(byAdding: .day, value: dayIndex, to: gridStart) {
+                            if row >= rowCount {
+                                DayCellView(date: gridStart)
+                                    .hidden()
+                                    .accessibilityHidden(true)
+                            } else if let dayDate = calendar.date(byAdding: .day, value: dayIndex, to: gridStart) {
                                 if calendar.isDate(
                                     dayDate,
                                     equalTo: monthStart,
