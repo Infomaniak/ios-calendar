@@ -30,8 +30,16 @@ struct EventSectionView: View {
     private let endDate: Date
 
     @Binding private var color: Color
+    @Binding private var calendarColor: Color
 
-    init(event: CalendarCoreUI.UIEvent, color: Binding<Color> = .constant(.gray)) {
+    @Binding private var isColorPickerPresented: Bool
+
+    init(
+        event: CalendarCoreUI.UIEvent,
+        color: Binding<Color> = .constant(.gray),
+        calendarColor: Binding<Color> = .constant(.gray),
+        isColorPickerPresented: Binding<Bool>
+    ) {
         self.event = event
         title = event.title
         location = event.location
@@ -39,6 +47,8 @@ struct EventSectionView: View {
         startDate = event.startDate
         endDate = event.endDate
         _color = color
+        _calendarColor = calendarColor
+        _isColorPickerPresented = isColorPickerPresented
     }
 
     private var displayedComponents: DatePickerComponents {
@@ -51,9 +61,21 @@ struct EventSectionView: View {
 
     var body: some View {
         HStack {
-            RoundedRectangle(cornerRadius: 4)
-                .fill(color)
-                .frame(width: 8, height: 32)
+            Button {
+                isColorPickerPresented = true
+            } label: {
+                RoundedRectangle(cornerRadius: 4)
+                    .fill(color)
+                    .frame(width: 18, height: 18)
+                    .shadow(color: .black.opacity(0.25), radius: 2, x: 0, y: 0)
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(calendarColor, lineWidth: 3)
+                            .frame(width: 28, height: 28)
+                    }
+                    .padding(.trailing, 8)
+            }
+
             Text(title)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .font(.title2)
@@ -77,5 +99,10 @@ struct EventSectionView: View {
 }
 
 #Preview {
-    EventSectionView(event: UIEvent.preview)
+    EventSectionView(
+        event: UIEvent.preview,
+        color: .constant(.blue),
+        calendarColor: .constant(.green),
+        isColorPickerPresented: .constant(false)
+    )
 }

@@ -26,21 +26,34 @@ public struct EventDetailsView: View {
 
     private let event: CalendarCoreUI.UIEvent
     @State private var color: Color
+    @State private var calendarColor: Color
+    @State private var isColorPickerPresented = false
 
     public init(
         event: CalendarCoreUI.UIEvent
     ) {
         self.event = event
-        _color = State(initialValue: Color(event.colors.datavizContainer))
+        _color = State(initialValue: Color(event.colors.onDatavizContainer))
+        _calendarColor = State(initialValue: Color(.gray))
     }
 
     public var body: some View {
         NavigationStack {
             Form {
-                EventSectionView(event: event, color: $color)
-                CalendarSectionView(event: event, color: $color)
+                EventSectionView(
+                    event: event,
+                    color: $color,
+                    calendarColor: $calendarColor,
+                    isColorPickerPresented: $isColorPickerPresented
+                )
+                CalendarSectionView(event: event, calendarColor: $calendarColor)
                 AlertsSectionView(event: event)
                 ParticipantsSectionView(event: event)
+            }
+            .sheet(isPresented: $isColorPickerPresented) {
+                ColorSelectionView(selection: $color)
+                    .presentationDetents([.medium])
+                    .presentationDragIndicator(.visible)
             }
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
