@@ -51,6 +51,7 @@ let createEditEventView = Feature(
     TargetDependency.target(name: "\(Constants.projectName)Resources"),
     TargetDependency.external(name: "DesignSystem"),
     TargetDependency.external(name: "ESDSCalendar"),
+    TargetDependency.external(name: "InfomaniakCoreSwiftUI"),
     TargetDependency.external(name: "InfomaniakDI")
 ])
 

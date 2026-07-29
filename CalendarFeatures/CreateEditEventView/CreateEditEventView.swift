@@ -29,9 +29,12 @@ public struct CreateEditEventView: View {
     @State private var title: String
     @State private var colors: [Color] = [.gray, .red, .orange, .yellow, .green, .blue, .purple]
     @State private var color: Color = .gray
+    @State private var calendarColor: Color
+    @State private var isColorPickerPresented = false
     @State private var startDate: Date
     @State private var endDate: Date
-    @State private var location: String
+    @State private var location: String?
+    @State private var isAllDay: Bool
     @State private var selectedCalendar: UICalendar?
     @State private var availableCalendars: [UICalendar] = []
     @State private var alarmOffsets: [AlarmOffset] = []
@@ -69,32 +72,31 @@ public struct CreateEditEventView: View {
         _title = State(initialValue: event?.title ?? "")
         _startDate = State(initialValue: event?.startDate ?? Date())
         _endDate = State(initialValue: event?.endDate ?? Date() + 3600)
-        _location = State(initialValue: event?.location ?? "")
-        _color = State(initialValue: event?.colors.datavizContainer ?? .gray)
+        _location = State(initialValue: event?.location ?? nil)
+        _isAllDay = State(initialValue: event?.isAllDay ?? false)
+        _startDate = State(initialValue: event?.startDate ?? Date())
+        _endDate = State(initialValue: event?.endDate ?? Date() + 3600)
+        _color = State(initialValue: event?.colors.onDatavizContainer ?? .gray)
         _alarmOffsets = State(initialValue: (event?.alarms ?? []).map {
             AlarmOffset(trigger: $0.trigger)
         })
+        _calendarColor = State(initialValue: Color(.gray))
     }
 
     public var body: some View {
         Form {
-            HStack {
-                RoundedRectangle(cornerRadius: 4)
-                    .fill(color)
-                    .frame(width: 8, height: 32)
-                TextField("Title", text: $title)
-                    .font(.title2)
-                    .fontWeight(.semibold)
-            }
-
-            Section {
-                DatePicker("Start Date", selection: $startDate, displayedComponents: [.date, .hourAndMinute])
-                DatePicker("End Date", selection: $endDate, displayedComponents: [.date, .hourAndMinute])
-                TextField("Location Or Room", text: $location)
-                    .textContentType(.fullStreetAddress)
-            } header: {
-                Text("Date & Location")
-            }
+            EventSectionView(
+                event: event,
+                isEditableView: true,
+                title: $title,
+                location: $location,
+                isAllDay: $isAllDay,
+                startDate: $startDate,
+                endDate: $endDate,
+                color: $color,
+                calendarColor: $calendarColor,
+                isColorPickerPresented: $isColorPickerPresented
+            )
 
             Section {
                 Picker("Calendar", selection: $selectedCalendar) {
@@ -178,6 +180,11 @@ public struct CreateEditEventView: View {
             } header: {
                 Text("Participants")
             }
+        }
+        .sheet(isPresented: $isColorPickerPresented) {
+            ColorSelectionView(selection: $color)
+                .presentationDetents([.medium])
+                .presentationDragIndicator(.visible)
         }
         .navigationTitle(navigationTitle)
         .navigationBarTitleDisplayMode(.inline)

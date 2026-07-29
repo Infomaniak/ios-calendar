@@ -19,7 +19,7 @@
 import CalendarResources
 import SwiftUI
 
-struct ColorSelectionView: View {
+public struct ColorSelectionView: View {
     @Environment(\.dismiss) private var dismiss
 
     private let colors: [Color] = [
@@ -31,7 +31,11 @@ struct ColorSelectionView: View {
 
     private let columns = [GridItem(.adaptive(minimum: 44), spacing: 16)]
 
-    var body: some View {
+    public init(selection: Binding<Color>) {
+        _selection = selection
+    }
+
+    public var body: some View {
         NavigationStack {
             LazyVGrid(columns: columns, spacing: 16) {
                 ForEach(colors, id: \.self) { paletteColor in
