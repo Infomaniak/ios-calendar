@@ -76,6 +76,7 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
 
     public let user: UIAttendee?
     public let attendees: [UIAttendee]
+    public let canEdit: Bool
 
     public let colors: UIEvent.Colors
 
@@ -91,7 +92,7 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
         alarms: [UIEventAlarm] = [],
         user: UIAttendee? = nil,
         attendees: [UIAttendee],
-        organizer: UIAttendee? = nil,
+        canEdit: Bool = false,
         colors: UIEvent.Colors
     ) {
         self.id = id
@@ -105,6 +106,7 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
         self.alarms = alarms
         self.user = user
         self.attendees = attendees
+        self.canEdit = canEdit
         self.colors = colors
     }
 }
@@ -138,6 +140,9 @@ public extension UIEvent {
             return uiAttendee
         }
         self.user = user
+
+        canEdit = event.canEdit
+
 
         colors = .init(eventColors: event.colors)
     }

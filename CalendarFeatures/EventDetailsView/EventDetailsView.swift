@@ -73,12 +73,13 @@ public struct EventDetailsView: View {
                         }
                     }
                 }
-
-                ToolbarItem(placement: .primaryAction) {
-                    Button {
-                        path.append(event)
-                    } label: {
-                        Text("Edit")
+                if event.canEdit {
+                    ToolbarItem(placement: .primaryAction) {
+                        Button {
+                            path.append(event)
+                        } label: {
+                            Text("Edit")
+                        }
                     }
                 }
             }

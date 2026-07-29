@@ -222,5 +222,5 @@ public struct CreateEditEventView: View {
 
 #Preview {
     // Edit Event Preview
-    CreateEditEventView(event: UIEvent.kykyPreview)
+    CreateEditEventView(event: UIEvent.alarmsPreview)
 }
