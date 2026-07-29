@@ -27,15 +27,16 @@ import SwiftUI
 struct CalendarSectionView: View {
     @State private var selectedCalendar: UICalendar?
     @State private var availableCalendars: [UICalendar] = []
-    @Binding private var color: Color
-    private var colors: [Color]
+    @Binding private var calendarColor: Color
 
     let event: CalendarCoreUI.UIEvent?
 
-    init(event: CalendarCoreUI.UIEvent?, color: Binding<Color> = .constant(.gray), colors: [Color] = [.gray]) {
+    init(
+        event: CalendarCoreUI.UIEvent?,
+        calendarColor: Binding<Color> = .constant(.gray)
+    ) {
         self.event = event
-        _color = color
-        self.colors = colors
+        _calendarColor = calendarColor
     }
 
     var body: some View {
@@ -55,22 +56,6 @@ struct CalendarSectionView: View {
                     Text(CalendarResourcesStrings.sectionCalendarHeader)
                 }
             }
-
-//            LabeledContent(CalendarResourcesStrings.eventColorLabel) {
-//                HStack(spacing: 8) {
-//                    ForEach(colors, id: \.self) { paletteColor in
-//                        Circle()
-//                            .fill(paletteColor)
-//                            .frame(width: 16, height: 16)
-//                            .overlay {
-//                                if paletteColor == color {
-//                                    Circle().stroke(.primary, lineWidth: 2).padding(-3)
-//                                }
-//                            }
-//                    }
-//                }
-//            }
-//            .accessibilityHidden(true)
         } header: {
             Text(CalendarResourcesStrings.sectionCalendarHeader)
         }
@@ -84,11 +69,11 @@ struct CalendarSectionView: View {
         for await calendars in calendarSDK.calendarManager.observeCalendars() {
             let uiCalendars = calendars.map { UICalendar(calendar: $0) }
             availableCalendars = uiCalendars
-            
+
             if let event {
                 selectedCalendar = uiCalendars.first { $0.id == event.calendarId }
             }
-            self.color = selectedCalendar?.color ?? .gray
+            calendarColor = selectedCalendar?.color ?? .gray
         }
     }
 }
