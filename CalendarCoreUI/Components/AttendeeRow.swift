@@ -54,6 +54,13 @@ public struct AttendeeRow: View {
                             .background(.secondary.opacity(0.15))
                             .clipShape(Capsule())
                     }
+
+                    Text(attendee.status.name)
+                        .font(.caption2)
+                        .padding(.horizontal, IKPadding.mini)
+                        .padding(.vertical, IKPadding.micro)
+                        .background(attendee.status.color.opacity(0.15))
+                        .clipShape(Capsule())
                 }
 
                 if shouldShowEmail {

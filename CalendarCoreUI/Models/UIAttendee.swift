@@ -18,6 +18,7 @@
 
 import Foundation
 import MultiplatformCalendar
+import SwiftUI
 
 public enum UIParticipationStatus: String, Sendable {
     case accepted
@@ -33,6 +34,24 @@ public extension UIParticipationStatus {
         case .declined: self = .declined
         case .tentative: self = .tentative
         case .needsAction: self = .needsAction
+        }
+    }
+
+    var name: String {
+        switch self {
+        case .accepted: return "Accepted"
+        case .declined: return "Declined"
+        case .tentative: return "Tentative"
+        case .needsAction: return "Needs Action"
+        }
+    }
+
+    var color: Color {
+        switch self {
+        case .accepted: return Color.green
+        case .declined: return Color.red
+        case .tentative: return Color.yellow
+        case .needsAction: return Color.orange
         }
     }
 }
