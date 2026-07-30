@@ -16,7 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import CalendarCoreUI
 import CalendarResources
 import DesignSystem
 import InfomaniakCoreSwiftUI
@@ -39,7 +38,7 @@ public struct AlertsSectionView: View {
     }
 
     public var body: some View {
-        if !alarmOffsets.isEmpty {
+        if !alarmOffsets.isEmpty || isEditableView {
             Section {
                 ForEach(alarmOffsets.indices, id: \.self) { index in
                     if isEditableView {
@@ -49,15 +48,22 @@ public struct AlertsSectionView: View {
                             }
                         }
                     } else {
-                        HStack {
-                            Text("Alarm \(index + 1)")
-
-                            Text(AlarmOffset.allCases.first { $0 == alarmOffsets[index] }?.rawValue ?? "")
-                                .frame(maxWidth: .infinity, alignment: .trailing)
-                        }
+                        LabeledContent("Alarm \(index + 1)", value: alarmOffsets[index].rawValue)
+                    }
+                }
+                .onDelete { indexSet in
+                    if isEditableView {
+                        alarmOffsets.remove(atOffsets: indexSet)
                     }
                 }
 
+                if isEditableView {
+                    Button {
+                        alarmOffsets.append(.none)
+                    } label: {
+                        Label("Add alarm", systemImage: "plus.circle.fill")
+                    }
+                }
             } header: {
                 Text("Alerts")
             }
