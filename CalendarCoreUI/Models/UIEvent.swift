@@ -63,6 +63,7 @@ public extension UIEvent {
 public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
     public let id: String
     public let title: String
+    public let description: String?
     public let status: EventStatus?
     public let location: String?
     public let kMeetLink: String? = nil // TODO: Get it from Event
@@ -83,6 +84,7 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
     public init(
         id: String,
         title: String,
+        description: String? = nil,
         startDate: Date,
         endDate: Date,
         isAllDay: Bool = false,
@@ -97,6 +99,7 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
     ) {
         self.id = id
         self.title = title
+        self.description = description
         self.startDate = startDate
         self.endDate = endDate
         self.isAllDay = isAllDay
@@ -117,6 +120,7 @@ public extension UIEvent {
 
         id = "\(eventDaySlice.position.index)-\(event.occurrenceIdValue)"
         title = event.title
+        description = event.description_
         status = event.status
         location = event.location
 

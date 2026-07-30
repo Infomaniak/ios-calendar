@@ -24,6 +24,7 @@ public struct EventSectionView: View {
     let isEditableView: Bool
 
     @Binding private var title: String
+    @Binding private var description: String?
     @Binding private var location: String?
     @Binding private var isAllDay: Bool
     @Binding private var startDate: Date
@@ -38,6 +39,7 @@ public struct EventSectionView: View {
         event: CalendarCoreUI.UIEvent?,
         isEditableView: Bool = false,
         title: Binding<String> = .constant(""),
+        description: Binding<String?> = .constant(nil),
         location: Binding<String?> = .constant(nil),
         isAllDay: Binding<Bool> = .constant(false),
         startDate: Binding<Date> = .constant(Date()),
@@ -49,6 +51,7 @@ public struct EventSectionView: View {
         self.event = event
         self.isEditableView = isEditableView
         _title = isEditableView ? title : .constant(event?.title ?? "")
+        _description = isEditableView ? description : .constant(event?.description)
         _location = isEditableView ? location : .constant(event?.location)
         _isAllDay = isEditableView ? isAllDay : .constant(event?.isAllDay ?? false)
         _startDate = isEditableView ? startDate : .constant(event?.startDate ?? Date())
@@ -67,25 +70,48 @@ public struct EventSectionView: View {
     }
 
     public var body: some View {
-        HStack {
-            if isEditableView {
-                Button {
-                    isColorPickerPresented = true
-                } label: {
+        Section {
+            HStack {
+                if isEditableView {
+                    Button {
+                        isColorPickerPresented = true
+                    } label: {
+                        ColorSelectorButtonLabel(color: $color, calendarColor: $calendarColor)
+                    }
+
+                    TextField("Title", text: $title)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .font(.title2)
+                        .fontWeight(.semibold)
+                } else {
                     ColorSelectorButtonLabel(color: $color, calendarColor: $calendarColor)
+
+                    Text(title)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .font(.title2)
+                        .fontWeight(.semibold)
                 }
-
-                TextField("Title", text: $title)
+            }
+            if isEditableView {
+                TextField(
+                    "Description",
+                    text: Binding(
+                        get: { description ?? "" },
+                        set: { description = $0 }
+                    ),
+                    axis: .vertical
+                )
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .font(.body)
+                .foregroundStyle(.secondary)
+                .lineLimit(1...6)
+                .fixedSize(horizontal: false, vertical: true)
+            } else if let description, !description.isEmpty {
+                Text(description)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .font(.title2)
-                    .fontWeight(.semibold)
-            } else {
-                ColorSelectorButtonLabel(color: $color, calendarColor: $calendarColor)
-
-                Text(title)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .font(.title2)
-                    .fontWeight(.semibold)
+                    .font(.body)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1...6)
             }
         }
 
