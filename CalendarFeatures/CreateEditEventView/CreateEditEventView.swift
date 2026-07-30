@@ -27,8 +27,7 @@ public struct CreateEditEventView: View {
     @Environment(\.dismiss) private var dismiss
 
     @State private var title: String
-    @State private var colors: [Color] = [.gray, .red, .orange, .yellow, .green, .blue, .purple]
-    @State private var color: Color = .gray
+    @State private var color: Color
     @State private var calendarColor: Color
     @State private var isColorPickerPresented = false
     @State private var startDate: Date
@@ -37,49 +36,25 @@ public struct CreateEditEventView: View {
     @State private var isAllDay: Bool
     @State private var selectedCalendar: UICalendar?
     @State private var availableCalendars: [UICalendar] = []
-    @State private var alarmOffsets: [AlarmOffset] = []
-    @State private var attendeesListIsOpen = true
 
     let event: CalendarCoreUI.UIEvent?
 
-    private var uniqueAttendees: [UIAttendee] {
-        guard let event = event else { return [] }
-        var seenEmails = Set<String>()
-
-        return event.attendees.filter { attendee in
-            seenEmails.insert(normalizedEmail(attendee.email)).inserted
-        }
-    }
-
-    private var visibleAttendees: [UIAttendee] {
-        Array(uniqueAttendees.prefix(3))
-    }
-
-    private func normalizedEmail(_ email: String) -> String {
-        email.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+    private var isCreateView: Bool {
+        return event == nil
     }
 
     private var navigationTitle: String {
-        if let event = event {
-            return "Edit Event: \(event.title)"
-        } else {
-            return "Create Event"
-        }
+        return isCreateView ? "Create Event" : "Edit Event"
     }
 
     public init(event: CalendarCoreUI.UIEvent? = nil) {
         self.event = event
         _title = State(initialValue: event?.title ?? "")
-        _startDate = State(initialValue: event?.startDate ?? Date())
+        _startDate = State(initialValue: event?.startDate ?? Date() + 1800)
         _endDate = State(initialValue: event?.endDate ?? Date() + 3600)
         _location = State(initialValue: event?.location ?? nil)
         _isAllDay = State(initialValue: event?.isAllDay ?? false)
-        _startDate = State(initialValue: event?.startDate ?? Date())
-        _endDate = State(initialValue: event?.endDate ?? Date() + 3600)
         _color = State(initialValue: event?.colors.onDatavizContainer ?? .gray)
-        _alarmOffsets = State(initialValue: (event?.alarms ?? []).map {
-            AlarmOffset(trigger: $0.trigger)
-        })
         _calendarColor = State(initialValue: Color(.gray))
     }
 
@@ -107,10 +82,7 @@ public struct CreateEditEventView: View {
                 availableCalendars: $availableCalendars
             )
 
-            AlertsSectionView(
-                event: event,
-                isEditableView: true
-            )
+            AlertsSectionView(event: event, isEditableView: true)
 
             ParticipantsSectionView(event: event)
         }
@@ -122,7 +94,7 @@ public struct CreateEditEventView: View {
         .navigationTitle(navigationTitle)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            if event == nil {
+            if isCreateView {
                 ToolbarItem(placement: .cancellationAction) {
                     if #available(iOS 26.0, *) {
                         Button(role: .close, action: dismiss.callAsFunction)
@@ -135,7 +107,7 @@ public struct CreateEditEventView: View {
             }
 
             ToolbarItem(placement: .confirmationAction) {
-                if event == nil {
+                if isCreateView {
                     Button("Create", action: register)
                 } else {
                     Button("Save", action: save)
