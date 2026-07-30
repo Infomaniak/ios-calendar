@@ -89,7 +89,7 @@ struct EventSectionView: View {
                 .disabled(true)
             DatePicker("End Date", selection: .constant(endDate), displayedComponents: displayedComponents)
                 .disabled(true)
-            if let location = location, !location.isEmpty {
+            if let location, !location.isEmpty {
                 LabeledContent(CalendarResourcesStrings.locationOrRoomLabel, value: location)
             }
         } header: {

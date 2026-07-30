@@ -24,7 +24,7 @@ struct ColorSelectionView: View {
 
     private let colors: [Color] = [
         .red, .orange, .yellow, .green, .mint, .teal,
-        .cyan, .blue, .indigo, .purple, .pink, .brown,
+        .cyan, .blue, .indigo, .purple, .pink, .brown
     ]
 
     @Binding var selection: Color
