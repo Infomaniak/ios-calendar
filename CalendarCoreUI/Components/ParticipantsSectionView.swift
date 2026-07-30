@@ -25,11 +25,6 @@ public struct ParticipantsSectionView: View {
 
     let event: CalendarCoreUI.UIEvent?
 
-    private var organizer: UIAttendee? {
-        guard let event else { return nil }
-        return event.organizer
-    }
-
     private var uniqueAttendees: [UIAttendee] {
         guard let event else { return [] }
         var seenEmails = Set<String>()
@@ -56,7 +51,6 @@ public struct ParticipantsSectionView: View {
     }
 
     public var body: some View {
-
         if !uniqueAttendees.isEmpty {
             Section {
                 DisclosureGroup(isExpanded: $attendeesListIsOpen) {
