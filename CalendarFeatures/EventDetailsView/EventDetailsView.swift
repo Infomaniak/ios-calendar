@@ -51,7 +51,12 @@ public struct EventDetailsView: View {
                     calendarColor: $calendarColor,
                     isColorPickerPresented: $isColorPickerPresented
                 )
-                CalendarSectionView(event: event, calendarColor: $calendarColor, selectedCalendar: $selectedCalendar, availableCalendars: $availableCalendars)
+                CalendarSectionView(
+                    event: event,
+                    calendarColor: $calendarColor,
+                    selectedCalendar: $selectedCalendar,
+                    availableCalendars: $availableCalendars
+                )
                 AlertsSectionView(event: event)
                 ParticipantsSectionView(event: event)
             }

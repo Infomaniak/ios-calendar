@@ -48,12 +48,13 @@ let preloadingView = Feature(
 let createEditEventView = Feature(
     name: "CreateEditEventView",
     additionalDependencies: [
-    TargetDependency.target(name: "\(Constants.projectName)Resources"),
-    TargetDependency.external(name: "DesignSystem"),
-    TargetDependency.external(name: "ESDSCalendar"),
-    TargetDependency.external(name: "InfomaniakCoreSwiftUI"),
-    TargetDependency.external(name: "InfomaniakDI")
-])
+        TargetDependency.target(name: "\(Constants.projectName)Resources"),
+        TargetDependency.external(name: "DesignSystem"),
+        TargetDependency.external(name: "ESDSCalendar"),
+        TargetDependency.external(name: "InfomaniakCoreSwiftUI"),
+        TargetDependency.external(name: "InfomaniakDI")
+    ]
+)
 
 let eventDetailsView = Feature(
     name: "EventDetailsView",

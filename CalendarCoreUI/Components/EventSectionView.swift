@@ -104,14 +104,14 @@ public struct EventSectionView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .font(.body)
                 .foregroundStyle(.secondary)
-                .lineLimit(1...6)
+                .lineLimit(1 ... 6)
                 .fixedSize(horizontal: false, vertical: true)
             } else if let description, !description.isEmpty {
                 Text(description)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .font(.body)
                     .foregroundStyle(.secondary)
-                    .lineLimit(1...6)
+                    .lineLimit(1 ... 6)
             }
         }
 
