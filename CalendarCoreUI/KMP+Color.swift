@@ -29,4 +29,25 @@ extension Color {
 
         self.init(.sRGB, red: r, green: g, blue: b, opacity: a)
     }
+
+    public var argb: Int32? {
+        let uiColor = UIColor(self)
+
+        var r: CGFloat = 0
+        var g: CGFloat = 0
+        var b: CGFloat = 0
+        var a: CGFloat = 0
+
+        guard uiColor.getRed(&r, green: &g, blue: &b, alpha: &a) else {
+            return nil
+        }
+
+        let ai = UInt32((a * 255.0).rounded())
+        let ri = UInt32((r * 255.0).rounded())
+        let gi = UInt32((g * 255.0).rounded())
+        let bi = UInt32((b * 255.0).rounded())
+
+        let packed = (ai << 24) | (ri << 16) | (gi << 8) | bi
+        return Int32(bitPattern: packed)
+    }
 }
