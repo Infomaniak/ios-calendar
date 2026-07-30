@@ -31,6 +31,8 @@ public struct EventDetailsView: View {
     @State private var color: Color
     @State private var calendarColor: Color
     @State private var isColorPickerPresented = false
+    @State private var selectedCalendar: UICalendar?
+    @State private var availableCalendars: [UICalendar] = []
 
     public init(
         event: CalendarCoreUI.UIEvent
@@ -49,7 +51,7 @@ public struct EventDetailsView: View {
                     calendarColor: $calendarColor,
                     isColorPickerPresented: $isColorPickerPresented
                 )
-                CalendarSectionView(event: event, calendarColor: $calendarColor)
+                CalendarSectionView(event: event, calendarColor: $calendarColor, selectedCalendar: $selectedCalendar, availableCalendars: $availableCalendars)
                 AlertsSectionView(event: event)
                 ParticipantsSectionView(event: event)
             }

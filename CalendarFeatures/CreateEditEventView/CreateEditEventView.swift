@@ -102,29 +102,15 @@ public struct CreateEditEventView: View {
                 event: event,
                 isEditableView: true,
                 color: $color,
-                calendarColor: $calendarColor
+                calendarColor: $calendarColor,
+                selectedCalendar: $selectedCalendar,
+                availableCalendars: $availableCalendars
             )
 
-            Section {
-                ForEach(alarmOffsets.indices, id: \.self) { index in
-                    Picker("Alarm \(index + 1)", selection: $alarmOffsets[index]) {
-                        ForEach(AlarmOffset.allCases) { offset in
-                            Text(offset.rawValue).tag(offset)
-                        }
-                    }
-                }
-                .onDelete { indexSet in
-                    alarmOffsets.remove(atOffsets: indexSet)
-                }
-
-                Button {
-                    alarmOffsets.append(.none)
-                } label: {
-                    Label("Add alarm", systemImage: "plus.circle.fill")
-                }
-            } header: {
-                Text("Alerts")
-            }
+            AlertsSectionView(
+                event: event,
+                isEditableView: true
+            )
 
             ParticipantsSectionView(event: event)
         }
@@ -136,41 +122,141 @@ public struct CreateEditEventView: View {
         .navigationTitle(navigationTitle)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .cancellationAction) {
-                if #available(iOS 26.0, *) {
-                    Button(role: .close, action: dismiss.callAsFunction)
-                } else {
-                    Button(action: dismiss.callAsFunction) {
-                        Label("close", systemImage: "xmark")
+            if event == nil {
+                ToolbarItem(placement: .cancellationAction) {
+                    if #available(iOS 26.0, *) {
+                        Button(role: .close, action: dismiss.callAsFunction)
+                    } else {
+                        Button(action: dismiss.callAsFunction) {
+                            Label("close", systemImage: "xmark")
+                        }
                     }
                 }
             }
+
             ToolbarItem(placement: .confirmationAction) {
-                Button("Save", action: save)
-            }
-        }
-
-        .task {
-            await observeCalendars()
-        }
-    }
-
-    private func observeCalendars() async {
-        @InjectService var calendarSDK: CalendarCoreGraph
-        for await calendars in calendarSDK.calendarManager.observeCalendars() {
-            let uiCalendars = calendars.map { UICalendar(calendar: $0) }
-            availableCalendars = uiCalendars
-
-            if let event {
-                selectedCalendar = uiCalendars.first { $0.id == event.calendarId }
+                if event == nil {
+                    Button("Create", action: register)
+                } else {
+                    Button("Save", action: save)
+                }
             }
         }
     }
 
     private func save() {
-        let triggerDates = alarmOffsets.compactMap { $0.triggerDate(for: startDate) }
-        print("Alarms trigger dates:", triggerDates)
-        dismiss()
+        guard let existingEvent = event else { return }
+        guard let validCalendarId = selectedCalendar?.id else { return }
+
+        Task {
+            let calendar = Calendar.current
+            let startComponents = calendar.dateComponents(
+                [.year, .month, .day, .hour, .minute, .second, .nanosecond],
+                from: startDate
+            )
+            let endComponents = calendar.dateComponents(
+                [.year, .month, .day, .hour, .minute, .second, .nanosecond],
+                from: endDate
+            )
+
+            do {
+                @InjectService var calendarSDK: CalendarCoreGraph
+
+                try await calendarSDK.calendarManager.updateEvent(eventId: existingEvent.id, data: EventEditData(
+                    title: title,
+                    timing: EventTiming(
+                        start: .init(
+                            year: Int32(startComponents.year ?? 0),
+                            month: Int32(startComponents.month ?? 0),
+                            day: Int32(startComponents.day ?? 0),
+                            hour: Int32(startComponents.hour ?? 0),
+                            minute: Int32(startComponents.minute ?? 0),
+                            second: Int32(startComponents.second ?? 0),
+                            nanosecond: Int32(startComponents.nanosecond ?? 0)
+                        ),
+                        end: .init(
+                            year: Int32(endComponents.year ?? 0),
+                            month: Int32(endComponents.month ?? 0),
+                            day: Int32(endComponents.day ?? 0),
+                            hour: Int32(endComponents.hour ?? 0),
+                            minute: Int32(endComponents.minute ?? 0),
+                            second: Int32(endComponents.second ?? 0),
+                            nanosecond: Int32(endComponents.nanosecond ?? 0)
+                        ),
+                        startTimeZone: Kotlinx_datetimeTimeZone.companion.currentSystemDefault(),
+                        endTimeZone: Kotlinx_datetimeTimeZone.companion.currentSystemDefault(),
+                        isAllDay: isAllDay
+                    ),
+                    location: location ?? "",
+                    description: "",
+                    calendarId: validCalendarId,
+                    eventColor: color,
+                    alarms: []
+                ))
+
+                dismiss()
+
+            } catch {
+                print("Error saving event: \(error)")
+            }
+        }
+    }
+
+    private func register() {
+        guard let validCalendarId = selectedCalendar?.id else { return }
+
+        Task {
+            let calendar = Calendar.current
+            let startComponents = calendar.dateComponents(
+                [.year, .month, .day, .hour, .minute, .second, .nanosecond],
+                from: startDate
+            )
+            let endComponents = calendar.dateComponents(
+                [.year, .month, .day, .hour, .minute, .second, .nanosecond],
+                from: endDate
+            )
+
+            do {
+                @InjectService var calendarSDK: CalendarCoreGraph
+
+                try await calendarSDK.calendarManager.createEvent(data: EventEditData(
+                    title: title,
+                    timing: EventTiming(
+                        start: .init(
+                            year: Int32(startComponents.year ?? 0),
+                            month: Int32(startComponents.month ?? 0),
+                            day: Int32(startComponents.day ?? 0),
+                            hour: Int32(startComponents.hour ?? 0),
+                            minute: Int32(startComponents.minute ?? 0),
+                            second: Int32(startComponents.second ?? 0),
+                            nanosecond: Int32(startComponents.nanosecond ?? 0)
+                        ),
+                        end: .init(
+                            year: Int32(endComponents.year ?? 0),
+                            month: Int32(endComponents.month ?? 0),
+                            day: Int32(endComponents.day ?? 0),
+                            hour: Int32(endComponents.hour ?? 0),
+                            minute: Int32(endComponents.minute ?? 0),
+                            second: Int32(endComponents.second ?? 0),
+                            nanosecond: Int32(endComponents.nanosecond ?? 0)
+                        ),
+                        startTimeZone: Kotlinx_datetimeTimeZone.companion.currentSystemDefault(),
+                        endTimeZone: Kotlinx_datetimeTimeZone.companion.currentSystemDefault(),
+                        isAllDay: isAllDay
+                    ),
+                    location: location ?? "",
+                    description: "",
+                    calendarId: validCalendarId,
+                    eventColor: color.argb,
+                    alarms: []
+                ))
+
+                dismiss()
+
+            } catch {
+                print("Error create event: \(error)")
+            }
+        }
     }
 }
 

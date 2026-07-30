@@ -24,10 +24,10 @@ import InfomaniakDI
 import SwiftUI
 
 public struct CalendarSectionView: View {
-    @State private var selectedCalendar: UICalendar?
-    @State private var availableCalendars: [UICalendar] = []
     @Binding private var color: Color
     @Binding private var calendarColor: Color
+    @Binding private var selectedCalendar: UICalendar?
+    @Binding private var availableCalendars: [UICalendar]
 
     let event: CalendarCoreUI.UIEvent?
     let isEditableView: Bool
@@ -36,12 +36,16 @@ public struct CalendarSectionView: View {
         event: CalendarCoreUI.UIEvent?,
         isEditableView: Bool = false,
         color: Binding<Color> = .constant(.gray),
-        calendarColor: Binding<Color> = .constant(.gray)
+        calendarColor: Binding<Color> = .constant(.gray),
+        selectedCalendar: Binding<UICalendar?> = .constant(nil),
+        availableCalendars: Binding<[UICalendar]> = .constant([])
     ) {
         self.event = event
         self.isEditableView = isEditableView
         _color = color
         _calendarColor = calendarColor
+        _selectedCalendar = selectedCalendar
+        _availableCalendars = availableCalendars
     }
 
     public var body: some View {
@@ -91,6 +95,7 @@ public struct CalendarSectionView: View {
         }
     }
 
+    @MainActor
     private func observeCalendars() async {
         @InjectService var calendarSDK: CalendarCoreGraph
         var didSetInitialSelection = false
@@ -102,6 +107,8 @@ public struct CalendarSectionView: View {
             if !didSetInitialSelection {
                 if let event {
                     selectedCalendar = uiCalendars.first { $0.id == event.calendarId }
+                } else if selectedCalendar == nil {
+                    selectedCalendar = uiCalendars.first
                 }
                 calendarColor = selectedCalendar?.color ?? .gray
                 didSetInitialSelection = true
