@@ -107,124 +107,60 @@ public struct CreateEditEventView: View {
             }
 
             ToolbarItem(placement: .confirmationAction) {
-                if isCreateView {
-                    Button("Create", action: register)
-                } else {
-                    Button("Save", action: save)
+                if let validCalendarId = selectedCalendar?.id {
+                    let timing = EventTiming(
+                        start: startDate.kotlinDate,
+                        end: endDate.kotlinDate,
+                        startTimeZone: Kotlinx_datetimeTimeZone.companion.currentSystemDefault(),
+                        endTimeZone: Kotlinx_datetimeTimeZone.companion.currentSystemDefault(),
+                        isAllDay: isAllDay
+                    )
+
+                    let data = EventEditData(
+                        title: title,
+                        timing: timing,
+                        location: location ?? "",
+                        description: "",
+                        calendarId: validCalendarId,
+                        eventColor: color.argb,
+                        alarms: []
+                    )
+
+                    if isCreateView {
+                        Button("Create") {
+                            register(data: data)
+                        }
+                    } else {
+                        Button("Save") {
+                            save(data: data)
+                        }
+                    }
                 }
             }
         }
     }
 
-    private func save() {
+    private func save(data: EventEditData) {
         guard let existingEvent = event else { return }
-        guard let validCalendarId = selectedCalendar?.id else { return }
-
         Task {
-            let calendar = Calendar.current
-            let startComponents = calendar.dateComponents(
-                [.year, .month, .day, .hour, .minute, .second, .nanosecond],
-                from: startDate
-            )
-            let endComponents = calendar.dateComponents(
-                [.year, .month, .day, .hour, .minute, .second, .nanosecond],
-                from: endDate
-            )
-
             do {
                 @InjectService var calendarSDK: CalendarCoreGraph
-
-                try await calendarSDK.calendarManager.updateEvent(eventId: existingEvent.id, data: EventEditData(
-                    title: title,
-                    timing: EventTiming(
-                        start: .init(
-                            year: Int32(startComponents.year ?? 0),
-                            month: Int32(startComponents.month ?? 0),
-                            day: Int32(startComponents.day ?? 0),
-                            hour: Int32(startComponents.hour ?? 0),
-                            minute: Int32(startComponents.minute ?? 0),
-                            second: Int32(startComponents.second ?? 0),
-                            nanosecond: Int32(startComponents.nanosecond ?? 0)
-                        ),
-                        end: .init(
-                            year: Int32(endComponents.year ?? 0),
-                            month: Int32(endComponents.month ?? 0),
-                            day: Int32(endComponents.day ?? 0),
-                            hour: Int32(endComponents.hour ?? 0),
-                            minute: Int32(endComponents.minute ?? 0),
-                            second: Int32(endComponents.second ?? 0),
-                            nanosecond: Int32(endComponents.nanosecond ?? 0)
-                        ),
-                        startTimeZone: Kotlinx_datetimeTimeZone.companion.currentSystemDefault(),
-                        endTimeZone: Kotlinx_datetimeTimeZone.companion.currentSystemDefault(),
-                        isAllDay: isAllDay
-                    ),
-                    location: location ?? "",
-                    description: "",
-                    calendarId: validCalendarId,
-                    eventColor: color,
-                    alarms: []
-                ))
-
+                try await calendarSDK.calendarManager.updateEvent(
+                    eventId: existingEvent.id, data: data
+                )
                 dismiss()
-
             } catch {
                 print("Error saving event: \(error)")
             }
         }
     }
 
-    private func register() {
-        guard let validCalendarId = selectedCalendar?.id else { return }
-
+    private func register(data: EventEditData) {
         Task {
-            let calendar = Calendar.current
-            let startComponents = calendar.dateComponents(
-                [.year, .month, .day, .hour, .minute, .second, .nanosecond],
-                from: startDate
-            )
-            let endComponents = calendar.dateComponents(
-                [.year, .month, .day, .hour, .minute, .second, .nanosecond],
-                from: endDate
-            )
-
             do {
                 @InjectService var calendarSDK: CalendarCoreGraph
-
-                try await calendarSDK.calendarManager.createEvent(data: EventEditData(
-                    title: title,
-                    timing: EventTiming(
-                        start: .init(
-                            year: Int32(startComponents.year ?? 0),
-                            month: Int32(startComponents.month ?? 0),
-                            day: Int32(startComponents.day ?? 0),
-                            hour: Int32(startComponents.hour ?? 0),
-                            minute: Int32(startComponents.minute ?? 0),
-                            second: Int32(startComponents.second ?? 0),
-                            nanosecond: Int32(startComponents.nanosecond ?? 0)
-                        ),
-                        end: .init(
-                            year: Int32(endComponents.year ?? 0),
-                            month: Int32(endComponents.month ?? 0),
-                            day: Int32(endComponents.day ?? 0),
-                            hour: Int32(endComponents.hour ?? 0),
-                            minute: Int32(endComponents.minute ?? 0),
-                            second: Int32(endComponents.second ?? 0),
-                            nanosecond: Int32(endComponents.nanosecond ?? 0)
-                        ),
-                        startTimeZone: Kotlinx_datetimeTimeZone.companion.currentSystemDefault(),
-                        endTimeZone: Kotlinx_datetimeTimeZone.companion.currentSystemDefault(),
-                        isAllDay: isAllDay
-                    ),
-                    location: location ?? "",
-                    description: "",
-                    calendarId: validCalendarId,
-                    eventColor: color.argb,
-                    alarms: []
-                ))
-
+                try await calendarSDK.calendarManager.createEvent(data: data)
                 dismiss()
-
             } catch {
                 print("Error create event: \(error)")
             }

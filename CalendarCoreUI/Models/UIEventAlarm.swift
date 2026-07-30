@@ -145,16 +145,14 @@ extension UIAlarmTrigger {
 
 extension UITriggerRelation {
     init(sdk: TriggerRelation) {
-        // À adapter selon les cas réels du SDK
         switch sdk {
         case .start: self = .start
         case .end: self = .end
-        default: self = .start
         }
     }
 }
 
-/// Preview data for SwiftUI previews
+/// Preview data for SwiftUI preview
 public extension UIEventAlarm {
     static let preview = UIEventAlarm(
         action: .display,
