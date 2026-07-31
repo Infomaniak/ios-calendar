@@ -62,6 +62,8 @@ public extension UIEvent {
 
 public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
     public let id: String
+    public let sourceEventId: String
+
     public let title: String
     public let description: String?
     public let status: EventStatus?
@@ -83,6 +85,7 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
 
     public init(
         id: String,
+        sourceEventId: String,
         title: String,
         description: String? = nil,
         startDate: Date,
@@ -98,6 +101,7 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
         colors: UIEvent.Colors
     ) {
         self.id = id
+        self.sourceEventId = sourceEventId
         self.title = title
         self.description = description
         self.startDate = startDate
@@ -119,6 +123,7 @@ public extension UIEvent {
         let event = eventDaySlice.event
 
         id = "\(eventDaySlice.position.index)-\(event.occurrenceIdValue)"
+        sourceEventId = event.idValue
         title = event.title
         description = event.description_
         status = event.status
@@ -157,6 +162,7 @@ public extension UIEvent {
 public extension UIEvent {
     static let alarmsPreview = UIEvent(
         id: "0",
+        sourceEventId: "0",
         title: "Event Title",
         startDate: Date().addingTimeInterval(3600),
         endDate: Date().addingTimeInterval(7200),
@@ -170,6 +176,7 @@ public extension UIEvent {
 
     static let preview = UIEvent(
         id: "0",
+        sourceEventId: "0",
         title: "Event Title",
         startDate: Date().addingTimeInterval(3600),
         endDate: Date().addingTimeInterval(7200),
@@ -182,6 +189,7 @@ public extension UIEvent {
 
     static let shortPreview = UIEvent(
         id: "1",
+        sourceEventId: "0",
         title: "Short Title With A Very Long Title But It's Okay Because We Want To Test The UI And See How It Looks With A Long Title",
         startDate: Date(),
         endDate: Date().addingTimeInterval(60 * 15),
@@ -193,6 +201,7 @@ public extension UIEvent {
     )
     static let mediumPreview = UIEvent(
         id: "2",
+        sourceEventId: "0",
         title: "Medium Title With A Very Long Title But It's Okay Because We Want To Test The UI And See How It Looks With A Long Title",
         startDate: Date(),
         endDate: Date().addingTimeInterval(60 * 60 * 2),
@@ -204,6 +213,7 @@ public extension UIEvent {
     )
     static let longPreview = UIEvent(
         id: "3",
+        sourceEventId: "0",
         title: "Long Title With A Very Long Title But It's Okay Because We Want To Test The UI And See How It Looks With A Long Title",
         startDate: Date(),
         endDate: Date().addingTimeInterval(60 * 60 * 24 * 2),
@@ -220,6 +230,7 @@ public extension UIEvent {
         let randomEndDate = randomStartDate.addingTimeInterval(Double.random(in: 3600 ... 7200))
         return UIEvent(
             id: "\(index)",
+            sourceEventId: "\(index)",
             title: "Event \(index)",
             startDate: randomStartDate,
             endDate: randomEndDate,

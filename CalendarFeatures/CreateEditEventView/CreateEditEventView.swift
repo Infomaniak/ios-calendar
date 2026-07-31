@@ -146,7 +146,7 @@ public struct CreateEditEventView: View {
             do {
                 @InjectService var calendarSDK: CalendarCoreGraph
                 try await calendarSDK.calendarManager.updateEvent(
-                    eventId: existingEvent.id, data: data
+                    eventId: existingEvent.sourceEventId, data: data
                 )
                 dismiss()
             } catch {
