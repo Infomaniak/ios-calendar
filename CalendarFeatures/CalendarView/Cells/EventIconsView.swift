@@ -36,16 +36,18 @@ struct EventIconsView: View {
     let hasLocation: Bool
     let hasKMeetLink: Bool
     let hasAttendees: Bool
+    let shouldShowLocationIcon: Bool
 
-    init(event: CalendarCoreUI.UIEvent) {
+    init(event: CalendarCoreUI.UIEvent, shouldShowLocationIcon: Bool = true) {
         hasLocation = event.location != nil
         hasKMeetLink = event.kMeetLink != nil
         hasAttendees = !event.attendees.isEmpty
+        self.shouldShowLocationIcon = shouldShowLocationIcon
     }
 
     var body: some View {
         HStack(spacing: IKPadding.micro) {
-            if hasLocation {
+            if hasLocation && shouldShowLocationIcon {
                 CalendarResourcesAsset.Images.mapPin.swiftUIImage
                     .resizableIcon(CalendarResourcesStrings.contentDescriptionHasLocation)
             }

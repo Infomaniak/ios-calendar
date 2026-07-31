@@ -19,6 +19,7 @@
 import CalendarCoreUI
 import DesignSystem
 import ESDSFoundation
+import Eventually
 import SwiftUI
 
 struct DayView: View {
@@ -68,8 +69,9 @@ struct DayContentView: View {
     @State private var pointsPerHour = Constants.PointsPerHour.default
     @State private var currentMagnification: CGFloat = 1.0
 
-    @Binding var selectedEvent: CalendarCoreUI.UIEvent?
+    @State private var coveredTextHeights: [Int: CGFloat] = [:]
 
+    @Binding var selectedEvent: CalendarCoreUI.UIEvent?
     let date: Date
     let events: [CalendarCoreUI.UIEvent]
 
@@ -112,34 +114,38 @@ struct DayContentView: View {
                         )
                         .padding(.horizontal, value: .medium)
 
-                        DayViewLayout(
-                            calendar: calendar,
-                            verticalInset: Self.Constants.verticalInset,
-                            leadingInset: Self.Constants.leadingInset + IKPadding.medium,
-                            trailingInset: IKPadding.medium,
-                            pointsPerHour: effectivePointsPerHour
-                        ) {
-                            ForEach(events) { event in
-                                Button { selectedEvent = event } label: {
-                                    DayEventView(event: event, pointsPerHour: effectivePointsPerHour)
-                                }
-                                .buttonStyle(.plain)
-                                .tag(event.startDate)
-                            }
-                        }
-
-                        if calendar.isDate(date, inSameDayAs: timeline.date) {
-                            let indicatorPosition = timeIndicatorPosition(at: timeline.date)
-
-                            TimelineIndicatorView(date: timeline.date)
-                                .padding(.leading, value: .medium)
-                                .visualEffect { content, visualProxy in
-                                    content
-                                        .offset(y: -visualProxy.size.height / 2 + indicatorPosition)
-                                }
+                    EventuallyLayout(
+                        startOfDay: calendar.startOfDay(for: date),
+                        hourSlotHeight: effectivePointsPerHour
+                    ) { textHeights in
+                        guard coveredTextHeights != textHeights else { return }
+                        coveredTextHeights = textHeights
+                    } {
+                        ForEach(Array(events.enumerated()), id: \.element.id) { index, event in
+                            DayEventView(
+                                event: event,
+                                pointsPerHour: effectivePointsPerHour,
+                                maxTextHeight: coveredTextHeights[index]
+                            )
+                            .eventuallyDateIntervalLayout(
+                                DateInterval(
+                                    start: event.startDate,
+                                    end: event.endDate
+                                )
+                            )
                         }
                     }
-                    .frame(height: viewHeight)
+                    .padding(.leading, Self.Constants.leadingInset)
+                    .padding(.vertical, Self.Constants.verticalInset)
+
+                    if calendar.isDate(date, inSameDayAs: timeline.date) {
+                        TimelineIndicatorView(date: timeline.date)
+                            .padding(.leading, value: .medium)
+                            .visualEffect { content, proxy in
+                                content
+                                    .offset(y: -proxy.size.height / 2 + timeIndicatorPosition(at: timeline.date))
+                            }
+                    }
                 }
                 .scrollPosition($scrollPosition)
                 .onScrollGeometryChange(for: CGFloat.self) { scrollProxy in

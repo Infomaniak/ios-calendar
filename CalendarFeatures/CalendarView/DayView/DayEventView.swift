@@ -23,6 +23,13 @@ import SwiftUI
 struct DayEventView: View {
     let event: CalendarCoreUI.UIEvent
     let pointsPerHour: CGFloat
+    let maxTextHeight: CGFloat?
+
+    init(event: CalendarCoreUI.UIEvent, pointsPerHour: CGFloat, maxTextHeight: CGFloat? = nil) {
+        self.event = event
+        self.pointsPerHour = pointsPerHour
+        self.maxTextHeight = maxTextHeight
+    }
 
     private var height: CGFloat {
         let duration = event.endDate.timeIntervalSince(event.startDate)
@@ -32,30 +39,69 @@ struct DayEventView: View {
         return CGFloat(cappedHours) * pointsPerHour
     }
 
-    var body: some View {
-        HStack {
-            ViewThatFits(in: .vertical) {
-                VStack(alignment: .leading, spacing: 0) {
-                    Text(event.startDate ..< event.endDate, format: .eventTimeBounds)
-                        .font(.caption2)
+    private var effectiveHeight: CGFloat {
+        maxTextHeight ?? height
+    }
 
+    private var contentPadding: EdgeInsets {
+        let padding: CGFloat = effectiveHeight > 15 ? IKPadding.mini : 0
+        return EdgeInsets(top: padding, leading: IKPadding.mini,
+                          bottom: 0, trailing: IKPadding.mini)
+    }
+
+    var body: some View {
+        ViewThatFits(in: .vertical) {
+            VStack(alignment: .leading, spacing: 0) {
+                HStack {
                     Text(event.title)
-                        .lineLimit(1)
                         .font(.caption.bold())
+                        .frame(maxWidth: .infinity, alignment: .leading)
+
+                    EventIconsView(event: event, shouldShowLocationIcon: false)
                 }
 
-                Text(event.title)
-                    .lineLimit(1)
-                    .font(.caption.bold())
-                    .minimumScaleFactor(0.5)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
+                if let location = event.location, !location.isEmpty {
+                    Text(location)
+                        .font(.caption2)
+                        .lineLimit(1)
+                }
 
-            EventIconsView(event: event)
+                Text(event.startDate ..< event.endDate, format: .eventTimeBounds)
+                    .font(.caption2)
+            }
+
+            VStack(alignment: .leading, spacing: 0) {
+                HStack {
+                    Text(event.title)
+                        .font(.caption.bold())
+                        .frame(maxWidth: .infinity, alignment: .leading)
+
+                    EventIconsView(event: event, shouldShowLocationIcon: false)
+                }
+
+                if let location = event.location, !location.isEmpty {
+                    Text(location)
+                        .font(.caption2)
+                        .lineLimit(1)
+                }
+            }
+
+            HStack {
+                Text(event.title)
+                    .font(.caption.bold())
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                EventIconsView(event: event)
+            }
+
+            Text(event.title)
+                .font(.caption.bold())
         }
-        .padding(IKPadding.mini)
+        .padding(contentPadding)
+        .frame(maxHeight: effectiveHeight, alignment: .top)
         .frame(height: height, alignment: .top)
         .eventCellStyle(event: event, padding: 0)
+        .opacity(0.75)
     }
 }
 
