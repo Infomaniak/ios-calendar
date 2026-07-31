@@ -104,39 +104,42 @@ struct DayContentView: View {
 
     var body: some View {
         GeometryReader { proxy in
-            TimelineView(.everyMinute) { timeline in
+        TimelineView(.everyMinute) { timeline in
+            let allDayEvents = events.filter(\.isAllDay)
+            VStack(spacing: 0) {
+                FullDayEventView(
+                    events: allDayEvents,
+                    date: date
+                )
                 ScrollView {
                     ZStack(alignment: .top) {
-                        DayTimelineView(
-                            date: date,
-                            pointsPerHour: effectivePointsPerHour,
-                            leadingOffset: Self.Constants.leadingInset
-                        )
-                        .padding(.horizontal, value: .medium)
+                        DayTimelineView(date: date, pointsPerHour: effectivePointsPerHour, leadingOffset: Self.Constants.leadingInset)
 
-                    EventuallyLayout(
-                        startOfDay: calendar.startOfDay(for: date),
-                        hourSlotHeight: effectivePointsPerHour
-                    ) { textHeights in
-                        guard coveredTextHeights != textHeights else { return }
-                        coveredTextHeights = textHeights
-                    } {
-                        ForEach(Array(events.enumerated()), id: \.element.id) { index, event in
-                            DayEventView(
-                                event: event,
-                                pointsPerHour: effectivePointsPerHour,
-                                maxTextHeight: coveredTextHeights[index]
-                            )
-                            .eventuallyDateIntervalLayout(
-                                DateInterval(
-                                    start: event.startDate,
-                                    end: event.endDate
-                                )
-                            )
+                        EventuallyLayout(
+                            startOfDay: calendar.startOfDay(for: date),
+                            hourSlotHeight: effectivePointsPerHour
+                        ) { textHeights in
+                            guard coveredTextHeights != textHeights else { return }
+                            coveredTextHeights = textHeights
+                        } {
+                            ForEach(Array(events.filter { !$0.isAllDay }.enumerated()), id: \.element.id) { index, event in
+                                if !event.isAllDay {
+                                    DayEventView(
+                                        event: event,
+                                        pointsPerHour: effectivePointsPerHour,
+                                        maxTextHeight: coveredTextHeights[index]
+                                    )
+                                    .eventuallyDateIntervalLayout(
+                                        DateInterval(
+                                            start: event.startDate,
+                                            end: event.endDate
+                                        )
+                                    )
+                                }
+                            }
                         }
-                    }
-                    .padding(.leading, Self.Constants.leadingInset)
-                    .padding(.vertical, Self.Constants.verticalInset)
+                        .padding(.leading, Self.Constants.leadingInset)
+                        .padding(.vertical, Self.Constants.verticalInset)
 
                     if calendar.isDate(date, inSameDayAs: timeline.date) {
                         TimelineIndicatorView(date: timeline.date)
