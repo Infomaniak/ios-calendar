@@ -40,28 +40,35 @@ struct CalendarListContentView: View {
 
     let indexedCalendars: [Int: [UICalendar]]
 
+    private func isExpandedBinding(for accountId: Int) -> Binding<Bool> {
+        Binding(
+            get: { expandedAccounts.contains(accountId) },
+            set: { isExpanding in
+                if isExpanding {
+                    expandedAccounts.insert(accountId)
+                } else {
+                    expandedAccounts.remove(accountId)
+                }
+            }
+        )
+    }
+
     var body: some View {
         ForEach(Array(calendarAccounts.values)) { account in
             Section {
                 DisclosureGroup(
-                    isExpanded: Binding(
-                        get: { expandedAccounts.contains(account.id) },
-                        set: { isExpanding in
-                            if isExpanding {
-                                expandedAccounts.insert(account.id)
-                            } else {
-                                expandedAccounts.remove(account.id)
-                            }
-                        }
-                    )
+                    isExpanded: isExpandedBinding(for: account.id)
                 ) {
-                    ForEach(indexedCalendars[account.id, default: []]) { calendar in
+                    let calendars = indexedCalendars[account.id, default: []]
+
+                    ForEach(Array(calendars.enumerated()), id: \.element.id) { index, calendar in
                         Button {
                             toggleCalendar(calendar: calendar)
                         } label: {
                             HStack(spacing: 8) {
                                 Circle()
-                                    .fill(calendar.color)
+                                    .strokeBorder(calendar.color, lineWidth: 2)
+                                    .background(Circle().fill(isVisible(calendar) ? calendar.color : .clear))
                                     .frame(width: 24, height: 24)
                                     .overlay {
                                         if isVisible(calendar) {
@@ -79,13 +86,22 @@ struct CalendarListContentView: View {
                                     .foregroundStyle(.foreground)
                             }
                         }
+                        .listRowSeparator(
+                            index == 0 ? .visible : .hidden,
+                            edges: index == 0 ? .top : .all
+                        )
                     }
                 } label: {
-                    AccountCellView(
-                        rawAvatarURL: account.user.avatar,
-                        displayName: account.user.displayName,
-                        email: account.user.email
-                    )
+                    VStack(alignment: .leading, spacing: 8) {
+                        AccountCellView(
+                            rawAvatarURL: account.user.avatar,
+                            displayName: account.user.displayName,
+                            email: account.user.email
+                        )
+                    }
+                }
+                .alignmentGuide(.listRowSeparatorLeading) { _ in
+                    0
                 }
             }
         }
