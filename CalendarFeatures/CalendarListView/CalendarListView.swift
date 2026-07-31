@@ -69,7 +69,7 @@ public struct CalendarListView: View {
                     Button(role: .close, action: dismiss.callAsFunction)
                 } else {
                     Button(action: dismiss.callAsFunction) {
-                        Label("close", systemImage: "xmark")
+                        Label(CalendarResourcesStrings.closeLabel, systemImage: "xmark")
                     }
                 }
             }

@@ -10,6 +10,9 @@
 /* loco:6a4deb24e064eb69fa065712 */
 "buttonShow" = "Visa";
 
+/* loco:6a63153465d939443107b2d2 */
+"closeLabel" = "Stäng";
+
 /* loco:6a21369c4c1c4427f404f752 */
 "contentDescriptionCreateEvent" = "Skapa ett evenemang";
 
