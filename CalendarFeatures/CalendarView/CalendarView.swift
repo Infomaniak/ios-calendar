@@ -17,19 +17,37 @@
  */
 
 import CalendarCore
+import CalendarResources
 import SwiftUI
 
 extension CalendarViewMode {
-    var iconName: String {
+    var icon: Image {
         switch self {
         case .planning:
-            return "rectangle.split.1x2"
+            return CalendarResourcesAsset.Images.rowsTwo.swiftUIImage
         case .day:
-            return "distribute.vertical"
+            return CalendarResourcesAsset.Images.overlineRectangleUnderline.swiftUIImage
+        case .threeDays:
+            return CalendarResourcesAsset.Images.columnsThree.swiftUIImage
         case .week:
-            return "distribute.vertical"
+            return CalendarResourcesAsset.Images.columnsFour.swiftUIImage
         case .month:
-            return "distribute.vertical"
+            return CalendarResourcesAsset.Images.gridThreeTwo.swiftUIImage
+        }
+    }
+
+    var localizedName: String {
+        switch self {
+        case .planning:
+            return CalendarResourcesStrings.planningTitle
+        case .day:
+            return CalendarResourcesStrings.dayTitle
+        case .threeDays:
+            return CalendarResourcesStrings.threeDaysTitle
+        case .week:
+            return CalendarResourcesStrings.weekTitle
+        case .month:
+            return CalendarResourcesStrings.monthTitle
         }
     }
 }
@@ -50,6 +68,8 @@ public struct CalendarView: View {
                 DaysView()
             case .week:
                 WeekView()
+            case .threeDays:
+                Text("Three Days View")
             case .month:
                 MonthView()
             }
@@ -57,12 +77,20 @@ public struct CalendarView: View {
         .toolbar {
             ToolbarItem(placement: .bottomBar) {
                 Picker(selection: $selectedMode) {
-                    Label("Planning", systemImage: "rectangle.split.1x2")
-                        .tag(CalendarViewMode.planning)
-                    Label("Day", systemImage: "distribute.vertical")
-                        .tag(CalendarViewMode.day)
+                    ForEach(CalendarViewMode.allCases, id: \.self) { mode in
+                        Label {
+                            Text(mode.localizedName)
+                        } icon: {
+                            mode.icon
+                        }
+                        .tag(mode)
+                    }
                 } label: {
-                    Label("Calendar layout", systemImage: selectedMode.iconName)
+                    Label {
+                        Text(selectedMode.localizedName)
+                    } icon: {
+                        selectedMode.icon
+                    }
                 }
                 .labelsHidden()
                 .pickerStyle(.menu)

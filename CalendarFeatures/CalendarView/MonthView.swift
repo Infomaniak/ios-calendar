@@ -22,7 +22,7 @@ public struct MonthView: View {
     public init() {}
 
     public var body: some View {
-        EmptyView()
+        Text("MonthView")
     }
 }
 
