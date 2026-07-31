@@ -29,7 +29,6 @@ import SwiftUI
 public struct CalendarListView: View {
     @Environment(\.calendarAccounts) private var calendarAccounts
     @Environment(\.openURL) private var openURL
-    @Environment(\.dismiss) private var dismiss
 
     @State private var indexedCalendars = [Int: [UICalendar]]()
     @State private var isExpanded = true
@@ -63,18 +62,6 @@ public struct CalendarListView: View {
         .task(id: calendarAccounts) {
             await observeCalendars()
         }
-        .toolbar {
-            ToolbarItem(placement: .cancellationAction) {
-                if #available(iOS 26.0, *) {
-                    Button(role: .close, action: dismiss.callAsFunction)
-                } else {
-                    Button(action: dismiss.callAsFunction) {
-                        Label(CalendarResourcesStrings.closeLabel, systemImage: "xmark")
-                    }
-                }
-            }
-        }
-        .navigationBarTitleDisplayMode(.inline)
     }
 
     private func observeCalendars() async {
