@@ -21,29 +21,43 @@ import SwiftUI
 
 struct MiniCalendarHeaderViewModifier: ViewModifier {
     @State private var displayMode: MiniCalendarView.DisplayMode = .week
+    @State private var displayedDate: Date
 
     @Binding var selectedDate: Date
+
+    init(selectedDate: Binding<Date>) {
+        _selectedDate = selectedDate
+        _displayedDate = State(initialValue: selectedDate.wrappedValue)
+    }
 
     func body(content: Content) -> some View {
         Group {
             if #available(iOS 26.0, *) {
                 content
                     .safeAreaBar(edge: .top) {
-                        MiniCalendarView(displayMode: $displayMode, selectedDate: $selectedDate)
-                            .padding(.bottom, IKPadding.mini)
+                        MiniCalendarView(
+                            displayMode: $displayMode,
+                            selectedDate: $selectedDate,
+                            displayedDate: $displayedDate
+                        )
+                        .padding(.bottom, IKPadding.mini)
                     }
             } else {
                 content
                     .safeAreaInset(edge: .top) {
-                        MiniCalendarView(displayMode: $displayMode, selectedDate: $selectedDate)
-                            .padding(.bottom, IKPadding.mini)
-                            .background(Material.bar)
-                            .onAppear {
-                                let navBarAppearance = UINavigationBarAppearance()
-                                navBarAppearance.shadowImage = nil
-                                navBarAppearance.shadowColor = nil
-                                UINavigationBar.appearance().standardAppearance = navBarAppearance
-                            }
+                        MiniCalendarView(
+                            displayMode: $displayMode,
+                            selectedDate: $selectedDate,
+                            displayedDate: $displayedDate
+                        )
+                        .padding(.bottom, IKPadding.mini)
+                        .background(Material.bar)
+                        .onAppear {
+                            let navBarAppearance = UINavigationBarAppearance()
+                            navBarAppearance.shadowImage = nil
+                            navBarAppearance.shadowColor = nil
+                            UINavigationBar.appearance().standardAppearance = navBarAppearance
+                        }
                     }
             }
         }
@@ -52,7 +66,7 @@ struct MiniCalendarHeaderViewModifier: ViewModifier {
                 ToolbarItem(placement: .principal) {
                     Button(action: switchDisplayMode) {
                         HStack {
-                            Text(selectedDate, format: .dateTime.year().month(.wide))
+                            Text(displayedDate, format: .dateTime.year().month(.wide))
                             Image(systemName: "chevron.down")
                         }
                     }
@@ -67,7 +81,7 @@ struct MiniCalendarHeaderViewModifier: ViewModifier {
 
             } else {
                 ToolbarItem(placement: .topBarLeading) {
-                    Text(selectedDate, format: .dateTime.year().month(.wide))
+                    Text(displayedDate, format: .dateTime.year().month(.wide))
                 }
             }
 

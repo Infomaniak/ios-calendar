@@ -24,13 +24,22 @@ struct WeekHeaderView: View {
     @Environment(\.calendar) private var calendar
 
     let startDate: Date
+    @Binding var selectedDate: Date
 
     var body: some View {
         HStack(spacing: 0) {
             ForEach(0 ..< 7, id: \.self) { dayIndex in
                 ZStack {
                     if let dayDate = calendar.date(byAdding: .day, value: dayIndex, to: startDate) {
-                        DayCellView(date: dayDate)
+                        Button {
+                            selectedDate = calendar.startOfDay(for: dayDate)
+                        } label: {
+                            DayCellView(
+                                date: dayDate,
+                                isSelected: calendar.isDate(dayDate, inSameDayAs: selectedDate)
+                            )
+                        }
+                        .buttonStyle(.plain)
                     }
                 }
                 .frame(maxWidth: .infinity)
@@ -42,7 +51,9 @@ struct WeekHeaderView: View {
 }
 
 #Preview {
+    @Previewable @State var selectedDate = Date()
     WeekHeaderView(
-        startDate: Calendar.current.weekStart(for: Date())
+        startDate: Calendar.current.weekStart(for: Date()),
+        selectedDate: $selectedDate
     )
 }

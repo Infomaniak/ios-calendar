@@ -20,8 +20,6 @@ import DesignSystem
 import SwiftUI
 
 struct MiniCalendarView: View {
-    @Namespace private var weeksOrMonthViewNamespace
-
     enum DisplayMode {
         case month
         case week
@@ -29,17 +27,26 @@ struct MiniCalendarView: View {
 
     @Binding var displayMode: DisplayMode
     @Binding var selectedDate: Date
+    @Binding var displayedDate: Date
 
     var body: some View {
         VStack(spacing: IKPadding.micro) {
             DayOfWeekView()
             if displayMode == .week {
-                InfiniteScrollView(referenceDateInterval: .weekOfYear, selectedDate: $selectedDate) { date in
-                    WeekHeaderView(startDate: date)
+                InfiniteScrollView(
+                    referenceDateInterval: .weekOfYear,
+                    selectedDate: $selectedDate,
+                    displayedDate: $displayedDate
+                ) { date in
+                    WeekHeaderView(startDate: date, selectedDate: $selectedDate)
                 }
             } else {
-                InfiniteScrollView(referenceDateInterval: .month, selectedDate: $selectedDate) { date in
-                    MonthHeaderView(startDate: date)
+                InfiniteScrollView(
+                    referenceDateInterval: .month,
+                    selectedDate: $selectedDate,
+                    displayedDate: $displayedDate
+                ) { date in
+                    MonthHeaderView(startDate: date, selectedDate: $selectedDate)
                 }
             }
         }
@@ -50,5 +57,6 @@ struct MiniCalendarView: View {
 #Preview {
     @Previewable @State var displayMode: MiniCalendarView.DisplayMode = .week
     @Previewable @State var selectedDate = Date()
-    MiniCalendarView(displayMode: $displayMode, selectedDate: $selectedDate)
+    @Previewable @State var displayedDate = Date()
+    MiniCalendarView(displayMode: $displayMode, selectedDate: $selectedDate, displayedDate: $displayedDate)
 }

@@ -48,6 +48,7 @@ struct InfiniteScrollView<ContentView: View>: View {
     let referenceDateInterval: Calendar.Component
 
     @Binding var selectedDate: Date
+    @Binding var displayedDate: Date
 
     @ViewBuilder var content: (Date) -> ContentView
 
@@ -71,17 +72,29 @@ struct InfiniteScrollView<ContentView: View>: View {
             let containerWidth = geometry.containerSize.width
             return ScrollInfo(offsetX: offsetX, contentWidth: contentWidth, containerWidth: containerWidth)
         } action: { _, newValue in
+            updateDisplayedDate(newValue)
             adjustWindowIfNeeded(newValue)
         }
         .onAppear {
             referenceDates = generateReferenceDates(
-                from: Date(),
+                from: displayedDate,
                 range: -InfiniteScrollConstants.pageWindow ... InfiniteScrollConstants.pageWindow
             )
         }
         .onChange(of: selectedDate) { _, newValue in
             scrollToSelectedDateIfNeeded(newValue)
         }
+    }
+
+    private func updateDisplayedDate(_ scrollInfo: ScrollInfo) {
+        guard scrollInfo.containerWidth > 0, !referenceDates.isEmpty else { return }
+
+        let pageIndex = Int((scrollInfo.offsetX / scrollInfo.containerWidth).rounded())
+        guard referenceDates.indices.contains(pageIndex) else { return }
+
+        let visibleDate = referenceDates[pageIndex]
+        guard displayedDate != visibleDate else { return }
+        displayedDate = visibleDate
     }
 
     private func generateReferenceDates(from date: Date, range: ClosedRange<Int>) -> [Date] {
@@ -174,7 +187,12 @@ struct InfiniteScrollView<ContentView: View>: View {
 
 #Preview {
     @Previewable @State var selectedDate = Date()
-    InfiniteScrollView(referenceDateInterval: .weekOfYear, selectedDate: $selectedDate) { date in
-        WeekHeaderView(startDate: date)
+    @Previewable @State var displayedDate = Date()
+    InfiniteScrollView(
+        referenceDateInterval: .weekOfYear,
+        selectedDate: $selectedDate,
+        displayedDate: $displayedDate
+    ) { date in
+        WeekHeaderView(startDate: date, selectedDate: $selectedDate)
     }
 }

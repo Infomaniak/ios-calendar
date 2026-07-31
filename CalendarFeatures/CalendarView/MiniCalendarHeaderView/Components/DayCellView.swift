@@ -46,8 +46,10 @@ struct DayCellView: View {
         .overlay {
             if isSelected, !isToday {
                 Circle().stroke(Color.accentColor, lineWidth: 1)
+                    .transition(.scale(scale: 0.5, anchor: .center).combined(with: .opacity))
             }
         }
+        .padding(1)
         .geometryGroup()
     }
 }

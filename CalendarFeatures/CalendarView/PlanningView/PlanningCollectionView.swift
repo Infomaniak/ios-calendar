@@ -486,14 +486,17 @@ struct PlanningCollectionView: UIViewRepresentable {
         }
 
         private func syncSelectedDateToVisibleDay(_ scrollView: UIScrollView) {
-            guard !isAdjusting, let collectionView = scrollView as? UICollectionView,
+            guard scrollView.isDragging || scrollView.isDecelerating,
+                  !isAdjusting, let collectionView = scrollView as? UICollectionView,
                   let topIndexPath = collectionView.indexPathsForVisibleItems.min() else {
                 return
             }
             let topDate = day(at: topIndexPath.section).date
             guard mainViewState.selectedDate != topDate else { return }
             planningViewModel.suppressScrollTargetSync = true
-            mainViewState.selectedDate = topDate
+            withAnimation {
+                mainViewState.selectedDate = topDate
+            }
         }
     }
 }

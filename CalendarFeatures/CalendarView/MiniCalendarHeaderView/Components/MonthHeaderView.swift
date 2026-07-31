@@ -24,6 +24,7 @@ struct MonthHeaderView: View {
     @Environment(\.calendar) private var calendar
 
     let startDate: Date
+    @Binding var selectedDate: Date
 
     private let maximumRowCount = 6
 
@@ -57,16 +58,22 @@ struct MonthHeaderView: View {
                                     .hidden()
                                     .accessibilityHidden(true)
                             } else if let dayDate = calendar.date(byAdding: .day, value: dayIndex, to: gridStart) {
-                                if calendar.isDate(
-                                    dayDate,
-                                    equalTo: monthStart,
-                                    toGranularity: .month
-                                ) {
-                                    DayCellView(date: dayDate)
-                                } else {
-                                    DayCellView(date: dayDate)
-                                        .opacity(0.5)
+                                Button {
+                                    selectedDate = calendar.startOfDay(for: dayDate)
+                                } label: {
+                                    DayCellView(
+                                        date: dayDate,
+                                        isSelected: calendar.isDate(dayDate, inSameDayAs: selectedDate)
+                                    )
+                                    .opacity(
+                                        calendar.isDate(
+                                            dayDate,
+                                            equalTo: monthStart,
+                                            toGranularity: .month
+                                        ) ? 1 : 0.5
+                                    )
                                 }
+                                .buttonStyle(.plain)
                             }
                         }
                         .frame(maxWidth: .infinity)
@@ -80,7 +87,9 @@ struct MonthHeaderView: View {
 }
 
 #Preview {
+    @Previewable @State var selectedDate = Date()
     MonthHeaderView(
-        startDate: Calendar.current.monthStart(for: Date())
+        startDate: Calendar.current.monthStart(for: Date()),
+        selectedDate: $selectedDate
     )
 }
