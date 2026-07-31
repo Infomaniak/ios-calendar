@@ -17,25 +17,93 @@
  */
 
 import CalendarCore
+import CalendarResources
 import SwiftUI
+
+extension CalendarViewMode {
+    var icon: Image {
+        switch self {
+        case .planning:
+            return CalendarResourcesAsset.Images.rowsTwo.swiftUIImage
+        case .day:
+            return CalendarResourcesAsset.Images.overlineRectangleUnderline.swiftUIImage
+        case .threeDays:
+            return CalendarResourcesAsset.Images.columnsThree.swiftUIImage
+        case .week:
+            return CalendarResourcesAsset.Images.columnsFour.swiftUIImage
+        case .month:
+            return CalendarResourcesAsset.Images.gridThreeTwo.swiftUIImage
+        }
+    }
+
+    var localizedName: String {
+        switch self {
+        case .planning:
+            return CalendarResourcesStrings.planningTitle
+        case .day:
+            return CalendarResourcesStrings.dayTitle
+        case .threeDays:
+            return CalendarResourcesStrings.threeDaysTitle
+        case .week:
+            return CalendarResourcesStrings.weekTitle
+        case .month:
+            return CalendarResourcesStrings.monthTitle
+        }
+    }
+}
 
 public struct CalendarView: View {
     @Environment(\.calendarAccounts) private var calendarAccounts
 
-    @State private var selectedMode: CalendarViewMode = .day
+    @SceneStorage("SelectedMode") private var selectedMode: CalendarViewMode = .day
 
     public init() {}
 
     public var body: some View {
-        switch selectedMode {
-        case .planning:
-            PlanningView(calendarAccounts: calendarAccounts)
-        case .day:
-            DaysView()
-        case .week:
-            WeekView()
-        case .month:
-            MonthView()
+        Group {
+            switch selectedMode {
+            case .planning:
+                PlanningView(calendarAccounts: calendarAccounts)
+            case .day:
+                DaysView()
+            case .week:
+                WeekView()
+            case .threeDays:
+                Text("Three Days View")
+            case .month:
+                MonthView()
+            }
+        }
+        .toolbar {
+            ToolbarItem(placement: .bottomBar) {
+                Picker(selection: $selectedMode) {
+                    ForEach(CalendarViewMode.allCases, id: \.self) { mode in
+                        Label {
+                            Text(mode.localizedName)
+                        } icon: {
+                            mode.icon
+                        }
+                        .tag(mode)
+                    }
+                } label: {
+                    Label {
+                        Text(selectedMode.localizedName)
+                    } icon: {
+                        selectedMode.icon
+                    }
+                }
+                .labelsHidden()
+                .pickerStyle(.menu)
+            }
+
+            if #available(iOS 26.0, *) {
+                ToolbarSpacer(.flexible, placement: .bottomBar)
+            }
+
+            ToolbarItem(placement: .bottomBar) {
+                Button("New", systemImage: "plus") {}
+                    .buttonStyle(.bordered)
+            }
         }
     }
 }

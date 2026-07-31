@@ -22,7 +22,7 @@ public struct WeekView: View {
     public init() {}
 
     public var body: some View {
-        EmptyView()
+        Text("WeekView")
     }
 }
 
