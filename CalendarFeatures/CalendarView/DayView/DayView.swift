@@ -106,37 +106,17 @@ struct DayContentView: View {
         GeometryReader { proxy in
         TimelineView(.everyMinute) { timeline in
             let allDayEvents = events.filter(\.isAllDay)
-            VStack(spacing: 0) {
-                FullDayEventView(
-                    events: allDayEvents,
-                    date: date
-                )
-                ScrollView {
-                    ZStack(alignment: .top) {
-                        DayTimelineView(date: date, pointsPerHour: effectivePointsPerHour, leadingOffset: Self.Constants.leadingInset)
-
-                        EventuallyLayout(
-                            startOfDay: calendar.startOfDay(for: date),
-                            hourSlotHeight: effectivePointsPerHour
-                        ) { textHeights in
-                            guard coveredTextHeights != textHeights else { return }
-                            coveredTextHeights = textHeights
-                        } {
-                            ForEach(Array(events.filter { !$0.isAllDay }.enumerated()), id: \.element.id) { index, event in
-                                if !event.isAllDay {
-                                    DayEventView(
-                                        event: event,
-                                        pointsPerHour: effectivePointsPerHour,
-                                        maxTextHeight: coveredTextHeights[index]
-                                    )
-                                    .eventuallyDateIntervalLayout(
-                                        DateInterval(
-                                            start: event.startDate,
-                                            end: event.endDate
-                                        )
-                                    )
-                                }
-                            }
+            Group {
+                if #available(iOS 26.0, *) {
+                    timelineContent(currentDate: timeline.date)
+                        .safeAreaBar(edge: .top) {
+                            FullDayEventView(events: allDayEvents, date: date)
+                        }
+                } else {
+                    timelineContent(currentDate: timeline.date)
+                        .safeAreaInset(edge: .top) {
+                            FullDayEventView(events: allDayEvents, date: date)
+                                .background(Material.bar)
                         }
                         .padding(.leading, Self.Constants.leadingInset)
                         .padding(.vertical, Self.Constants.verticalInset)
@@ -171,6 +151,43 @@ struct DayContentView: View {
                         }
                 )
             }
+        }
+    }
+
+    private func timelineContent(currentDate: Date) -> some View {
+        ScrollView {
+            ZStack(alignment: .top) {
+                DayTimelineView(date: date, pointsPerHour: effectivePointsPerHour, leadingOffset: Self.Constants.leadingInset)
+
+                EventuallyLayout(
+                    startOfDay: calendar.startOfDay(for: date),
+                    hourSlotHeight: effectivePointsPerHour
+                ) { textHeights in
+                    guard coveredTextHeights != textHeights else { return }
+                    coveredTextHeights = textHeights
+                } {
+                    ForEach(Array(events.filter { !$0.isAllDay }.enumerated()), id: \.element.id) { index, event in
+                        if !event.isAllDay {
+                            DayEventView(
+                                event: event,
+                                pointsPerHour: effectivePointsPerHour,
+                                maxTextHeight: coveredTextHeights[index]
+                            )
+                            .eventuallyDateIntervalLayout(
+                                DateInterval(
+                                    start: event.startDate,
+                                    end: event.endDate
+                                )
+                            )
+                        }
+                    }
+                }
+                .padding(.leading, Self.Constants.leadingInset)
+                .padding(.vertical, Self.Constants.verticalInset)
+
+                TimelineIndicatorView(date: currentDate, pointsPerHour: effectivePointsPerHour)
+            }
+            .frame(height: viewHeight)
         }
     }
 

@@ -81,6 +81,7 @@ struct FullDayEventView: View {
                     .scrollDisabled(eventPairs.count <= 2)
                     .frame(height: CGFloat(visibleRowCount) * rowHeight)
                     .contentMargins(.bottom, IKPadding.micro, for: .scrollContent)
+                    .contentMargins(.top, 0, for: .scrollContent)
                 }
             }
         }
