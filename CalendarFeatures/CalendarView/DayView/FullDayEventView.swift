@@ -17,11 +17,11 @@
  */
 
 import CalendarCoreUI
+import CalendarResources
 import DesignSystem
 import SwiftUI
 
 struct FullDayEventView: View {
-    @Environment(\.calendar) private var calendar
     @Environment(\.esdsTheme) private var theme
 
     let events: [CalendarCoreUI.UIEvent]
@@ -50,7 +50,7 @@ struct FullDayEventView: View {
                 .padding(IKPadding.mini)
             HStack(alignment: .top, spacing: 0) {
                 if !events.isEmpty {
-                    Text("Jour entier")
+                    Text(CalendarResourcesStrings.allDayLabel)
                         .font(.caption2)
                         .padding(.leading, IKPadding.medium)
                         .frame(
@@ -62,17 +62,11 @@ struct FullDayEventView: View {
                             ForEach(eventPairs, id: \.0.id) { firstEvent, secondEvent in
                                 HStack {
                                     Text(firstEvent.title)
-                                        .lineLimit(1)
-                                        .padding(.leading, IKPadding.mini)
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                        .eventCellStyle(event: firstEvent, padding: 0)
+                                        .allDayEventStyle(for: firstEvent)
 
-                                    if let secondEvent = secondEvent {
+                                    if let secondEvent {
                                         Text(secondEvent.title)
-                                            .lineLimit(1)
-                                            .padding(.leading, IKPadding.mini)
-                                            .frame(maxWidth: .infinity, alignment: .leading)
-                                            .eventCellStyle(event: secondEvent, padding: 0)
+                                            .allDayEventStyle(for: secondEvent)
                                     }
                                 }
                             }
@@ -95,5 +89,14 @@ struct FullDayEventView: View {
                 .fill(theme.color.borderDim2Default)
                 .frame(height: 1)
         }
+    }
+}
+
+private extension View {
+    func allDayEventStyle(for event: CalendarCoreUI.UIEvent) -> some View {
+        lineLimit(1)
+            .padding(.leading, IKPadding.mini)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .eventCellStyle(event: event, padding: 0)
     }
 }
