@@ -108,7 +108,9 @@ struct DayView: View {
                         }
                     }
 
-                    TimelineIndicatorView(date: timeline.date, pointsPerHour: effectivePointsPerHour)
+                    if calendar.isDate(date, inSameDayAs: timeline.date) {
+                        TimelineIndicatorView(date: timeline.date, pointsPerHour: effectivePointsPerHour)
+                    }
                 }
                 .frame(height: viewHeight)
             }
