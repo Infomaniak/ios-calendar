@@ -17,6 +17,7 @@
  */
 
 import DesignSystem
+@preconcurrency import InfomaniakCore
 import InfomaniakCoreSwiftUI
 import InfomaniakCreateAccount
 import InterAppLogin
@@ -35,6 +36,15 @@ struct OnboardingBottomButtonsView: View {
         selection == slideCount - 1
     }
 
+    private var shouldDisplayInterAppLogin: Bool {
+        #if DEBUG
+        if ApiEnvironment.current == .prod {
+            return false
+        }
+        #endif
+        return true
+    }
+
     var body: some View {
         ZStack {
             if isLastSlide {
@@ -42,7 +52,8 @@ struct OnboardingBottomButtonsView: View {
                     ContinueWithAccountView(
                         isLoading: loginHandler.isLoading,
                         excludingUserIds: [],
-                        allowsMultipleSelection: false
+                        allowsMultipleSelection: false,
+                        shouldDisplayInterAppLogin: shouldDisplayInterAppLogin
                     ) {
                         loginPressed()
                     } onLoginWithAccountsPressed: { accounts in

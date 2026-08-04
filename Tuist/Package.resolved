@@ -1,5 +1,5 @@
 {
-  "originHash" : "334424c6e85303ecca9c7a5badcc2564be2b8cd19b01a7b68c58b41ce3da4aa9",
+  "originHash" : "37f6e4ee71394e5441365054c28ccbbe0d677c747f2110ef2a826cd07dac4ca3",
   "pins" : [
     {
       "identity" : "alamofire",
@@ -78,8 +78,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-features",
       "state" : {
-        "revision" : "08b0a7d9a6b8debff6ab8f2f6f525cfb1f0d1caa",
-        "version" : "10.1.2"
+        "revision" : "7f852f0076d08cfcf9186060463f59f4aabb575c",
+        "version" : "10.2.0"
       }
     },
     {
@@ -177,8 +177,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getsentry/sentry-cocoa",
       "state" : {
-        "revision" : "67310f115f3fc1e5e1f2e262f9009c64bb387e3f",
-        "version" : "9.22.0"
+        "revision" : "afa7510e05b99f35c1febe47566bfd868fa53fb9",
+        "version" : "9.23.0"
       }
     },
     {
