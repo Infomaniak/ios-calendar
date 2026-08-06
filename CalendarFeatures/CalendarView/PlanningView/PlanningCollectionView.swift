@@ -69,7 +69,7 @@ struct PlanningCollectionView: UIViewRepresentable {
     func updateUIView(_ collectionView: UICollectionView, context: Context) {
         let coordinator = context.coordinator
         coordinator.applyContentInsetTop(
-            200 + nextEventCardViewModel.size.height + IKPadding.medium,
+            nextEventCardViewModel.size.height + IKPadding.medium,
             in: collectionView
         )
         coordinator.applyWithAnchorRestoration(planningViewModel.days, in: collectionView)

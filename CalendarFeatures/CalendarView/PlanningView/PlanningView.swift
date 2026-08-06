@@ -41,7 +41,7 @@ public struct PlanningView: View {
             nextEventCardViewModel: nextEventCardViewModel,
             mainViewState: mainViewState
         )
-        .ignoresSafeArea()
+        .ignoresSafeArea(edges: [.bottom])
         .overlay(alignment: .top) {
             NextEventCardView(model: nextEventCardViewModel)
                 .padding(.horizontal, IKPadding.medium)
