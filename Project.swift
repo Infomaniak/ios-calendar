@@ -66,6 +66,7 @@ let calendarListView = Feature(
     additionalDependencies: [
         settingsView,
         TargetDependency.target(name: "CalendarResources"),
+        TargetDependency.external(name: "ESDSFoundation"),
         TargetDependency.external(name: "InfomaniakDI"),
         TargetDependency.external(name: "InfomaniakCoreSwiftUI")
     ]

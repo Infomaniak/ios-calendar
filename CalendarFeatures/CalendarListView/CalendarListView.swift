@@ -21,44 +21,61 @@ import CalendarCoreUI
 import CalendarResources
 import CalendarSettingsView
 import DesignSystem
+import ESDSFoundation
 import InfomaniakDI
 import MultiplatformCalendar
-import OSLog
 import SwiftUI
 
 public struct CalendarListView: View {
+    @Environment(\.esdsTheme) private var theme
     @Environment(\.calendarAccounts) private var calendarAccounts
-    @Environment(\.openURL) private var openURL
 
     @State private var indexedCalendars = [Int: [UICalendar]]()
-    @State private var isExpanded = true
 
     public init() {}
 
     public var body: some View {
         List {
-            CalendarListContentView(indexedCalendars: indexedCalendars)
+            Section {
+                CalendarListContentView(indexedCalendars: indexedCalendars)
+            } header: {
+                Text(CalendarResourcesStrings.calendarsMenuSectionTitle)
+                    .foregroundStyle(theme.color.textSecondary)
+            }
 
             Section {
-                DisclosureGroup("Réglages", isExpanded: $isExpanded) {
-                    NavigationLink(destination: SettingsView()) {
-                        CalendarResourcesAsset.Images.productCalendar.swiftUIImage
-                        Text(CalendarResourcesStrings.settingsTitle)
+                NavigationLink(destination: Text(CalendarResourcesStrings.accountsTitle)) {
+                    Label {
+                        Text(CalendarResourcesStrings.accountsTitle)
+                            .foregroundStyle(theme.color.textPrimary)
+                    } icon: {
+                        CalendarResourcesAsset.Images.circleUser.swiftUIImage
                     }
-                    Button {
-                        openURL(URLConstants.helpAndSupportURL)
-                    } label: {
-                        Label {
-                            Text(CalendarResourcesStrings.helpTitle)
-                        } icon: {
-                            CalendarResourcesAsset.Images.headset.swiftUIImage
-                        }
-                    }
-                    .foregroundStyle(.primary)
                 }
+
+                NavigationLink(destination: SettingsView()) {
+                    Label {
+                        Text(CalendarResourcesStrings.settingsTitle)
+                            .foregroundStyle(theme.color.textPrimary)
+                    } icon: {
+                        CalendarResourcesAsset.Images.cog.swiftUIImage
+                    }
+                }
+
+                Link(destination: URLConstants.helpAndSupportURL) {
+                    Label {
+                        Text(CalendarResourcesStrings.helpTitle)
+                            .foregroundStyle(theme.color.textPrimary)
+                    } icon: {
+                        CalendarResourcesAsset.Images.headset.swiftUIImage
+                    }
+                }
+                .buttonStyle(.plain)
+            } header: {
+                Text(CalendarResourcesStrings.configurationMenuSectionTitle)
+                    .foregroundStyle(theme.color.textSecondary)
             }
         }
-        .contentMargins(.top, IKPadding.mini, for: .scrollContent)
         .task(id: calendarAccounts) {
             await observeCalendars()
         }

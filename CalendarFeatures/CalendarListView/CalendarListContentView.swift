@@ -18,6 +18,7 @@
 
 import CalendarCore
 import CalendarCoreUI
+import ESDSFoundation
 import InfomaniakDI
 @preconcurrency import MultiplatformCalendar
 import SwiftUI
@@ -33,21 +34,22 @@ private extension View {
 }
 
 struct CalendarListContentView: View {
+    @Environment(\.esdsTheme) private var theme
     @Environment(\.calendarAccounts) private var calendarAccounts
 
-    @State private var expandedAccounts: Set<Int> = []
+    @State private var collapsedAccounts: Set<Int> = []
     @State private var visibilityOverrides = [String: Bool]()
 
     let indexedCalendars: [Int: [UICalendar]]
 
     private func isExpandedBinding(for accountId: Int) -> Binding<Bool> {
         Binding(
-            get: { expandedAccounts.contains(accountId) },
+            get: { !collapsedAccounts.contains(accountId) },
             set: { isExpanding in
                 if isExpanding {
-                    expandedAccounts.insert(accountId)
+                    collapsedAccounts.remove(accountId)
                 } else {
-                    expandedAccounts.remove(accountId)
+                    collapsedAccounts.insert(accountId)
                 }
             }
         )
@@ -83,7 +85,7 @@ struct CalendarListContentView: View {
 
                                 Text(calendar.displayName)
                                     .lineLimit(1)
-                                    .foregroundStyle(.foreground)
+                                    .foregroundStyle(theme.color.textPrimary)
                             }
                         }
                         .listRowSeparator(
@@ -92,13 +94,11 @@ struct CalendarListContentView: View {
                         )
                     }
                 } label: {
-                    VStack(alignment: .leading, spacing: 8) {
-                        AccountCellView(
-                            rawAvatarURL: account.user.avatar,
-                            displayName: account.user.displayName,
-                            email: account.user.email
-                        )
-                    }
+                    AccountCellView(
+                        rawAvatarURL: account.user.avatar,
+                        displayName: account.user.displayName,
+                        email: account.user.email
+                    )
                 }
                 .alignmentGuide(.listRowSeparatorLeading) { _ in
                     0
