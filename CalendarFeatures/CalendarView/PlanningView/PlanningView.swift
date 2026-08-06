@@ -36,7 +36,6 @@ public struct PlanningView: View {
     }
 
     public var body: some View {
-        @Bindable var mainViewState = mainViewState
         PlanningCollectionView(
             planningViewModel: planningViewModel,
             nextEventCardViewModel: nextEventCardViewModel,
@@ -47,16 +46,6 @@ public struct PlanningView: View {
             NextEventCardView(model: nextEventCardViewModel)
                 .padding(.horizontal, IKPadding.medium)
                 .padding(.vertical, IKPadding.mini)
-        }
-        .modifier(MiniCalendarHeaderViewModifier(selectedDate: $mainViewState.selectedDate))
-        .toolbar {
-            ToolbarItem(placement: .bottomBar) {
-                Button("Today") {
-                    withAnimation {
-                        mainViewState.selectedDate = Calendar.current.startOfDay(for: Date())
-                    }
-                }
-            }
         }
         .onChange(of: mainViewState.selectedDate, initial: true) { _, newValue in
             guard !planningViewModel.suppressScrollTargetSync else {
