@@ -17,11 +17,14 @@
  */
 
 import CalendarCoreUI
+import ESDSFoundation
 import InfomaniakCore
 import InfomaniakCoreSwiftUI
 import SwiftUI
 
 struct AccountCellView: View {
+    @Environment(\.esdsTheme) private var theme
+
     let rawAvatarURL: String?
     let displayName: String
     let email: String
@@ -34,11 +37,11 @@ struct AccountCellView: View {
 
             VStack(alignment: .leading, spacing: 0) {
                 Text(displayName)
-                    .font(.body)
-                    .fontWeight(.medium)
+                    .font(.body.weight(.medium))
+                    .foregroundStyle(theme.color.textPrimary)
                 Text(email)
                     .font(.body)
-                    .foregroundStyle(.gray)
+                    .foregroundStyle(theme.color.textSecondary)
             }
             .lineLimit(1)
             .frame(maxWidth: .infinity, alignment: .leading)

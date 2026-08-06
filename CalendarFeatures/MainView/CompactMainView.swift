@@ -38,9 +38,29 @@ public struct CompactMainView: View {
                 }
         }
         .sheet(isPresented: $isShowingCalendarListView) {
-            NavigationStack {
-                CalendarListView()
-            }
+            CalendarListSheetView()
+        }
+    }
+}
+
+struct CalendarListSheetView: View {
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            CalendarListView()
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        if #available(iOS 26.0, *) {
+                            Button(role: .close, action: dismiss.callAsFunction)
+                        } else {
+                            Button(action: dismiss.callAsFunction) {
+                                Label(CalendarResourcesStrings.closeLabel, systemImage: "xmark")
+                            }
+                        }
+                    }
+                }
+                .navigationBarTitleDisplayMode(.inline)
         }
     }
 }

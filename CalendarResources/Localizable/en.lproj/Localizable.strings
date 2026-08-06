@@ -1,3 +1,9 @@
+/* loco:6a6cadf80c75b08650039524 */
+"accountManagement" = "Account Management";
+
+/* loco:6a742debc579c73504099d24 */
+"accountsTitle" = "Accounts";
+
 /* loco:6a3d35f26bb2f27bf40b0052 */
 "allDayLabel" = "All Day";
 
@@ -9,6 +15,15 @@
 
 /* loco:6a4deb24e064eb69fa065712 */
 "buttonShow" = "Show";
+
+/* loco:6a742d5283e910cbff0a9742 */
+"calendarsMenuSectionTitle" = "Calendars";
+
+/* loco:6a63153465d939443107b2d2 */
+"closeLabel" = "Close";
+
+/* loco:6a742cc217cebb36870c27e2 */
+"configurationMenuSectionTitle" = "Configuration";
 
 /* loco:6a21369c4c1c4427f404f752 */
 "contentDescriptionCreateEvent" = "Create an event";
@@ -28,8 +43,20 @@
 /* loco:6a203e6bc6a8e2e3c9024e12 */
 "dayTitle" = "Day";
 
+/* loco:6a631392189120de490885c4 */
+"endLabel" = "End";
+
+/* loco:6a63163836b2bc1b160c0a12 */
+"eventColorLabel" = "Event colour";
+
+/* loco:6a6315016659664bd10ce392 */
+"eventTitle" = "Event";
+
 /* loco:6a3e2023d4ed90a7ed0b19e5 */
 "helpTitle" = "Help center";
+
+/* loco:6a6312ad25e577a9830d55c2 */
+"locationOrRoomLabel" = "Location or room";
 
 /* loco:6a2040c0637876be5f0ec2f2 */
 "monthTitle" = "Month";
@@ -46,11 +73,26 @@
 /* loco:6a2041176b9fab94970540c4 */
 "planningTitle" = "Planning";
 
+/* loco:6a6315c87ee8c4a584018c52 */
+"sectionCalendarHeader" = "Calendar";
+
+/* loco:6a63112f3c2e2bb658012e92 */
+"sectionOrganizerHeader" = "Organizer";
+
+/* loco:6a6310a79aab70776906b25c */
+"sectionParticipantsHeader" = "Participants";
+
 /* loco:6a3e20aad4ed90a7ed0b19e7 */
 "settingsTitle" = "Settings";
 
+/* loco:6a631349aaecfe24ff0e28d2 */
+"startLabel" = "Start";
+
 /* loco:6a203f703a4a6492b407ce23 */
 "threeDaysTitle" = "Three days";
+
+/* loco:6a63118bfc3889d1fb077fc2 */
+"titleLabel" = "Title";
 
 /* loco:6a33b6883afea93d8b078502 */
 "weekHeaderWeekNumber" = "W%d";
