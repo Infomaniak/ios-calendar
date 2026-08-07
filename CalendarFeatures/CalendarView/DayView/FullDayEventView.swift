@@ -28,75 +28,67 @@ struct FullDayEventView: View {
     let date: Date
 
     private var visibleRowCount: Int {
-        min(eventPairs.count, 2)
+        min(events.count, 2)
     }
 
     private var rowHeight: CGFloat {
-        return 15.0 + DayView.Constants.verticalInset * 2
-    }
-
-    private var eventPairs: [(CalendarCoreUI.UIEvent, CalendarCoreUI.UIEvent?)] {
-        stride(from: 0, to: events.count, by: 2).map { index in
-            let firstEvent = events[index]
-            let secondEvent = (index + 1 < events.count) ? events[index + 1] : nil
-            return (firstEvent, secondEvent)
-        }
+        return 32 + DayView.Constants.verticalInset * 2
     }
 
     var body: some View {
         VStack {
-            Text(date, format: .dateTime.weekday().day().month().year())
-                .frame(maxWidth: .infinity, alignment: .center)
-                .padding(IKPadding.mini)
+            HStack {
+                Text(date, format: .dateTime.week())
+                    .foregroundStyle(theme.color.textTertiary)
+                    .frame(
+                        width: DayView.Constants.leadingInset,
+                        alignment: .trailing
+                    )
+
+                (
+                    Text(date, format: .dateTime.weekday(.wide))
+                        .fontWeight(.semibold)
+                        + Text(" – ")
+                        + Text(date, format: .dateTime.day().month())
+                )
+                .font(.body)
+                .foregroundStyle(theme.color.textPrimary)
+                .padding(.leading, IKPadding.mini)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
             HStack(alignment: .top, spacing: 0) {
                 if !events.isEmpty {
                     Text(CalendarResourcesStrings.allDayLabel)
                         .font(.caption2)
-                        .padding(.leading, IKPadding.medium)
+                        .foregroundStyle(theme.color.textTertiary)
                         .frame(
                             width: DayView.Constants.leadingInset,
-                            alignment: .leading
+                            alignment: .trailing
                         )
+                        .multilineTextAlignment(.trailing)
                     ScrollView {
                         VStack {
-                            ForEach(eventPairs, id: \.0.id) { firstEvent, secondEvent in
-                                HStack {
-                                    Text(firstEvent.title)
-                                        .allDayEventStyle(for: firstEvent)
-
-                                    if let secondEvent {
-                                        Text(secondEvent.title)
-                                            .allDayEventStyle(for: secondEvent)
-                                    }
-                                }
+                            ForEach(events, id: \.id) { event in
+                                Text(event.title)
+                                    .lineLimit(1)
+                                    .padding(.leading, IKPadding.micro)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .eventCellStyle(event: event)
                             }
                         }
                     }
-                    .scrollDisabled(eventPairs.count <= 2)
-                    .frame(height: CGFloat(visibleRowCount) * rowHeight)
-                    .contentMargins(.bottom, IKPadding.micro, for: .scrollContent)
+                    .scrollDisabled(events.count <= 2)
+                    .frame(height: CGFloat(visibleRowCount) * rowHeight + IKPadding.medium)
+                    .contentMargins(.bottom, IKPadding.medium, for: .scrollContent)
                     .contentMargins(.top, 0, for: .scrollContent)
                 }
             }
         }
-        .overlay(alignment: .top) {
-            Rectangle()
-                .fill(theme.color.borderDim2Default)
-                .frame(height: 1)
-        }
+        .padding(.bottom, events.isEmpty ? IKPadding.medium : 0)
         .overlay(alignment: .bottom) {
-            Rectangle()
-                .fill(theme.color.borderDim2Default)
+            Divider()
                 .frame(height: 1)
+                .overlay(theme.color.borderDim2Default)
         }
-    }
-}
-
-private extension View {
-    func allDayEventStyle(for event: CalendarCoreUI.UIEvent) -> some View {
-        lineLimit(1)
-            .padding(.leading, IKPadding.mini)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .eventCellStyle(event: event, padding: 0)
     }
 }
