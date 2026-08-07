@@ -1,5 +1,5 @@
 {
-  "originHash" : "37f6e4ee71394e5441365054c28ccbbe0d677c747f2110ef2a826cd07dac4ca3",
+  "originHash" : "c77abc35165971d0f9f20094d123cac8213c9de2b4e3dd8b64885eaa93c3b9e5",
   "pins" : [
     {
       "identity" : "alamofire",
@@ -123,8 +123,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/multiplatform-calendar",
       "state" : {
-        "revision" : "8e3bb78a5c06eb0b48be6336183b4f08fc6f3c1a",
-        "version" : "0.3.0"
+        "revision" : "f204af2520b4e6bb2ac5a034a304d47b9caac9e0",
+        "version" : "0.4.0"
       }
     },
     {
