@@ -168,19 +168,17 @@ struct DayContentView: View {
                     coveredTextHeights = textHeights
                 } {
                     ForEach(Array(events.filter { !$0.isAllDay }.enumerated()), id: \.element.id) { index, event in
-                        if !event.isAllDay {
-                            DayEventView(
-                                event: event,
-                                pointsPerHour: effectivePointsPerHour,
-                                maxTextHeight: coveredTextHeights[index]
+                        DayEventView(
+                            event: event,
+                            pointsPerHour: effectivePointsPerHour,
+                            maxTextHeight: coveredTextHeights[index]
+                        )
+                        .eventuallyDateIntervalLayout(
+                            DateInterval(
+                                start: event.startDate,
+                                end: event.endDate
                             )
-                            .eventuallyDateIntervalLayout(
-                                DateInterval(
-                                    start: event.startDate,
-                                    end: event.endDate
-                                )
-                            )
-                        }
+                        )
                     }
                 }
                 .padding(.leading, Self.Constants.leadingInset)

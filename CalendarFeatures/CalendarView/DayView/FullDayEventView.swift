@@ -38,7 +38,8 @@ struct FullDayEventView: View {
     var body: some View {
         VStack {
             HStack {
-                Text(date, format: .dateTime.week())
+                let weekNumber = Calendar.current.component(.weekOfYear, from: date)
+                Text(CalendarResourcesStrings.weekHeaderWeekNumber(weekNumber))
                     .foregroundStyle(theme.color.textTertiary)
                     .frame(
                         width: DayView.Constants.leadingInset,
