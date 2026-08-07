@@ -105,7 +105,7 @@ public extension UIEvent {
     init?(eventDaySlice: MultiplatformCalendar.EventDaySlice, userEmail: String?) {
         let event = eventDaySlice.event
 
-        id = "\(eventDaySlice.position.index)-\(event.idValue)"
+        id = "\(eventDaySlice.position.index)-\(event.occurrenceIdValue)"
         title = event.title
         status = event.status
         location = event.location
