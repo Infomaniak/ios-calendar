@@ -16,29 +16,50 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import CalendarCoreUI
+import CalendarResources
+import DesignSystem
 import ESDSFoundation
 import InfomaniakCore
 import InfomaniakCoreSwiftUI
 import SwiftUI
 
-struct AccountCellView: View {
+public struct AccountCellView: View {
     @Environment(\.esdsTheme) private var theme
 
     let rawAvatarURL: String?
     let displayName: String
     let email: String
-    let avatarSize: CGFloat = 40
+    let avatarSize: CGFloat
+    let isOrganizer: Bool
 
-    var body: some View {
+    public init(rawAvatarURL: String?, displayName: String, email: String, avatarSize: CGFloat = 40, isOrganizer: Bool = false) {
+        self.rawAvatarURL = rawAvatarURL
+        self.displayName = displayName
+        self.email = email
+        self.avatarSize = avatarSize
+        self.isOrganizer = isOrganizer
+    }
+
+    public var body: some View {
         HStack {
             AvatarView(rawAvatarURL: rawAvatarURL, displayName: displayName,
                        email: email, size: avatarSize)
 
             VStack(alignment: .leading, spacing: 0) {
-                Text(displayName)
-                    .font(.body.weight(.medium))
-                    .foregroundStyle(theme.color.textPrimary)
+                HStack(spacing: IKPadding.mini) {
+                    Text(displayName)
+                        .font(.body.weight(.medium))
+                        .foregroundStyle(theme.color.textPrimary)
+
+                    if isOrganizer {
+                        Text(CalendarResourcesStrings.sectionOrganizerHeader)
+                            .font(.caption2)
+                            .padding(.horizontal, IKPadding.mini)
+                            .padding(.vertical, IKPadding.micro)
+                            .background(.secondary.opacity(0.15))
+                            .clipShape(Capsule())
+                    }
+                }
                 Text(email)
                     .font(.body)
                     .foregroundStyle(theme.color.textSecondary)

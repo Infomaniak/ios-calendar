@@ -91,7 +91,6 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
         alarms: [UIEventAlarm] = [],
         user: UIAttendee? = nil,
         attendees: [UIAttendee],
-        organizer: UIAttendee? = nil,
         colors: UIEvent.Colors
     ) {
         self.id = id

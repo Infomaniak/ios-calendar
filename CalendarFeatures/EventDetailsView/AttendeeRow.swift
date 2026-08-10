@@ -35,34 +35,12 @@ struct AttendeeRow: View {
     }
 
     var body: some View {
-        HStack(spacing: IKPadding.medium) {
-            AvatarView(
-                rawAvatarURL: nil,
-                displayName: attendee.displayName ?? attendee.email,
-                email: attendee.email,
-                size: IKIconSize.large.rawValue
-            )
-
-            VStack(alignment: .leading, spacing: IKPadding.micro) {
-                HStack(spacing: IKPadding.mini) {
-                    Text(displayName)
-
-                    if isOrganizer {
-                        Text(CalendarResourcesStrings.sectionOrganizerHeader)
-                            .font(.caption2)
-                            .padding(.horizontal, IKPadding.mini)
-                            .padding(.vertical, IKPadding.micro)
-                            .background(.secondary.opacity(0.15))
-                            .clipShape(Capsule())
-                    }
-                }
-
-                if shouldShowEmail {
-                    Text(attendee.email)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-            }
-        }
+        AccountCellView(
+            rawAvatarURL: nil,
+            displayName: attendee.displayName ?? attendee.email,
+            email: attendee.email,
+            avatarSize: IKIconSize.large.rawValue,
+            isOrganizer: isOrganizer
+        )
     }
 }

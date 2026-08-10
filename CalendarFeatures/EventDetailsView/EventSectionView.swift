@@ -18,16 +18,15 @@
 
 import CalendarCoreUI
 import CalendarResources
+import DesignSystem
+import ESDSFoundation
 import SwiftUI
 
 struct EventSectionView: View {
+    @Environment(\.esdsTheme) private var theme
     let event: CalendarCoreUI.UIEvent
 
     private let title: String
-    private let location: String?
-    private let isAllDay: Bool
-    private let startDate: Date
-    private let endDate: Date
 
     @Binding private var color: Color
     @Binding private var calendarColor: Color
@@ -42,58 +41,32 @@ struct EventSectionView: View {
     ) {
         self.event = event
         title = event.title
-        location = event.location
-        isAllDay = event.isAllDay
-        startDate = event.startDate
-        endDate = event.endDate
         _color = color
         _calendarColor = calendarColor
         _isColorPickerPresented = isColorPickerPresented
     }
 
-    private var displayedComponents: DatePickerComponents {
-        if isAllDay {
-            return [.date]
-        } else {
-            return [.date, .hourAndMinute]
-        }
-    }
-
     var body: some View {
         HStack {
             Button {
-                isColorPickerPresented = true
+                // TODO: After when edit view change isColorPickerPresented value
             } label: {
-                RoundedRectangle(cornerRadius: 4)
+                RoundedRectangle(cornerRadius: IKRadius.small)
                     .fill(color)
-                    .frame(width: 18, height: 18)
-                    .shadow(color: .black.opacity(0.25), radius: 2, x: 0, y: 0)
+                    .frame(width: IKIconSize.medium.rawValue, height: IKIconSize.medium.rawValue)
+                    .shadow(color: .black.opacity(0.25), radius: IKRadius.small, x: 0, y: 0)
                     .overlay {
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(calendarColor, lineWidth: 3)
-                            .frame(width: 28, height: 28)
+                        RoundedRectangle(cornerRadius: IKRadius.medium)
+                            .stroke(calendarColor, lineWidth: 4)
+                            .frame(width: IKIconSize.large.rawValue, height: IKIconSize.large.rawValue)
                     }
-                    .padding(.trailing, 8)
+                    .padding(.trailing, IKPadding.mini)
             }
 
             Text(title)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .font(.title2)
+                .font(.body)
                 .fontWeight(.semibold)
-        }
-
-        Section {
-            Toggle(CalendarResourcesStrings.allDayLabel, isOn: .constant(isAllDay))
-                .disabled(true)
-            DatePicker("Start Date", selection: .constant(startDate), displayedComponents: displayedComponents)
-                .disabled(true)
-            DatePicker("End Date", selection: .constant(endDate), displayedComponents: displayedComponents)
-                .disabled(true)
-            if let location, !location.isEmpty {
-                LabeledContent(CalendarResourcesStrings.locationOrRoomLabel, value: location)
-            }
-        } header: {
-            Text("Date & Location")
         }
     }
 }

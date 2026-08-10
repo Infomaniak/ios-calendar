@@ -23,30 +23,20 @@ import InfomaniakCoreSwiftUI
 import SwiftUI
 
 struct AlertsSectionView: View {
-    private let event: CalendarCoreUI.UIEvent
-    @State private var alarmOffsets: [AlarmOffset] = []
+    @Binding private var alarms: [UIEventAlarm]
 
-    init(event: CalendarCoreUI.UIEvent) {
-        self.event = event
-        _alarmOffsets = State(initialValue: (event.alarms).map {
-            AlarmOffset(trigger: $0.trigger)
-        })
+    init(alarms: Binding<[UIEventAlarm]>) {
+        _alarms = alarms
     }
 
     var body: some View {
-        if !alarmOffsets.isEmpty {
-            Section {
-                ForEach(alarmOffsets.indices, id: \.self) { index in
-                    Picker("Alarm \(index + 1)", selection: $alarmOffsets[index]) {
-                        ForEach(AlarmOffset.allCases) { offset in
-                            Text(offset.rawValue).tag(offset)
-                        }
-                    }
-                    .disabled(true)
+        ForEach(alarms.indices, id: \.self) { index in
+            Picker(alarms[index].action.label, selection: $alarms[index].offset) {
+                ForEach(AlarmOffset.allCases) { offset in
+                    Text(offset.rawValue).tag(offset)
                 }
-            } header: {
-                Text("Alerts")
             }
+            .disabled(true)
         }
     }
 }

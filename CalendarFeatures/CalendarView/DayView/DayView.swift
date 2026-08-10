@@ -101,9 +101,9 @@ struct DayView: View {
                                 onSelectEvent(event)
                             } label: {
                                 DayEventView(event: event, pointsPerHour: effectivePointsPerHour)
-                                    .tag(event.startDate)
                             }
                             .buttonStyle(.plain)
+                            .tag(event.startDate)
                         }
                     }
 

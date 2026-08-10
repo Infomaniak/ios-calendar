@@ -21,11 +21,12 @@ import Foundation
 
 public struct UIEventAlarm: Sendable, Hashable {
     public let action: UIAlarmAction
-    public let trigger: UIAlarmTrigger
+    public let trigger: UIAlarmTrigger?
     public let description: String?
     public let summary: String?
     public let attendees: [String]
     public let attachments: [String]
+    public var offset: AlarmOffset
 
     public init(
         action: UIAlarmAction,
@@ -41,10 +42,11 @@ public struct UIEventAlarm: Sendable, Hashable {
         self.attendees = attendees
         self.description = description
         self.summary = summary
+        offset = AlarmOffset(trigger: trigger)
     }
 }
 
-extension UIEventAlarm {
+public extension UIEventAlarm {
     init(sdk: MultiplatformCalendar.EventAlarm) {
         action = UIAlarmAction(sdk: sdk.action)
         trigger = UIAlarmTrigger(sdk: sdk.trigger)
@@ -52,6 +54,7 @@ extension UIEventAlarm {
         attendees = sdk.attendees
         description = sdk.description_
         summary = sdk.summary
+        offset = AlarmOffset(trigger: trigger)
     }
 }
 
@@ -65,14 +68,32 @@ public enum UIAlarmTrigger: Sendable, Hashable {
     case absolute(instant: Date)
 }
 
-public enum UIAlarmAction: Sendable, Hashable {
+public enum UIAlarmAction: Identifiable, Sendable, Hashable {
     case display
     case audio
     case email
-    case unknown(raw: String)
+    case unknown(String)
+
+    public var id: String {
+        switch self {
+        case .display: return "display"
+        case .audio: return "audio"
+        case .email: return "email"
+        case .unknown(let raw): return "unknown_\(raw)"
+        }
+    }
+
+    public var label: String {
+        switch self {
+        case .display: return "Notification"
+        case .audio: return "Notification audio"
+        case .email: return "Email"
+        case .unknown(let raw): return raw
+        }
+    }
 }
 
-public enum AlarmOffset: String, CaseIterable, Identifiable, Hashable {
+public enum AlarmOffset: String, CaseIterable, Identifiable, Hashable, Sendable {
     case none = "None"
     case fiveMinutesBefore = "5 minutes before"
     case oneHourBefore = "1 hour before"
@@ -83,17 +104,17 @@ public enum AlarmOffset: String, CaseIterable, Identifiable, Hashable {
         rawValue
     }
 
-    public func triggerDate(for eventDate: Date) -> Date? {
+    public func triggerDate(for startDate: Date, to endDate: Date) -> Date? {
         switch self {
         case .none: return nil
-        case .fiveMinutesBefore: return Calendar.current.date(byAdding: .minute, value: -5, to: eventDate)
-        case .fiveMinutesAfter: return Calendar.current.date(byAdding: .minute, value: +5, to: eventDate)
-        case .oneHourBefore: return Calendar.current.date(byAdding: .hour, value: -1, to: eventDate)
-        case .oneHourAfter: return Calendar.current.date(byAdding: .hour, value: +1, to: eventDate)
+        case .fiveMinutesBefore: return Calendar.current.date(byAdding: .minute, value: -5, to: startDate)
+        case .fiveMinutesAfter: return Calendar.current.date(byAdding: .minute, value: +5, to: endDate)
+        case .oneHourBefore: return Calendar.current.date(byAdding: .hour, value: -1, to: startDate)
+        case .oneHourAfter: return Calendar.current.date(byAdding: .hour, value: +1, to: endDate)
         }
     }
 
-    public init(trigger: UIAlarmTrigger) {
+    public init(trigger: UIAlarmTrigger?) {
         switch trigger {
         case .relative(let offset, let relatedTo):
             switch (offset, relatedTo) {
@@ -103,11 +124,12 @@ public enum AlarmOffset: String, CaseIterable, Identifiable, Hashable {
                 self = .oneHourBefore
             case (-300, UITriggerRelation.end):
                 self = .fiveMinutesAfter
-            case(-3600, UITriggerRelation.end):
+            case (-3600, UITriggerRelation.end):
                 self = .oneHourAfter
             default: self = .none
             }
-        case .absolute:
+
+        default:
             self = .none
         }
     }
@@ -120,15 +142,15 @@ public extension UIAlarmAction {
         case is AlarmActionAudio: self = .audio
         case is AlarmActionEmail: self = .email
         case let unknown as AlarmActionUnknown:
-            self = .unknown(raw: unknown.raw)
+            self = .unknown(unknown.raw)
         default:
-            self = .unknown(raw: "")
+            self = .unknown("")
         }
     }
 }
 
 extension UIAlarmTrigger {
-    init(sdk: any AlarmTrigger) {
+    init?(sdk: any AlarmTrigger) {
         switch sdk {
         case let relative as AlarmTriggerRelative:
             self = .relative(
@@ -138,7 +160,7 @@ extension UIAlarmTrigger {
         case let absolute as AlarmTriggerAbsolute:
             self = .absolute(instant: absolute.instant.date)
         default:
-            self = .absolute(instant: Date())
+            return nil
         }
     }
 }
@@ -149,7 +171,6 @@ extension UITriggerRelation {
         switch sdk {
         case .start: self = .start
         case .end: self = .end
-        default: self = .start
         }
     }
 }
@@ -171,6 +192,6 @@ public extension UIEventAlarm {
                      description: "5 minutes before", summary: "Quick reminder"),
         UIEventAlarm(action: .email, trigger: .relative(offset: -3600, relatedTo: .end),
                      attachments: [], attendees: ["john@apple.com"],
-                     description: "1 hour before", summary: "Prepare slides")
+                     description: "1 hour after", summary: "Prepare slides")
     ]
 }

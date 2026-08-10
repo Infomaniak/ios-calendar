@@ -24,15 +24,7 @@ import SwiftUI
 struct ParticipantsSectionView: View {
     @State private var attendeesListIsOpen = false
 
-    let event: CalendarCoreUI.UIEvent
-
-    private var uniqueAttendees: [UIAttendee] {
-        var seenEmails = Set<String>()
-
-        return event.attendees.filter { attendee in
-            seenEmails.insert(normalizedEmail(attendee.email)).inserted
-        }
-    }
+    var uniqueAttendees: [UIAttendee]
 
     private var visibleAttendees: [UIAttendee] {
         Array(uniqueAttendees.prefix(3))
@@ -40,10 +32,6 @@ struct ParticipantsSectionView: View {
 
     private func isOrganizer(_ attendee: UIAttendee) -> Bool {
         return attendee.isOrganizer
-    }
-
-    private func normalizedEmail(_ email: String) -> String {
-        email.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
     }
 
     var body: some View {
