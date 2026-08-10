@@ -26,10 +26,6 @@ struct ParticipantsSectionView: View {
 
     let event: CalendarCoreUI.UIEvent
 
-    private var organizer: UIAttendee? {
-        event.organizer
-    }
-
     private var uniqueAttendees: [UIAttendee] {
         var seenEmails = Set<String>()
 
@@ -42,18 +38,8 @@ struct ParticipantsSectionView: View {
         Array(uniqueAttendees.prefix(3))
     }
 
-    private var isOrganizerInAttendees: Bool {
-        guard let organizer else { return false }
-
-        return uniqueAttendees.contains { attendee in
-            normalizedEmail(attendee.email) == normalizedEmail(organizer.email)
-        }
-    }
-
     private func isOrganizer(_ attendee: UIAttendee) -> Bool {
-        guard let organizer else { return false }
-
-        return normalizedEmail(attendee.email) == normalizedEmail(organizer.email)
+        return attendee.isOrganizer
     }
 
     private func normalizedEmail(_ email: String) -> String {
@@ -61,14 +47,6 @@ struct ParticipantsSectionView: View {
     }
 
     var body: some View {
-        if let organizer, !isOrganizerInAttendees {
-            Section {
-                AttendeeRow(attendee: organizer, isOrganizer: true)
-            } header: {
-                Text(CalendarResourcesStrings.sectionOrganizerHeader)
-            }
-        }
-
         if !uniqueAttendees.isEmpty {
             Section {
                 DisclosureGroup(isExpanded: $attendeesListIsOpen) {

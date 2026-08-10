@@ -76,7 +76,6 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
 
     public let user: UIAttendee?
     public let attendees: [UIAttendee]
-    public let organizer: UIAttendee?
 
     public let colors: UIEvent.Colors
 
@@ -106,7 +105,6 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
         self.alarms = alarms
         self.user = user
         self.attendees = attendees
-        self.organizer = organizer
         self.colors = colors
     }
 }
@@ -141,8 +139,6 @@ public extension UIEvent {
         }
         self.user = user
 
-        organizer = event.organizer.map { UIAttendee(attendee: $0) }
-
         colors = .init(eventColors: event.colors)
     }
 }
@@ -172,7 +168,6 @@ public extension UIEvent {
         location: "1 Infinite Loop",
         calendarId: "0",
         attendees: UIAttendee.previews,
-        organizer: UIAttendee(displayName: "Tim Cook", email: "tim@apple.com", status: .accepted),
         colors: .preview
     )
 
