@@ -71,6 +71,7 @@ struct FullDayEventView: View {
                         VStack {
                             ForEach(events, id: \.id) { event in
                                 Text(event.title)
+                                    .font(.caption.bold())
                                     .lineLimit(1)
                                     .padding(.leading, IKPadding.micro)
                                     .frame(maxWidth: .infinity, alignment: .leading)
