@@ -123,7 +123,7 @@ public extension UIEvent {
         let event = eventDaySlice.event
 
         id = "\(eventDaySlice.position.index)-\(event.occurrenceIdValue)"
-        sourceEventId = event.idValue
+        sourceEventId = event.masterEventIdValue
         title = event.title
         description = event.description_
         status = event.status
