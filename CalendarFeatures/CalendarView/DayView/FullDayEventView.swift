@@ -28,11 +28,21 @@ struct FullDayEventView: View {
     let date: Date
 
     private var visibleRowCount: Int {
-        min(events.count, 2)
+        min(eventPairs.count, 2)
     }
 
-    private var rowHeight: CGFloat {
-        return 32 + DayView.Constants.verticalInset * 2
+    private var headerHeight: CGFloat {
+        let rowHeight = 16 + DayView.Constants.verticalInset * 2 + IKPadding.mini
+        let extraPadding = eventPairs.count > 2 ? IKPadding.mini : 0
+        return CGFloat(visibleRowCount) * rowHeight + extraPadding
+    }
+
+    private var eventPairs: [(CalendarCoreUI.UIEvent, CalendarCoreUI.UIEvent?)] {
+        stride(from: 0, to: events.count, by: 2).map { index in
+            let firstEvent = events[index]
+            let secondEvent = (index + 1 < events.count) ? events[index + 1] : nil
+            return (firstEvent, secondEvent)
+        }
     }
 
     var body: some View {
@@ -68,20 +78,23 @@ struct FullDayEventView: View {
                         )
                         .multilineTextAlignment(.trailing)
                     ScrollView {
-                        VStack {
-                            ForEach(events, id: \.id) { event in
-                                Text(event.title)
-                                    .font(.caption.bold())
-                                    .lineLimit(1)
-                                    .padding(.leading, IKPadding.micro)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .eventCellStyle(event: event)
+                        VStack(spacing: IKPadding.micro) {
+                            ForEach(eventPairs, id: \.0.id) { firstEvent, secondEvent in
+                                HStack(spacing: IKPadding.micro) {
+                                    Text(firstEvent.title)
+                                        .allDayEventStyle(for: firstEvent)
+
+                                    if let secondEvent {
+                                        Text(secondEvent.title)
+                                            .allDayEventStyle(for: secondEvent)
+                                    }
+                                }
                             }
                         }
                     }
-                    .scrollDisabled(events.count <= 2)
-                    .frame(height: CGFloat(visibleRowCount) * rowHeight + IKPadding.medium)
-                    .contentMargins(.bottom, IKPadding.medium, for: .scrollContent)
+                    .scrollDisabled(eventPairs.count <= 2)
+                    .frame(height: headerHeight)
+                    .contentMargins(.bottom, IKPadding.micro, for: .scrollContent)
                     .contentMargins(.top, 0, for: .scrollContent)
                 }
             }
@@ -92,5 +105,14 @@ struct FullDayEventView: View {
                 .frame(height: 1)
                 .overlay(theme.color.borderDim2Default)
         }
+    }
+}
+
+private extension View {
+    func allDayEventStyle(for event: CalendarCoreUI.UIEvent) -> some View {
+        font(.caption.bold())
+            .lineLimit(1)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .eventCellStyle(event: event)
     }
 }
