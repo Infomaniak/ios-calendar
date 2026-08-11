@@ -46,9 +46,6 @@ struct InfiniteScrollView<ContentView: View>: View {
     @State private var referenceDates = [Date]()
     @State private var scrollPosition: ScrollPosition = .init()
 
-    @State private var adjustingWindowDirection: ScrollDirection?
-    @State private var isProgrammaticallyScrolling = false
-
     @State private var isLocked = false
     @State private var lockedId: Date?
 
@@ -67,9 +64,10 @@ struct InfiniteScrollView<ContentView: View>: View {
                         .containerRelativeFrame(.horizontal)
                         .visualEffect { [isLocked, lockedId] content, proxy in
                             let minX = proxy.frame(in: .scrollView(axis: .horizontal)).minX
+                            let opacity: Double = !isLocked || lockedId == referenceDate ? 1 : 0
 
                             return content
-                                .opacity(isLocked ? (lockedId == referenceDate ? 1 : 0) : 1)
+                                .opacity(opacity)
                                 .offset(x: isLocked ? -minX : 0)
                         }
                 }
@@ -135,7 +133,6 @@ struct InfiniteScrollView<ContentView: View>: View {
             return
         }
 
-        isProgrammaticallyScrolling = true
         withAnimation {
             if !referenceDates.contains(where: { $0 == selectedDateReferenceStart }) {
                 referenceDates = generateReferenceDates(
@@ -146,7 +143,6 @@ struct InfiniteScrollView<ContentView: View>: View {
 
             scrollPosition.scrollTo(id: selectedDateReferenceStart)
         }
-        isProgrammaticallyScrolling = false
     }
 
     private func adjustWindowIfNeeded(_ scrollInfo: ScrollInfo) {

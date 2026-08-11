@@ -86,7 +86,7 @@ struct MiniCalendarHeaderViewModifier: ViewModifier {
             }
 
             ToolbarItem(placement: .topBarTrailing) {
-                Button(action: switchDisplayMode) {
+                Button {} label: {
                     Image(systemName: "magnifyingglass")
                 }
             }
