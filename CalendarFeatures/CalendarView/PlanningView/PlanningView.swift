@@ -17,11 +17,14 @@
  */
 
 import CalendarCore
+import CalendarCoreUI
 import DesignSystem
 import Foundation
 import SwiftUI
 
 public struct PlanningView: View {
+    @Environment(MainViewState.self) private var mainViewState: MainViewState
+
     @State private var planningViewModel: PlanningViewModel
     @State private var nextEventCardViewModel = NextEventCardViewModel()
 
@@ -33,29 +36,36 @@ public struct PlanningView: View {
     }
 
     public var body: some View {
-        PlanningCollectionView(planningViewModel: planningViewModel, nextEventCardViewModel: nextEventCardViewModel)
-            .ignoresSafeArea()
-            .overlay(alignment: .top) {
-                NextEventCardView(model: nextEventCardViewModel)
-                    .padding(.horizontal, IKPadding.medium)
-                    .padding(.vertical, IKPadding.mini)
+        PlanningCollectionView(
+            planningViewModel: planningViewModel,
+            nextEventCardViewModel: nextEventCardViewModel,
+            mainViewState: mainViewState
+        )
+        .ignoresSafeArea(edges: [.bottom])
+        .overlay(alignment: .top) {
+            NextEventCardView(model: nextEventCardViewModel)
+                .padding(.horizontal, IKPadding.medium)
+                .padding(.vertical, IKPadding.mini)
+        }
+        .onChange(of: mainViewState.selectedDate, initial: true) { _, newValue in
+            guard !planningViewModel.suppressScrollTargetSync else {
+                planningViewModel.suppressScrollTargetSync = false
+                return
             }
-            .toolbar {
-                ToolbarItem(placement: .bottomBar) {
-                    Button("Today") {
-                        withAnimation {
-                            planningViewModel.scrollTarget = Date()
-                        }
-                    }
-                }
-            }
-            .task {
-                planningViewModel.scrollTarget = Date()
-            }
-            .id(calendarAccounts)
+            planningViewModel.scrollTarget = newValue
+        }
+        .id(calendarAccounts)
     }
 }
 
 #Preview {
-    PlanningView(calendarAccounts: [:])
+    NavigationStack {
+        PlanningView(calendarAccounts: [:])
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button("Menu", systemImage: "sidebar.left") {}
+                }
+            }
+    }
+    .environment(MainViewState())
 }

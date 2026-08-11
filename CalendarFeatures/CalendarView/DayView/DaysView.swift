@@ -23,12 +23,13 @@ import MultiplatformCalendar
 import SwiftUI
 
 struct DaysView: View {
+    @Environment(MainViewState.self) private var mainViewState
     @Environment(\.calendarAccounts) private var calendarAccounts
 
     @State private var events: [Date: [CalendarCoreUI.UIEvent]] = [:]
 
     private var dates: [Date] {
-        return [Calendar.current.startOfDay(for: .now)]
+        return [mainViewState.selectedDate]
     }
 
     var body: some View {

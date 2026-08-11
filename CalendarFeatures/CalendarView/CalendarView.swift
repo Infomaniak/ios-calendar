@@ -17,6 +17,7 @@
  */
 
 import CalendarCore
+import CalendarCoreUI
 import CalendarResources
 import SwiftUI
 
@@ -54,12 +55,14 @@ extension CalendarViewMode {
 
 public struct CalendarView: View {
     @Environment(\.calendarAccounts) private var calendarAccounts
+    @Environment(MainViewState.self) private var mainViewState
 
     @SceneStorage("SelectedMode") private var selectedMode: CalendarViewMode = .day
 
     public init() {}
 
     public var body: some View {
+        @Bindable var mainViewState = mainViewState
         Group {
             switch selectedMode {
             case .planning:
@@ -74,6 +77,7 @@ public struct CalendarView: View {
                 MonthView()
             }
         }
+        .modifier(MiniCalendarHeaderViewModifier(selectedDate: $mainViewState.selectedDate))
         .toolbar {
             ToolbarItem(placement: .bottomBar) {
                 Picker(selection: $selectedMode) {
@@ -97,12 +101,29 @@ public struct CalendarView: View {
             }
 
             if #available(iOS 26.0, *) {
+                ToolbarSpacer(.fixed, placement: .bottomBar)
+            }
+
+            ToolbarItem(placement: .bottomBar) {
+                Button(CalendarResourcesStrings.contentDescriptionToday, systemImage: "calendar") {
+                    withAnimation {
+                        mainViewState.selectedDate = Calendar.current.startOfDay(for: Date())
+                    }
+                }
+            }
+
+            if #available(iOS 26.0, *) {
                 ToolbarSpacer(.flexible, placement: .bottomBar)
             }
 
             ToolbarItem(placement: .bottomBar) {
-                Button("New", systemImage: "plus") {}
-                    .buttonStyle(.bordered)
+                if #available(iOS 26.0, *) {
+                    Button("New", systemImage: "plus") {}
+                        .buttonStyle(.glassProminent)
+                } else {
+                    Button("New", systemImage: "plus") {}
+                        .buttonStyle(.borderedProminent)
+                }
             }
         }
     }

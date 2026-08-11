@@ -18,12 +18,12 @@
 
 import Foundation
 
-public extension Calendar {
-    func weekStart(for date: Date) -> Date {
-        dateInterval(of: .weekOfYear, for: date)?.start ?? startOfDay(for: date)
-    }
+@MainActor
+@Observable
+public final class MainViewState {
+    public var selectedDate: Date
 
-    func monthStart(for date: Date) -> Date {
-        dateInterval(of: .month, for: date)?.start ?? startOfDay(for: date)
+    public init(selectedDate: Date = Date()) {
+        self.selectedDate = selectedDate
     }
 }
