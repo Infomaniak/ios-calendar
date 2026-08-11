@@ -72,8 +72,16 @@ struct InfiniteScrollView<ContentView: View>: View {
             let containerWidth = geometry.containerSize.width
             return ScrollInfo(offsetX: offsetX, contentWidth: contentWidth, containerWidth: containerWidth)
         } action: { _, newValue in
-            updateDisplayedDate(newValue)
             adjustWindowIfNeeded(newValue)
+        }
+        .onScrollPhaseChange { _, newPhase, context in
+            if newPhase == .decelerating || newPhase == .idle {
+                let offsetX = context.geometry.contentOffset.x + context.geometry.contentInsets.leading
+                let contentWidth = context.geometry.contentSize.width
+                let containerWidth = context.geometry.containerSize.width
+                let scrollInfo = ScrollInfo(offsetX: offsetX, contentWidth: contentWidth, containerWidth: containerWidth)
+                updateDisplayedDate(scrollInfo)
+            }
         }
         .onAppear {
             referenceDates = generateReferenceDates(
