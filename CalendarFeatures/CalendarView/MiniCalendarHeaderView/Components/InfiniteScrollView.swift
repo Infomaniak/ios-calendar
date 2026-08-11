@@ -28,22 +28,29 @@ struct ScrollInfo: Equatable {
 enum ScrollDirection {
     case past
     case future
-}
 
-enum InfiniteScrollConstants {
-    static let pageWindow = 3
-    static let moveWindowThreshold = 10
-    static let adjustWindowThreshold: CGFloat = 100
+    static func fromScrollInfo(_ scrollInfo: ScrollInfo) -> ScrollDirection? {
+        if scrollInfo.offsetX < 0 {
+            return .past
+        } else if scrollInfo.offsetX > (scrollInfo.containerWidth * 2) {
+            return .future
+        } else {
+            return nil
+        }
+    }
 }
 
 struct InfiniteScrollView<ContentView: View>: View {
     @Environment(\.calendar) private var calendar
 
     @State private var referenceDates = [Date]()
-    @State private var scrollPosition: ScrollPosition = .init(idType: Date.self)
+    @State private var scrollPosition: ScrollPosition = .init()
 
     @State private var adjustingWindowDirection: ScrollDirection?
     @State private var isProgrammaticallyScrolling = false
+
+    @State private var isLocked = false
+    @State private var lockedId: Date?
 
     let referenceDateInterval: Calendar.Component
 
@@ -54,10 +61,17 @@ struct InfiniteScrollView<ContentView: View>: View {
 
     var body: some View {
         ScrollView(.horizontal) {
-            LazyHStack(spacing: 0) {
+            HStack(spacing: 0) {
                 ForEach(referenceDates, id: \.self) { referenceDate in
                     content(referenceDate)
                         .containerRelativeFrame(.horizontal)
+                        .visualEffect { [isLocked, lockedId] content, proxy in
+                            let minX = proxy.frame(in: .scrollView(axis: .horizontal)).minX
+
+                            return content
+                                .opacity(isLocked ? (lockedId == referenceDate ? 1 : 0) : 1)
+                                .offset(x: isLocked ? -minX : 0)
+                        }
                 }
             }
             .scrollTargetLayout()
@@ -65,7 +79,7 @@ struct InfiniteScrollView<ContentView: View>: View {
         .scrollIndicators(.hidden)
         .scrollTargetBehavior(.paging)
         .scrollPosition($scrollPosition)
-        .defaultScrollAnchor(.center)
+        .defaultScrollAnchor(.center, for: .initialOffset)
         .onScrollGeometryChange(for: ScrollInfo.self) { geometry in
             let offsetX = geometry.contentOffset.x + geometry.contentInsets.leading
             let contentWidth = geometry.contentSize.width
@@ -86,7 +100,7 @@ struct InfiniteScrollView<ContentView: View>: View {
         .onAppear {
             referenceDates = generateReferenceDates(
                 from: displayedDate,
-                range: -InfiniteScrollConstants.pageWindow ... InfiniteScrollConstants.pageWindow
+                range: -1 ... 1
             )
         }
         .onChange(of: selectedDate) { _, newValue in
@@ -126,7 +140,7 @@ struct InfiniteScrollView<ContentView: View>: View {
             if !referenceDates.contains(where: { $0 == selectedDateReferenceStart }) {
                 referenceDates = generateReferenceDates(
                     from: selectedDateReferenceStart,
-                    range: -InfiniteScrollConstants.pageWindow ... InfiniteScrollConstants.pageWindow
+                    range: -1 ... 1
                 )
             }
 
@@ -136,58 +150,34 @@ struct InfiniteScrollView<ContentView: View>: View {
     }
 
     private func adjustWindowIfNeeded(_ scrollInfo: ScrollInfo) {
-        guard scrollInfo.contentWidth > 0, !isProgrammaticallyScrolling else { return }
+        guard scrollInfo.contentWidth > 0 else { return }
 
-        let offsetX = scrollInfo.offsetX
-        let contentWidth = scrollInfo.contentWidth
-        let containerWidth = scrollInfo.containerWidth
+        let scrollDirection = ScrollDirection.fromScrollInfo(scrollInfo)
+        if let scrollDirection, !isLocked {
+            isLocked = true
+            if scrollDirection == .past {
+                lockedId = referenceDates.first
+                referenceDates.insert(contentsOf: generateReferenceDates(from: referenceDates.first!, range: -2 ... -1), at: 0)
+                referenceDates.removeLast(2)
+            } else {
+                lockedId = referenceDates.last
+                referenceDates.append(contentsOf: generateReferenceDates(from: referenceDates.last!, range: 1 ... 2))
+                referenceDates.removeFirst(2)
+            }
+        } else if isLocked {
+            var transaction = Transaction()
+            transaction.scrollPositionUpdatePreservesVelocity = true
+            withTransaction(transaction) {
+                if scrollDirection == .future {
+                    scrollPosition.scrollTo(x: -scrollInfo.containerWidth * 2)
+                } else if scrollDirection == .past {
+                    scrollPosition.scrollTo(x: scrollInfo.containerWidth * 2)
+                }
+            }
 
-        if offsetX > (contentWidth - containerWidth - InfiniteScrollConstants.adjustWindowThreshold)
-            && adjustingWindowDirection != .future {
-            adjustWindowFuture()
-        } else if offsetX < InfiniteScrollConstants.adjustWindowThreshold && adjustingWindowDirection != .past {
-            adjustWindowPast()
-        }
-    }
-
-    private func adjustWindowFuture() {
-        guard let lastReferenceStart = referenceDates.last else { return }
-        adjustingWindowDirection = .future
-
-        let additionalWeeks = generateReferenceDates(from: lastReferenceStart, range: 1 ... InfiniteScrollConstants.pageWindow)
-        referenceDates.append(contentsOf: additionalWeeks)
-
-        resizeWindowIfNeeded(direction: adjustingWindowDirection)
-
-        Task { @MainActor in
-            adjustingWindowDirection = nil
-        }
-    }
-
-    private func adjustWindowPast() {
-        guard let firstReferenceStart = referenceDates.first else { return }
-        adjustingWindowDirection = .past
-
-        let additionalWeeks = generateReferenceDates(from: firstReferenceStart, range: -InfiniteScrollConstants.pageWindow ... -1)
-        referenceDates.insert(contentsOf: additionalWeeks, at: 0)
-
-        resizeWindowIfNeeded(direction: adjustingWindowDirection)
-
-        Task { @MainActor in
-            adjustingWindowDirection = nil
-        }
-    }
-
-    private func resizeWindowIfNeeded(direction: ScrollDirection?) {
-        guard referenceDates.count > InfiniteScrollConstants.moveWindowThreshold else { return }
-
-        var transaction = Transaction()
-        transaction.scrollPositionUpdatePreservesVelocity = true
-        withTransaction(transaction) {
-            if direction == .future {
-                referenceDates.removeFirst(InfiniteScrollConstants.pageWindow)
-            } else if direction == .past {
-                referenceDates.removeLast(InfiniteScrollConstants.pageWindow)
+            DispatchQueue.main.async {
+                lockedId = nil
+                isLocked = false
             }
         }
     }
