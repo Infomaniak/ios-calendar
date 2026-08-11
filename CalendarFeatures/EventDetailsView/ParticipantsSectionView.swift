@@ -19,41 +19,76 @@
 import CalendarCoreUI
 import CalendarResources
 import DesignSystem
+import ESDSFoundation
+import InfomaniakCoreSwiftUI
 import SwiftUI
 
 struct ParticipantsSectionView: View {
+    @Environment(\.esdsTheme) private var theme
+
     @State private var attendeesListIsOpen = false
 
     var uniqueAttendees: [UIAttendee]
 
     private var visibleAttendees: [UIAttendee] {
-        Array(uniqueAttendees.prefix(3))
+        Array(uniqueAttendees.prefix(4))
+    }
+
+    private var participationSummary: String {
+        let formatters: [UIParticipationStatus: (Int) -> String] = [
+            .accepted: CalendarResourcesStrings.attendeesAcceptedCount,
+            .tentative: CalendarResourcesStrings.attendeesTentativeCount,
+            .needsAction: CalendarResourcesStrings.attendeesPendingCount,
+            .declined: CalendarResourcesStrings.attendeesDeclinedCount
+        ]
+
+        return UIParticipationStatus.allCases.compactMap { status in
+            let count = uniqueAttendees.filter { $0.status == status }.count
+            return count > 0 ? formatters[status]?(count) : nil
+        }.joined(separator: ", ")
     }
 
     var body: some View {
         if !uniqueAttendees.isEmpty {
-            Section {
-                DisclosureGroup(isExpanded: $attendeesListIsOpen) {
-                    ForEach(uniqueAttendees) { attendee in
-                        AttendeeRow(attendee: attendee, isOrganizer: attendee.isOrganizer)
-                    }
-                } label: {
-                    HStack(spacing: IKPadding.micro) {
-                        HStack(spacing: -IKPadding.mini) {
-                            ForEach(Array(visibleAttendees.enumerated()), id: \.element) { attendee in
-                                AvatarView(rawAvatarURL: nil,
-                                           displayName: attendee.element.displayName ?? attendee.element.email,
-                                           email: attendee.element.email,
-                                           size: IKIconSize.medium.rawValue)
-                            }
-                        }
-                        .compositingGroup()
-
-                        Text(CalendarResourcesStrings.participantsLabel(uniqueAttendees.count))
-                    }
+            DisclosureGroup(isExpanded: $attendeesListIsOpen) {
+                ForEach(uniqueAttendees) { attendee in
+                    AttendeeRow(attendee: attendee, isOrganizer: attendee.isOrganizer)
                 }
-            } header: {
-                Text(CalendarResourcesStrings.sectionParticipantsHeader)
+            } label: {
+                HStack(spacing: 0) {
+                    CalendarResourcesAsset.Images.usersStacked.swiftUIImage
+                        .iconSize(IKIconSize.large)
+                        .foregroundStyle(theme.color.iconSecondary)
+
+                    VStack(alignment: .leading) {
+                        Text(CalendarResourcesStrings.participantsLabel(uniqueAttendees.count))
+                            .font(.body)
+                            .foregroundStyle(theme.color.textPrimary)
+
+                        Text(participationSummary)
+                            .font(.subheadline)
+                            .foregroundStyle(theme.color.textSecondary)
+                    }
+                    .padding(.leading, IKPadding.medium)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                    HStack(spacing: -IKPadding.mini) {
+                        ForEach(Array(visibleAttendees.enumerated()), id: \.element) { attendee in
+                            AvatarView(rawAvatarURL: nil,
+                                       displayName: attendee.element.displayName ?? attendee.element.email,
+                                       email: attendee.element.email,
+                                       size: IKIconSize.large.rawValue)
+                        }
+                        if uniqueAttendees.count > 4 {
+                            InitialsView(initials: "+\(uniqueAttendees.count - 4)",
+                                         backgroundColor: theme.color.backgroundElevationSurfacePressed,
+                                         foregroundColor: .accentColor,
+                                         size: IKIconSize.large.rawValue)
+                        }
+                    }
+                    .compositingGroup()
+                    .padding(.trailing, IKPadding.micro)
+                }
             }
         }
     }

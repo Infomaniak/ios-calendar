@@ -19,11 +19,11 @@
 import Foundation
 import MultiplatformCalendar
 
-public enum UIParticipationStatus: String, Sendable {
+public enum UIParticipationStatus: String, Sendable, CaseIterable {
     case accepted
-    case declined
     case tentative
     case needsAction
+    case declined
 }
 
 public extension UIParticipationStatus {
