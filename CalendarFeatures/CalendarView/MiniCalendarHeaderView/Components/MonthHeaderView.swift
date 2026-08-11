@@ -46,9 +46,9 @@ struct MonthHeaderView: View {
     }
 
     var body: some View {
-        Grid(horizontalSpacing: IKPadding.micro, verticalSpacing: IKPadding.micro) {
+        VStack(spacing: IKPadding.micro) {
             ForEach(0 ..< maximumRowCount, id: \.self) { row in
-                GridRow {
+                HStack(spacing: IKPadding.micro) {
                     ForEach(0 ..< 7, id: \.self) { column in
                         let dayIndex = row * 7 + column
 
@@ -78,8 +78,8 @@ struct MonthHeaderView: View {
                         }
                         .frame(maxWidth: .infinity)
                     }
-                    .geometryGroup()
                 }
+                .geometryGroup()
             }
         }
         .frame(maxWidth: .infinity)
