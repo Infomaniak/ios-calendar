@@ -30,20 +30,16 @@ struct ParticipantsSectionView: View {
         Array(uniqueAttendees.prefix(3))
     }
 
-    private func isOrganizer(_ attendee: UIAttendee) -> Bool {
-        return attendee.isOrganizer
-    }
-
     var body: some View {
         if !uniqueAttendees.isEmpty {
             Section {
                 DisclosureGroup(isExpanded: $attendeesListIsOpen) {
                     ForEach(uniqueAttendees) { attendee in
-                        AttendeeRow(attendee: attendee, isOrganizer: isOrganizer(attendee))
+                        AttendeeRow(attendee: attendee, isOrganizer: attendee.isOrganizer)
                     }
                 } label: {
                     HStack(spacing: IKPadding.micro) {
-                        HStack(spacing: -IKIconSize.medium.rawValue / 3) {
+                        HStack(spacing: -IKPadding.mini) {
                             ForEach(Array(visibleAttendees.enumerated()), id: \.element) { attendee in
                                 AvatarView(rawAvatarURL: nil,
                                            displayName: attendee.element.displayName ?? attendee.element.email,

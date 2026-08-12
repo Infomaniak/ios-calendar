@@ -23,7 +23,6 @@ import ESDSFoundation
 import SwiftUI
 
 public struct EventDetailsView: View {
-    @Environment(\.esdsTheme) private var theme
     @Environment(\.dismiss) private var dismiss
 
     private let event: CalendarCoreUI.UIEvent
@@ -65,7 +64,7 @@ public struct EventDetailsView: View {
         NavigationStack {
             Form {
                 EventSectionView(
-                    event: event,
+                    title: event.title,
                     color: $color,
                     calendarColor: $calendarColor,
                     isColorPickerPresented: $isColorPickerPresented
@@ -95,9 +94,6 @@ public struct EventDetailsView: View {
                     }
                 }
                 ParticipantsSectionView(uniqueAttendees: uniqueAttendees)
-            }
-            .floatingPanel(isPresented: $isColorPickerPresented, backgroundColor: theme.color.backgroundElevationOverlayDefault) {
-                ColorSelectionView(selection: $color)
             }
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {

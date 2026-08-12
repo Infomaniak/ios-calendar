@@ -23,10 +23,7 @@ import ESDSFoundation
 import SwiftUI
 
 struct EventSectionView: View {
-    @Environment(\.esdsTheme) private var theme
-    let event: CalendarCoreUI.UIEvent
-
-    private let title: String
+    private var title: String
 
     @Binding private var color: Color
     @Binding private var calendarColor: Color
@@ -34,13 +31,12 @@ struct EventSectionView: View {
     @Binding private var isColorPickerPresented: Bool
 
     init(
-        event: CalendarCoreUI.UIEvent,
+        title: String,
         color: Binding<Color> = .constant(.gray),
         calendarColor: Binding<Color> = .constant(.gray),
         isColorPickerPresented: Binding<Bool>
     ) {
-        self.event = event
-        title = event.title
+        self.title = title
         _color = color
         _calendarColor = calendarColor
         _isColorPickerPresented = isColorPickerPresented
@@ -73,7 +69,7 @@ struct EventSectionView: View {
 
 #Preview {
     EventSectionView(
-        event: UIEvent.preview,
+        title: UIEvent.preview.title,
         color: .constant(.blue),
         calendarColor: .constant(.green),
         isColorPickerPresented: .constant(false)

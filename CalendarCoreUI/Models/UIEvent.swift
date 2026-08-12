@@ -124,7 +124,6 @@ public extension UIEvent {
         calendarId = event.calendarIdValue
 
         alarms = event.alarms.map {
-            // TODO: Keep my alarms (user.email in attendees)
             UIEventAlarm(sdk: $0)
         }
 

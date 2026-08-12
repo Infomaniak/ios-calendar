@@ -57,21 +57,8 @@ public struct PlanningView: View {
         }
         .sheet(item: $planningViewModel.selectedEvent) { event in
             EventDetailsView(
-                event: event,
-                calendar: planningViewModel.calendar(for: event)
+                event: event
             )
-        }
-        .toolbar {
-            ToolbarItem(placement: .bottomBar) {
-                Button("Today") {
-                    withAnimation {
-                        planningViewModel.scrollTarget = Date()
-                    }
-                }
-            }
-        }
-        .task {
-            planningViewModel.scrollTarget = Date()
         }
         .id(calendarAccounts)
     }

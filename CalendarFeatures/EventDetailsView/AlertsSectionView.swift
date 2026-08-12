@@ -31,12 +31,9 @@ struct AlertsSectionView: View {
 
     var body: some View {
         ForEach(alarms.indices, id: \.self) { index in
-            Picker(alarms[index].action.label, selection: $alarms[index].offset) {
-                ForEach(AlarmOffset.allCases) { offset in
-                    Text(offset.rawValue).tag(offset)
-                }
+            LabeledContent(alarms[index].action.label) {
+                Text(alarms[index].offset.rawValue)
             }
-            .disabled(true)
         }
     }
 }

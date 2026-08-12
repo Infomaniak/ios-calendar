@@ -26,14 +26,6 @@ struct AttendeeRow: View {
     let attendee: UIAttendee
     let isOrganizer: Bool
 
-    private var displayName: String {
-        attendee.displayName ?? attendee.email
-    }
-
-    private var shouldShowEmail: Bool {
-        displayName != attendee.email
-    }
-
     var body: some View {
         AccountCellView(
             rawAvatarURL: nil,

@@ -60,9 +60,11 @@ public struct AccountCellView: View {
                             .clipShape(Capsule())
                     }
                 }
-                Text(email)
-                    .font(.body)
-                    .foregroundStyle(theme.color.textSecondary)
+                if displayName != email {
+                    Text(email)
+                        .font(.body)
+                        .foregroundStyle(theme.color.textSecondary)
+                }
             }
             .lineLimit(1)
             .frame(maxWidth: .infinity, alignment: .leading)

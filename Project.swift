@@ -193,6 +193,7 @@ let project = Project(
                 dependencies: [
                     .target(name: "\(Constants.projectName)Core"),
                     .target(name: "\(Constants.projectName)Resources"),
+                    .external(name: "ESDSFoundation"),
                     .external(name: "InfomaniakCore"),
                     .external(name: "InfomaniakCoreSwiftUI"),
                     .external(name: "InfomaniakDI"),
