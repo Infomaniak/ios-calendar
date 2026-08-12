@@ -99,6 +99,8 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
 
     public let colors: UIEvent.Colors
 
+    public let classification: UIClassification?
+
     public init(
         id: String,
         title: String,
@@ -111,7 +113,8 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
         alarms: [UIEventAlarm] = [],
         user: UIAttendee? = nil,
         attendees: [UIAttendee],
-        colors: UIEvent.Colors
+        colors: UIEvent.Colors,
+        classification: UIClassification? = .public
     ) {
         self.id = id
         self.title = title
@@ -125,6 +128,7 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
         self.user = user
         self.attendees = attendees
         self.colors = colors
+        self.classification = classification
     }
 }
 
@@ -163,6 +167,8 @@ public extension UIEvent {
         self.user = user
 
         colors = .init(eventColors: event.colors)
+
+        classification = .init(classification: event.classification)
     }
 }
 
