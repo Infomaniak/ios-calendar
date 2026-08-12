@@ -30,6 +30,7 @@ public struct EventDetailsView: View {
     @State private var calendarColor: Color
     @State private var isColorPickerPresented = false
     @State private var alarms: [UIEventAlarm]
+    @State private var selectedStatus: UIParticipationStatus?
 
     private var uniqueAttendees: [UIAttendee] {
         var seenEmails = Set<String>()
@@ -58,6 +59,7 @@ public struct EventDetailsView: View {
         _color = State(initialValue: Color(event.colors.onContainerColor))
         _calendarColor = State(initialValue: Color(.gray))
         _alarms = State(initialValue: event.alarms)
+        _selectedStatus = State(initialValue: event.user?.status)
     }
 
     public var body: some View {
@@ -105,6 +107,23 @@ public struct EventDetailsView: View {
                     }
                 }
                 ParticipantsSectionView(uniqueAttendees: uniqueAttendees)
+
+                if selectedStatus != nil {
+                    Section {
+                        HStack(spacing: IKPadding.medium) {
+                            ForEach([UIParticipationStatus.accepted, .declined, .tentative], id: \.self) { answer in
+                                AnswerButton(
+                                    answer: answer,
+                                    isSelected: selectedStatus == answer
+                                ) {
+                                    selectedStatus = answer
+                                }
+                            }
+                        }
+                        .frame(maxWidth: .infinity, alignment: .center)
+                        .listRowBackground(Color.clear)
+                    }
+                }
             }
             .closeToolbarItem(dismiss: dismiss)
             .navigationTitle(CalendarResourcesStrings.eventTitle)
