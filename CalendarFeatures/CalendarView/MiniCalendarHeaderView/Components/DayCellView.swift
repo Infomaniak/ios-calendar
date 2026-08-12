@@ -27,16 +27,23 @@ struct DayCellView: View {
 
     let date: Date
     var isSelected = false
+    let eventDots: [Color]
 
     var isToday: Bool {
         return calendar.isDateInToday(date)
     }
 
     var body: some View {
-        ZStack {
-            Text("00")
-                .opacity(0)
-            Text(date, format: .dateTime.day())
+        VStack(spacing: 2) {
+            ZStack {
+                Text("00")
+                    .opacity(0)
+                Text(date, format: .dateTime.day())
+            }
+
+            if !(isSelected || isToday) {
+                EventDotsView(eventDots: eventDots)
+            }
         }
         .padding(value: .micro)
         .monospacedDigit()
@@ -56,7 +63,7 @@ struct DayCellView: View {
 
 #Preview {
     HStack {
-        DayCellView(date: Date())
-        DayCellView(date: Date(timeIntervalSinceNow: -86400), isSelected: true)
+        DayCellView(date: Date(), eventDots: [])
+        DayCellView(date: Date(timeIntervalSinceNow: -86400), isSelected: true, eventDots: [])
     }
 }

@@ -25,6 +25,7 @@ struct MonthHeaderView: View {
 
     let startDate: Date
     @Binding var selectedDate: Date
+    let datesWithEventDots: [Date: [Color]]
 
     private let maximumRowCount = 6
 
@@ -54,7 +55,7 @@ struct MonthHeaderView: View {
 
                         ZStack {
                             if row >= rowCount {
-                                DayCellView(date: gridStart)
+                                DayCellView(date: gridStart, eventDots: [])
                                     .hidden()
                                     .accessibilityHidden(true)
                             } else if let dayDate = calendar.date(byAdding: .day, value: dayIndex, to: gridStart) {
@@ -63,7 +64,8 @@ struct MonthHeaderView: View {
                                 } label: {
                                     DayCellView(
                                         date: dayDate,
-                                        isSelected: calendar.isDate(dayDate, inSameDayAs: selectedDate)
+                                        isSelected: calendar.isDate(dayDate, inSameDayAs: selectedDate),
+                                        eventDots: datesWithEventDots[dayDate] ?? []
                                     )
                                     .opacity(
                                         calendar.isDate(
@@ -90,6 +92,7 @@ struct MonthHeaderView: View {
     @Previewable @State var selectedDate = Date()
     MonthHeaderView(
         startDate: Calendar.current.monthStart(for: Date()),
-        selectedDate: $selectedDate
+        selectedDate: $selectedDate,
+        datesWithEventDots: [:]
     )
 }
