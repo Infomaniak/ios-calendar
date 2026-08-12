@@ -70,6 +70,17 @@ public struct EventDetailsView: View {
                     isColorPickerPresented: $isColorPickerPresented
                 )
 
+                if let classification = event.classification {
+                    Section {
+                        StatusRow(
+                            text: classification == .private ? CalendarResourcesStrings.privateLabel :
+                                CalendarResourcesStrings.publicLabel,
+                            icon: classification == .private ? CalendarResourcesAsset.Images.lock.swiftUIImage :
+                                CalendarResourcesAsset.Images.lockOpen.swiftUIImage
+                        )
+                    }
+                }
+
                 Section {
                     Toggle(CalendarResourcesStrings.allDayLabel, isOn: .constant(event.isAllDay))
                         .disabled(true)
