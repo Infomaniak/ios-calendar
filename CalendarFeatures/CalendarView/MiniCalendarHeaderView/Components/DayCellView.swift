@@ -29,21 +29,29 @@ struct DayCellView: View {
     var isSelected = false
     let eventDots: [Color]
 
-    var isToday: Bool {
+    private var isToday: Bool {
         return calendar.isDateInToday(date)
+    }
+
+    private var displayedEventDots: [Color] {
+        guard !(isSelected || isToday) else {
+            return []
+        }
+        return eventDots
     }
 
     var body: some View {
         VStack(spacing: 2) {
+            EventDotsView(eventDots: [])
+                .hidden()
+
             ZStack {
                 Text("00")
-                    .opacity(0)
+                    .hidden()
                 Text(date, format: .dateTime.day())
             }
 
-            if !(isSelected || isToday) {
-                EventDotsView(eventDots: eventDots)
-            }
+            EventDotsView(eventDots: displayedEventDots)
         }
         .padding(value: .micro)
         .monospacedDigit()
