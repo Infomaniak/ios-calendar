@@ -114,5 +114,21 @@
         <string>%d deltakere</string>
       </dict>
     </dict>
+    <key>roomSeatsLabel</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>%d sete</string>
+        <key>other</key>
+        <string>%d seter</string>
+      </dict>
+    </dict>
   </dict>
 </plist>
