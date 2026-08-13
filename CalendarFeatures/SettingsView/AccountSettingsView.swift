@@ -18,6 +18,7 @@
 
 import CalendarCore
 import CalendarCoreUI
+import CalendarResources
 import DesignSystem
 import ESDSFoundation
 import InfomaniakCore
@@ -67,15 +68,15 @@ public struct AccountSettingsView: View {
             .listRowBackground(Color.clear)
 
             Section {
-                Toggle("Masquer le compte", isOn: $maskedAccount)
+                Toggle(CalendarResourcesStrings.hideAccountToggle, isOn: $maskedAccount)
                     .toggleStyle(SwitchToggleStyle())
-                Button("Supprimer le compte") {
+                Button(CalendarResourcesStrings.deleteAccount) {
                     presentedAccountDeletionToken = tokenStore.tokenFor(userId: user.id)?.apiToken
                 }
                 .font(.body)
                 .foregroundStyle(theme.color.textPrimary)
 
-                Button("Se déconnecter", role: .destructive) {
+                Button(CalendarResourcesStrings.logOutButton, role: .destructive) {
                     isPresentedLogOutAlert = true
                 }
                 .frame(maxWidth: .infinity, alignment: .center)
@@ -83,7 +84,7 @@ public struct AccountSettingsView: View {
         }
         .listSectionSpacing(IKPadding.mini)
         .alert(
-            "Déconnecter le compte “\(user.displayName)”",
+            CalendarResourcesStrings.signOutAccount(user.displayName),
             isPresented: $isPresentedLogOutAlert,
             actions: {
                 Button(role: .destructive) {
@@ -92,26 +93,25 @@ public struct AccountSettingsView: View {
                         isPresentedConfirmLogOutAlert = true
                     }
                 } label: {
-                    Text("Déconnecter le compte")
+                    Text(CalendarResourcesStrings.signOutAccountConfirm)
                 }
             },
             message: {
                 Text(
-                    "Ce compte et les calendriers associés seront déconnectés de l’app « Calendar ». Ils restent disponibles sur votre compte Infomaniak en ligne."
+                    CalendarResourcesStrings.signOutAccountDescription
                 )
             }
         )
         .alert(
-            "Le compte a bien été déconnecté",
-            isPresented: $isPresentedConfirmLogOutAlert,
-            actions: {
-                Button(role: .cancel) {
-                    dismiss()
-                } label: {
-                    Text("Fermer")
-                }
+            CalendarResourcesStrings.signOutAccountSuccessful,
+            isPresented: $isPresentedConfirmLogOutAlert
+        ) {
+            Button(role: .cancel) {
+                dismiss()
+            } label: {
+                Text(CalendarResourcesStrings.closeLabel)
             }
-        )
+        }
         .sheet(item: $presentedAccountDeletionToken) { userToken in
             DeleteAccountView(token: userToken, delegate: delegate)
         }
@@ -157,7 +157,6 @@ final class AccountSettingsViewDelegate: DeleteAccountDelegate {
     nonisolated func didCompleteDeleteAccount() {
         Task {
             await accountManager.removeAccountFor(userId: userId)
-            print("compte supprimé")
         }
     }
 

@@ -19,6 +19,7 @@
 import CalendarCore
 import CalendarCoreUI
 import CalendarOnboardingView
+import CalendarResources
 import DesignSystem
 import ESDSFoundation
 import InfomaniakCoreCommonUI
@@ -53,7 +54,7 @@ public struct AccountsListContentView: View {
                         .alignmentGuide(.listRowSeparatorLeading) { _ in 0 }
                     }
 
-                    Button("Add account") {
+                    Button(CalendarResourcesStrings.addAccount) {
                         isShowingNewAccountView = true
                     }
                     .frame(maxWidth: .infinity, alignment: .center)
@@ -62,11 +63,11 @@ public struct AccountsListContentView: View {
                 Section {
                     HStack {
                         VStack(alignment: .leading, spacing: 0) {
-                            Text("Ajouter un calendrier externe")
+                            Text(CalendarResourcesStrings.addExternalCalendar)
                                 .font(.body.weight(.medium))
                                 .foregroundStyle(theme.color.textPrimary)
 
-                            Text("Abonnement via URL")
+                            Text(CalendarResourcesStrings.urlSubscribe)
                                 .font(.body)
                                 .foregroundStyle(theme.color.textSecondary)
                         }
@@ -81,7 +82,7 @@ public struct AccountsListContentView: View {
             }, content: {
                 SingleOnboardingView()
             })
-            .navigationTitle("Comptes")
+            .navigationTitle(CalendarResourcesStrings.accountsTitle)
             .navigationBarTitleDisplayMode(.inline)
         }
     }
