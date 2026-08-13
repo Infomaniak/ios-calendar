@@ -44,7 +44,7 @@ public struct CalendarListView: View {
             }
 
             Section {
-                NavigationLink(destination: AccountSettingsView()) {
+                NavigationLink(destination: AccountsListContentView()) {
                     Label {
                         Text(CalendarResourcesStrings.accountsTitle)
                             .foregroundStyle(theme.color.contentPrimary)
