@@ -17,6 +17,7 @@
  */
 
 import CalendarCore
+import CalendarCoreUI
 import InfomaniakCoreCommonUI
 import InfomaniakDI
 import InfomaniakOnboarding
@@ -26,6 +27,7 @@ public struct SingleOnboardingView: View {
     @LazyInjectService private var orientationManager: OrientationManageable
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.calendarAccounts) private var calendarAccounts
 
     @State private var loginHandler = LoginHandler()
 
@@ -44,6 +46,9 @@ public struct SingleOnboardingView: View {
             )
         }
         .ignoresSafeArea()
+        .onChange(of: calendarAccounts.count) { _ in
+            dismiss()
+        }
         .onAppear {
             if UIDevice.current.userInterfaceIdiom == .phone {
                 UIDevice.current

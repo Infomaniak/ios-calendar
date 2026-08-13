@@ -26,6 +26,7 @@ import SwiftUI
 
 public struct AccountSettingsView: View {
     @Environment(\.esdsTheme) private var theme
+    @Environment(\.dismiss) private var dismiss
 
     @InjectService private var accountManager: AccountManager
 
@@ -101,7 +102,7 @@ public struct AccountSettingsView: View {
             isPresented: $isPresentedConfirmLogOutAlert,
             actions: {
                 Button(role: .cancel) {
-                    // Logic close and open onboarding (if more 0 account) or juste back
+                    dismiss()
                 } label: {
                     Text("Fermer")
                 }
