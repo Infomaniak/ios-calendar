@@ -17,34 +17,23 @@
  */
 
 import CalendarCoreUI
-import ESDSFoundation
-import InfomaniakCore
+import CalendarResources
+import DesignSystem
 import InfomaniakCoreSwiftUI
 import SwiftUI
 
-struct AccountCellView: View {
-    @Environment(\.esdsTheme) private var theme
+struct AlertsSectionView: View {
+    @Binding private var alarms: [UIEventAlarm]
 
-    let rawAvatarURL: String?
-    let displayName: String
-    let email: String
-    let avatarSize: CGFloat = 40
+    init(alarms: Binding<[UIEventAlarm]>) {
+        _alarms = alarms
+    }
 
     var body: some View {
-        HStack {
-            AvatarView(rawAvatarURL: rawAvatarURL, displayName: displayName,
-                       email: email, size: avatarSize)
-
-            VStack(alignment: .leading, spacing: 0) {
-                Text(displayName)
-                    .font(.body.weight(.medium))
-                    .foregroundStyle(theme.color.textPrimary)
-                Text(email)
-                    .font(.body)
-                    .foregroundStyle(theme.color.textSecondary)
+        ForEach(alarms.indices, id: \.self) { index in
+            LabeledContent(alarms[index].action.label) {
+                Text(alarms[index].offset.rawValue)
             }
-            .lineLimit(1)
-            .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 }

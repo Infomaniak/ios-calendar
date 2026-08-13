@@ -71,6 +71,9 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
     public let endDate: Date
     public let isAllDay: Bool
 
+    public let calendarId: String
+    public let alarms: [UIEventAlarm]
+
     public let user: UIAttendee?
     public let attendees: [UIAttendee]
 
@@ -84,6 +87,8 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
         isAllDay: Bool = false,
         status: EventStatus?,
         location: String? = nil,
+        calendarId: String,
+        alarms: [UIEventAlarm] = [],
         user: UIAttendee? = nil,
         attendees: [UIAttendee],
         colors: UIEvent.Colors
@@ -95,6 +100,8 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
         self.isAllDay = isAllDay
         self.status = status
         self.location = location
+        self.calendarId = calendarId
+        self.alarms = alarms
         self.user = user
         self.attendees = attendees
         self.colors = colors
@@ -114,6 +121,12 @@ public extension UIEvent {
         endDate = eventDaySlice.displayEndInstant().date
         isAllDay = eventDaySlice.isAllDay
 
+        calendarId = event.calendarIdValue
+
+        alarms = event.alarms.map {
+            UIEventAlarm(sdk: $0)
+        }
+
         var user: UIAttendee?
         attendees = event.attendees.map {
             let uiAttendee = UIAttendee(attendee: $0)
@@ -131,6 +144,19 @@ public extension UIEvent {
 // MARK: - Previews
 
 public extension UIEvent {
+    static let alarmsPreview = UIEvent(
+        id: "0",
+        title: "Event Title",
+        startDate: Date().addingTimeInterval(3600),
+        endDate: Date().addingTimeInterval(7200),
+        status: .confirmed,
+        location: "1 Infinite Loop, Cupertino",
+        calendarId: "0",
+        alarms: UIEventAlarm.previews,
+        attendees: UIAttendee.previews,
+        colors: .preview
+    )
+
     static let preview = UIEvent(
         id: "0",
         title: "Event Title",
@@ -138,6 +164,7 @@ public extension UIEvent {
         endDate: Date().addingTimeInterval(7200),
         status: .confirmed,
         location: "1 Infinite Loop",
+        calendarId: "0",
         attendees: UIAttendee.previews,
         colors: .preview
     )
@@ -148,6 +175,7 @@ public extension UIEvent {
         startDate: Date(),
         endDate: Date().addingTimeInterval(60 * 15),
         status: .confirmed,
+        calendarId: "0",
         user: UIAttendee(displayName: "Tim Cook", email: "tim@apple.com", status: .accepted),
         attendees: UIAttendee.previews,
         colors: .preview
@@ -158,6 +186,7 @@ public extension UIEvent {
         startDate: Date(),
         endDate: Date().addingTimeInterval(60 * 60 * 2),
         status: .tentative,
+        calendarId: "0",
         user: UIAttendee(displayName: "Tim Cook", email: "tim@apple.com", status: .needsAction),
         attendees: [],
         colors: .preview
@@ -168,6 +197,7 @@ public extension UIEvent {
         startDate: Date(),
         endDate: Date().addingTimeInterval(60 * 60 * 24 * 2),
         status: .cancelled,
+        calendarId: "0",
         user: UIAttendee(displayName: "Tim Cook", email: "tim@apple.com", status: .declined),
         attendees: UIAttendee.previews,
         colors: .preview
@@ -183,6 +213,7 @@ public extension UIEvent {
             startDate: randomStartDate,
             endDate: randomEndDate,
             status: .confirmed,
+            calendarId: "0",
             attendees: UIAttendee.previews,
             colors: .preview
         )

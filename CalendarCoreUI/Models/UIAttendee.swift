@@ -45,11 +45,13 @@ public struct UIAttendee: Sendable, Equatable, Hashable, Identifiable {
     public let displayName: String?
     public let email: String
     public let status: UIParticipationStatus
+    public let isOrganizer: Bool
 
-    public init(displayName: String?, email: String, status: UIParticipationStatus) {
+    public init(displayName: String?, email: String, status: UIParticipationStatus, isOrganizer: Bool = false) {
         self.displayName = displayName
         self.email = email
         self.status = status
+        self.isOrganizer = isOrganizer
     }
 }
 
@@ -58,6 +60,7 @@ public extension UIAttendee {
         displayName = attendee.displayName
         email = attendee.email
         status = UIParticipationStatus(participationStatus: attendee.status)
+        isOrganizer = attendee.isOrganizer
     }
 }
 

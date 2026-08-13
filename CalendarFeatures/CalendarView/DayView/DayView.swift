@@ -53,6 +53,7 @@ struct DayView: View {
     @State private var pointsPerHour = Constants.PointsPerHour.default
     @State private var currentMagnification: CGFloat = 1.0
 
+    let onSelectEvent: (CalendarCoreUI.UIEvent) -> Void
     let date: Date
     let events: [CalendarCoreUI.UIEvent]
 
@@ -96,8 +97,13 @@ struct DayView: View {
                         pointsPerHour: effectivePointsPerHour
                     ) {
                         ForEach(events) { event in
-                            DayEventView(event: event, pointsPerHour: effectivePointsPerHour)
-                                .tag(event.startDate)
+                            Button {
+                                onSelectEvent(event)
+                            } label: {
+                                DayEventView(event: event, pointsPerHour: effectivePointsPerHour)
+                            }
+                            .buttonStyle(.plain)
+                            .tag(event.startDate)
                         }
                     }
 
@@ -126,5 +132,5 @@ struct DayView: View {
 }
 
 #Preview {
-    DayView(date: .now, events: [.preview, .preview])
+    DayView(onSelectEvent: { _ in }, date: .now, events: [.preview, .preview])
 }

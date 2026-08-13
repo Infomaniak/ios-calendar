@@ -16,16 +16,102 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarCoreUI
+import CalendarResources
+import DesignSystem
+import ESDSFoundation
 import SwiftUI
 
 public struct EventDetailsView: View {
-    public init() {}
+    @Environment(\.dismiss) private var dismiss
+
+    private let event: CalendarCoreUI.UIEvent
+    @State private var color: Color
+    @State private var calendarColor: Color
+    @State private var isColorPickerPresented = false
+    @State private var alarms: [UIEventAlarm]
+
+    private var uniqueAttendees: [UIAttendee] {
+        var seenEmails = Set<String>()
+
+        return event.attendees.filter { attendee in
+            seenEmails.insert(normalizedEmail(attendee.email)).inserted
+        }
+    }
+
+    private func normalizedEmail(_ email: String) -> String {
+        email.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+    }
+
+    private var displayedComponents: DatePickerComponents {
+        if event.isAllDay {
+            return [.date]
+        } else {
+            return [.date, .hourAndMinute]
+        }
+    }
+
+    public init(
+        event: CalendarCoreUI.UIEvent
+    ) {
+        self.event = event
+        _color = State(initialValue: Color(event.colors.onDatavizContainer))
+        _calendarColor = State(initialValue: Color(.gray))
+        _alarms = State(initialValue: event.alarms)
+    }
 
     public var body: some View {
-        EmptyView()
+        NavigationStack {
+            Form {
+                EventSectionView(
+                    title: event.title,
+                    color: $color,
+                    calendarColor: $calendarColor,
+                    isColorPickerPresented: $isColorPickerPresented
+                )
+
+                Section {
+                    Toggle(CalendarResourcesStrings.allDayLabel, isOn: .constant(event.isAllDay))
+                        .disabled(true)
+                    DatePicker("Start Date", selection: .constant(event.startDate), displayedComponents: displayedComponents)
+                        .disabled(true)
+                    DatePicker("End Date", selection: .constant(event.endDate), displayedComponents: displayedComponents)
+                        .disabled(true)
+                    if let location = event.location, !location.isEmpty {
+                        LabeledContent(CalendarResourcesStrings.locationOrRoomLabel, value: location)
+                    }
+                } header: {
+                    Text("Date & Location")
+                }
+
+                CalendarSectionView(event: event, calendarColor: $calendarColor)
+
+                if !alarms.isEmpty {
+                    Section {
+                        AlertsSectionView(alarms: $alarms)
+                    } header: {
+                        Text("Alerts")
+                    }
+                }
+                ParticipantsSectionView(uniqueAttendees: uniqueAttendees)
+            }
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    if #available(iOS 26.0, *) {
+                        Button(role: .close, action: dismiss.callAsFunction)
+                    } else {
+                        Button(action: dismiss.callAsFunction) {
+                            Label(CalendarResourcesStrings.closeLabel, systemImage: "xmark")
+                        }
+                    }
+                }
+            }
+            .navigationTitle(CalendarResourcesStrings.eventTitle)
+            .navigationBarTitleDisplayMode(.inline)
+        }
     }
 }
 
 #Preview {
-    EventDetailsView()
+    EventDetailsView(event: CalendarCoreUI.UIEvent.preview)
 }

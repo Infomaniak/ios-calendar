@@ -134,7 +134,12 @@ struct PlanningCollectionView: UIViewRepresentable {
 
             allDayCellRegistration = .init { cell, _, event in
                 cell.contentConfiguration = UIHostingConfiguration {
-                    PlanningDayEventView(event: event)
+                    Button {
+                        planningViewModel.selectedEvent = event
+                    } label: {
+                        PlanningDayEventView(event: event)
+                    }
+                    .buttonStyle(.plain)
                 }
                 .margins(.all, 0)
                 .minSize(height: PlanningLayoutMetrics.eventRowMinHeight)
@@ -146,7 +151,12 @@ struct PlanningCollectionView: UIViewRepresentable {
 
             eventCellRegistration = .init { cell, _, event in
                 cell.contentConfiguration = UIHostingConfiguration {
-                    PlanningEventView(event: event)
+                    Button {
+                        planningViewModel.selectedEvent = event
+                    } label: {
+                        PlanningEventView(event: event)
+                    }
+                    .buttonStyle(.plain)
                 }
                 .margins(.all, 0)
                 .minSize(height: PlanningLayoutMetrics.eventRowMinHeight)
