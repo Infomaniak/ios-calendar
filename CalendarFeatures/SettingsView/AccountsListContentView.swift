@@ -20,11 +20,13 @@ import CalendarCore
 import CalendarCoreUI
 import CalendarOnboardingView
 import DesignSystem
+import ESDSFoundation
 import InfomaniakCoreCommonUI
 import InfomaniakDI
 import SwiftUI
 
 public struct AccountsListContentView: View {
+    @Environment(\.esdsTheme) private var theme
     @Environment(\.calendarAccounts) private var calendarAccounts
 
     @State private var isShowingNewAccountView = false
@@ -33,8 +35,8 @@ public struct AccountsListContentView: View {
 
     public var body: some View {
         NavigationStack {
-            Section {
-                List {
+            List {
+                Section {
                     let accountsArray = Array(calendarAccounts.values)
 
                     ForEach(accountsArray) { account in
@@ -55,6 +57,22 @@ public struct AccountsListContentView: View {
                         isShowingNewAccountView = true
                     }
                     .frame(maxWidth: .infinity, alignment: .center)
+                }
+
+                Section {
+                    HStack {
+                        VStack(alignment: .leading, spacing: 0) {
+                            Text("Ajouter un calendrier externe")
+                                .font(.body.weight(.medium))
+                                .foregroundStyle(theme.color.textPrimary)
+
+                            Text("Abonnement via URL")
+                                .font(.body)
+                                .foregroundStyle(theme.color.textSecondary)
+                        }
+                        .lineLimit(1)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    }
                 }
             }
             .fullScreenCover(isPresented: $isShowingNewAccountView, onDismiss: {
