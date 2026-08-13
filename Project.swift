@@ -70,9 +70,19 @@ let calendarView = Feature(
 
 let createEditEventView = Feature(name: "CreateEditEventView", additionalDependencies: [])
 
-let settingsView = Feature(name: "SettingsView", additionalDependencies: [
-    onboardingView
-])
+let settingsView = Feature(
+    name: "SettingsView",
+    additionalDependencies: [
+        onboardingView,
+        TargetDependency.target(name: "\(Constants.projectName)Resources"),
+        TargetDependency.external(name: "DesignSystem"),
+        TargetDependency.external(name: "ESDSFoundation"),
+        TargetDependency.external(name: "InfomaniakCore"),
+        TargetDependency.external(name: "InfomaniakCoreCommonUI"),
+        TargetDependency.external(name: "InfomaniakDI"),
+        TargetDependency.external(name: "InfomaniakLogin")
+    ]
+)
 
 let calendarListView = Feature(
     name: "CalendarListView",

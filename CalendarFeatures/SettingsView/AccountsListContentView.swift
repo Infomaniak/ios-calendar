@@ -38,7 +38,7 @@ public struct AccountsListContentView: View {
         NavigationStack {
             List {
                 Section {
-                    let accountsArray = Array(calendarAccounts.values)
+                    let accountsArray = calendarAccounts.values.sorted { $0.user.displayName < $1.user.displayName }
 
                     ForEach(accountsArray) { account in
                         NavigationLink {

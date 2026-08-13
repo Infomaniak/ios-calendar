@@ -19,10 +19,10 @@
 import DeviceAssociation
 import Foundation
 @preconcurrency import InfomaniakCore
+import InfomaniakCoreCommonUI
 import InfomaniakDeviceCheck
 import InfomaniakDI
 import InfomaniakLogin
-import InfomaniakCoreCommonUI
 import InterAppLogin
 import MultiplatformCalendar
 import OSLog

@@ -1,5 +1,5 @@
 /*
- Infomaniak Mail - iOS App
+ Infomaniak Calendar - iOS App
  Copyright (C) 2026 Infomaniak Network SA
 
  This program is free software: you can redistribute it and/or modify
@@ -9,11 +9,11 @@
 
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
 
  You should have received a copy of the GNU General Public License
- along with this program. If not, see <http://www.gnu.org/licenses/>.
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 import CalendarCore
@@ -36,15 +36,20 @@ public struct SingleOnboardingView: View {
     public init() {}
 
     public var body: some View {
-        WaveView(slides: slides, selectedSlide: .constant(0), dismissHandler: {
-            Task { @MainActor in dismiss() }
-        }) { _ in
-            OnboardingBottomButtonsView(
-                loginHandler: loginHandler,
-                selection: .constant(0),
-                slideCount: 1
-            )
-        }
+        WaveView(
+            slides: slides,
+            selectedSlide: .constant(0),
+            dismissHandler: {
+                Task { @MainActor in dismiss() }
+            },
+            bottomView: { _ in
+                OnboardingBottomButtonsView(
+                    loginHandler: loginHandler,
+                    selection: .constant(0),
+                    slideCount: 1
+                )
+            }
+        )
         .ignoresSafeArea()
         .onChange(of: calendarAccounts.count) { _ in
             dismiss()
