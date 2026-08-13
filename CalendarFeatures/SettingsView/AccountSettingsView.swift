@@ -22,6 +22,7 @@ import DesignSystem
 import ESDSFoundation
 import InfomaniakCore
 import InfomaniakDI
+import InfomaniakLogin
 import SwiftUI
 
 public struct AccountSettingsView: View {
@@ -29,10 +30,13 @@ public struct AccountSettingsView: View {
     @Environment(\.dismiss) private var dismiss
 
     @InjectService private var accountManager: AccountManager
+    @InjectService private var tokenStore: TokenStore
 
     @State private var maskedAccount = false
     @State private var isPresentedLogOutAlert = false
     @State private var isPresentedConfirmLogOutAlert = false
+    @State private var delegate: AccountSettingsViewDelegate
+    @State private var presentedAccountDeletionToken: ApiToken?
 
     private var user: UserProfile
 
@@ -40,6 +44,7 @@ public struct AccountSettingsView: View {
         user: UserProfile
     ) {
         self.user = user
+        _delegate = State(wrappedValue: AccountSettingsViewDelegate(userId: user.id))
     }
 
     public var body: some View {
@@ -65,15 +70,14 @@ public struct AccountSettingsView: View {
                 Toggle("Masquer le compte", isOn: $maskedAccount)
                     .toggleStyle(SwitchToggleStyle())
                 Button("Supprimer le compte") {
-                    print("Supprimer le compte")
+                    presentedAccountDeletionToken = tokenStore.tokenFor(userId: user.id)?.apiToken
                 }
                 .font(.body)
                 .foregroundStyle(theme.color.textPrimary)
 
-                Button("Se déconnecter") {
+                Button("Se déconnecter", role: .destructive) {
                     isPresentedLogOutAlert = true
                 }
-                .foregroundStyle(theme.color.textFeedbackErrorDefault)
                 .frame(maxWidth: .infinity, alignment: .center)
             }
         }
@@ -108,7 +112,56 @@ public struct AccountSettingsView: View {
                 }
             }
         )
+        .sheet(item: $presentedAccountDeletionToken) { userToken in
+            DeleteAccountView(token: userToken, delegate: delegate)
+        }
         .navigationTitle(user.displayName)
         .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+struct DeleteAccountView: UIViewControllerRepresentable {
+    let token: ApiToken
+    let delegate: DeleteAccountDelegate
+
+    func makeUIViewController(context: Context) -> UINavigationController {
+        return DeleteAccountViewController.instantiateInViewController(
+            delegate: delegate,
+            accessToken: token.accessToken,
+            navBarColor: nil,
+            navBarButtonColor: nil
+        )
+    }
+
+    func updateUIViewController(_ uiViewController: UINavigationController, context: Context) {
+        // Not needed
+    }
+}
+
+extension ApiToken: @retroactive Identifiable {
+    public var id: String {
+        return "\(userId)\(accessToken)"
+    }
+}
+
+@MainActor
+final class AccountSettingsViewDelegate: DeleteAccountDelegate {
+    @LazyInjectService private var accountManager: AccountManager
+
+    let userId: Int
+
+    init(userId: Int) {
+        self.userId = userId
+    }
+
+    nonisolated func didCompleteDeleteAccount() {
+        Task {
+            await accountManager.removeAccountFor(userId: userId)
+            print("compte supprimé")
+        }
+    }
+
+    nonisolated func didFailDeleteAccount(error: InfomaniakLoginError) {
+        print("Erreur lors de la suppression : \(error)")
     }
 }
