@@ -18,6 +18,7 @@
 
 import CalendarCore
 import CalendarCoreUI
+import DesignSystem
 import SwiftUI
 
 public struct AccountsListContentView: View {
@@ -39,11 +40,19 @@ public struct AccountsListContentView: View {
                                 email: account.user.email
                             )
                         }
+                        .listRowSeparator(.hidden)
                     }
-
-                    Button("Add account") {
-                        print("Add account")
+                    VStack(spacing: 0) {
+                        Divider()
+                            .padding(.horizontal, IKPadding.medium)
+                        Button("Add account") {
+                            print("Add account")
+                        }
+                        .frame(maxWidth: .infinity, alignment: .center)
+                        .padding(.vertical, IKPadding.medium)
                     }
+                    .listRowInsets(EdgeInsets())
+                    .listRowSeparator(.hidden)
                 }
             }
             .navigationTitle("Comptes")
