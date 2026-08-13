@@ -35,7 +35,9 @@ public struct AccountsListContentView: View {
         NavigationStack {
             Section {
                 List {
-                    ForEach(Array(calendarAccounts.values)) { account in
+                    let accountsArray = Array(calendarAccounts.values)
+
+                    ForEach(accountsArray) { account in
                         NavigationLink {
                             AccountSettingsView(user: account.user)
                         } label: {
@@ -45,19 +47,14 @@ public struct AccountsListContentView: View {
                                 email: account.user.email
                             )
                         }
-                        .listRowSeparator(.hidden)
+                        .listRowSeparator(account.id == accountsArray.last?.id ? .visible : .hidden)
+                        .alignmentGuide(.listRowSeparatorLeading) { _ in 0 }
                     }
-                    VStack(spacing: 0) {
-                        Divider()
-                            .padding(.horizontal, IKPadding.medium)
-                        Button("Add account") {
-                            isShowingNewAccountView = true
-                        }
-                        .frame(maxWidth: .infinity, alignment: .center)
-                        .padding(.vertical, IKPadding.medium)
+
+                    Button("Add account") {
+                        isShowingNewAccountView = true
                     }
-                    .listRowInsets(EdgeInsets())
-                    .listRowSeparator(.hidden)
+                    .frame(maxWidth: .infinity, alignment: .center)
                 }
             }
             .fullScreenCover(isPresented: $isShowingNewAccountView, onDismiss: {
