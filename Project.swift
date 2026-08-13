@@ -70,7 +70,9 @@ let calendarView = Feature(
 
 let createEditEventView = Feature(name: "CreateEditEventView", additionalDependencies: [])
 
-let settingsView = Feature(name: "SettingsView", additionalDependencies: [])
+let settingsView = Feature(name: "SettingsView", additionalDependencies: [
+    onboardingView
+])
 
 let calendarListView = Feature(
     name: "CalendarListView",

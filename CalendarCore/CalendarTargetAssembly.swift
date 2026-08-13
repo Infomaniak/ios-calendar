@@ -22,6 +22,7 @@ import Foundation
 import InfomaniakDeviceCheck
 import InfomaniakDI
 import InfomaniakLogin
+import InfomaniakCoreCommonUI
 import InterAppLogin
 import MultiplatformCalendar
 import OSLog
@@ -99,6 +100,9 @@ open class CalendarTargetAssembly: TargetAssembly {
             },
             Factory(type: ConnectedAccountManagerable.self) { _, _ in
                 ConnectedAccountManager(currentAppKeychainIdentifier: Self.bundleId)
+            },
+            Factory(type: OrientationManageable.self) { _, _ in
+                OrientationManager()
             }
         ]
     }

@@ -18,11 +18,16 @@
 
 import CalendarCore
 import CalendarCoreUI
+import CalendarOnboardingView
 import DesignSystem
+import InfomaniakCoreCommonUI
+import InfomaniakDI
 import SwiftUI
 
 public struct AccountsListContentView: View {
     @Environment(\.calendarAccounts) private var calendarAccounts
+
+    @State private var isShowingNewAccountView = false
 
     public init() {}
 
@@ -46,7 +51,7 @@ public struct AccountsListContentView: View {
                         Divider()
                             .padding(.horizontal, IKPadding.medium)
                         Button("Add account") {
-                            print("Add account")
+                            isShowingNewAccountView = true
                         }
                         .frame(maxWidth: .infinity, alignment: .center)
                         .padding(.vertical, IKPadding.medium)
@@ -55,6 +60,12 @@ public struct AccountsListContentView: View {
                     .listRowSeparator(.hidden)
                 }
             }
+            .fullScreenCover(isPresented: $isShowingNewAccountView, onDismiss: {
+                @InjectService var orientationManager: OrientationManageable
+                orientationManager.setOrientationLock(.all)
+            }, content: {
+                SingleOnboardingView()
+            })
             .navigationTitle("Comptes")
             .navigationBarTitleDisplayMode(.inline)
         }
