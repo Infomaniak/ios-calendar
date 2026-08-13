@@ -20,6 +20,7 @@ import CalendarCore
 import CalendarCoreUI
 import DesignSystem
 import ESDSFoundation
+import InfomaniakCore
 import InfomaniakDI
 import SwiftUI
 
@@ -32,23 +33,32 @@ public struct AccountSettingsView: View {
     @State private var isPresentedLogOutAlert = false
     @State private var isPresentedConfirmLogOutAlert = false
 
-    private var calendarAccount: CalendarAccount
+    private var user: UserProfile
 
     public init(
-        calendarAccount: CalendarAccount
+        user: UserProfile
     ) {
-        self.calendarAccount = calendarAccount
+        self.user = user
     }
 
     public var body: some View {
-        Form {
-            Section {
-                AccountCellView(
-                    rawAvatarURL: calendarAccount.user.avatar,
-                    displayName: calendarAccount.user.displayName,
-                    email: calendarAccount.user.email
-                )
+        List {
+            HStack(spacing: IKPadding.medium) {
+                AvatarView(rawAvatarURL: user.avatar, displayName: user.displayName,
+                           email: user.email, size: 52)
+
+                VStack(alignment: .leading, spacing: 0) {
+                    Text(user.displayName)
+                        .font(.title3.weight(.medium))
+                        .foregroundStyle(theme.color.textPrimary)
+                    Text(user.email)
+                        .font(.title3)
+                        .foregroundStyle(theme.color.textSecondary)
+                }
+                .lineLimit(1)
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
+            .listRowBackground(Color.clear)
 
             Section {
                 Toggle("Masquer le compte", isOn: $maskedAccount)
@@ -62,41 +72,42 @@ public struct AccountSettingsView: View {
                 Button("Se déconnecter") {
                     isPresentedLogOutAlert = true
                 }
-                .alert(
-                    "Déconnecter le compte “\(calendarAccount.user.displayName)”",
-                    isPresented: $isPresentedLogOutAlert,
-                    actions: {
-                        Button(role: .destructive) {
-                            Task {
-                                await accountManager.removeAccountFor(userId: calendarAccount.user.id)
-                                isPresentedConfirmLogOutAlert = true
-                            }
-                        } label: {
-                            Text("Déconnecter le compte")
-                        }
-                    },
-                    message: {
-                        Text(
-                            "Ce compte et les calendriers associés seront déconnectés de l’app « Calendar ». Ils restent disponibles sur votre compte Infomaniak en ligne."
-                        )
-                    }
-                )
-                .alert(
-                    "Le compte a bien été déconnecté",
-                    isPresented: $isPresentedConfirmLogOutAlert,
-                    actions: {
-                        Button(role: .cancel) {
-                            // Logic close and open onboarding (if more 0 account) or juste back
-                        } label: {
-                            Text("Fermer")
-                        }
-                    }
-                )
                 .foregroundStyle(theme.color.textFeedbackErrorDefault)
                 .frame(maxWidth: .infinity, alignment: .center)
             }
         }
-        .navigationTitle(calendarAccount.user.displayName)
+        .listSectionSpacing(IKPadding.mini)
+        .alert(
+            "Déconnecter le compte “\(user.displayName)”",
+            isPresented: $isPresentedLogOutAlert,
+            actions: {
+                Button(role: .destructive) {
+                    Task {
+                        await accountManager.removeAccountFor(userId: user.id)
+                        isPresentedConfirmLogOutAlert = true
+                    }
+                } label: {
+                    Text("Déconnecter le compte")
+                }
+            },
+            message: {
+                Text(
+                    "Ce compte et les calendriers associés seront déconnectés de l’app « Calendar ». Ils restent disponibles sur votre compte Infomaniak en ligne."
+                )
+            }
+        )
+        .alert(
+            "Le compte a bien été déconnecté",
+            isPresented: $isPresentedConfirmLogOutAlert,
+            actions: {
+                Button(role: .cancel) {
+                    // Logic close and open onboarding (if more 0 account) or juste back
+                } label: {
+                    Text("Fermer")
+                }
+            }
+        )
+        .navigationTitle(user.displayName)
         .navigationBarTitleDisplayMode(.inline)
     }
 }

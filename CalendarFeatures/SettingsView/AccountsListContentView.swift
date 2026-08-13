@@ -32,7 +32,7 @@ public struct AccountsListContentView: View {
                 List {
                     ForEach(Array(calendarAccounts.values)) { account in
                         NavigationLink {
-                            AccountSettingsView(calendarAccount: account)
+                            AccountSettingsView(user: account.user)
                         } label: {
                             AccountCellView(
                                 rawAvatarURL: account.user.avatar,
