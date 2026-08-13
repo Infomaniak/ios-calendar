@@ -20,13 +20,19 @@ import CalendarCore
 import CalendarCoreUI
 import DesignSystem
 import ESDSFoundation
+import InfomaniakDI
 import SwiftUI
 
 public struct AccountSettingsView: View {
     @Environment(\.esdsTheme) private var theme
 
-    private var calendarAccount: CalendarAccount
+    @InjectService private var accountManager: AccountManager
+
     @State private var maskedAccount = false
+    @State private var isPresentedLogOutAlert = false
+    @State private var isPresentedConfirmLogOutAlert = false
+
+    private var calendarAccount: CalendarAccount
 
     public init(
         calendarAccount: CalendarAccount
@@ -54,8 +60,38 @@ public struct AccountSettingsView: View {
                 .foregroundStyle(theme.color.textPrimary)
 
                 Button("Se déconnecter") {
-                    print("Se déconnecter")
+                    isPresentedLogOutAlert = true
                 }
+                .alert(
+                    "Déconnecter le compte “\(calendarAccount.user.displayName)”",
+                    isPresented: $isPresentedLogOutAlert,
+                    actions: {
+                        Button(role: .destructive) {
+                            Task {
+                                await accountManager.removeAccountFor(userId: calendarAccount.user.id)
+                                isPresentedConfirmLogOutAlert = true
+                            }
+                        } label: {
+                            Text("Déconnecter le compte")
+                        }
+                    },
+                    message: {
+                        Text(
+                            "Ce compte et les calendriers associés seront déconnectés de l’app « Calendar ». Ils restent disponibles sur votre compte Infomaniak en ligne."
+                        )
+                    }
+                )
+                .alert(
+                    "Le compte a bien été déconnecté",
+                    isPresented: $isPresentedConfirmLogOutAlert,
+                    actions: {
+                        Button(role: .cancel) {
+                            // Logic close and open onboarding (if more 0 account) or juste back
+                        } label: {
+                            Text("Fermer")
+                        }
+                    }
+                )
                 .foregroundStyle(theme.color.textFeedbackErrorDefault)
                 .frame(maxWidth: .infinity, alignment: .center)
             }
