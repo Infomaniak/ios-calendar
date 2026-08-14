@@ -67,7 +67,7 @@ struct DayContentView: View {
     @State private var scrollPosition = ScrollPosition()
 
     @State private var pointsPerHour = Constants.PointsPerHour.default
-    @State private var currentMagnification: CGFloat = 1.0
+    @State private var effectivePointsPerHour = Constants.PointsPerHour.default
 
     @State private var coveredTextHeights: [Int: CGFloat] = [:]
 
@@ -92,10 +92,6 @@ struct DayContentView: View {
         marks.append(startOfNextDay)
 
         return marks
-    }
-
-    private var effectivePointsPerHour: CGFloat {
-        return clampedPointsPerHour(pointsPerHour * currentMagnification)
     }
 
     private var viewHeight: CGFloat {
@@ -187,7 +183,21 @@ struct DayContentView: View {
                 TimelineIndicatorView(date: currentDate, pointsPerHour: effectivePointsPerHour)
             }
             .frame(height: viewHeight)
+            .id(timelineId)
+            .simultaneousGesture(
+                MagnifyGesture()
+                    .onChanged { value in
+                        unitAnchorState = value.startAnchor
+                        let newPointsPerHour = pointsPerHour * value.magnification
+                        effectivePointsPerHour = clampedPointsPerHour(newPointsPerHour)
+                        positionId = timelineId
+                    }
+                    .onEnded { _ in
+                        pointsPerHour = effectivePointsPerHour
+                    }
+            )
         }
+        .scrollPosition(id: $positionId, anchor: unitAnchorState)
     }
 
     private func clampedPointsPerHour(_ value: CGFloat) -> CGFloat {
