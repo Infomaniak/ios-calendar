@@ -73,6 +73,10 @@ struct EventCellStyle: ViewModifier {
             .padding(padding)
             .foregroundStyle(foreground)
             .background(background)
+            .overlay(alignment: .leading) {
+                colors.onDatavizContainer
+                    .frame(width: IKPadding.micro)
+            }
             .strikethrough(mode == .declined)
             .overlay(alignment: .leading) {
                 Rectangle()
