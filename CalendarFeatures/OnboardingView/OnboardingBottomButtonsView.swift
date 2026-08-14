@@ -32,6 +32,8 @@ struct OnboardingBottomButtonsView: View {
 
     let slideCount: Int
 
+    var dismissHandler: (() -> Void)?
+
     private var isLastSlide: Bool {
         selection == slideCount - 1
     }
@@ -83,13 +85,13 @@ struct OnboardingBottomButtonsView: View {
 
     private func loginPressed() {
         Task {
-            await loginHandler.login()
+            await loginHandler.login(dimissHandler: dismissHandler)
         }
     }
 
     private func loginWithAccountsPressed(accounts: [ConnectedAccount]) {
         Task {
-            await loginHandler.loginWith(accounts: accounts)
+            await loginHandler.loginWith(accounts: accounts, dimissHandler: dismissHandler)
         }
     }
 }

@@ -50,7 +50,8 @@ public struct AccountsListContentView: View {
                                 email: account.user.email
                             )
                         }
-                        .listRowSeparator(account.id == accountsArray.last?.id ? .visible : .hidden)
+                        .listRowSeparator(account.id == accountsArray.last?.id ? .visible : .hidden, edges: .bottom)
+                        .listRowSeparator(.hidden, edges: .top)
                         .alignmentGuide(.listRowSeparatorLeading) { _ in 0 }
                     }
 

@@ -16,8 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import CalendarCore
-import CalendarCoreUI
 import InfomaniakCoreCommonUI
 import InfomaniakDI
 import InfomaniakOnboarding
@@ -27,7 +25,6 @@ public struct SingleOnboardingView: View {
     @LazyInjectService private var orientationManager: OrientationManageable
 
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.calendarAccounts) private var calendarAccounts
 
     @StateObject private var loginHandler = LoginHandler()
 
@@ -47,14 +44,13 @@ public struct SingleOnboardingView: View {
                     loginHandler: loginHandler,
                     selection: .constant(0),
                     slideCount: 1
-                )
+                ) {
+                    dismiss.callAsFunction()
+                }
             }
         )
         .ignoresSafeArea()
         .loginErrorAlert(loginHandler: loginHandler)
-        .onChange(of: calendarAccounts.count) { _ in
-            dismiss()
-        }
         .onAppear {
             if UIDevice.current.userInterfaceIdiom == .phone {
                 UIDevice.current
