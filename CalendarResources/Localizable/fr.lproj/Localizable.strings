@@ -1,5 +1,3 @@
-/* loco:6a6cadf80c75b08650039524 */
-"accountManagement" = "Gestion des comptes";
 
 /* loco:6a742debc579c73504099d24 */
 "accountsTitle" = "Comptes";
@@ -122,7 +120,7 @@
 "titleLabel" = "Titre";
 
 /* loco:6a7dc5b0149a9f50750c3c52 */
-"urlSubscribe" = "Subscribe via l’URL";
+"urlSubscribe" = "S’abonner via l’URL";
 
 /* loco:6a33b6883afea93d8b078502 */
 "weekHeaderWeekNumber" = "S%d";

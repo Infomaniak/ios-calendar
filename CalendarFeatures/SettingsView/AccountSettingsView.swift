@@ -41,6 +41,8 @@ public struct AccountSettingsView: View {
 
     private var user: UserProfile
 
+    private var iconSize: CGFloat = 48
+
     public init(
         user: UserProfile
     ) {
@@ -52,7 +54,7 @@ public struct AccountSettingsView: View {
         List {
             HStack(spacing: IKPadding.medium) {
                 AvatarView(rawAvatarURL: user.avatar, displayName: user.displayName,
-                           email: user.email, size: 52)
+                           email: user.email, size: iconSize)
 
                 VStack(alignment: .leading, spacing: 0) {
                     Text(user.displayName)
@@ -75,6 +77,7 @@ public struct AccountSettingsView: View {
                 }
                 .font(.body)
                 .foregroundStyle(theme.color.textPrimary)
+                .disabled(true) // Temporarily disable it until the 403 issue is resolved
 
                 Button(CalendarResourcesStrings.logOutButton, role: .destructive) {
                     isPresentedLogOutAlert = true
@@ -89,7 +92,12 @@ public struct AccountSettingsView: View {
             actions: {
                 Button(role: .destructive) {
                     Task {
-                        await accountManager.removeAccountFor(userId: user.id)
+                        do {
+                            try await accountManager.removeAccountFor(userId: user.id)
+                        } catch {
+                            print("Logout failed: \(error)")
+                        }
+
                         isPresentedConfirmLogOutAlert = true
                     }
                 } label: {
@@ -156,7 +164,11 @@ final class AccountSettingsViewDelegate: DeleteAccountDelegate {
 
     nonisolated func didCompleteDeleteAccount() {
         Task {
-            await accountManager.removeAccountFor(userId: userId)
+            do {
+                try await accountManager.removeAccountFor(userId: userId)
+            } catch {
+                print("Logout failed: \(error)")
+            }
         }
     }
 

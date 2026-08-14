@@ -25,6 +25,7 @@ let onboardingView = Feature(
     additionalDependencies: [
         TargetDependency.target(name: "\(Constants.projectName)Resources"),
         TargetDependency.external(name: "InfomaniakCore"),
+        TargetDependency.external(name: "InfomaniakCoreCommonUI"),
         TargetDependency.external(name: "InfomaniakCoreSwiftUI"),
         TargetDependency.external(name: "InfomaniakDeviceCheck"),
         TargetDependency.external(name: "InfomaniakLogin"),
@@ -188,6 +189,7 @@ let project = Project(
                     .external(name: "MultiplatformCalendar"),
                     .external(name: "DeviceAssociation"),
                     .external(name: "InfomaniakCore"),
+                    .external(name: "InfomaniakCoreCommonUI"),
                     .external(name: "InfomaniakDI"),
                     .external(name: "InfomaniakDeviceCheck"),
                     .external(name: "InfomaniakLogin"),

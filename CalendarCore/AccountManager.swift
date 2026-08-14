@@ -71,13 +71,14 @@ public actor AccountManager {
         try await createAccount(token: token)
     }
 
-    public func removeAccountFor(userId: Int) async {
+    public func removeAccountFor(userId: Int) async throws {
+        try? await calendarSDK.accountManager.removeAccount(accountId: Int64(userId))
+
         calendarAccounts[userId] = nil
         tokenStore.removeTokenFor(userId: userId)
         try? await davCredentialsKeychainHelper.deleteCredentials(for: userId)
         await userProfileStore.removeUserProfile(id: userId)
         deviceManager.forgetLocalDeviceHash(forUserId: userId)
-        try? await calendarSDK.accountManager.removeAccount(accountId: Int64(userId))
 
         calendarAccountsStreamContinuation.yield(Array(calendarAccounts.values))
     }

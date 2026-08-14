@@ -29,7 +29,7 @@ public struct SingleOnboardingView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.calendarAccounts) private var calendarAccounts
 
-    @State private var loginHandler = LoginHandler()
+    @StateObject private var loginHandler = LoginHandler()
 
     private let slides = [Slide.onboardingSlides.last!]
 
@@ -51,6 +51,7 @@ public struct SingleOnboardingView: View {
             }
         )
         .ignoresSafeArea()
+        .loginErrorAlert(loginHandler: loginHandler)
         .onChange(of: calendarAccounts.count) { _ in
             dismiss()
         }

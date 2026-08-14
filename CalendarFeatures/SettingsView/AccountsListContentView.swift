@@ -35,7 +35,7 @@ public struct AccountsListContentView: View {
     public init() {}
 
     public var body: some View {
-        NavigationStack {
+        Group {
             List {
                 Section {
                     let accountsArray = calendarAccounts.values.sorted { $0.user.displayName < $1.user.displayName }
@@ -61,7 +61,9 @@ public struct AccountsListContentView: View {
                 }
 
                 Section {
-                    HStack {
+                    NavigationLink {
+                        EmptyView()
+                    } label: {
                         VStack(alignment: .leading, spacing: 0) {
                             Text(CalendarResourcesStrings.addExternalCalendar)
                                 .font(.body.weight(.medium))
