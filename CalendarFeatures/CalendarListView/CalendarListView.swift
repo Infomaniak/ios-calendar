@@ -36,12 +36,7 @@ public struct CalendarListView: View {
 
     public var body: some View {
         List {
-            Section {
-                CalendarListContentView(indexedCalendars: indexedCalendars)
-            } header: {
-                Text(CalendarResourcesStrings.calendarsMenuSectionTitle)
-                    .foregroundStyle(theme.color.contentSecondary)
-            }
+            CalendarListContentView(indexedCalendars: indexedCalendars)
 
             Section {
                 NavigationLink(destination: AccountsListContentView()) {
@@ -79,6 +74,7 @@ public struct CalendarListView: View {
         .task(id: calendarAccounts) {
             await observeCalendars()
         }
+        .listSectionSpacing(.compact)
     }
 
     private func observeCalendars() async {
