@@ -55,7 +55,7 @@ struct DayContentView: View {
         // swiftlint:disable:next nesting
         enum PointsPerHour {
             static let minimum: CGFloat = 40
-            static let `default`: CGFloat = 60
+            static let `default`: CGFloat = 64
             static let maximum: CGFloat = 100
         }
     }

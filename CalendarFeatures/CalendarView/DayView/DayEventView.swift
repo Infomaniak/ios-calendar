@@ -36,17 +36,23 @@ struct DayEventView: View {
         let hours = duration / 3600
 
         let cappedHours = min(max(hours, 0.25), 24)
-        return CGFloat(cappedHours) * pointsPerHour
+        return max(CGFloat(cappedHours) * pointsPerHour, 16)
     }
 
     private var effectiveHeight: CGFloat {
         maxTextHeight ?? height
     }
 
+    private var isCompact: Bool {
+        effectiveHeight <= 24
+    }
+
     private var contentPadding: EdgeInsets {
-        let padding: CGFloat = effectiveHeight > 15 ? IKPadding.mini : 0
-        return EdgeInsets(top: padding, leading: IKPadding.mini,
-                          bottom: 0, trailing: IKPadding.mini)
+        if isCompact {
+            return EdgeInsets(top: 0, leading: IKPadding.mini, bottom: 0, trailing: IKPadding.mini)
+        }
+        let topPadding = min(IKPadding.mini, effectiveHeight * 0.15)
+        return EdgeInsets(top: topPadding, leading: IKPadding.mini, bottom: 0, trailing: IKPadding.mini)
     }
 
     var body: some View {
@@ -98,7 +104,7 @@ struct DayEventView: View {
                 .font(.caption.bold())
         }
         .padding(contentPadding)
-        .frame(maxHeight: effectiveHeight, alignment: .top)
+        .frame(maxHeight: effectiveHeight, alignment: isCompact ? .center : .top)
         .frame(height: height, alignment: .top)
         .eventCellStyle(event: event, padding: 0)
         .opacity(0.75)
