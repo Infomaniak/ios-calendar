@@ -55,7 +55,7 @@ struct EventIconsView: View {
                 CalendarResourcesAsset.Images.productKmeet.swiftUIImage
                     .resizableIcon(CalendarResourcesStrings.contentDescriptionHasKMeetLink)
             }
-            if !hasAttendees {
+            if hasAttendees {
                 CalendarResourcesAsset.Images.usersStacked.swiftUIImage
                     .resizableIcon(CalendarResourcesStrings.contentDescriptionHasAttendees)
             }
