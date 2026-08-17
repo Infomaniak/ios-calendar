@@ -1,5 +1,5 @@
 {
-  "originHash" : "c77abc35165971d0f9f20094d123cac8213c9de2b4e3dd8b64885eaa93c3b9e5",
+  "originHash" : "e2c9528ceb0dde9f54c469bed1e48d8c45260f8e846d0d238f04850ff89016d3",
   "pins" : [
     {
       "identity" : "alamofire",
@@ -8,6 +8,15 @@
       "state" : {
         "revision" : "7595cbcf59809f9977c5f6378500de2ad73b7ddb",
         "version" : "5.12.0"
+      }
+    },
+    {
+      "identity" : "infinitescrollviews",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Infomaniak/InfiniteScrollViews",
+      "state" : {
+        "branch" : "feat/custom-background-color",
+        "revision" : "4b43110d963b7a257d6599c5e4b7856e8486975e"
       }
     },
     {
