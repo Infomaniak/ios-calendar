@@ -57,6 +57,8 @@ struct DayContentView: View {
             static let minimum: CGFloat = 40
             static let `default`: CGFloat = 64
             static let maximum: CGFloat = 100
+
+            static let horizontalRelayoutStep: CGFloat = 8
         }
     }
 
@@ -152,13 +154,22 @@ struct DayContentView: View {
     }
 
     private func timelineContent(currentDate: Date) -> some View {
-        ScrollView {
+        let horizontalPointsPerHour = horizontalLayoutPointsPerHour(
+            for: effectivePointsPerHour
+        )
+
+        return ScrollView {
             ZStack(alignment: .top) {
-                DayTimelineView(date: date, pointsPerHour: effectivePointsPerHour, leadingOffset: Self.Constants.leadingInset)
+                DayTimelineView(
+                    date: date,
+                    pointsPerHour: effectivePointsPerHour,
+                    leadingOffset: Self.Constants.leadingInset
+                )
 
                 EventuallyLayout(
                     startOfDay: calendar.startOfDay(for: date),
-                    hourSlotHeight: effectivePointsPerHour
+                    hourSlotHeight: effectivePointsPerHour,
+                    horizontalHourSlotHeight: horizontalPointsPerHour
                 ) { textHeights in
                     guard coveredTextHeights != textHeights else { return }
                     coveredTextHeights = textHeights
@@ -180,7 +191,9 @@ struct DayContentView: View {
                 .padding(.leading, Self.Constants.leadingInset)
                 .padding(.vertical, Self.Constants.verticalInset)
 
-                TimelineIndicatorView(date: currentDate, pointsPerHour: effectivePointsPerHour)
+                if calendar.isDate(date, inSameDayAs: currentDate) {
+                    TimelineIndicatorView(date: currentDate, pointsPerHour: effectivePointsPerHour)
+                }
             }
             .frame(height: viewHeight)
             .id(timelineId)
