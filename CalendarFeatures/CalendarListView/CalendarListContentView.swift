@@ -85,7 +85,7 @@ struct CalendarListContentView: View {
 
                                 Text(calendar.displayName)
                                     .lineLimit(1)
-                                    .foregroundStyle(theme.color.textPrimary)
+                                    .foregroundStyle(theme.color.contentPrimary)
                             }
                         }
                         .listRowSeparator(

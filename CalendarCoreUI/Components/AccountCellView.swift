@@ -42,14 +42,13 @@ public struct AccountCellView: View {
 
     public var body: some View {
         HStack {
-            AvatarView(rawAvatarURL: rawAvatarURL, displayName: displayName,
-                       email: email, size: avatarSize)
+            AvatarView(rawAvatarURL: rawAvatarURL, displayName: displayName, email: email, size: avatarSize)
 
             VStack(alignment: .leading, spacing: 0) {
                 HStack(spacing: IKPadding.mini) {
                     Text(displayName)
                         .font(.body.weight(.medium))
-                        .foregroundStyle(theme.color.textPrimary)
+                        .foregroundStyle(theme.color.contentPrimary)
 
                     if isOrganizer {
                         Text(CalendarResourcesStrings.sectionOrganizerHeader)
@@ -63,7 +62,7 @@ public struct AccountCellView: View {
                 if displayName != email {
                     Text(email)
                         .font(.body)
-                        .foregroundStyle(theme.color.textSecondary)
+                        .foregroundStyle(theme.color.contentSecondary)
                 }
             }
             .lineLimit(1)

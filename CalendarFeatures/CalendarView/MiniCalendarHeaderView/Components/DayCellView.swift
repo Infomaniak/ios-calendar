@@ -56,7 +56,7 @@ struct DayCellView: View {
         .padding(value: .micro)
         .monospacedDigit()
         .font(.body.weight(.semibold))
-        .foregroundColor(theme.color.textPrimary)
+        .foregroundColor(theme.color.contentPrimary)
         .background(isToday ? Color.accentColor : Color.clear, in: .circle)
         .overlay {
             if isSelected, !isToday {

@@ -41,7 +41,7 @@ struct EventDotsView: View {
                 Image(systemName: "plus")
                     .resizable()
                     .frame(width: 6, height: 6)
-                    .foregroundStyle(theme.color.iconSecondary)
+                    .foregroundStyle(theme.color.contentSecondary)
             } else {
                 ForEach(eventDots.prefix(maxEventCount), id: \.hashValue) { dot in
                     Circle()

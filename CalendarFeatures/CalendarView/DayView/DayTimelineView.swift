@@ -84,7 +84,7 @@ struct DayTimelineView: View {
                 ForEach(hourMarks, id: \.self) { mark in
                     Text(mark, format: Self.Constants.dateFormater)
                         .font(.caption2.weight(.semibold))
-                        .foregroundStyle(theme.color.textSecondary)
+                        .foregroundStyle(theme.color.contentSecondary)
                         .tag(mark)
                 }
             }

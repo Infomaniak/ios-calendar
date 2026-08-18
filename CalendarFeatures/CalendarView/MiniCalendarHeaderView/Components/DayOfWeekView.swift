@@ -34,7 +34,7 @@ struct DayOfWeekView: View {
                     if let weekDayDate = Calendar.current.date(byAdding: .day, value: dayOffset, to: weekStartDate) {
                         Text(weekDayDate, format: .dateTime.weekday(.narrow))
                             .font(.caption)
-                            .foregroundColor(theme.color.textPrimary)
+                            .foregroundColor(theme.color.contentPrimary)
                     }
                 }
                 .frame(maxWidth: .infinity)

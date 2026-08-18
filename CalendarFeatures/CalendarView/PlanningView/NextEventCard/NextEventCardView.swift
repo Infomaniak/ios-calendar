@@ -210,7 +210,7 @@ struct NextEventContentCardView: View {
                 }
                 .font(.caption2.bold())
             }
-            .foregroundStyle(theme.color.textPrimary)
+            .foregroundStyle(theme.color.contentPrimary)
 
             HStack {
                 if !event.attendees.isEmpty {
