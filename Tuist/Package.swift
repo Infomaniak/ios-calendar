@@ -34,7 +34,7 @@ let package = Package(
         .package(url: "https://github.com/Infomaniak/ios-core-ui", .upToNextMajor(from: "26.0.0")),
         .package(url: "https://github.com/Infomaniak/ios-create-account", .upToNextMajor(from: "25.0.0")),
         .package(url: "https://github.com/Infomaniak/ios-dependency-injection", .upToNextMajor(from: "2.0.6")),
-        .package(url: "https://github.com/Infomaniak/ios-design-system.git", .upToNextMajor(from: "0.0.1")),
+        .package(url: "https://github.com/Infomaniak/ios-design-system.git", .upToNextMinor(from: "0.2.0")),
         .package(url: "https://github.com/Infomaniak/ios-device-check", .upToNextMajor(from: "1.1.1")),
         .package(url: "https://github.com/Infomaniak/ios-features", .upToNextMajor(from: "10.2.0")),
         .package(url: "https://github.com/Infomaniak/ios-login", .upToNextMajor(from: "7.8.0")),
