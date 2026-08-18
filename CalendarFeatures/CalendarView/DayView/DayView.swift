@@ -109,6 +109,10 @@ struct DayView: View {
 
                     if calendar.isDate(date, inSameDayAs: timeline.date) {
                         TimelineIndicatorView(date: timeline.date, pointsPerHour: effectivePointsPerHour)
+                            .visualEffect { content, proxy in
+                                content
+                                    .offset(y: -proxy.size.height / 2 + timeIndicatorPosition(at: timeline.date))
+                            }
                     }
                 }
                 .frame(height: viewHeight)
@@ -116,10 +120,7 @@ struct DayView: View {
             .contentMargins(IKPadding.medium, for: .scrollContent)
             .scrollPosition($scrollPosition)
             .onAppear {
-                let now = Date.now
-                let elapsedTime = now.timeIntervalSince(calendar.startOfDay(for: now)) / 3600
-
-                let currentTimePosition = elapsedTime * effectivePointsPerHour + Self.Constants.verticalInset
+                let currentTimePosition = timeIndicatorPosition(at: .now)
                 scrollPosition.scrollTo(y: currentTimePosition - IKPadding.huge)
             }
             .simultaneousGesture(
@@ -137,6 +138,11 @@ struct DayView: View {
 
     private func clampedPointsPerHour(_ value: CGFloat) -> CGFloat {
         return min(max(value, Constants.PointsPerHour.minimum), Constants.PointsPerHour.maximum)
+    }
+
+    private func timeIndicatorPosition(at date: Date) -> CGFloat {
+        let elapsedTime = date.timeIntervalSince(calendar.startOfDay(for: date)) / 3600
+        return elapsedTime * effectivePointsPerHour + Self.Constants.verticalInset
     }
 }
 
