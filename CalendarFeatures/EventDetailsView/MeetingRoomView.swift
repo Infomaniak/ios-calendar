@@ -37,30 +37,30 @@ public struct MeetingRoomView: View {
         HStack {
             CalendarResourcesAsset.Images.doorOpen.swiftUIImage
                 .iconSize(IKIconSize.large)
-                .foregroundStyle(theme.color.iconSecondary)
+                .foregroundStyle(theme.color.contentSecondary)
 
             VStack(alignment: .leading, spacing: 0) {
                 Text(roomTitle)
                     .font(.body.weight(.regular))
-                    .foregroundStyle(theme.color.textPrimary)
+                    .foregroundStyle(theme.color.contentPrimary)
 
                 HStack(spacing: IKPadding.mini) {
                     CalendarResourcesAsset.Images.usersStacked.swiftUIImage
                         .iconSize(IKIconSize.medium)
-                        .foregroundStyle(theme.color.iconSecondary)
+                        .foregroundStyle(theme.color.contentSecondary)
                     Text(CalendarResourcesStrings.roomSeatsLabel(roomCapacity))
                         .padding(.trailing, IKPadding.mini)
                         .font(.subheadline.weight(.regular))
-                        .foregroundStyle(theme.color.textSecondary)
+                        .foregroundStyle(theme.color.contentSecondary)
 
                     CalendarResourcesAsset.Images.stair.swiftUIImage
                         .iconSize(IKIconSize.medium)
-                        .foregroundStyle(theme.color.iconSecondary)
+                        .foregroundStyle(theme.color.contentSecondary)
 
                     let floor = Self.ordinalFormatter.string(from: roomFloor as NSNumber) ?? "\(roomFloor)"
                     Text(CalendarResourcesStrings.roomFloorLabel(floor))
                         .font(.subheadline.weight(.regular))
-                        .foregroundStyle(theme.color.textSecondary)
+                        .foregroundStyle(theme.color.contentSecondary)
                 }
             }
             .padding(.trailing, IKPadding.large)

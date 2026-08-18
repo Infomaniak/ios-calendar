@@ -46,13 +46,13 @@ struct AnswerButton: View {
     private var foregroundColor: Color {
         switch answer {
         case .accepted:
-            isSelected ? .green : theme.color.textPrimary
+            isSelected ? .green : theme.color.contentPrimary
         case .declined:
-            isSelected ? .red : theme.color.textPrimary
+            isSelected ? .red : theme.color.contentPrimary
         case .tentative:
-            isSelected ? .gray : theme.color.textPrimary
+            isSelected ? .gray : theme.color.contentPrimary
         default:
-            theme.color.textPrimary
+            theme.color.contentPrimary
         }
     }
 }

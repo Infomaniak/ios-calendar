@@ -29,10 +29,10 @@ public struct StatusRow: View {
         HStack {
             icon
                 .iconSize(IKIconSize.large)
-                .foregroundStyle(theme.color.iconSecondary)
+                .foregroundStyle(theme.color.contentSecondary)
             Text(text)
                 .font(.body)
-                .foregroundStyle(theme.color.textPrimary)
+                .foregroundStyle(theme.color.contentPrimary)
         }
     }
 }

@@ -39,15 +39,15 @@ public struct LocationRow: View {
             HStack(spacing: IKPadding.medium) {
                 CalendarResourcesAsset.Images.mapPin.swiftUIImage
                     .iconSize(IKIconSize.large)
-                    .foregroundStyle(theme.color.iconSecondary)
+                    .foregroundStyle(theme.color.contentSecondary)
                 Text(address)
-                    .foregroundStyle(theme.color.textPrimary)
+                    .foregroundStyle(theme.color.contentPrimary)
 
                 Spacer()
 
                 CalendarResourcesAsset.Images.chevronRight.swiftUIImage
                     .iconSize(IKIconSize.medium)
-                    .foregroundStyle(theme.color.iconTertiary)
+                    .foregroundStyle(theme.color.contentTertiary)
             }
         }
     }

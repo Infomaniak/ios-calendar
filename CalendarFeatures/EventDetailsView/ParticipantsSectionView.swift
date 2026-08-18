@@ -58,16 +58,16 @@ struct ParticipantsSectionView: View {
                 HStack(spacing: 0) {
                     CalendarResourcesAsset.Images.usersStacked.swiftUIImage
                         .iconSize(IKIconSize.large)
-                        .foregroundStyle(theme.color.iconSecondary)
+                        .foregroundStyle(theme.color.contentSecondary)
 
                     VStack(alignment: .leading) {
                         Text(CalendarResourcesStrings.participantsLabel(uniqueAttendees.count))
                             .font(.body)
-                            .foregroundStyle(theme.color.textPrimary)
+                            .foregroundStyle(theme.color.contentPrimary)
 
                         Text(participationSummary)
                             .font(.subheadline)
-                            .foregroundStyle(theme.color.textSecondary)
+                            .foregroundStyle(theme.color.contentSecondary)
                     }
                     .padding(.leading, IKPadding.medium)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -82,7 +82,7 @@ struct ParticipantsSectionView: View {
                         if uniqueAttendees.count > 4 {
                             InitialsView(initials: "+\(uniqueAttendees.count - 4)",
                                          backgroundColor: theme.color.backgroundElevationSurfacePressed,
-                                         foregroundColor: .accentColor,
+                                         foregroundColor: theme.color.backgroundBrandDefault,
                                          size: IKIconSize.large.rawValue)
                         }
                     }

@@ -30,22 +30,22 @@ public struct DayRow: View {
         HStack(spacing: IKPadding.medium) {
             CalendarResourcesAsset.Images.clock.swiftUIImage
                 .iconSize(IKIconSize.large)
-                .foregroundStyle(theme.color.iconSecondary)
+                .foregroundStyle(theme.color.contentSecondary)
 
             VStack(alignment: .leading) {
                 dateRangeText
                     .font(.body)
-                    .foregroundStyle(theme.color.textPrimary)
+                    .foregroundStyle(theme.color.contentPrimary)
 
                 if let timeZoneRangeText {
                     Text(timeZoneRangeText)
                         .font(.subheadline)
-                        .foregroundStyle(theme.color.textSecondary)
+                        .foregroundStyle(theme.color.contentSecondary)
                 }
 
                 Text("Chaque semaine le mercredi") // TODO: Use event recurrence
                     .font(.subheadline)
-                    .foregroundStyle(theme.color.backgroundBrandDefault)
+                    .foregroundStyle(theme.color.contentBrandDefault)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
