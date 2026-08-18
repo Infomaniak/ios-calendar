@@ -18,6 +18,7 @@
 
 import CalendarCoreUI
 import DesignSystem
+import InfiniteScrollViews
 import InfomaniakDI
 import MultiplatformCalendar
 import SwiftUI
@@ -26,6 +27,19 @@ struct MiniCalendarView: View {
     enum DisplayMode {
         case month
         case week
+
+        var referenceDateInterval: Foundation.Calendar.Component {
+            switch self {
+            case .month:
+                return .month
+            case .week:
+                return .weekOfYear
+            }
+        }
+
+        func referenceDate(for date: Date, calendar: Foundation.Calendar) -> Date {
+            calendar.dateInterval(of: referenceDateInterval, for: date)?.start ?? calendar.startOfDay(for: date)
+        }
     }
 
     @Environment(\.calendar) private var calendar
@@ -39,27 +53,30 @@ struct MiniCalendarView: View {
     var body: some View {
         VStack(spacing: IKPadding.micro) {
             DayOfWeekView()
-            if displayMode == .week {
-                InfiniteScrollView(
-                    referenceDateInterval: .weekOfYear,
-                    selectedDate: $selectedDate,
-                    displayedDate: $displayedDate
-                ) { date in
-                    WeekHeaderView(startDate: date, selectedDate: $selectedDate, datesWithEventDots: datesWithEventDots)
+            switch displayMode {
+            case .week:
+                MiniCalendarPagedInfiniteScrollView(
+                    referenceDateInterval: displayMode.referenceDateInterval,
+                    referenceDate: $displayedDate
+                ) { referenceDate in
+                    WeekHeaderView(startDate: referenceDate, selectedDate: $selectedDate, datesWithEventDots: datesWithEventDots)
                 }
-            } else {
-                InfiniteScrollView(
-                    referenceDateInterval: .month,
-                    selectedDate: $selectedDate,
-                    displayedDate: $displayedDate
-                ) { date in
-                    MonthHeaderView(startDate: date, selectedDate: $selectedDate, datesWithEventDots: datesWithEventDots)
+            case .month:
+                MiniCalendarPagedInfiniteScrollView(
+                    referenceDateInterval: displayMode.referenceDateInterval,
+                    referenceDate: $displayedDate
+                ) { referenceDate in
+                    MonthHeaderView(startDate: referenceDate, selectedDate: $selectedDate, datesWithEventDots: datesWithEventDots)
                 }
             }
         }
-        .fixedSize(horizontal: false, vertical: true)
         .task(id: displayedDate) {
             await updateCalendarDotsFor(date: displayedDate, calendar: calendar)
+        }
+        .onChange(of: selectedDate) { _, newValue in
+            withAnimation {
+                displayedDate = displayMode.referenceDate(for: newValue, calendar: calendar)
+            }
         }
     }
 
@@ -91,6 +108,40 @@ struct MiniCalendarView: View {
                 self.datesWithEventDots = datesWithEventDots
             }
         }
+    }
+}
+
+struct MiniCalendarPagedInfiniteScrollView<ContentView: View>: View {
+    @Environment(\.calendar) private var calendar
+
+    let referenceDateInterval: Foundation.Calendar.Component
+    @Binding var referenceDate: Date
+    @ViewBuilder let content: (Date) -> ContentView
+
+    var body: some View {
+        PagedInfiniteScrollView(
+            changeIndex: $referenceDate,
+            content: { referenceDate in
+                content(referenceDate)
+            },
+            increaseIndexAction: { referenceDateAfter($0) },
+            decreaseIndexAction: { referenceDateBefore($0) },
+            shouldAnimateBetween: { targetDate, currentDate in
+                (targetDate != currentDate, targetDate > currentDate ? .forward : .reverse)
+            },
+            transitionStyle: .scroll,
+            navigationOrientation: .horizontal,
+            backgroundColor: .clear
+        )
+        .id(referenceDateInterval)
+    }
+
+    private func referenceDateAfter(_ date: Date) -> Date? {
+        calendar.date(byAdding: referenceDateInterval, value: 1, to: date)
+    }
+
+    private func referenceDateBefore(_ date: Date) -> Date? {
+        calendar.date(byAdding: referenceDateInterval, value: -1, to: date)
     }
 }
 

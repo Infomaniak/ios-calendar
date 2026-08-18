@@ -47,7 +47,7 @@ struct MonthHeaderView: View {
     }
 
     var body: some View {
-        VStack(spacing: IKPadding.micro) {
+        VStack(spacing: 0) {
             ForEach(0 ..< maximumRowCount, id: \.self) { row in
                 HStack(spacing: IKPadding.micro) {
                     ForEach(0 ..< 7, id: \.self) { column in

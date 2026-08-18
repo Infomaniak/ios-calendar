@@ -20,6 +20,8 @@ import DesignSystem
 import SwiftUI
 
 struct MiniCalendarHeaderViewModifier: ViewModifier {
+    @Environment(\.calendar) private var calendar
+
     @State private var displayMode: MiniCalendarView.DisplayMode = .week
     @State private var displayedDate: Date
 
@@ -97,6 +99,7 @@ struct MiniCalendarHeaderViewModifier: ViewModifier {
     private func switchDisplayMode() {
         withAnimation {
             displayMode = displayMode == .month ? .week : .month
+            displayedDate = displayMode.referenceDate(for: selectedDate, calendar: calendar)
         }
     }
 }
