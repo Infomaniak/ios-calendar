@@ -19,10 +19,12 @@
 import CalendarCoreUI
 import CalendarResources
 import DesignSystem
+import ESDSFoundation
 import InfomaniakCoreSwiftUI
 import SwiftUI
 
 struct AlertsSectionView: View {
+    @Environment(\.esdsTheme) private var theme
     @Binding private var alarms: [UIEventAlarm]
 
     init(alarms: Binding<[UIEventAlarm]>) {
@@ -31,8 +33,17 @@ struct AlertsSectionView: View {
 
     var body: some View {
         ForEach(alarms.indices, id: \.self) { index in
-            LabeledContent(alarms[index].action.label) {
+            LabeledContent {
                 Text(alarms[index].offset.rawValue)
+                    .foregroundStyle(theme.color.contentSecondary)
+            } label: {
+                HStack(spacing: IKPadding.mini) {
+                    alarms[index].action.icon
+                        .iconSize(IKIconSize.large)
+                        .foregroundStyle(theme.color.contentSecondary)
+                    Text(alarms[index].action.label)
+                        .foregroundStyle(theme.color.contentPrimary)
+                }
             }
         }
     }
