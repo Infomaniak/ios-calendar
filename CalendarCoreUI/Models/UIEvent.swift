@@ -90,6 +90,8 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
     public let startDate: Date
     public let endDate: Date
     public let isAllDay: Bool
+    public let startTimeZone: TimeZone?
+    public let endTimeZone: TimeZone?
 
     public let calendarId: String
     public let alarms: [UIEventAlarm]
@@ -114,7 +116,9 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
         user: UIAttendee? = nil,
         attendees: [UIAttendee],
         colors: UIEvent.Colors,
-        classification: UIClassification? = .public
+        classification: UIClassification? = .public,
+        startTimeZone: TimeZone? = nil,
+        endTimeZone: TimeZone? = nil
     ) {
         self.id = id
         self.title = title
@@ -129,6 +133,8 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
         self.attendees = attendees
         self.colors = colors
         self.classification = classification
+        self.startTimeZone = startTimeZone
+        self.endTimeZone = endTimeZone
     }
 }
 
@@ -149,6 +155,8 @@ public extension UIEvent {
         startDate = eventDaySlice.displayStartInstant().date
         endDate = eventDaySlice.displayEndInstant().date
         isAllDay = eventDaySlice.isAllDay
+        startTimeZone = event.timing.startTimeZone.flatMap { TimeZone(identifier: $0.id) }
+        endTimeZone = event.timing.endTimeZone.flatMap { TimeZone(identifier: $0.id) }
 
         calendarId = event.calendarIdValue
 
