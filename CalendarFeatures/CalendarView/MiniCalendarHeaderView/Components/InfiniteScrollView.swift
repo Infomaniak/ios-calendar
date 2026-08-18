@@ -123,7 +123,10 @@ struct InfiniteScrollView<ContentView: View>: View {
         }
 
         return range.compactMap { offset in
-            calendar.date(byAdding: referenceDateInterval, value: offset, to: currentReferenceStart)
+            guard let date = calendar.date(byAdding: referenceDateInterval, value: offset, to: currentReferenceStart) else {
+                return nil
+            }
+            return calendar.startOfDay(for: date)
         }
     }
 
@@ -187,6 +190,6 @@ struct InfiniteScrollView<ContentView: View>: View {
         selectedDate: $selectedDate,
         displayedDate: $displayedDate
     ) { date in
-        WeekHeaderView(startDate: date, selectedDate: $selectedDate)
+        WeekHeaderView(startDate: date, selectedDate: $selectedDate, datesWithEventDots: [:])
     }
 }

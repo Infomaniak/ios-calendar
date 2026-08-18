@@ -25,6 +25,7 @@ struct WeekHeaderView: View {
 
     let startDate: Date
     @Binding var selectedDate: Date
+    let datesWithEventDots: [Date: [Color]]
 
     var body: some View {
         HStack(spacing: 0) {
@@ -36,7 +37,8 @@ struct WeekHeaderView: View {
                         } label: {
                             DayCellView(
                                 date: dayDate,
-                                isSelected: calendar.isDate(dayDate, inSameDayAs: selectedDate)
+                                isSelected: calendar.isDate(dayDate, inSameDayAs: selectedDate),
+                                eventDots: datesWithEventDots[dayDate] ?? []
                             )
                         }
                         .buttonStyle(.plain)
@@ -54,6 +56,7 @@ struct WeekHeaderView: View {
     @Previewable @State var selectedDate = Date()
     WeekHeaderView(
         startDate: Calendar.current.weekStart(for: Date()),
-        selectedDate: $selectedDate
+        selectedDate: $selectedDate,
+        datesWithEventDots: [:]
     )
 }

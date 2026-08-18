@@ -24,7 +24,7 @@ import AppKit
 import MultiplatformCalendar
 import SwiftUI
 
-extension Color {
+public extension Color {
     init(light: Color, dark: Color) {
         #if canImport(UIKit)
         self.init(UIColor { traits in
