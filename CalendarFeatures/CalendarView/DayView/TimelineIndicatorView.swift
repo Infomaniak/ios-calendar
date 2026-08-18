@@ -31,24 +31,28 @@ struct TimelineIndicatorView: View {
         return date.timeIntervalSince(startOfDay) / 3600
     }
 
+    private var tint: Color {
+        theme.color.backgroundDatavizPinkDim1Default
+    }
+
     var body: some View {
         HStack(spacing: theme.spacing.twoXs) {
             Text(date.formatted(DayTimelineView.Constants.dateFormater))
                 .font(DayTimelineView.Constants.labelFont)
                 .padding(.horizontal, theme.spacing.xs)
                 .padding(.vertical, theme.spacing.twoXs)
-                .foregroundStyle(.white) // TODO: Use Red - On Dataviz when available
-                .background(.red, in: .capsule) // TODO: Use Red - Background Dataviz when available
+                .foregroundStyle(theme.color.contentInverse)
+                .background(tint, in: .capsule)
 
             HStack(spacing: 0) {
                 Circle()
-                    .fill(.red) // TODO: Use Red - On Dataviz when available
+                    .fill(tint)
                     .frame(width: 8, height: 8)
 
                 Divider()
                     .frame(height: 1)
                     .frame(maxWidth: .infinity)
-                    .background(.red) // TODO: Use Red - On Dataviz when available
+                    .background(tint)
             }
         }
         .accessibilityHidden(true)
