@@ -89,6 +89,7 @@ struct DayView: View {
             ScrollView {
                 ZStack(alignment: .top) {
                     DayTimelineView(date: date, pointsPerHour: effectivePointsPerHour, leadingOffset: Self.Constants.leadingInset)
+                        .padding(.horizontal, value: .medium)
 
                     DayViewLayout(
                         calendar: calendar,
@@ -106,9 +107,11 @@ struct DayView: View {
                             .tag(event.startDate)
                         }
                     }
+                    .padding(.horizontal, value: .medium)
 
                     if calendar.isDate(date, inSameDayAs: timeline.date) {
                         TimelineIndicatorView(date: timeline.date, pointsPerHour: effectivePointsPerHour)
+                            .padding(.leading, value: .medium)
                             .visualEffect { content, proxy in
                                 content
                                     .offset(y: -proxy.size.height / 2 + timeIndicatorPosition(at: timeline.date))
@@ -117,7 +120,6 @@ struct DayView: View {
                 }
                 .frame(height: viewHeight)
             }
-            .contentMargins(IKPadding.medium, for: .scrollContent)
             .scrollPosition($scrollPosition)
             .onAppear {
                 let currentTimePosition = timeIndicatorPosition(at: .now)
