@@ -19,11 +19,14 @@
 import CalendarCore
 import CalendarCoreUI
 import CalendarEventDetailsView
+import InfiniteScrollViews
 import InfomaniakDI
 import MultiplatformCalendar
 import SwiftUI
 
 struct DaysView: View {
+    @Environment(\.calendar) private var calendar
+
     @Environment(MainViewState.self) private var mainViewState
     @Environment(\.calendarAccounts) private var calendarAccounts
 
@@ -35,13 +38,23 @@ struct DaysView: View {
     }
 
     var body: some View {
-        ScrollView(.horizontal) {
-            ForEach(dates, id: \.self) { date in
+        @Bindable var mainViewState = mainViewState
+        PagedInfiniteScrollView(
+            changeIndex: $mainViewState.selectedDate,
+            content: { date in
                 DayView(onSelectEvent: { selectedEvent = $0 }, date: date, events: events[date] ?? [])
-                    .containerRelativeFrame(.horizontal)
-            }
-        }
-        .scrollTargetBehavior(.paging)
+            },
+            increaseIndexAction: { calendar.date(byAdding: .day, value: 1, to: $0) },
+            decreaseIndexAction: { calendar.date(byAdding: .day, value: -1, to: $0) },
+            areIndexesEqualAction: { $0 == $1 },
+            shouldAnimateBetween: { newValue, oldValue in
+                return (newValue != oldValue, newValue > oldValue ? .forward : .reverse)
+            },
+            transitionStyle: .scroll,
+            navigationOrientation: .horizontal,
+            backgroundColor: .clear
+        )
+        .ignoresSafeArea(.all, edges: .bottom)
         .sheet(item: $selectedEvent) { event in
             EventDetailsView(event: event)
         }
