@@ -20,16 +20,9 @@ import ESDSFoundation
 import SwiftUI
 
 struct TimelineIndicatorView: View {
-    @Environment(\.calendar) private var calendar
     @Environment(\.esdsTheme) private var theme
 
     let date: Date
-    let pointsPerHour: CGFloat
-
-    private var elapsedTime: CGFloat {
-        let startOfDay = calendar.startOfDay(for: date)
-        return date.timeIntervalSince(startOfDay) / 3600
-    }
 
     private var tint: Color {
         theme.color.backgroundDatavizPinkDim1Default
@@ -60,5 +53,5 @@ struct TimelineIndicatorView: View {
 }
 
 #Preview {
-    TimelineIndicatorView(date: .now, pointsPerHour: 0)
+    TimelineIndicatorView(date: .now)
 }

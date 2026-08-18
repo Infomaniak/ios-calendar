@@ -32,7 +32,7 @@ struct DayTimelineView: View {
     enum Constants {
         static let labelFont = Font.caption2.weight(.semibold)
         static let labelFontSize = UIFont.scaledFontSize(.caption2, size: 11)
-        static let labelSpacing: CGFloat = IKPadding.medium
+        static let labelSpacing: CGFloat = IKPadding.small
 
         static let dateFormater: Date.FormatStyle = .dateTime.hour().minute()
     }

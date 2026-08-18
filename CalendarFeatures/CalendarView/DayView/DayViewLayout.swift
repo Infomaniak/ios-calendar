@@ -23,6 +23,7 @@ struct DayViewLayout: Layout {
 
     let verticalInset: CGFloat
     let leadingInset: CGFloat
+    let trailingInset: CGFloat
 
     let pointsPerHour: CGFloat
 
@@ -42,7 +43,7 @@ struct DayViewLayout: Layout {
             let preferredSize = subview.sizeThatFits(.unspecified)
             subview.place(
                 at: CGPoint(x: leadingInset, y: offsetY),
-                proposal: .init(width: (proposal.width ?? 100) - leadingInset, height: preferredSize.height)
+                proposal: .init(width: (proposal.width ?? 100) - leadingInset - trailingInset, height: preferredSize.height)
             )
         }
     }

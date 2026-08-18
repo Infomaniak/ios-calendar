@@ -33,7 +33,7 @@ struct DayView: View {
 
             let fakeDate = Calendar.current.date(from: DateComponents(hour: 12, minute: 0)) ?? .now
             let labelWidth = fakeDate.formatted(DayTimelineView.Constants.dateFormater)
-                .size(withAttributes: [.font: font]).width
+                .size(withAttributes: [.font: font]).width + 2 * IKPadding.mini
 
             return labelWidth.rounded(.up) + DayTimelineView.Constants.labelSpacing
         }()
@@ -94,7 +94,8 @@ struct DayView: View {
                     DayViewLayout(
                         calendar: calendar,
                         verticalInset: Self.Constants.verticalInset,
-                        leadingInset: Self.Constants.leadingInset,
+                        leadingInset: Self.Constants.leadingInset + IKPadding.medium,
+                        trailingInset: IKPadding.medium,
                         pointsPerHour: effectivePointsPerHour
                     ) {
                         ForEach(events) { event in
@@ -107,10 +108,9 @@ struct DayView: View {
                             .tag(event.startDate)
                         }
                     }
-                    .padding(.horizontal, value: .medium)
 
                     if calendar.isDate(date, inSameDayAs: timeline.date) {
-                        TimelineIndicatorView(date: timeline.date, pointsPerHour: effectivePointsPerHour)
+                        TimelineIndicatorView(date: timeline.date)
                             .padding(.leading, value: .medium)
                             .visualEffect { content, proxy in
                                 content
