@@ -26,17 +26,6 @@ public struct DayRow: View {
     @Environment(\.esdsTheme) private var theme
     let event: CalendarCoreUI.UIEvent
 
-    private var dateRangeText: Text {
-        let dateText = Text(event.startDate, format: .dateTime.month(.wide).day().weekday(.wide))
-        let separator = Text(" – ")
-
-        if event.isAllDay {
-            return dateText + separator + Text(CalendarResourcesStrings.allDayLabel)
-        } else {
-            return dateText + separator + Text(event.startDate, format: .dateTime.hour().minute())
-        }
-    }
-
     public var body: some View {
         HStack(spacing: IKPadding.medium) {
             CalendarResourcesAsset.Images.clock.swiftUIImage
@@ -48,11 +37,78 @@ public struct DayRow: View {
                     .font(.body)
                     .foregroundStyle(theme.color.textPrimary)
 
+                if let timeZoneRangeText {
+                    Text(timeZoneRangeText)
+                        .font(.subheadline)
+                        .foregroundStyle(theme.color.textSecondary)
+                }
+
                 Text("Chaque semaine le mercredi") // TODO: Use event recurrence
                     .font(.subheadline)
-                    .foregroundStyle(theme.color.textSecondary)
+                    .foregroundStyle(theme.color.backgroundBrandDefault)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private var dateRangeText: Text {
+        let date = Text(event.startDate, format: .dateTime.month(.wide).day().weekday(.wide))
+
+        let detail = event.isAllDay ? CalendarResourcesStrings.allDayLabel : timeRange(in: .current)
+
+        return date + Text(" - \(detail)")
+    }
+
+    private var timeZoneRangeText: String? {
+        guard let startTimeZone = event.startTimeZone,
+              let endTimeZone = event.endTimeZone else { return nil }
+
+        if startTimeZone == endTimeZone {
+            return "\(timeRange(in: startTimeZone)) (\(formattedTimeZone(for: event.startDate, in: startTimeZone)))"
+        }
+
+        return [
+            formattedTime(for: event.startDate, in: startTimeZone),
+            "(\(formattedTimeZone(for: event.startDate, in: startTimeZone)))",
+            "-",
+            formattedTime(for: event.endDate, in: endTimeZone),
+            "(\(formattedTimeZone(for: event.endDate, in: endTimeZone)))"
+        ]
+        .joined(separator: " ")
+    }
+
+    private func timeRange(in timeZone: TimeZone) -> String {
+        (event.startDate ..< event.endDate)
+            .formatted(
+                Date.IntervalFormatStyle(
+                    date: .omitted,
+                    time: .shortened,
+                    locale: .current,
+                    timeZone: timeZone
+                )
+            )
+    }
+
+    private func formattedTime(for date: Date, in timeZone: TimeZone) -> String {
+        date.formatted(
+            Date.FormatStyle(
+                date: .omitted,
+                time: .shortened,
+                locale: .current,
+                timeZone: timeZone
+            )
+        )
+    }
+
+    private func formattedTimeZone(for date: Date, in timeZone: TimeZone) -> String {
+        date.formatted(
+            Date.FormatStyle(
+                date: .omitted,
+                time: .omitted,
+                locale: .current,
+                timeZone: timeZone
+            )
+            .timeZone(.localizedGMT(.short))
+        )
     }
 }
