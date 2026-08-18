@@ -26,7 +26,7 @@ struct NoEventsCellView: View {
     var body: some View {
         Text(CalendarResourcesStrings.planningNothingPlanned)
             .font(.caption.weight(.medium))
-            .foregroundStyle(theme.color.textPrimary)
+            .foregroundStyle(theme.color.contentPrimary)
             .padding(.horizontal, value: .medium)
             .frame(maxWidth: .infinity, alignment: .leading)
     }

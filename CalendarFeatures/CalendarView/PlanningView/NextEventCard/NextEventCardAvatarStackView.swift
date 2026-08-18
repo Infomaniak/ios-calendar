@@ -62,7 +62,7 @@ struct NextEventCardAvatarStackView: View {
             if hiddenAttendeesCount > 0 {
                 Text(CalendarResourcesStrings.moreParticipantsLabel(hiddenAttendeesCount))
                     .font(.footnote)
-                    .foregroundStyle(theme.color.textTertiary)
+                    .foregroundStyle(theme.color.contentTertiary)
             }
         }
     }

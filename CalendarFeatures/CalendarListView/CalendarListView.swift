@@ -40,14 +40,14 @@ public struct CalendarListView: View {
                 CalendarListContentView(indexedCalendars: indexedCalendars)
             } header: {
                 Text(CalendarResourcesStrings.calendarsMenuSectionTitle)
-                    .foregroundStyle(theme.color.textSecondary)
+                    .foregroundStyle(theme.color.contentSecondary)
             }
 
             Section {
                 NavigationLink(destination: Text(CalendarResourcesStrings.accountsTitle)) {
                     Label {
                         Text(CalendarResourcesStrings.accountsTitle)
-                            .foregroundStyle(theme.color.textPrimary)
+                            .foregroundStyle(theme.color.contentPrimary)
                     } icon: {
                         CalendarResourcesAsset.Images.circleUser.swiftUIImage
                     }
@@ -56,7 +56,7 @@ public struct CalendarListView: View {
                 NavigationLink(destination: SettingsView()) {
                     Label {
                         Text(CalendarResourcesStrings.settingsTitle)
-                            .foregroundStyle(theme.color.textPrimary)
+                            .foregroundStyle(theme.color.contentPrimary)
                     } icon: {
                         CalendarResourcesAsset.Images.cog.swiftUIImage
                     }
@@ -65,7 +65,7 @@ public struct CalendarListView: View {
                 Link(destination: URLConstants.helpAndSupportURL) {
                     Label {
                         Text(CalendarResourcesStrings.helpTitle)
-                            .foregroundStyle(theme.color.textPrimary)
+                            .foregroundStyle(theme.color.contentPrimary)
                     } icon: {
                         CalendarResourcesAsset.Images.headset.swiftUIImage
                     }
@@ -73,7 +73,7 @@ public struct CalendarListView: View {
                 .buttonStyle(.plain)
             } header: {
                 Text(CalendarResourcesStrings.configurationMenuSectionTitle)
-                    .foregroundStyle(theme.color.textSecondary)
+                    .foregroundStyle(theme.color.contentSecondary)
             }
         }
         .task(id: calendarAccounts) {

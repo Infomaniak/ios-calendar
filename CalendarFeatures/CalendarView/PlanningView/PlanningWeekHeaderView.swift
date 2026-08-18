@@ -36,11 +36,11 @@ struct PlanningWeekHeaderView: View {
             HStack {
                 Text(CalendarResourcesStrings.weekHeaderWeekNumber(calendar.component(.weekOfYear, from: date)))
                     .font(.system(.caption2))
-                    .foregroundStyle(theme.color.textTertiary)
+                    .foregroundStyle(theme.color.contentTertiary)
 
                 Text(weekInterval, format: .interval.day().month(.wide))
                     .font(.system(.caption, weight: .semibold))
-                    .foregroundStyle(theme.color.textPrimary)
+                    .foregroundStyle(theme.color.contentPrimary)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
