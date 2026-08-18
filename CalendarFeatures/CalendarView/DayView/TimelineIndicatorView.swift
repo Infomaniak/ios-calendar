@@ -32,7 +32,6 @@ struct TimelineIndicatorView: View {
     }
 
     var body: some View {
-        let markerY = elapsedTime * pointsPerHour + DayView.Constants.verticalInset
         HStack(spacing: theme.spacing.twoXs) {
             Text(date.formatted(DayTimelineView.Constants.dateFormater))
                 .font(DayTimelineView.Constants.labelFont)
@@ -51,11 +50,6 @@ struct TimelineIndicatorView: View {
                     .frame(maxWidth: .infinity)
                     .background(.red) // TODO: Use Red - On Dataviz when available
             }
-        }
-        .visualEffect { content, geometryProxy in
-            content.offset(
-                y: markerY - geometryProxy.size.height / 2
-            )
         }
         .accessibilityHidden(true)
     }
