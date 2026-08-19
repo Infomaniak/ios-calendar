@@ -50,7 +50,7 @@ struct FullDayEventView: View {
             HStack {
                 let weekNumber = Calendar.current.component(.weekOfYear, from: date)
                 Text(CalendarResourcesStrings.weekHeaderWeekNumber(weekNumber))
-                    .foregroundStyle(theme.color.textTertiary)
+                    .foregroundStyle(theme.color.contentTertiary)
                     .frame(
                         width: DayView.Constants.leadingInset,
                         alignment: .trailing
@@ -63,7 +63,7 @@ struct FullDayEventView: View {
                         + Text(date, format: .dateTime.day().month())
                 )
                 .font(.body)
-                .foregroundStyle(theme.color.textPrimary)
+                .foregroundStyle(theme.color.contentPrimary)
                 .padding(.leading, IKPadding.mini)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -71,7 +71,7 @@ struct FullDayEventView: View {
                 if !events.isEmpty {
                     Text(CalendarResourcesStrings.allDayLabel)
                         .font(.caption2)
-                        .foregroundStyle(theme.color.textTertiary)
+                        .foregroundStyle(theme.color.contentTertiary)
                         .frame(
                             width: DayView.Constants.leadingInset,
                             alignment: .trailing

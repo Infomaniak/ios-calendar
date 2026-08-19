@@ -119,15 +119,6 @@ struct DayContentView: View {
                         }
                         .padding(.leading, Self.Constants.leadingInset)
                         .padding(.vertical, Self.Constants.verticalInset)
-
-                    if calendar.isDate(date, inSameDayAs: timeline.date) {
-                        TimelineIndicatorView(date: timeline.date)
-                            .padding(.leading, value: .medium)
-                            .visualEffect { content, proxy in
-                                content
-                                    .offset(y: -proxy.size.height / 2 + timeIndicatorPosition(at: timeline.date))
-                            }
-                    }
                 }
                 .scrollPosition($scrollPosition)
                 .onScrollGeometryChange(for: CGFloat.self) { scrollProxy in
@@ -165,6 +156,7 @@ struct DayContentView: View {
                     pointsPerHour: effectivePointsPerHour,
                     leadingOffset: Self.Constants.leadingInset
                 )
+                .padding(.horizontal, value: .medium)
 
                 EventuallyLayout(
                     startOfDay: calendar.startOfDay(for: date),
@@ -188,11 +180,17 @@ struct DayContentView: View {
                         )
                     }
                 }
-                .padding(.leading, Self.Constants.leadingInset)
+                .padding(.leading, Self.Constants.leadingInset + IKPadding.medium)
+                .padding(.trailing, IKPadding.medium)
                 .padding(.vertical, Self.Constants.verticalInset)
 
                 if calendar.isDate(date, inSameDayAs: currentDate) {
-                    TimelineIndicatorView(date: currentDate, pointsPerHour: effectivePointsPerHour)
+                    TimelineIndicatorView(date: currentDate)
+                        .padding(.leading, value: .medium)
+                        .visualEffect { content, proxy in
+                            content
+                                .offset(y: -proxy.size.height / 2 + timeIndicatorPosition(at: currentDate))
+                        }
                 }
             }
             .frame(height: viewHeight)
@@ -229,6 +227,24 @@ struct DayContentView: View {
         } else {
             scrollPosition.scrollTo(y: storedScrollPosition)
         }
+	}
+
+    private func horizontalLayoutPointsPerHour(
+        for livePointsPerHour: CGFloat
+    ) -> CGFloat {
+        let minimum = Self.Constants.PointsPerHour.minimum
+        let maximum = Self.Constants.PointsPerHour.maximum
+        let step = Self.Constants.PointsPerHour.horizontalRelayoutStep
+
+        guard step > 0 else {
+            return livePointsPerHour
+        }
+
+        let stepIndex = ((livePointsPerHour - minimum) / step)
+            .rounded(.toNearestOrAwayFromZero)
+        let snappedValue = minimum + stepIndex * step
+
+        return min(max(snappedValue, minimum), maximum)
     }
 }
 

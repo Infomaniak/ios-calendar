@@ -11,6 +11,15 @@
       }
     },
     {
+      "identity" : "eventually",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Infomaniak/Eventually.git",
+      "state" : {
+        "branch" : "feat/get-horizontal-event-value",
+        "revision" : "957df8a277d00aaec91f70f980ff2d674beb9178"
+      }
+    },
+    {
       "identity" : "infinitescrollviews",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/InfiniteScrollViews",
