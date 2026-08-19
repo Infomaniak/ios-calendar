@@ -23,22 +23,21 @@ import SwiftUI
 struct WeekHeaderView: View {
     @Environment(\.calendar) private var calendar
 
-    let startDate: Date
+    let page: ReferenceDatePage
     @Binding var selectedDate: Date
-    let datesWithEventDots: [Date: [Color]]
 
     var body: some View {
         HStack(spacing: 0) {
             ForEach(0 ..< 7, id: \.self) { dayIndex in
                 ZStack {
-                    if let dayDate = calendar.date(byAdding: .day, value: dayIndex, to: startDate) {
+                    if let dayDate = calendar.date(byAdding: .day, value: dayIndex, to: page.referenceDate) {
                         Button {
                             selectedDate = calendar.startOfDay(for: dayDate)
                         } label: {
                             DayCellView(
                                 date: dayDate,
                                 isSelected: calendar.isDate(dayDate, inSameDayAs: selectedDate),
-                                eventDots: datesWithEventDots[dayDate] ?? []
+                                eventDots: page.datesWithEventDots[dayDate] ?? []
                             )
                         }
                         .buttonStyle(.plain)
@@ -55,8 +54,7 @@ struct WeekHeaderView: View {
 #Preview {
     @Previewable @State var selectedDate = Date()
     WeekHeaderView(
-        startDate: Calendar.current.weekStart(for: Date()),
-        selectedDate: $selectedDate,
-        datesWithEventDots: [:]
+        page: ReferenceDatePage(referenceDate: Calendar.current.weekStart(for: Date())),
+        selectedDate: $selectedDate
     )
 }

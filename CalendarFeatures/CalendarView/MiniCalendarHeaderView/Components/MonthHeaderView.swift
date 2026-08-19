@@ -23,14 +23,13 @@ import SwiftUI
 struct MonthHeaderView: View {
     @Environment(\.calendar) private var calendar
 
-    let startDate: Date
+    let page: ReferenceDatePage
     @Binding var selectedDate: Date
-    let datesWithEventDots: [Date: [Color]]
 
     private let maximumRowCount = 6
 
     private var monthStart: Date {
-        calendar.monthStart(for: startDate)
+        calendar.monthStart(for: page.referenceDate)
     }
 
     private var gridStart: Date {
@@ -65,7 +64,7 @@ struct MonthHeaderView: View {
                                     DayCellView(
                                         date: dayDate,
                                         isSelected: calendar.isDate(dayDate, inSameDayAs: selectedDate),
-                                        eventDots: datesWithEventDots[dayDate] ?? []
+                                        eventDots: page.datesWithEventDots[dayDate] ?? []
                                     )
                                     .opacity(
                                         calendar.isDate(
@@ -91,8 +90,7 @@ struct MonthHeaderView: View {
 #Preview {
     @Previewable @State var selectedDate = Date()
     MonthHeaderView(
-        startDate: Calendar.current.monthStart(for: Date()),
-        selectedDate: $selectedDate,
-        datesWithEventDots: [:]
+        page: ReferenceDatePage(referenceDate: Calendar.current.monthStart(for: Date())),
+        selectedDate: $selectedDate
     )
 }

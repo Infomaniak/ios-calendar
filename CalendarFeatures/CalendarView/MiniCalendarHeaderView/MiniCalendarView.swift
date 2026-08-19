@@ -23,6 +23,16 @@ import InfomaniakDI
 import MultiplatformCalendar
 import SwiftUI
 
+struct ReferenceDatePage: Hashable, Equatable {
+    let referenceDate: Date
+    let datesWithEventDots: [Date: [Color]]
+
+    init(referenceDate: Date, datesWithEventDots: [Date: [Color]] = [:]) {
+        self.referenceDate = referenceDate
+        self.datesWithEventDots = datesWithEventDots
+    }
+}
+
 struct MiniCalendarView: View {
     enum DisplayMode {
         case month
@@ -44,11 +54,9 @@ struct MiniCalendarView: View {
 
     @Environment(\.calendar) private var calendar
 
-    @State private var datesWithEventDots: [Date: [Color]] = [:]
-
     @Binding var displayMode: DisplayMode
     @Binding var selectedDate: Date
-    @Binding var displayedDate: Date
+    @Binding var displayedPage: ReferenceDatePage
 
     var body: some View {
         VStack(spacing: IKPadding.micro) {
@@ -57,25 +65,28 @@ struct MiniCalendarView: View {
             case .week:
                 MiniCalendarPagedInfiniteScrollView(
                     referenceDateInterval: displayMode.referenceDateInterval,
-                    referenceDate: $displayedDate
-                ) { referenceDate in
-                    WeekHeaderView(startDate: referenceDate, selectedDate: $selectedDate, datesWithEventDots: datesWithEventDots)
+                    displayedPage: $displayedPage
+                ) { page in
+                    WeekHeaderView(page: page, selectedDate: $selectedDate)
                 }
             case .month:
                 MiniCalendarPagedInfiniteScrollView(
                     referenceDateInterval: displayMode.referenceDateInterval,
-                    referenceDate: $displayedDate
-                ) { referenceDate in
-                    MonthHeaderView(startDate: referenceDate, selectedDate: $selectedDate, datesWithEventDots: datesWithEventDots)
+                    displayedPage: $displayedPage
+                ) { page in
+                    MonthHeaderView(page: page, selectedDate: $selectedDate)
                 }
             }
         }
-        .task(id: displayedDate) {
-            await updateCalendarDotsFor(date: displayedDate, calendar: calendar)
+        .id(displayedPage)
+        .task(id: displayedPage.referenceDate) {
+            await updateCalendarDotsFor(date: displayedPage.referenceDate, calendar: calendar)
         }
         .onChange(of: selectedDate) { _, newValue in
             withAnimation {
-                displayedDate = displayMode.referenceDate(for: newValue, calendar: calendar)
+                displayedPage = ReferenceDatePage(
+                    referenceDate: displayMode.referenceDate(for: newValue, calendar: calendar)
+                )
             }
         }
     }
@@ -85,6 +96,8 @@ struct MiniCalendarView: View {
         let components = calendar.dateComponents([.year, .month], from: date)
         guard let year = components.year,
               let month = components.month else { return }
+
+        let referenceStartOfDayDate = calendar.startOfDay(for: date)
 
         @InjectService var calendarSDK: CalendarCoreGraph
         for await colorsByDay in calendarSDK.calendarManager.observeMonthlyCalendarColors(month: .init(
@@ -100,12 +113,16 @@ struct MiniCalendarView: View {
                     )) else { return nil }
 
                     let colors = colors.map { Color(eventColor: $0.datavizContainerVariant) }
-                    return (date, colors)
+                    let startOfDayDate = calendar.startOfDay(for: date)
+                    return (startOfDayDate, colors)
                 }
             )
 
             await MainActor.run {
-                self.datesWithEventDots = datesWithEventDots
+                displayedPage = ReferenceDatePage(
+                    referenceDate: referenceStartOfDayDate,
+                    datesWithEventDots: datesWithEventDots
+                )
             }
         }
     }
@@ -115,39 +132,46 @@ struct MiniCalendarPagedInfiniteScrollView<ContentView: View>: View {
     @Environment(\.calendar) private var calendar
 
     let referenceDateInterval: Foundation.Calendar.Component
-    @Binding var referenceDate: Date
-    @ViewBuilder let content: (Date) -> ContentView
+    @Binding var displayedPage: ReferenceDatePage
+    @ViewBuilder let content: (ReferenceDatePage) -> ContentView
 
     var body: some View {
         PagedInfiniteScrollView(
-            changeIndex: $referenceDate,
-            content: { referenceDate in
-                content(referenceDate)
+            changeIndex: $displayedPage,
+            content: { page in
+                content(page)
             },
             increaseIndexAction: { referenceDateAfter($0) },
             decreaseIndexAction: { referenceDateBefore($0) },
-            shouldAnimateBetween: { targetDate, currentDate in
-                (targetDate != currentDate, targetDate > currentDate ? .forward : .reverse)
+            shouldAnimateBetween: { targetPage, currentPage in
+                let targetDate = targetPage.referenceDate
+                let currentDate = currentPage.referenceDate
+                return (targetDate != currentDate, targetDate > currentDate ? .forward : .reverse)
             },
             transitionStyle: .scroll,
             navigationOrientation: .horizontal,
             backgroundColor: .clear
         )
-        .id(referenceDateInterval)
     }
 
-    private func referenceDateAfter(_ date: Date) -> Date? {
-        calendar.date(byAdding: referenceDateInterval, value: 1, to: date)
+    private func referenceDateAfter(_ page: ReferenceDatePage) -> ReferenceDatePage? {
+        guard let date = calendar.date(byAdding: referenceDateInterval, value: 1, to: page.referenceDate) else {
+            return nil
+        }
+        return ReferenceDatePage(referenceDate: date)
     }
 
-    private func referenceDateBefore(_ date: Date) -> Date? {
-        calendar.date(byAdding: referenceDateInterval, value: -1, to: date)
+    private func referenceDateBefore(_ page: ReferenceDatePage) -> ReferenceDatePage? {
+        guard let date = calendar.date(byAdding: referenceDateInterval, value: -1, to: page.referenceDate) else {
+            return nil
+        }
+        return ReferenceDatePage(referenceDate: date)
     }
 }
 
 #Preview {
     @Previewable @State var displayMode: MiniCalendarView.DisplayMode = .week
     @Previewable @State var selectedDate = Date()
-    @Previewable @State var displayedDate = Date()
-    MiniCalendarView(displayMode: $displayMode, selectedDate: $selectedDate, displayedDate: $displayedDate)
+    @Previewable @State var displayedPage = ReferenceDatePage(referenceDate: Date())
+    MiniCalendarView(displayMode: $displayMode, selectedDate: $selectedDate, displayedPage: $displayedPage)
 }
