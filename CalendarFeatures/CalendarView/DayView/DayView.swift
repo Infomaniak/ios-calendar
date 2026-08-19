@@ -109,16 +109,16 @@ struct DayContentView: View {
                     timelineContent(currentDate: timeline.date)
                         .safeAreaBar(edge: .top) {
                             FullDayEventView(events: allDayEvents, date: date)
+                                .padding(.horizontal, value: .medium)
                                 .glassEffect(.identity, in: Rectangle())
                         }
                 } else {
                     timelineContent(currentDate: timeline.date)
                         .safeAreaInset(edge: .top) {
                             FullDayEventView(events: allDayEvents, date: date)
+                                .padding(.horizontal, value: .medium)
                                 .background(Material.bar)
                         }
-                        .padding(.leading, Self.Constants.leadingInset)
-                        .padding(.vertical, Self.Constants.verticalInset)
                 }
                 .scrollPosition($scrollPosition)
                 .onScrollGeometryChange(for: CGFloat.self) { scrollProxy in
