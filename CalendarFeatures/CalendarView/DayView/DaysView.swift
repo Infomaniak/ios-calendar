@@ -37,6 +37,7 @@ private struct PagedInfiniteDateView<Content: View>: View {
             content: content,
             increaseIndexAction: increaseIndexAction,
             decreaseIndexAction: decreaseIndexAction,
+            areIndexesEqualAction: areIndexesEqualAction,
             shouldAnimateBetween: shouldAnimateBetween,
             transitionStyle: .scroll,
             navigationOrientation: .horizontal,
@@ -52,12 +53,18 @@ private struct PagedInfiniteDateView<Content: View>: View {
         return calendar.date(byAdding: .day, value: -1, to: date)
     }
 
+    private func areIndexesEqualAction(_ lhs: Date, _ rhs: Date) -> Bool {
+        return calendar.isDate(lhs, inSameDayAs: rhs)
+    }
+
     private func shouldAnimateBetween(_ newValue: Date, _ oldValue: Date) -> (Bool, UIPageViewController.NavigationDirection) {
         return (newValue != oldValue, newValue > oldValue ? .forward : .reverse)
     }
 }
 
 struct DaysView: View {
+    @Environment(\.calendar) private var calendar
+
     @Environment(MainViewState.self) private var mainViewState
     @Environment(\.calendarAccounts) private var calendarAccounts
 
@@ -68,7 +75,7 @@ struct DaysView: View {
         @Bindable var mainViewState = mainViewState
 
         PagedInfiniteDateView(selectedDate: $mainViewState.selectedDate) { date in
-            DayView(selectedEvent: $selectedEvent, date: date, events: events[date, default: []])
+            DayView(selectedEvent: $selectedEvent, date: date, events: eventsOfDay(date))
         }
         .ignoresSafeArea(.all, edges: .bottom)
         .sheet(item: $selectedEvent) { event in
@@ -79,10 +86,15 @@ struct DaysView: View {
         }
     }
 
+    private func eventsOfDay(_ date: Date) -> [CalendarCoreUI.UIEvent] {
+        let day = date.startOfDay(calendar)
+        return events[day, default: []]
+    }
+
     private func observeCalendars() async {
-        let today = Calendar.current.startOfDay(for: .now)
-        let startDate = Calendar.current.date(byAdding: .day, value: -2, to: today) ?? today
-        let endDate = Calendar.current.date(byAdding: .day, value: 2, to: today) ?? today
+        let today = Date.now.startOfDay(calendar)
+        let startDate = calendar.date(byAdding: .day, value: -2, to: today) ?? today
+        let endDate = calendar.date(byAdding: .day, value: 2, to: today) ?? today
 
         @InjectService var calendarSDK: CalendarCoreGraph
         for await daySlices in calendarSDK.calendarManager.observeDaySlices(start: startDate.instant, end: endDate.instant) {
@@ -93,7 +105,7 @@ struct DaysView: View {
                 }
             }
 
-            let groupedEvents = Dictionary(grouping: uiEvents) { Calendar.current.startOfDay(for: $0.startDate) }
+            let groupedEvents = Dictionary(grouping: uiEvents) { $0.startDate.startOfDay(calendar) }
             events = groupedEvents
         }
     }
