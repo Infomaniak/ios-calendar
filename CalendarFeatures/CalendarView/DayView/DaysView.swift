@@ -58,17 +58,11 @@ private struct PagedInfiniteDateView<Content: View>: View {
 }
 
 struct DaysView: View {
-    @Environment(\.calendar) private var calendar
-
     @Environment(MainViewState.self) private var mainViewState
     @Environment(\.calendarAccounts) private var calendarAccounts
 
     @State private var events: [Date: [CalendarCoreUI.UIEvent]] = [:]
     @State private var selectedEvent: CalendarCoreUI.UIEvent?
-
-    private var dates: [Date] {
-        return [mainViewState.selectedDate]
-    }
 
     var body: some View {
         @Bindable var mainViewState = mainViewState
