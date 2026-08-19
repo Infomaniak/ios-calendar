@@ -24,6 +24,39 @@ import InfomaniakDI
 import MultiplatformCalendar
 import SwiftUI
 
+private struct PagedInfiniteDateView<Content: View>: View {
+    @Environment(\.calendar) private var calendar
+
+    @Binding var selectedDate: Date
+
+    @ViewBuilder let content: (Date) -> Content
+
+    var body: some View {
+        PagedInfiniteScrollView(
+            changeIndex: $selectedDate,
+            content: content,
+            increaseIndexAction: increaseIndexAction,
+            decreaseIndexAction: decreaseIndexAction,
+            shouldAnimateBetween: shouldAnimateBetween,
+            transitionStyle: .scroll,
+            navigationOrientation: .horizontal,
+            backgroundColor: .clear
+        )
+    }
+
+    private func increaseIndexAction(_ date: Date) -> Date? {
+        return calendar.date(byAdding: .day, value: 1, to: date)
+    }
+
+    private func decreaseIndexAction(_ date: Date) -> Date? {
+        return calendar.date(byAdding: .day, value: -1, to: date)
+    }
+
+    private func shouldAnimateBetween(_ newValue: Date, _ oldValue: Date) -> (Bool, UIPageViewController.NavigationDirection) {
+        return (newValue != oldValue, newValue > oldValue ? .forward : .reverse)
+    }
+}
+
 struct DaysView: View {
     @Environment(\.calendar) private var calendar
 
@@ -39,21 +72,10 @@ struct DaysView: View {
 
     var body: some View {
         @Bindable var mainViewState = mainViewState
-        PagedInfiniteScrollView(
-            changeIndex: $mainViewState.selectedDate,
-            content: { date in
-                DayView(onSelectEvent: { selectedEvent = $0 }, date: date, events: events[date] ?? [])
-            },
-            increaseIndexAction: { calendar.date(byAdding: .day, value: 1, to: $0) },
-            decreaseIndexAction: { calendar.date(byAdding: .day, value: -1, to: $0) },
-            areIndexesEqualAction: { $0 == $1 },
-            shouldAnimateBetween: { newValue, oldValue in
-                return (newValue != oldValue, newValue > oldValue ? .forward : .reverse)
-            },
-            transitionStyle: .scroll,
-            navigationOrientation: .horizontal,
-            backgroundColor: .clear
-        )
+
+        PagedInfiniteDateView(selectedDate: $mainViewState.selectedDate) { date in
+            DayView(selectedEvent: $selectedEvent, date: date, events: events[date, default: []])
+        }
         .ignoresSafeArea(.all, edges: .bottom)
         .sheet(item: $selectedEvent) { event in
             EventDetailsView(event: event)
