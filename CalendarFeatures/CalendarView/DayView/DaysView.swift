@@ -24,41 +24,89 @@ import InfomaniakDI
 import MultiplatformCalendar
 import SwiftUI
 
+struct PagedDaysIndex: Equatable, Hashable {
+    let date: Date
+    let events: [CalendarCoreUI.UIEvent]
+
+    static func == (lhs: Self, rhs: Self) -> Bool {
+        return Calendar.current.isDate(lhs.date, inSameDayAs: rhs.date) && lhs.events == rhs.events
+    }
+}
+
 private struct PagedInfiniteDateView<Content: View>: View {
     @Environment(\.calendar) private var calendar
 
+    @State private var index: PagedDaysIndex
+
     @Binding var selectedDate: Date
 
-    @ViewBuilder let content: (Date) -> Content
+    let events: [Date: [CalendarCoreUI.UIEvent]]
+    @ViewBuilder let content: (PagedDaysIndex) -> Content
+
+    init(selectedDate: Binding<Date>, events: [Date: [CalendarCoreUI.UIEvent]], content: @escaping (PagedDaysIndex) -> Content) {
+        _index = State(wrappedValue:
+            PagedDaysIndex(
+                date: selectedDate.wrappedValue,
+                events: events[Calendar.current.startOfDay(for: selectedDate.wrappedValue), default: []]
+            ))
+
+        _selectedDate = selectedDate
+        self.events = events
+        self.content = content
+    }
 
     var body: some View {
         PagedInfiniteScrollView(
-            changeIndex: $selectedDate,
+            changeIndex: $index,
             content: content,
             increaseIndexAction: increaseIndexAction,
             decreaseIndexAction: decreaseIndexAction,
-            areIndexesEqualAction: areIndexesEqualAction,
             shouldAnimateBetween: shouldAnimateBetween,
             transitionStyle: .scroll,
             navigationOrientation: .horizontal,
             backgroundColor: .clear
         )
+        .onChange(of: events) { _, newValue in
+            index = PagedDaysIndex(date: selectedDate, events: newValue[selectedDate.startOfDay(calendar), default: []])
+        }
+        .onChange(of: index) { _, newValue in
+            guard !calendar.isDate(newValue.date, inSameDayAs: selectedDate) else { return }
+            selectedDate = newValue.date
+        }
+        .onChange(of: selectedDate) { _, newValue in
+            guard !calendar.isDate(newValue, inSameDayAs: index.date) else { return }
+            index = PagedDaysIndex(date: newValue, events: eventsOfDay(newValue))
+        }
     }
 
-    private func increaseIndexAction(_ date: Date) -> Date? {
-        return calendar.date(byAdding: .day, value: 1, to: date)
+    private func increaseIndexAction(_ index: PagedDaysIndex) -> PagedDaysIndex? {
+        guard let nextDate = calendar.date(byAdding: .day, value: 1, to: index.date) else {
+            return nil
+        }
+
+        return PagedDaysIndex(date: nextDate, events: eventsOfDay(nextDate))
     }
 
-    private func decreaseIndexAction(_ date: Date) -> Date? {
-        return calendar.date(byAdding: .day, value: -1, to: date)
+    private func decreaseIndexAction(_ index: PagedDaysIndex) -> PagedDaysIndex? {
+        guard let previousDate = calendar.date(byAdding: .day, value: -1, to: index.date) else {
+            return nil
+        }
+
+        return PagedDaysIndex(date: previousDate, events: eventsOfDay(previousDate))
     }
 
-    private func areIndexesEqualAction(_ lhs: Date, _ rhs: Date) -> Bool {
-        return calendar.isDate(lhs, inSameDayAs: rhs)
+    private func shouldAnimateBetween(
+        _ newValue: PagedDaysIndex, _ oldValue: PagedDaysIndex
+    ) -> (Bool, UIPageViewController.NavigationDirection) {
+        let newDate = newValue.date
+        let oldDate = oldValue.date
+
+        return (newDate != oldDate, newDate > oldDate ? .forward : .reverse)
     }
 
-    private func shouldAnimateBetween(_ newValue: Date, _ oldValue: Date) -> (Bool, UIPageViewController.NavigationDirection) {
-        return (newValue != oldValue, newValue > oldValue ? .forward : .reverse)
+    private func eventsOfDay(_ date: Date) -> [CalendarCoreUI.UIEvent] {
+        let day = date.startOfDay(calendar)
+        return events[day, default: []]
     }
 }
 
@@ -74,8 +122,8 @@ struct DaysView: View {
     var body: some View {
         @Bindable var mainViewState = mainViewState
 
-        PagedInfiniteDateView(selectedDate: $mainViewState.selectedDate) { date in
-            DayView(selectedEvent: $selectedEvent, date: date, events: eventsOfDay(date))
+        PagedInfiniteDateView(selectedDate: $mainViewState.selectedDate, events: events) { index in
+            DayView(selectedEvent: $selectedEvent, date: index.date, events: index.events)
         }
         .ignoresSafeArea(.all, edges: .bottom)
         .sheet(item: $selectedEvent) { event in
@@ -84,11 +132,6 @@ struct DaysView: View {
         .task {
             await observeCalendars()
         }
-    }
-
-    private func eventsOfDay(_ date: Date) -> [CalendarCoreUI.UIEvent] {
-        let day = date.startOfDay(calendar)
-        return events[day, default: []]
     }
 
     private func observeCalendars() async {
