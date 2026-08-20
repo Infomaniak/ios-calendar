@@ -110,7 +110,7 @@ struct DayContentView: View {
                         .safeAreaBar(edge: .top) {
                             FullDayEventView(events: allDayEvents, date: date)
                                 .padding(.horizontal, value: .medium)
-                                .glassEffect(.identity, in: Rectangle())
+                                .glassEffect(.regular, in: Rectangle())
                         }
                 } else {
                     timelineContent(currentDate: timeline.date)
