@@ -70,6 +70,7 @@ struct DayContentView: View {
 
     @State private var pointsPerHour = Constants.PointsPerHour.default
     @State private var effectivePointsPerHour = Constants.PointsPerHour.default
+    @State private var currentMagnification: CGFloat = 1.0
 
     @State private var coveredTextHeights: [Int: CGFloat] = [:]
 
@@ -152,21 +153,23 @@ struct DayContentView: View {
                     }
                 }
                 .frame(height: viewHeight)
-                .id(timelineId)
+                .scrollPosition($scrollPosition)
+                .onAppear {
+                    let currentTimePosition = timeIndicatorPosition(at: .now)
+                    scrollPosition.scrollTo(y: currentTimePosition - IKPadding.huge)
+                }
                 .simultaneousGesture(
                     MagnifyGesture()
                         .onChanged { value in
-                            unitAnchorState = value.startAnchor
-                            let newPointsPerHour = pointsPerHour * value.magnification
-                            effectivePointsPerHour = clampedPointsPerHour(newPointsPerHour)
-                            positionId = timelineId
+                            currentMagnification = value.magnification
+                            effectivePointsPerHour = clampedPointsPerHour(pointsPerHour * value.magnification)
                         }
                         .onEnded { _ in
-                            pointsPerHour = effectivePointsPerHour
+                            currentMagnification = 1.0
                         }
                 )
             }
-            .scrollPosition(id: $positionId, anchor: unitAnchorState)
+
             .modifier(GlassHeaderBarModifier {
                 FullDayEventView(events: events.filter(\.isAllDay), date: date)
             })
