@@ -107,7 +107,6 @@ struct DayEventView: View {
         .frame(maxHeight: effectiveHeight, alignment: isCompact ? .center : .top)
         .frame(height: height, alignment: .top)
         .eventCellStyle(event: event, padding: 0)
-        .opacity(0.75)
     }
 }
 

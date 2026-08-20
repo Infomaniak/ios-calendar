@@ -72,7 +72,7 @@ struct EventCellStyle: ViewModifier {
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(padding)
             .foregroundStyle(foreground)
-            .background(background)
+            .background(background.opacity(0.75))
             .overlay(alignment: .leading) {
                 colors.onDatavizContainer.frame(width: 4)
             }
