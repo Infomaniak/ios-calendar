@@ -22,6 +22,19 @@ import ESDSFoundation
 import SwiftUI
 
 struct DayView: View {
+    @Environment(\.calendar) private var calendar
+    @Environment(DaysViewModel.self) private var daysViewModel
+
+    @Binding var selectedEvent: CalendarCoreUI.UIEvent?
+
+    let date: Date
+
+    var body: some View {
+        DayContentView(selectedEvent: $selectedEvent, date: date, events: daysViewModel.events(for: date, calendar: calendar))
+    }
+}
+
+struct DayContentView: View {
     enum Constants {
         static let verticalInset = DayTimelineView.Constants.labelFontSize / 2
 
@@ -47,13 +60,16 @@ struct DayView: View {
     }
 
     @Environment(\.calendar) private var calendar
+    @Environment(MainViewState.self) private var mainViewState
 
+    @SceneStorage("DayViewScrollPosition") private var storedScrollPosition = 0.0
     @State private var scrollPosition = ScrollPosition()
 
     @State private var pointsPerHour = Constants.PointsPerHour.default
     @State private var currentMagnification: CGFloat = 1.0
 
-    let onSelectEvent: (CalendarCoreUI.UIEvent) -> Void
+    @Binding var selectedEvent: CalendarCoreUI.UIEvent?
+
     let date: Date
     let events: [CalendarCoreUI.UIEvent]
 
@@ -85,56 +101,67 @@ struct DayView: View {
     }
 
     var body: some View {
-        TimelineView(.everyMinute) { timeline in
-            ScrollView {
-                ZStack(alignment: .top) {
-                    DayTimelineView(date: date, pointsPerHour: effectivePointsPerHour, leadingOffset: Self.Constants.leadingInset)
+        GeometryReader { proxy in
+            TimelineView(.everyMinute) { timeline in
+                ScrollView {
+                    ZStack(alignment: .top) {
+                        DayTimelineView(
+                            date: date,
+                            pointsPerHour: effectivePointsPerHour,
+                            leadingOffset: Self.Constants.leadingInset
+                        )
                         .padding(.horizontal, value: .medium)
 
-                    DayViewLayout(
-                        calendar: calendar,
-                        verticalInset: Self.Constants.verticalInset,
-                        leadingInset: Self.Constants.leadingInset + IKPadding.medium,
-                        trailingInset: IKPadding.medium,
-                        pointsPerHour: effectivePointsPerHour
-                    ) {
-                        ForEach(events) { event in
-                            Button {
-                                onSelectEvent(event)
-                            } label: {
-                                DayEventView(event: event, pointsPerHour: effectivePointsPerHour)
+                        DayViewLayout(
+                            calendar: calendar,
+                            verticalInset: Self.Constants.verticalInset,
+                            leadingInset: Self.Constants.leadingInset + IKPadding.medium,
+                            trailingInset: IKPadding.medium,
+                            pointsPerHour: effectivePointsPerHour
+                        ) {
+                            ForEach(events) { event in
+                                Button { selectedEvent = event } label: {
+                                    DayEventView(event: event, pointsPerHour: effectivePointsPerHour)
+                                }
+                                .buttonStyle(.plain)
+                                .tag(event.startDate)
                             }
-                            .buttonStyle(.plain)
-                            .tag(event.startDate)
+                        }
+
+                        if calendar.isDate(date, inSameDayAs: timeline.date) {
+                            let indicatorPosition = timeIndicatorPosition(at: timeline.date)
+
+                            TimelineIndicatorView(date: timeline.date)
+                                .padding(.leading, value: .medium)
+                                .visualEffect { content, visualProxy in
+                                    content
+                                        .offset(y: -visualProxy.size.height / 2 + indicatorPosition)
+                                }
                         }
                     }
-
-                    if calendar.isDate(date, inSameDayAs: timeline.date) {
-                        TimelineIndicatorView(date: timeline.date)
-                            .padding(.leading, value: .medium)
-                            .visualEffect { content, proxy in
-                                content
-                                    .offset(y: -proxy.size.height / 2 + timeIndicatorPosition(at: timeline.date))
-                            }
-                    }
+                    .frame(height: viewHeight)
                 }
-                .frame(height: viewHeight)
+                .scrollPosition($scrollPosition)
+                .onScrollGeometryChange(for: CGFloat.self) { scrollProxy in
+                    scrollProxy.contentOffset.y
+                } action: { _, newValue in
+                    guard mainViewState.selectedDate == date else { return }
+                    storedScrollPosition = Double(newValue)
+                }
+                .onAppear {
+                    scrollToCorrectPosition(proxy)
+                }
+                .simultaneousGesture(
+                    MagnifyGesture()
+                        .onChanged { value in
+                            currentMagnification = value.magnification
+                        }
+                        .onEnded { value in
+                            pointsPerHour = clampedPointsPerHour(pointsPerHour * value.magnification)
+                            currentMagnification = 1.0
+                        }
+                )
             }
-            .scrollPosition($scrollPosition)
-            .onAppear {
-                let currentTimePosition = timeIndicatorPosition(at: .now)
-                scrollPosition.scrollTo(y: currentTimePosition - IKPadding.huge)
-            }
-            .simultaneousGesture(
-                MagnifyGesture()
-                    .onChanged { value in
-                        currentMagnification = value.magnification
-                    }
-                    .onEnded { value in
-                        pointsPerHour = clampedPointsPerHour(pointsPerHour * value.magnification)
-                        currentMagnification = 1.0
-                    }
-            )
         }
     }
 
@@ -146,8 +173,17 @@ struct DayView: View {
         let elapsedTime = date.timeIntervalSince(calendar.startOfDay(for: date)) / 3600
         return elapsedTime * effectivePointsPerHour + Self.Constants.verticalInset
     }
+
+    private func scrollToCorrectPosition(_ proxy: GeometryProxy) {
+        if calendar.isDate(date, inSameDayAs: .now) {
+            let currentTimePosition = timeIndicatorPosition(at: .now)
+            scrollPosition.scrollTo(y: currentTimePosition - proxy.size.height / 2)
+        } else {
+            scrollPosition.scrollTo(y: storedScrollPosition)
+        }
+    }
 }
 
 #Preview {
-    DayView(onSelectEvent: { _ in }, date: .now, events: [.preview, .preview])
+    DayContentView(selectedEvent: .constant(nil), date: .now, events: [.preview, .preview])
 }
