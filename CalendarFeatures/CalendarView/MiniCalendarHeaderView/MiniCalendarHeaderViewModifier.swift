@@ -30,10 +30,13 @@ struct MiniCalendarHeaderViewModifier: ViewModifier {
     init(selectedDate: Binding<Date>, initialDisplayMode: MiniCalendarView.DisplayMode = .week) {
         _displayMode = State(initialValue: initialDisplayMode)
         _selectedDate = selectedDate
-        _displayedPage = State(initialValue: ReferenceDatePage(referenceDate: initialDisplayMode.referenceDate(
-            for: selectedDate.wrappedValue,
-            calendar: .current
-        )))
+        _displayedPage = State(initialValue: ReferenceDatePage(
+            referenceDate: initialDisplayMode.referenceDate(
+                for: selectedDate.wrappedValue,
+                calendar: .current
+            ),
+            referenceDateInterval: initialDisplayMode.referenceDateInterval
+        ))
     }
 
     func body(content: Content) -> some View {
@@ -104,7 +107,8 @@ struct MiniCalendarHeaderViewModifier: ViewModifier {
         withAnimation {
             displayMode = displayMode == .month ? .week : .month
             displayedPage = ReferenceDatePage(
-                referenceDate: displayMode.referenceDate(for: selectedDate, calendar: calendar)
+                referenceDate: displayMode.referenceDate(for: selectedDate, calendar: calendar),
+                referenceDateInterval: displayMode.referenceDateInterval
             )
         }
     }

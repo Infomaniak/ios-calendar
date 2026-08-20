@@ -54,7 +54,10 @@ struct WeekHeaderView: View {
 #Preview {
     @Previewable @State var selectedDate = Date()
     WeekHeaderView(
-        page: ReferenceDatePage(referenceDate: Calendar.current.weekStart(for: Date())),
+        page: ReferenceDatePage(
+            referenceDate: Calendar.current.weekStart(for: Date()),
+            referenceDateInterval: MiniCalendarView.DisplayMode.week.referenceDateInterval
+        ),
         selectedDate: $selectedDate
     )
 }

@@ -25,10 +25,12 @@ import SwiftUI
 
 struct ReferenceDatePage: Hashable, Equatable {
     let referenceDate: Date
+    let referenceDateInterval: Foundation.Calendar.Component
     let datesWithEventDots: [Date: [Color]]
 
-    init(referenceDate: Date, datesWithEventDots: [Date: [Color]] = [:]) {
+    init(referenceDate: Date, referenceDateInterval: Foundation.Calendar.Component, datesWithEventDots: [Date: [Color]] = [:]) {
         self.referenceDate = referenceDate
+        self.referenceDateInterval = referenceDateInterval
         self.datesWithEventDots = datesWithEventDots
     }
 }
@@ -74,6 +76,10 @@ struct MiniCalendarView: View {
                 increaseIndexAction: { referenceDateAfter($0) },
                 decreaseIndexAction: { referenceDateBefore($0) },
                 shouldAnimateBetween: { targetPage, currentPage in
+                    guard targetPage.referenceDateInterval == currentPage.referenceDateInterval else {
+                        return (false, .forward)
+                    }
+
                     let targetDate = targetPage.referenceDate
                     let currentDate = currentPage.referenceDate
                     return (targetDate != currentDate, targetDate > currentDate ? .forward : .reverse)
@@ -82,7 +88,6 @@ struct MiniCalendarView: View {
                 navigationOrientation: .horizontal,
                 backgroundColor: .clear
             )
-            .id(displayMode)
         }
         .task(id: displayedPage.referenceDate) {
             await updateCalendarDotsFor(date: displayedPage.referenceDate, calendar: calendar)
@@ -90,7 +95,8 @@ struct MiniCalendarView: View {
         .onChange(of: selectedDate) { _, newValue in
             withAnimation {
                 displayedPage = ReferenceDatePage(
-                    referenceDate: displayMode.referenceDate(for: newValue, calendar: calendar)
+                    referenceDate: displayMode.referenceDate(for: newValue, calendar: calendar),
+                    referenceDateInterval: displayMode.referenceDateInterval
                 )
             }
         }
@@ -100,14 +106,14 @@ struct MiniCalendarView: View {
         guard let date = calendar.date(byAdding: displayMode.referenceDateInterval, value: 1, to: page.referenceDate) else {
             return nil
         }
-        return ReferenceDatePage(referenceDate: date)
+        return ReferenceDatePage(referenceDate: date, referenceDateInterval: displayMode.referenceDateInterval)
     }
 
     private func referenceDateBefore(_ page: ReferenceDatePage) -> ReferenceDatePage? {
         guard let date = calendar.date(byAdding: displayMode.referenceDateInterval, value: -1, to: page.referenceDate) else {
             return nil
         }
-        return ReferenceDatePage(referenceDate: date)
+        return ReferenceDatePage(referenceDate: date, referenceDateInterval: displayMode.referenceDateInterval)
     }
 
     @concurrent
@@ -140,6 +146,7 @@ struct MiniCalendarView: View {
             await MainActor.run {
                 displayedPage = ReferenceDatePage(
                     referenceDate: referenceStartOfDayDate,
+                    referenceDateInterval: displayMode.referenceDateInterval,
                     datesWithEventDots: datesWithEventDots
                 )
             }
@@ -150,6 +157,9 @@ struct MiniCalendarView: View {
 #Preview {
     @Previewable @State var displayMode: MiniCalendarView.DisplayMode = .week
     @Previewable @State var selectedDate = Date()
-    @Previewable @State var displayedPage = ReferenceDatePage(referenceDate: Date())
+    @Previewable @State var displayedPage = ReferenceDatePage(
+        referenceDate: Date(),
+        referenceDateInterval: MiniCalendarView.DisplayMode.week.referenceDateInterval
+    )
     MiniCalendarView(displayMode: $displayMode, selectedDate: $selectedDate, displayedPage: $displayedPage)
 }

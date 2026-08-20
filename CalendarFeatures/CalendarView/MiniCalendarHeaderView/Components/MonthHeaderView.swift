@@ -90,7 +90,10 @@ struct MonthHeaderView: View {
 #Preview {
     @Previewable @State var selectedDate = Date()
     MonthHeaderView(
-        page: ReferenceDatePage(referenceDate: Calendar.current.monthStart(for: Date())),
+        page: ReferenceDatePage(
+            referenceDate: Calendar.current.monthStart(for: Date()),
+            referenceDateInterval: MiniCalendarView.DisplayMode.month.referenceDateInterval
+        ),
         selectedDate: $selectedDate
     )
 }
