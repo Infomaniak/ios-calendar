@@ -30,8 +30,9 @@ struct DayTimelineView: View {
     let leadingOffset: CGFloat
 
     enum Constants {
+        static let labelFont = Font.caption2.weight(.semibold)
         static let labelFontSize = UIFont.scaledFontSize(.caption2, size: 11)
-        static let labelSpacing: CGFloat = IKPadding.medium
+        static let labelSpacing: CGFloat = IKPadding.small
 
         static let dateFormater: Date.FormatStyle = .dateTime.hour().minute()
     }
@@ -83,7 +84,7 @@ struct DayTimelineView: View {
             } symbols: {
                 ForEach(hourMarks, id: \.self) { mark in
                     Text(mark, format: Self.Constants.dateFormater)
-                        .font(.caption2.weight(.semibold))
+                        .font(Self.Constants.labelFont)
                         .foregroundStyle(theme.color.contentSecondary)
                         .tag(mark)
                 }

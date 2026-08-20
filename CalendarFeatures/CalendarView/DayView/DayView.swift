@@ -33,7 +33,7 @@ struct DayView: View {
 
             let fakeDate = Calendar.current.date(from: DateComponents(hour: 12, minute: 0)) ?? .now
             let labelWidth = fakeDate.formatted(DayTimelineView.Constants.dateFormater)
-                .size(withAttributes: [.font: font]).width
+                .size(withAttributes: [.font: font]).width + 2 * IKPadding.mini
 
             return labelWidth.rounded(.up) + DayTimelineView.Constants.labelSpacing
         }()
@@ -85,15 +85,17 @@ struct DayView: View {
     }
 
     var body: some View {
-        TimelineView(.everyMinute) { _ in
+        TimelineView(.everyMinute) { timeline in
             ScrollView {
                 ZStack(alignment: .top) {
                     DayTimelineView(date: date, pointsPerHour: effectivePointsPerHour, leadingOffset: Self.Constants.leadingInset)
+                        .padding(.horizontal, value: .medium)
 
                     DayViewLayout(
                         calendar: calendar,
                         verticalInset: Self.Constants.verticalInset,
-                        leadingInset: Self.Constants.leadingInset,
+                        leadingInset: Self.Constants.leadingInset + IKPadding.medium,
+                        trailingInset: IKPadding.medium,
                         pointsPerHour: effectivePointsPerHour
                     ) {
                         ForEach(events) { event in
@@ -107,12 +109,22 @@ struct DayView: View {
                         }
                     }
 
-                    // TODO: Add indicator
+                    if calendar.isDate(date, inSameDayAs: timeline.date) {
+                        TimelineIndicatorView(date: timeline.date)
+                            .padding(.leading, value: .medium)
+                            .visualEffect { content, proxy in
+                                content
+                                    .offset(y: -proxy.size.height / 2 + timeIndicatorPosition(at: timeline.date))
+                            }
+                    }
                 }
                 .frame(height: viewHeight)
             }
-            .contentMargins(IKPadding.medium, for: .scrollContent)
             .scrollPosition($scrollPosition)
+            .onAppear {
+                let currentTimePosition = timeIndicatorPosition(at: .now)
+                scrollPosition.scrollTo(y: currentTimePosition - IKPadding.huge)
+            }
             .simultaneousGesture(
                 MagnifyGesture()
                     .onChanged { value in
@@ -128,6 +140,11 @@ struct DayView: View {
 
     private func clampedPointsPerHour(_ value: CGFloat) -> CGFloat {
         return min(max(value, Constants.PointsPerHour.minimum), Constants.PointsPerHour.maximum)
+    }
+
+    private func timeIndicatorPosition(at date: Date) -> CGFloat {
+        let elapsedTime = date.timeIntervalSince(calendar.startOfDay(for: date)) / 3600
+        return elapsedTime * effectivePointsPerHour + Self.Constants.verticalInset
     }
 }
 
