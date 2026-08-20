@@ -76,8 +76,6 @@ struct DaysView: View {
     @State private var viewModel = DaysViewModel()
     @State private var selectedEvent: CalendarCoreUI.UIEvent?
 
-    @State private var observationTask: Task<Void, Never>?
-
     var body: some View {
         @Bindable var mainViewState = mainViewState
 
@@ -89,15 +87,8 @@ struct DaysView: View {
         .sheet(item: $selectedEvent) { event in
             EventDetailsView(event: event)
         }
-        .onChange(of: mainViewState.selectedDate, initial: true) { _, newValue in
-            Task {
-                observationTask?.cancel()
-
-                observationTask = Task {
-                    await observeCalendars(newValue)
-                }
-                await observationTask?.value
-            }
+        .task(id: mainViewState.selectedDate) {
+            await observeCalendars(mainViewState.selectedDate)
         }
     }
 
