@@ -60,7 +60,9 @@ struct DayContentView: View {
     }
 
     @Environment(\.calendar) private var calendar
+    @Environment(MainViewState.self) private var mainViewState
 
+    @SceneStorage("DayViewScrollPosition") private var storedScrollPosition = 0.0
     @State private var scrollPosition = ScrollPosition()
 
     @State private var pointsPerHour = Constants.PointsPerHour.default
@@ -99,56 +101,67 @@ struct DayContentView: View {
     }
 
     var body: some View {
-        TimelineView(.everyMinute) { timeline in
-            ScrollView {
-                ZStack(alignment: .top) {
-                    DayTimelineView(date: date, pointsPerHour: effectivePointsPerHour, leadingOffset: Self.Constants.leadingInset)
+        GeometryReader { proxy in
+            TimelineView(.everyMinute) { timeline in
+                ScrollView {
+                    ZStack(alignment: .top) {
+                        DayTimelineView(
+                            date: date,
+                            pointsPerHour: effectivePointsPerHour,
+                            leadingOffset: Self.Constants.leadingInset
+                        )
                         .padding(.horizontal, value: .medium)
 
-                    DayViewLayout(
-                        calendar: calendar,
-                        verticalInset: Self.Constants.verticalInset,
-                        leadingInset: Self.Constants.leadingInset + IKPadding.medium,
-                        trailingInset: IKPadding.medium,
-                        pointsPerHour: effectivePointsPerHour
-                    ) {
-                        ForEach(events) { event in
-                            Button { selectedEvent = event } label: {
-                                DayEventView(event: event, pointsPerHour: effectivePointsPerHour)
+                        DayViewLayout(
+                            calendar: calendar,
+                            verticalInset: Self.Constants.verticalInset,
+                            leadingInset: Self.Constants.leadingInset + IKPadding.medium,
+                            trailingInset: IKPadding.medium,
+                            pointsPerHour: effectivePointsPerHour
+                        ) {
+                            ForEach(events) { event in
+                                Button { selectedEvent = event } label: {
+                                    DayEventView(event: event, pointsPerHour: effectivePointsPerHour)
+                                }
+                                .buttonStyle(.plain)
+                                .tag(event.startDate)
                             }
-                            .buttonStyle(.plain)
-                            .tag(event.startDate)
+                        }
+
+                        if calendar.isDate(date, inSameDayAs: timeline.date) {
+                            let indicatorPosition = timeIndicatorPosition(at: timeline.date)
+
+                            TimelineIndicatorView(date: timeline.date)
+                                .padding(.leading, value: .medium)
+                                .visualEffect { content, visualProxy in
+                                    content
+                                        .offset(y: -visualProxy.size.height / 2 + indicatorPosition)
+                                }
                         }
                     }
-
-                    if calendar.isDate(date, inSameDayAs: timeline.date) {
-                        let indicatorPosition = timeIndicatorPosition(at: timeline.date)
-
-                        TimelineIndicatorView(date: timeline.date)
-                            .padding(.leading, value: .medium)
-                            .visualEffect { content, proxy in
-                                content
-                                    .offset(y: -proxy.size.height / 2 + indicatorPosition)
-                            }
-                    }
+                    .frame(height: viewHeight)
                 }
-                .frame(height: viewHeight)
+                .scrollPosition($scrollPosition)
+                .onScrollGeometryChange(for: CGFloat.self) { scrollProxy in
+                    scrollProxy.contentOffset.y
+                } action: { _, newValue in
+                    guard mainViewState.selectedDate == date else { return }
+                    storedScrollPosition = Double(newValue)
+                }
+                .onAppear {
+                    scrollToCorrectPosition(proxy)
+                }
+                .simultaneousGesture(
+                    MagnifyGesture()
+                        .onChanged { value in
+                            currentMagnification = value.magnification
+                        }
+                        .onEnded { value in
+                            pointsPerHour = clampedPointsPerHour(pointsPerHour * value.magnification)
+                            currentMagnification = 1.0
+                        }
+                )
             }
-            .scrollPosition($scrollPosition)
-            .onAppear {
-                let currentTimePosition = timeIndicatorPosition(at: .now)
-                scrollPosition.scrollTo(y: currentTimePosition - IKPadding.huge)
-            }
-            .simultaneousGesture(
-                MagnifyGesture()
-                    .onChanged { value in
-                        currentMagnification = value.magnification
-                    }
-                    .onEnded { value in
-                        pointsPerHour = clampedPointsPerHour(pointsPerHour * value.magnification)
-                        currentMagnification = 1.0
-                    }
-            )
         }
     }
 
@@ -159,6 +172,15 @@ struct DayContentView: View {
     private func timeIndicatorPosition(at date: Date) -> CGFloat {
         let elapsedTime = date.timeIntervalSince(calendar.startOfDay(for: date)) / 3600
         return elapsedTime * effectivePointsPerHour + Self.Constants.verticalInset
+    }
+
+    private func scrollToCorrectPosition(_ proxy: GeometryProxy) {
+        if calendar.isDate(date, inSameDayAs: .now) {
+            let currentTimePosition = timeIndicatorPosition(at: .now)
+            scrollPosition.scrollTo(y: currentTimePosition - proxy.size.height / 2)
+        } else {
+            scrollPosition.scrollTo(y: storedScrollPosition)
+        }
     }
 }
 
