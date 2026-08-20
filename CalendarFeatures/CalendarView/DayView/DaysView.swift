@@ -22,32 +22,28 @@ import CalendarEventDetailsView
 import InfiniteScrollViews
 import InfomaniakDI
 import MultiplatformCalendar
+import Observation
 import SwiftUI
 
-struct PagedDaysIndex: Equatable, Hashable {
-    let date: Date
-    let events: [CalendarCoreUI.UIEvent]
+@Observable
+final class DaysViewModel {
+    var events = [Date: [CalendarCoreUI.UIEvent]]()
 
-    static func == (lhs: Self, rhs: Self) -> Bool {
-        return Calendar.current.isDate(lhs.date, inSameDayAs: rhs.date) && lhs.events == rhs.events
+    func events(for date: Date, calendar: Foundation.Calendar) -> [CalendarCoreUI.UIEvent] {
+        return events[date.startOfDay(calendar)] ?? []
     }
-
-    static let empty = PagedDaysIndex(date: Date.distantPast, events: [])
 }
 
 private struct PagedInfiniteDateView<Content: View>: View {
     @Environment(\.calendar) private var calendar
 
-    @State private var index = PagedDaysIndex.empty
-
     @Binding var selectedDate: Date
 
-    let events: [Date: [CalendarCoreUI.UIEvent]]
-    @ViewBuilder let content: (PagedDaysIndex) -> Content
+    @ViewBuilder let content: (Date) -> Content
 
     var body: some View {
         PagedInfiniteScrollView(
-            changeIndex: $index,
+            changeIndex: $selectedDate,
             content: content,
             increaseIndexAction: increaseIndexAction,
             decreaseIndexAction: decreaseIndexAction,
@@ -56,50 +52,18 @@ private struct PagedInfiniteDateView<Content: View>: View {
             navigationOrientation: .horizontal,
             backgroundColor: .clear
         )
-        .onChange(of: events, initial: true) { _, newValue in
-            index = PagedDaysIndex(date: selectedDate, events: eventsOfDay(selectedDate, store: newValue))
-        }
-        .onChange(of: index) { _, newValue in
-            guard !calendar.isDate(newValue.date, inSameDayAs: selectedDate) else { return }
-            selectedDate = newValue.date
-        }
-        .onChange(of: selectedDate) { _, newValue in
-            guard !calendar.isDate(newValue, inSameDayAs: index.date) else { return }
-            index = PagedDaysIndex(date: newValue, events: eventsOfDay(newValue))
-        }
     }
 
-    private func increaseIndexAction(_ index: PagedDaysIndex) -> PagedDaysIndex? {
-        guard let nextDate = calendar.date(byAdding: .day, value: 1, to: index.date) else {
-            return nil
-        }
-
-        return PagedDaysIndex(date: nextDate, events: eventsOfDay(nextDate))
+    private func increaseIndexAction(_ index: Date) -> Date? {
+        return calendar.date(byAdding: .day, value: 1, to: index)
     }
 
-    private func decreaseIndexAction(_ index: PagedDaysIndex) -> PagedDaysIndex? {
-        guard let previousDate = calendar.date(byAdding: .day, value: -1, to: index.date) else {
-            return nil
-        }
-
-        return PagedDaysIndex(date: previousDate, events: eventsOfDay(previousDate))
+    private func decreaseIndexAction(_ index: Date) -> Date? {
+        return calendar.date(byAdding: .day, value: -1, to: index)
     }
 
-    private func shouldAnimateBetween(
-        _ newValue: PagedDaysIndex, _ oldValue: PagedDaysIndex
-    ) -> (Bool, UIPageViewController.NavigationDirection) {
-        guard oldValue != .empty else { return (false, .forward) }
-
-        let newDate = newValue.date
-        let oldDate = oldValue.date
-        return (newDate != oldDate, newDate > oldDate ? .forward : .reverse)
-    }
-
-    private func eventsOfDay(_ date: Date, store: [Date: [CalendarCoreUI.UIEvent]]? = nil) -> [CalendarCoreUI.UIEvent] {
-        let day = date.startOfDay(calendar)
-
-        let eventsStore = store ?? events
-        return eventsStore[day, default: []]
+    private func shouldAnimateBetween(_ newValue: Date, _ oldValue: Date) -> (Bool, UIPageViewController.NavigationDirection) {
+        return (newValue != oldValue, newValue > oldValue ? .forward : .reverse)
     }
 }
 
@@ -109,16 +73,17 @@ struct DaysView: View {
     @Environment(MainViewState.self) private var mainViewState
     @Environment(\.calendarAccounts) private var calendarAccounts
 
-    @State private var events: [Date: [CalendarCoreUI.UIEvent]] = [:]
+    @State private var viewModel = DaysViewModel()
     @State private var selectedEvent: CalendarCoreUI.UIEvent?
 
     var body: some View {
         @Bindable var mainViewState = mainViewState
 
-        PagedInfiniteDateView(selectedDate: $mainViewState.selectedDate, events: events) { index in
-            DayView(selectedEvent: $selectedEvent, date: index.date, events: index.events)
+        PagedInfiniteDateView(selectedDate: $mainViewState.selectedDate) { date in
+            DayView(selectedEvent: $selectedEvent, date: date)
         }
         .ignoresSafeArea(.all, edges: .bottom)
+        .environment(viewModel)
         .sheet(item: $selectedEvent) { event in
             EventDetailsView(event: event)
         }
@@ -142,7 +107,7 @@ struct DaysView: View {
             }
 
             let groupedEvents = Dictionary(grouping: uiEvents) { $0.startDate.startOfDay(calendar) }
-            events = groupedEvents
+            viewModel.events = groupedEvents
         }
     }
 }

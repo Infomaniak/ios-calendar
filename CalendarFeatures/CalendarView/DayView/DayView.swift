@@ -22,6 +22,19 @@ import ESDSFoundation
 import SwiftUI
 
 struct DayView: View {
+    @Environment(\.calendar) private var calendar
+    @Environment(DaysViewModel.self) private var daysViewModel
+
+    @Binding var selectedEvent: CalendarCoreUI.UIEvent?
+
+    let date: Date
+
+    var body: some View {
+        DayContentView(selectedEvent: $selectedEvent, date: date, events: daysViewModel.events(for: date, calendar: calendar))
+    }
+}
+
+struct DayContentView: View {
     enum Constants {
         static let verticalInset = DayTimelineView.Constants.labelFontSize / 2
 
@@ -100,9 +113,7 @@ struct DayView: View {
                         pointsPerHour: effectivePointsPerHour
                     ) {
                         ForEach(events) { event in
-                            Button {
-                                selectedEvent = event
-                            } label: {
+                            Button { selectedEvent = event } label: {
                                 DayEventView(event: event, pointsPerHour: effectivePointsPerHour)
                             }
                             .buttonStyle(.plain)
@@ -150,5 +161,5 @@ struct DayView: View {
 }
 
 #Preview {
-    DayView(selectedEvent: .constant(nil), date: .now, events: [.preview, .preview])
+    DayContentView(selectedEvent: .constant(nil), date: .now, events: [.preview, .preview])
 }
