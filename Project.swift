@@ -66,7 +66,7 @@ let calendarView = Feature(
         TargetDependency.external(name: "ESDSCalendar"),
         TargetDependency.external(name: "InfiniteScrollViews"),
         TargetDependency.external(name: "InfomaniakDI"),
-		TargetDependency.external(name: "Eventually")
+        TargetDependency.external(name: "Eventually")
     ]
 )
 

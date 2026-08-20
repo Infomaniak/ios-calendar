@@ -172,16 +172,11 @@ struct DayContentView: View {
                             pointsPerHour: effectivePointsPerHour,
                             maxTextHeight: coveredTextHeights[index]
                         )
-                        .eventuallyDateIntervalLayout(
-                            DateInterval(
-                                start: event.startDate,
-                                end: event.endDate
-                            )
-                        )
+                        .eventuallyDateIntervalLayout(DateInterval(start: event.startDate, end: event.endDate))
                     }
                 }
                 .padding(.leading, Self.Constants.leadingInset + IKPadding.medium)
-                .padding(.trailing, IKPadding.medium)
+                .padding(.trailing, value: .medium)
                 .padding(.vertical, Self.Constants.verticalInset)
 
                 if calendar.isDate(date, inSameDayAs: currentDate) {
