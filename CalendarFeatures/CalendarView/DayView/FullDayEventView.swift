@@ -32,7 +32,7 @@ struct FullDayEventView: View {
     }
 
     private var headerHeight: CGFloat {
-        let rowHeight = 16 + DayView.Constants.verticalInset * 2 + IKPadding.mini
+        let rowHeight = 16 + DayContentView.Constants.verticalInset * 2 + IKPadding.mini
         let extraPadding = eventPairs.count > 2 ? IKPadding.mini : 0
         return CGFloat(visibleRowCount) * rowHeight + extraPadding
     }
@@ -53,7 +53,7 @@ struct FullDayEventView: View {
                     .foregroundStyle(theme.color.contentTertiary)
                     .padding(.trailing, IKPadding.medium)
                     .frame(
-                        width: DayView.Constants.leadingInset,
+                        width: DayContentView.Constants.leadingInset,
                         alignment: .trailing
                     )
 
@@ -74,7 +74,7 @@ struct FullDayEventView: View {
                         .foregroundStyle(theme.color.contentTertiary)
                         .padding(.trailing, IKPadding.medium)
                         .frame(
-                            width: DayView.Constants.leadingInset,
+                            width: DayContentView.Constants.leadingInset,
                             alignment: .trailing
                         )
                         .multilineTextAlignment(.trailing)
