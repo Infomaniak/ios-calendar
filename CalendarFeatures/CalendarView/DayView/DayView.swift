@@ -122,11 +122,13 @@ struct DayContentView: View {
                     }
 
                     if calendar.isDate(date, inSameDayAs: timeline.date) {
+                        let indicatorPosition = timeIndicatorPosition(at: timeline.date)
+
                         TimelineIndicatorView(date: timeline.date)
                             .padding(.leading, value: .medium)
                             .visualEffect { content, proxy in
                                 content
-                                    .offset(y: -proxy.size.height / 2 + timeIndicatorPosition(at: timeline.date))
+                                    .offset(y: -proxy.size.height / 2 + indicatorPosition)
                             }
                     }
                 }

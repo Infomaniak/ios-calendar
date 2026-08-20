@@ -76,6 +76,8 @@ struct DaysView: View {
     @State private var viewModel = DaysViewModel()
     @State private var selectedEvent: CalendarCoreUI.UIEvent?
 
+    @State private var observationTask: Task<Void, Never>?
+
     var body: some View {
         @Bindable var mainViewState = mainViewState
 
@@ -87,18 +89,29 @@ struct DaysView: View {
         .sheet(item: $selectedEvent) { event in
             EventDetailsView(event: event)
         }
-        .task {
-            await observeCalendars()
+        .onChange(of: mainViewState.selectedDate, initial: true) { _, newValue in
+            Task {
+                observationTask?.cancel()
+
+                observationTask = Task {
+                    await observeCalendars(newValue)
+                }
+                await observationTask?.value
+            }
         }
     }
 
-    private func observeCalendars() async {
-        let today = Date.now.startOfDay(calendar)
-        let startDate = calendar.date(byAdding: .day, value: -2, to: today) ?? today
-        let endDate = calendar.date(byAdding: .day, value: 2, to: today) ?? today
+    private func observeCalendars(_ date: Date) async {
+        let centerDate = date.startOfDay(calendar)
+        let startDate = calendar.date(byAdding: .day, value: -3, to: centerDate) ?? centerDate
+        let endDate = calendar.date(byAdding: .day, value: 3, to: centerDate) ?? centerDate
 
         @InjectService var calendarSDK: CalendarCoreGraph
         for await daySlices in calendarSDK.calendarManager.observeDaySlices(start: startDate.instant, end: endDate.instant) {
+            guard !Task.isCancelled else {
+                return
+            }
+
             let uiEvents = daySlices.values.flatMap { eventDaySlices in
                 eventDaySlices.compactMap {
                     let account = calendarAccounts[Int($0.event.accountIdValue)]
