@@ -194,19 +194,18 @@ struct DayContentView: View {
     private func horizontalLayoutPointsPerHour(
         for livePointsPerHour: CGFloat
     ) -> CGFloat {
-        let minimum = Self.Constants.PointsPerHour.minimum
-        let maximum = Self.Constants.PointsPerHour.maximum
-        let step = Self.Constants.PointsPerHour.horizontalRelayoutStep
-
-        guard step > 0 else {
+        guard Self.Constants.PointsPerHour.horizontalRelayoutStep > 0 else {
             return livePointsPerHour
         }
 
-        let stepIndex = ((livePointsPerHour - minimum) / step)
+        let stepIndex = ((livePointsPerHour - Self.Constants.PointsPerHour.minimum) /
+            Self.Constants.PointsPerHour.horizontalRelayoutStep)
             .rounded(.toNearestOrAwayFromZero)
-        let snappedValue = minimum + stepIndex * step
+        let snappedValue = Self.Constants.PointsPerHour.minimum + stepIndex *
+            Self.Constants.PointsPerHour.horizontalRelayoutStep
 
-        return min(max(snappedValue, minimum), maximum)
+        return min(max(snappedValue, Self.Constants.PointsPerHour.minimum),
+                   Self.Constants.PointsPerHour.maximum)
     }
 }
 
