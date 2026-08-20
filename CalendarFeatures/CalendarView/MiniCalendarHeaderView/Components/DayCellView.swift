@@ -64,6 +64,7 @@ struct DayCellView: View {
                     .transition(.scale(scale: 0.5, anchor: .center).combined(with: .opacity))
             }
         }
+        .frame(maxWidth: .infinity)
         .geometryGroup()
     }
 }
