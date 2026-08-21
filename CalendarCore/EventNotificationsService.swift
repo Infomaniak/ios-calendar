@@ -21,6 +21,8 @@ import MultiplatformCalendar
 import UserNotifications
 
 final class EventNotificationsService: Sendable {
+    private static let notificationIDPrefix = "event-alarm:"
+
     let referenceDate: Date
     let windowSize: TimeInterval
 
@@ -47,13 +49,27 @@ final class EventNotificationsService: Sendable {
 
     private func diffEventsAndNotifications(
         events: [Event], pendingNotifications: [UNNotificationRequest]
-    ) -> (toSchedule: [EventDaySlice], toUnschedule: [UNNotificationRequest]) {
-        return ([], [])
+    ) -> (toSchedule: [(event: Event, alarm: EventAlarm)], toUnschedule: [UNNotificationRequest]) {
+        let eventAlarms = events.flatMap { event in
+            event.alarms.map { (event: event, alarm: $0) }
+        }
+        let expectedNotificationIDs = Set(eventAlarms.map { notificationID(for: $0.event, alarm: $0.alarm) })
+        let pendingNotificationIDs = Set(pendingNotifications.map(\.identifier))
+
+        let toSchedule = eventAlarms.filter {
+            !pendingNotificationIDs.contains(notificationID(for: $0.event, alarm: $0.alarm))
+        }
+        let toUnschedule = pendingNotifications.filter {
+            $0.identifier.hasPrefix(Self.notificationIDPrefix)
+                && !expectedNotificationIDs.contains($0.identifier)
+        }
+
+        return (toSchedule, toUnschedule)
     }
 
     private func unscheduleStaleNotifications(_ notifications: [UNNotificationRequest]) async {
         let identifiers = notifications.map { $0.identifier }
-        UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers: identifiers)
+        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: identifiers)
     }
 
     private func scheduleNotificationsForEvents(_ events: [Event]) async {
@@ -83,7 +99,6 @@ final class EventNotificationsService: Sendable {
     }
 
     private func notificationID(for event: Event, alarm: EventAlarm) -> String {
-        // TODO: Generate unique ID for a notification based on event and alarm
-        return "WIP"
+        return "\(Self.notificationIDPrefix)\(event.masterEventIdValue):\(alarm.description())"
     }
 }
