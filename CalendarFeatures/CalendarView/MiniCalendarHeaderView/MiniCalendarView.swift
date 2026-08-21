@@ -73,17 +73,9 @@ struct MiniCalendarView: View {
                         WeekHeaderView(page: page, selectedDate: $selectedDate)
                     }
                 },
-                increaseIndexAction: { referenceDateAfter($0) },
-                decreaseIndexAction: { referenceDateBefore($0) },
-                shouldAnimateBetween: { targetPage, currentPage in
-                    guard targetPage.referenceDateInterval == currentPage.referenceDateInterval else {
-                        return (false, .forward)
-                    }
-
-                    let targetDate = targetPage.referenceDate
-                    let currentDate = currentPage.referenceDate
-                    return (targetDate != currentDate, targetDate > currentDate ? .forward : .reverse)
-                },
+                increaseIndexAction: referenceDateAfter,
+                decreaseIndexAction: referenceDateBefore,
+                shouldAnimateBetween: shouldAnimateBetween,
                 transitionStyle: .scroll,
                 navigationOrientation: .horizontal,
                 backgroundColor: .clear
@@ -103,6 +95,17 @@ struct MiniCalendarView: View {
         }
     }
 
+    private func shouldAnimateBetween(targetPage: ReferenceDatePage,
+                                      currentPage: ReferenceDatePage) -> (Bool, UIPageViewController.NavigationDirection) {
+        guard targetPage.referenceDateInterval == currentPage.referenceDateInterval else {
+            return (false, .forward)
+        }
+
+        let targetDate = targetPage.referenceDate
+        let currentDate = currentPage.referenceDate
+        return (targetDate != currentDate, targetDate > currentDate ? .forward : .reverse)
+    }
+
     private func referenceDateAfter(_ page: ReferenceDatePage) -> ReferenceDatePage? {
         guard let date = calendar.date(byAdding: displayMode.referenceDateInterval, value: 1, to: page.referenceDate) else {
             return nil
@@ -118,7 +121,7 @@ struct MiniCalendarView: View {
     }
 
     @concurrent
-    func updateCalendarDotsFor(date: Date, calendar: Foundation.Calendar) async {
+    private func updateCalendarDotsFor(date: Date, calendar: Foundation.Calendar) async {
         let components = calendar.dateComponents([.year, .month], from: date)
         guard let year = components.year,
               let month = components.month else { return }

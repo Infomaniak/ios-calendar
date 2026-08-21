@@ -60,7 +60,6 @@ struct MonthHeaderView: View {
         .padding(.horizontal, value: .small)
     }
 
-    @ViewBuilder
     private func cell(row: Int, dayIndex: Int) -> some View {
         ZStack {
             if row >= rowCount {
