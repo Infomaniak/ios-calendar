@@ -40,20 +40,50 @@ final class EventNotificationsService: Sendable {
         await scheduleNotificationsForEvents(diff.toSchedule)
     }
 
-    private func eventsWithNotifications(_ range: Range<Date>) async -> [EventDaySlice] {
-        // TODO: Add logic to fetch events from KMP once available
+    private func eventsWithNotifications(_ range: Range<Date>) async -> [Event] {
+        // TODO: Waiting for the KMP implementation
         return []
     }
 
-    private func diffEventsAndNotifications(events: [EventDaySlice], pendingNotifications: [UNNotificationRequest]) -> (toSchedule: [EventDaySlice], toUnschedule: [UNNotificationRequest]) {
+    private func diffEventsAndNotifications(
+        events: [Event], pendingNotifications: [UNNotificationRequest]
+    ) -> (toSchedule: [EventDaySlice], toUnschedule: [UNNotificationRequest]) {
         return ([], [])
     }
 
     private func unscheduleStaleNotifications(_ notifications: [UNNotificationRequest]) async {
-
+        let identifiers = notifications.map { $0.identifier }
+        UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers: identifiers)
     }
 
-    private func scheduleNotificationsForEvents(_ events: [EventDaySlice]) async {
+    private func scheduleNotificationsForEvents(_ events: [Event]) async {
+        for event in events {
+            for alarm in event.alarms {
+                guard let request = generateNotificationRequestForAlarm(alarm, event: event) else { continue }
+                try? await UNUserNotificationCenter.current().add(request)
+            }
+        }
+    }
 
+    private func generateNotificationRequestForAlarm(_ alarm: EventAlarm, event: Event) -> UNNotificationRequest? {
+        let content = UNMutableNotificationContent()
+        content.title = event.title
+
+        let trigger: UNCalendarNotificationTrigger
+        if let absoluteTrigger = alarm.trigger as? AlarmTriggerAbsolute {
+
+        } else if let relativeTrigger = alarm.trigger as? AlarmTriggerRelative {
+
+        } else {
+            return nil
+        }
+
+        let id = notificationID(for: event, alarm: alarm)
+        return UNNotificationRequest(identifier: id, content: content, trigger: trigger)
+    }
+
+    private func notificationID(for event: Event, alarm: EventAlarm) -> String {
+        // TODO: Generate unique ID for a notification based on event and alarm
+        return "WIP"
     }
 }
