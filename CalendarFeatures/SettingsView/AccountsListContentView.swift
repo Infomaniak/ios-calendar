@@ -35,59 +35,57 @@ public struct AccountsListContentView: View {
     public init() {}
 
     public var body: some View {
-        Group {
-            List {
-                Section {
-                    let accountsArray = calendarAccounts.values.sorted { $0.user.displayName < $1.user.displayName }
+        List {
+            Section {
+                let accountsArray = calendarAccounts.values.sorted { $0.user.displayName < $1.user.displayName }
 
-                    ForEach(accountsArray) { account in
-                        NavigationLink {
-                            AccountSettingsView(user: account.user)
-                        } label: {
-                            AccountCellView(
-                                rawAvatarURL: account.user.avatar,
-                                displayName: account.user.displayName,
-                                email: account.user.email
-                            )
-                        }
-                        .listRowSeparator(account.id == accountsArray.last?.id ? .visible : .hidden, edges: .bottom)
-                        .listRowSeparator(.hidden, edges: .top)
-                        .alignmentGuide(.listRowSeparatorLeading) { _ in 0 }
+                ForEach(accountsArray) { account in
+                    NavigationLink {
+                        AccountSettingsView(user: account.user)
+                    } label: {
+                        AccountCellView(
+                            rawAvatarURL: account.user.avatar,
+                            displayName: account.user.displayName,
+                            email: account.user.email
+                        )
                     }
-
-                    Button(CalendarResourcesStrings.addAccount) {
-                        isShowingNewAccountView = true
-                    }
-                    .frame(maxWidth: .infinity, alignment: .center)
+                    .listRowSeparator(account.id == accountsArray.last?.id ? .visible : .hidden, edges: .bottom)
+                    .listRowSeparator(.hidden, edges: .top)
+                    .alignmentGuide(.listRowSeparatorLeading) { _ in 0 }
                 }
 
-                Section {
-                    NavigationLink {
-                        EmptyView()
-                    } label: {
-                        VStack(alignment: .leading, spacing: 0) {
-                            Text(CalendarResourcesStrings.addExternalCalendar)
-                                .font(.body.weight(.medium))
-                                .foregroundStyle(theme.color.textPrimary)
+                Button(CalendarResourcesStrings.buttonAddAccount) {
+                    isShowingNewAccountView = true
+                }
+                .frame(maxWidth: .infinity, alignment: .center)
+            }
 
-                            Text(CalendarResourcesStrings.urlSubscribe)
-                                .font(.body)
-                                .foregroundStyle(theme.color.textSecondary)
-                        }
-                        .lineLimit(1)
-                        .frame(maxWidth: .infinity, alignment: .leading)
+            Section {
+                NavigationLink {
+                    EmptyView()
+                } label: {
+                    VStack(alignment: .leading, spacing: 0) {
+                        Text(CalendarResourcesStrings.addExternalCalendar)
+                            .font(.body.weight(.medium))
+                            .foregroundStyle(theme.color.textPrimary)
+
+                        Text(CalendarResourcesStrings.urlSubscribe)
+                            .font(.body)
+                            .foregroundStyle(theme.color.textSecondary)
                     }
+                    .lineLimit(1)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
-            .fullScreenCover(isPresented: $isShowingNewAccountView, onDismiss: {
-                @InjectService var orientationManager: OrientationManageable
-                orientationManager.setOrientationLock(.all)
-            }, content: {
-                SingleOnboardingView()
-            })
-            .navigationTitle(CalendarResourcesStrings.accountsTitle)
-            .navigationBarTitleDisplayMode(.inline)
         }
+        .fullScreenCover(isPresented: $isShowingNewAccountView, onDismiss: {
+            @InjectService var orientationManager: OrientationManageable
+            orientationManager.setOrientationLock(.all)
+        }, content: {
+            SingleOnboardingView()
+        })
+        .navigationTitle(CalendarResourcesStrings.accountsTitle)
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 

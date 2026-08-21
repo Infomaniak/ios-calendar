@@ -24,6 +24,7 @@ import ESDSFoundation
 import InfomaniakCore
 import InfomaniakDI
 import InfomaniakLogin
+import OSLog
 import SwiftUI
 
 public struct AccountSettingsView: View {
@@ -33,9 +34,9 @@ public struct AccountSettingsView: View {
     @InjectService private var accountManager: AccountManager
     @InjectService private var tokenStore: TokenStore
 
-    @State private var maskedAccount = false
-    @State private var isPresentedLogOutAlert = false
-    @State private var isPresentedConfirmLogOutAlert = false
+    @State private var isAccountVisible = false
+    @State private var isShowingLogOutAlert = false
+    @State private var isShowingConfirmLogOutAlert = false
     @State private var delegate: AccountSettingsViewDelegate
     @State private var presentedAccountDeletionToken: ApiToken?
 
@@ -52,25 +53,8 @@ public struct AccountSettingsView: View {
 
     public var body: some View {
         List {
-            HStack(spacing: IKPadding.medium) {
-                AvatarView(rawAvatarURL: user.avatar, displayName: user.displayName,
-                           email: user.email, size: iconSize)
-
-                VStack(alignment: .leading, spacing: 0) {
-                    Text(user.displayName)
-                        .font(.title3.weight(.medium))
-                        .foregroundStyle(theme.color.textPrimary)
-                    Text(user.email)
-                        .font(.title3)
-                        .foregroundStyle(theme.color.textSecondary)
-                }
-                .lineLimit(1)
-                .frame(maxWidth: .infinity, alignment: .leading)
-            }
-            .listRowBackground(Color.clear)
-
             Section {
-                Toggle(CalendarResourcesStrings.hideAccountToggle, isOn: $maskedAccount)
+                Toggle(CalendarResourcesStrings.hideAccountToggle, isOn: $isAccountVisible)
                     .toggleStyle(SwitchToggleStyle())
                 Button(CalendarResourcesStrings.deleteAccount) {
                     presentedAccountDeletionToken = tokenStore.tokenFor(userId: user.id)?.apiToken
@@ -80,51 +64,66 @@ public struct AccountSettingsView: View {
                 .disabled(true) // Temporarily disable it until the 403 issue is resolved
 
                 Button(CalendarResourcesStrings.logOutButton, role: .destructive) {
-                    isPresentedLogOutAlert = true
+                    isShowingLogOutAlert = true
                 }
                 .frame(maxWidth: .infinity, alignment: .center)
-            }
-        }
-        .listSectionSpacing(IKPadding.mini)
-        .alert(
-            CalendarResourcesStrings.signOutAccount(user.displayName),
-            isPresented: $isPresentedLogOutAlert,
-            actions: {
-                Button(role: .destructive) {
-                    Task {
-                        do {
-                            try await accountManager.removeAccountFor(userId: user.id)
-                        } catch {
-                            print("Logout failed: \(error)")
-                        }
+            } header: {
+                HStack(spacing: IKPadding.medium) {
+                    AvatarView(rawAvatarURL: user.avatar, displayName: user.displayName,
+                               email: user.email, size: iconSize)
 
-                        isPresentedConfirmLogOutAlert = true
+                    VStack(alignment: .leading, spacing: 0) {
+                        Text(user.displayName)
+                            .font(.title3.weight(.medium))
+                            .foregroundStyle(theme.color.textPrimary)
+                        Text(user.email)
+                            .font(.title3)
+                            .foregroundStyle(theme.color.textSecondary)
                     }
-                } label: {
-                    Text(CalendarResourcesStrings.signOutAccountConfirm)
+                    .lineLimit(1)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
-            },
-            message: {
-                Text(
-                    CalendarResourcesStrings.signOutAccountDescription
-                )
             }
-        )
-        .alert(
-            CalendarResourcesStrings.signOutAccountSuccessful,
-            isPresented: $isPresentedConfirmLogOutAlert
-        ) {
-            Button(role: .cancel) {
-                dismiss()
-            } label: {
-                Text(CalendarResourcesStrings.closeLabel)
+            .alert(
+                CalendarResourcesStrings.signOutAccount(user.displayName),
+                isPresented: $isShowingLogOutAlert,
+                actions: {
+                    Button(role: .destructive) {
+                        Task {
+                            do {
+                                try await accountManager.removeAccountFor(userId: user.id)
+                            } catch {
+                                Logger.general.error("Logout failed: \(error)")
+                            }
+
+                            isShowingConfirmLogOutAlert = true
+                        }
+                    } label: {
+                        Text(CalendarResourcesStrings.signOutAccountConfirm)
+                    }
+                },
+                message: {
+                    Text(
+                        CalendarResourcesStrings.signOutAccountDescription
+                    )
+                }
+            )
+            .alert(
+                CalendarResourcesStrings.signOutAccountSuccessful,
+                isPresented: $isShowingConfirmLogOutAlert
+            ) {
+                Button(role: .cancel) {
+                    dismiss()
+                } label: {
+                    Text(CalendarResourcesStrings.closeLabel)
+                }
             }
+            .sheet(item: $presentedAccountDeletionToken) { userToken in
+                DeleteAccountView(token: userToken, delegate: delegate)
+            }
+            .navigationTitle(user.displayName)
+            .navigationBarTitleDisplayMode(.inline)
         }
-        .sheet(item: $presentedAccountDeletionToken) { userToken in
-            DeleteAccountView(token: userToken, delegate: delegate)
-        }
-        .navigationTitle(user.displayName)
-        .navigationBarTitleDisplayMode(.inline)
     }
 }
 
@@ -167,12 +166,12 @@ final class AccountSettingsViewDelegate: DeleteAccountDelegate {
             do {
                 try await accountManager.removeAccountFor(userId: userId)
             } catch {
-                print("Logout failed: \(error)")
+                Logger.general.error("Logout failed: \(error)")
             }
         }
     }
 
     nonisolated func didFailDeleteAccount(error: InfomaniakLoginError) {
-        print("Erreur lors de la suppression : \(error)")
+        Logger.general.error("Error during deletion: \(error)")
     }
 }

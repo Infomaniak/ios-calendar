@@ -2,14 +2,14 @@
 /* loco:6a742debc579c73504099d24 */
 "accountsTitle" = "Λογαριασμοί";
 
-/* loco:6a748d3bf80dbe43e8081862 */
-"addAccount" = "Προσθήκη λογαριασμού";
-
 /* loco:6a7dc536ea258dafd7031a62 */
 "addExternalCalendar" = "Προσθήκη εξωτερικού ημερολογίου";
 
 /* loco:6a3d35f26bb2f27bf40b0052 */
 "allDayLabel" = "Όλη την ημέρα";
+
+/* loco:6a748d3bf80dbe43e8081862 */
+"buttonAddAccount" = "Προσθήκη λογαριασμού";
 
 /* loco:6a4de9659924fbe9f10f1002 */
 "buttonJoin" = "Εγγραφείτε";

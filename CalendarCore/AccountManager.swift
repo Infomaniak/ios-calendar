@@ -71,7 +71,7 @@ public actor AccountManager {
         try await createAccount(token: token)
     }
 
-    public func removeAccountFor(userId: Int) async throws {
+    public func removeAccountFor(userId: Int) async {
         try? await calendarSDK.accountManager.removeAccount(accountId: Int64(userId))
 
         calendarAccounts[userId] = nil

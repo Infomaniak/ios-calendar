@@ -2,14 +2,14 @@
 /* loco:6a742debc579c73504099d24 */
 "accountsTitle" = "Tilit";
 
-/* loco:6a748d3bf80dbe43e8081862 */
-"addAccount" = "Lisää tili";
-
 /* loco:6a7dc536ea258dafd7031a62 */
 "addExternalCalendar" = "Lisää ulkoinen kalenteri";
 
 /* loco:6a3d35f26bb2f27bf40b0052 */
 "allDayLabel" = "Koko päivän";
+
+/* loco:6a748d3bf80dbe43e8081862 */
+"buttonAddAccount" = "Lisää tili";
 
 /* loco:6a4de9659924fbe9f10f1002 */
 "buttonJoin" = "Liity mukaan";
