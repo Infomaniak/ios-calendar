@@ -1,20 +1,41 @@
-/* loco:6a6cadf80c75b08650039524 */
-"accountManagement" = "Kontoverwaltung";
+/* loco:6a7dc5b0149a9f50750c3c52 */
+" addExternalCalendarDescription" = "Über die URL abonnieren";
 
 /* loco:6a742debc579c73504099d24 */
 "accountsTitle" = "Konten";
 
+/* loco:6a7dc536ea258dafd7031a62 */
+"addExternalCalendarTitle" = "Einen externen Kalender hinzufügen";
+
 /* loco:6a3d35f26bb2f27bf40b0052 */
 "allDayLabel" = "Den ganzen Tag";
 
+/* loco:6a748d3bf80dbe43e8081862 */
+"buttonAddAccount" = "Konto hinzufügen";
+
+/* loco:6a7dc6dcf678fdc6400639d9 */
+"buttonDeleteAccount" = "Konto löschen";
+
 /* loco:6a4de9659924fbe9f10f1002 */
-"buttonJoin" = "Mitmachen";
+"buttonJoin" = "Beitreten";
+
+/* loco:6a7dc73c5274e3e0960fab50 */
+"buttonLogOut" = "Abmelden";
+
+/* loco:6a7c7c4523db46a469038b64 */
+"buttonMaybe" = "Vielleicht";
 
 /* loco:6a4deaee7855b4f804068862 */
 "buttonNavigate" = "Reiseroute";
 
+/* loco:6a7c7c2db1e5bd1671017cba */
+"buttonNo" = "Nein";
+
 /* loco:6a4deb24e064eb69fa065712 */
 "buttonShow" = "Anzeigen";
+
+/* loco:6a7c7c2123db46a469038b62 */
+"buttonYes" = "Ja";
 
 /* loco:6a742d5283e910cbff0a9742 */
 "calendarsMenuSectionTitle" = "Kalender";
@@ -43,6 +64,9 @@
 /* loco:6a203e6bc6a8e2e3c9024e12 */
 "dayTitle" = "Tag";
 
+/* loco:6a856424c3b19782760f9b12 */
+"descriptionTitle" = "Beschreibung";
+
 /* loco:6a631392189120de490885c4 */
 "endLabel" = "Ende";
 
@@ -53,7 +77,10 @@
 "eventTitle" = "Veranstaltung";
 
 /* loco:6a3e2023d4ed90a7ed0b19e5 */
-"helpTitle" = "Hilfezentrum";
+"helpTitle" = "Hilfe";
+
+/* loco:6a7dc6669b0d18a8380bb172 */
+"hideAccountToggle" = "Konto ausblenden";
 
 /* loco:6a6312ad25e577a9830d55c2 */
 "locationOrRoomLabel" = "Ort oder Raum";
@@ -67,11 +94,26 @@
 /* loco:6a3e37f5bc0f8ca5930a08d3 */
 "openCalendarListTitle" = "Kalenderliste öffnen";
 
+/* loco:6a858ecb52e69982a407cb02 */
+"openTitle" = "Öffnen";
+
+/* loco:6a858ffd1be4d033d804961f */
+"participateKMeetTitle" = "Am kMeet teilnehmen";
+
 /* loco:6a4ba692c3d7c4ef7f0aede2 */
 "planningNothingPlanned" = "Nichts geplant";
 
 /* loco:6a2041176b9fab94970540c4 */
 "planningTitle" = "Planung";
+
+/* loco:6a7c59f4fde2ada2c90f1912 */
+"privateLabel" = "Privat";
+
+/* loco:6a7c5a5bac18c7aa4e0a94a2 */
+"publicLabel" = "Öffentlich";
+
+/* loco:6a7c237bd92250395c0ccfd2 */
+"roomFloorLabel" = "%@ Etage";
 
 /* loco:6a6315c87ee8c4a584018c52 */
 "sectionCalendarHeader" = "Kalender";
@@ -85,6 +127,18 @@
 /* loco:6a3e20aad4ed90a7ed0b19e7 */
 "settingsTitle" = "Einstellungen";
 
+/* loco:6a7dc86fe6fe7c2bcf0f4274 */
+"signOutAccountAlertConfirm" = "Sich aus dem Konto abmelden";
+
+/* loco:6a7dc8cee6fe7c2bcf0f4276 */
+"signOutAccountAlertDescription" = "Dieses Konto und die dazugehörigen Kalender werden von der App „Kalender“ getrennt. Sie bleiben in Ihrem Infomaniak-Online-Konto weiterhin verfügbar.";
+
+/* loco:6a7dc7f20ed3d525e4036f1c */
+"signOutAccountAlertTitle" = "Sich vom Konto „%@“ abmelden";
+
+/* loco:6a7dc993b750d148d30593b2 */
+"signOutAccountSuccessfulAlertTitle" = "Das Konto wurde erfolgreich abgemeldet";
+
 /* loco:6a631349aaecfe24ff0e28d2 */
 "startLabel" = "Anfang";
 
@@ -93,6 +147,9 @@
 
 /* loco:6a63118bfc3889d1fb077fc2 */
 "titleLabel" = "Titel";
+
+/* loco:6a858f2fd3e38fa80607d215 */
+"urlLinkTitle" = "URL-Link";
 
 /* loco:6a33b6883afea93d8b078502 */
 "weekHeaderWeekNumber" = "KW%d";

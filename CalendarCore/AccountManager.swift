@@ -72,6 +72,8 @@ public actor AccountManager {
     }
 
     public func removeAccountFor(userId: Int) async {
+        try? await calendarSDK.accountManager.removeAccount(accountId: Int64(userId))
+
         calendarAccounts[userId] = nil
         tokenStore.removeTokenFor(userId: userId)
         try? await davCredentialsKeychainHelper.deleteCredentials(for: userId)

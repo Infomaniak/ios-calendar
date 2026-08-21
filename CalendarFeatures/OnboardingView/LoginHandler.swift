@@ -48,7 +48,7 @@ public final class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
         }
     }
 
-    public func login() async {
+    public func login(dimissHandler: (() -> Void)? = nil) async {
         isLoading = true
         defer { isLoading = false }
 
@@ -59,12 +59,14 @@ public final class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
                 hideCreateAccountButton: false
             )
             try await accountManager.createAndSetCurrentAccount(code: result.code, codeVerifier: result.verifier)
+
+            dimissHandler?()
         } catch {
             loginFailed(error: error)
         }
     }
 
-    public func loginWith(accounts: [ConnectedAccount]) async {
+    public func loginWith(accounts: [ConnectedAccount], dimissHandler: (() -> Void)? = nil) async {
         isLoading = true
         defer { isLoading = false }
 
@@ -94,6 +96,8 @@ public final class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
                 code: -1,
                 userInfo: [NSLocalizedDescriptionKey: "!Failed to login with all accounts"]
             ))
+        } else {
+            dimissHandler?()
         }
     }
 

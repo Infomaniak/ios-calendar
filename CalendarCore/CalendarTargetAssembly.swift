@@ -19,6 +19,7 @@
 import DeviceAssociation
 import Foundation
 @preconcurrency import InfomaniakCore
+import InfomaniakCoreCommonUI
 import InfomaniakDeviceCheck
 import InfomaniakDI
 import InfomaniakLogin
@@ -99,6 +100,9 @@ open class CalendarTargetAssembly: TargetAssembly {
             },
             Factory(type: ConnectedAccountManagerable.self) { _, _ in
                 ConnectedAccountManager(currentAppKeychainIdentifier: Self.bundleId)
+            },
+            Factory(type: OrientationManageable.self) { _, _ in
+                OrientationManager()
             }
         ]
     }
