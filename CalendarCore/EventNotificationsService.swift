@@ -72,11 +72,14 @@ final class EventNotificationsService: Sendable {
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: identifiers)
     }
 
-    private func scheduleNotificationsForEvents(_ events: [Event]) async {
-        for event in events {
-            for alarm in event.alarms {
-                guard let request = generateNotificationRequestForAlarm(alarm, event: event) else { continue }
-                try? await UNUserNotificationCenter.current().add(request)
+    private func scheduleNotificationsForEvents(_ eventAlarms: [(event: Event, alarm: EventAlarm)]) async {
+        for eventAlarm in eventAlarms {
+            guard let request = generateNotificationRequestForAlarm(eventAlarm.alarm, event: eventAlarm.event) else { continue }
+
+            do {
+                try await UNUserNotificationCenter.current().add(request)
+            } catch {
+                // Sentry error
             }
         }
     }
@@ -87,9 +90,18 @@ final class EventNotificationsService: Sendable {
 
         let trigger: UNCalendarNotificationTrigger
         if let absoluteTrigger = alarm.trigger as? AlarmTriggerAbsolute {
-
+            let components = Calendar.current.dateComponents(
+                [.year, .month, .day, .hour, .minute, .second],
+                from: absoluteTrigger.instant.date
+            )
+            trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
         } else if let relativeTrigger = alarm.trigger as? AlarmTriggerRelative {
-
+            let components = Calendar.current.dateComponents(
+                [.year, .month, .day, .hour, .minute, .second],
+                from: .now
+            )
+            // TODO: Compute date correctly
+            trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
         } else {
             return nil
         }
