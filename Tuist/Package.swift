@@ -39,6 +39,6 @@ let package = Package(
         .package(url: "https://github.com/Infomaniak/ios-features", .upToNextMajor(from: "10.2.0")),
         .package(url: "https://github.com/Infomaniak/ios-login", .upToNextMajor(from: "7.8.0")),
         .package(url: "https://github.com/Infomaniak/ios-onboarding", .upToNextMajor(from: "1.1.2")),
-        .package(url: "https://github.com/Infomaniak/multiplatform-calendar", branch: "spm-ios-snapshot-0.5.0-dyn-202608191242-32253678078-1")
+        .package(url: "https://github.com/Infomaniak/multiplatform-calendar", .upToNextMajor(from: "0.6.0"))
     ]
 )

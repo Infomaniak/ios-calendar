@@ -38,6 +38,7 @@ public extension UIEvent {
         public let onDatavizContainer: Color
         public let datavizContainerVariant: Color
         public let onDatavizContainerVariant: Color
+        public let sourceColorArgb: Int32
 
         public init(
             datavizContainer: Color,
@@ -49,13 +50,23 @@ public extension UIEvent {
             self.onDatavizContainer = onDatavizContainer
             self.datavizContainerVariant = datavizContainerVariant
             self.onDatavizContainerVariant = onDatavizContainerVariant
+            sourceColorArgb = datavizContainer.cgColor?.argb ?? 0
         }
 
         public init(eventColors: EventColors) {
-            datavizContainer = Color(eventColor: eventColors.datavizContainer)
-            onDatavizContainer = Color(eventColor: eventColors.onDatavizContainer)
-            datavizContainerVariant = Color(eventColor: eventColors.datavizContainerVariant)
-            onDatavizContainerVariant = Color(eventColor: eventColors.onDatavizContainerVariant)
+            datavizContainer = Color(argb: eventColors.containerColor)
+            onDatavizContainer = Color(eventColor: eventColors.onContainerColor)
+            datavizContainerVariant = Color(argb: eventColors.containerVariantColor)
+            onDatavizContainerVariant = Color(eventColor: eventColors.onContainerVariantColor)
+            sourceColorArgb = eventColors.sourceColor
+        }
+
+        public static func == (lhs: UIEvent.Colors, rhs: UIEvent.Colors) -> Bool {
+            lhs.sourceColorArgb == rhs.sourceColorArgb
+        }
+
+        public func hash(into hasher: inout Hasher) {
+            hasher.combine(sourceColorArgb)
         }
     }
 }

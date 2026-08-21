@@ -145,7 +145,7 @@ struct MiniCalendarView: View {
                         day: Int(dayDate.day)
                     )) else { return nil }
 
-                    let colors = visibleColors.map { Color(eventColor: $0.colors.datavizContainerVariant) }
+                    let colors = visibleColors.map { Color(argb: $0.colors.sourceColor) }
                     let startOfDayDate = calendar.startOfDay(for: date)
                     return (startOfDayDate, colors)
                 }

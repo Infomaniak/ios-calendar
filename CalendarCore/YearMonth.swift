@@ -29,6 +29,9 @@ public struct YearMonth: Sendable, Hashable {
 
     public static func fromDate(date: Date, calendar: Calendar) -> YearMonth? {
         let components = calendar.dateComponents([.year, .month], from: date)
-        return YearMonth(year: components.year!, month: components.month!)
+        guard let year = components.year, let month = components.month else {
+            return nil
+        }
+        return YearMonth(year: year, month: month)
     }
 }
