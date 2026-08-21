@@ -34,30 +34,35 @@ extension KotlinInstant {
 
 public extension UIEvent {
     struct Colors: Sendable, Equatable, Hashable {
-        public let datavizContainer: Color
-        public let onDatavizContainer: Color
-        public let datavizContainerVariant: Color
-        public let onDatavizContainerVariant: Color
+        public let calendarSourceColor: Color
+        public let containerColor: Color
+        public let onContainerColor: Color
+        public let containerVariantColor: Color
+        public let onContainerVariantColor: Color
+
         public let sourceColorArgb: Int32
 
         public init(
-            datavizContainer: Color,
-            onDatavizContainer: Color,
-            datavizContainerVariant: Color,
-            onDatavizContainerVariant: Color
+            calendarSourceColor: Color,
+            containerColor: Color,
+            onContainerColor: Color,
+            containerVariantColor: Color,
+            onContainerVariantColor: Color
         ) {
-            self.datavizContainer = datavizContainer
-            self.onDatavizContainer = onDatavizContainer
-            self.datavizContainerVariant = datavizContainerVariant
-            self.onDatavizContainerVariant = onDatavizContainerVariant
-            sourceColorArgb = datavizContainer.cgColor?.argb ?? 0
+            self.calendarSourceColor = calendarSourceColor
+            self.containerColor = containerColor
+            self.onContainerColor = onContainerColor
+            self.containerVariantColor = containerVariantColor
+            self.onContainerVariantColor = onContainerVariantColor
+            sourceColorArgb = containerColor.cgColor?.argb ?? 0
         }
 
         public init(eventColors: EventColors) {
-            datavizContainer = Color(argb: eventColors.containerColor)
-            onDatavizContainer = Color(eventColor: eventColors.onContainerColor)
-            datavizContainerVariant = Color(argb: eventColors.containerVariantColor)
-            onDatavizContainerVariant = Color(eventColor: eventColors.onContainerVariantColor)
+            calendarSourceColor = Color(argb: eventColors.calendarSourceColor)
+            containerColor = Color(argb: eventColors.containerColor)
+            onContainerColor = Color(eventColor: eventColors.onContainerColor)
+            containerVariantColor = Color(argb: eventColors.containerVariantColor)
+            onContainerVariantColor = Color(eventColor: eventColors.onContainerVariantColor)
             sourceColorArgb = eventColors.sourceColor
         }
 
@@ -233,9 +238,10 @@ public extension UIEvent {
 
 public extension UIEvent.Colors {
     static let preview = UIEvent.Colors(
-        datavizContainer: Color.white,
-        onDatavizContainer: Color.purple,
-        datavizContainerVariant: Color.purple.opacity(0.2),
-        onDatavizContainerVariant: Color.purple
+        calendarSourceColor: Color.purple,
+        containerColor: Color.purple.opacity(0.2),
+        onContainerColor: Color.purple,
+        containerVariantColor: Color.purple.opacity(0.2),
+        onContainerVariantColor: Color.purple.opacity(0.7)
     )
 }
