@@ -18,6 +18,7 @@
 
 import CalendarCore
 import CalendarCoreUI
+import CalendarResources
 import ESDSFoundation
 import InfomaniakDI
 @preconcurrency import MultiplatformCalendar
@@ -56,14 +57,16 @@ struct CalendarListContentView: View {
     }
 
     var body: some View {
-        ForEach(Array(calendarAccounts.values)) { account in
+        let sortedAccounts = Array(calendarAccounts.values).sorted { $0.id < $1.id }
+
+        ForEach(Array(sortedAccounts.enumerated()), id: \.element.id) { index, account in
             Section {
                 DisclosureGroup(
                     isExpanded: isExpandedBinding(for: account.id)
                 ) {
                     let calendars = indexedCalendars[account.id, default: []]
 
-                    ForEach(Array(calendars.enumerated()), id: \.element.id) { index, calendar in
+                    ForEach(Array(calendars.enumerated()), id: \.element.id) { calendarIndex, calendar in
                         Button {
                             toggleCalendar(calendar: calendar)
                         } label: {
@@ -89,8 +92,8 @@ struct CalendarListContentView: View {
                             }
                         }
                         .listRowSeparator(
-                            index == 0 ? .visible : .hidden,
-                            edges: index == 0 ? .top : .all
+                            calendarIndex == 0 ? .visible : .hidden,
+                            edges: calendarIndex == 0 ? .top : .all
                         )
                     }
                 } label: {
@@ -102,6 +105,11 @@ struct CalendarListContentView: View {
                 }
                 .alignmentGuide(.listRowSeparatorLeading) { _ in
                     0
+                }
+            } header: {
+                if index == 0 {
+                    Text(CalendarResourcesStrings.calendarsMenuSectionTitle)
+                        .foregroundStyle(theme.color.contentSecondary)
                 }
             }
         }
