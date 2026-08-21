@@ -34,6 +34,7 @@ extension KotlinInstant {
 
 public extension UIEvent {
     struct Colors: Sendable, Equatable, Hashable {
+        public let calendarSourceColor: Color
         public let containerColor: Color
         public let onContainerColor: Color
         public let containerVariantColor: Color
@@ -42,11 +43,13 @@ public extension UIEvent {
         public let sourceColorArgb: Int32
 
         public init(
+            calendarSourceColor: Color,
             containerColor: Color,
             onContainerColor: Color,
             containerVariantColor: Color,
             onContainerVariantColor: Color
         ) {
+            self.calendarSourceColor = calendarSourceColor
             self.containerColor = containerColor
             self.onContainerColor = onContainerColor
             self.containerVariantColor = containerVariantColor
@@ -55,6 +58,7 @@ public extension UIEvent {
         }
 
         public init(eventColors: EventColors) {
+            calendarSourceColor = Color(argb: eventColors.calendarSourceColor)
             containerColor = Color(argb: eventColors.containerColor)
             onContainerColor = Color(eventColor: eventColors.onContainerColor)
             containerVariantColor = Color(argb: eventColors.containerVariantColor)
@@ -234,9 +238,10 @@ public extension UIEvent {
 
 public extension UIEvent.Colors {
     static let preview = UIEvent.Colors(
-        containerColor: Color.white,
+        calendarSourceColor: Color.purple,
+        containerColor: Color.purple.opacity(0.2),
         onContainerColor: Color.purple,
         containerVariantColor: Color.purple.opacity(0.2),
-        onContainerVariantColor: Color.purple
+        onContainerVariantColor: Color.purple.opacity(0.7)
     )
 }

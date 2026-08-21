@@ -48,9 +48,9 @@ struct EventCellStyle: ViewModifier {
     private var foreground: Color {
         switch mode {
         case .default, .maybe, .declined:
-            return colors.onDatavizContainerVariant
+            return colors.onContainerColor
         case .pending:
-            return colors.onDatavizContainer
+            return colors.onContainerVariantColor
         }
     }
 
@@ -58,11 +58,11 @@ struct EventCellStyle: ViewModifier {
     private var background: some View {
         switch mode {
         case .default, .declined:
-            colors.datavizContainerVariant
+            colors.containerColor
         case .maybe:
-            DiagonalStripesView(color: colors.datavizContainerVariant)
+            DiagonalStripesView(color: colors.containerColor)
         case .pending:
-            colors.datavizContainer
+            colors.containerVariantColor
         }
     }
 
@@ -74,7 +74,18 @@ struct EventCellStyle: ViewModifier {
             .foregroundStyle(foreground)
             .background(background)
             .strikethrough(mode == .declined)
+            .overlay(alignment: .leading) {
+                Rectangle()
+                    .fill(colors.onContainerColor)
+                    .frame(width: 4)
+            }
             .clipShape(.rect(cornerRadius: 8))
+            .overlay {
+                if mode == .pending {
+                    RoundedRectangle(cornerRadius: 8)
+                        .strokeBorder(colors.onContainerColor, lineWidth: 1)
+                }
+            }
     }
 
     private static func computeMode(for event: CalendarCoreUI.UIEvent) -> Mode {

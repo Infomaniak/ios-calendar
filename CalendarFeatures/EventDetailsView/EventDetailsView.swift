@@ -55,7 +55,7 @@ public struct EventDetailsView: View {
         event: CalendarCoreUI.UIEvent
     ) {
         self.event = event
-        _color = State(initialValue: Color(event.colors.onDatavizContainer))
+        _color = State(initialValue: Color(event.colors.onContainerColor))
         _calendarColor = State(initialValue: Color(.gray))
         _alarms = State(initialValue: event.alarms)
     }

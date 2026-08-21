@@ -27,7 +27,7 @@ public struct DiagonalStripesView: View {
     public init(
         color: Color,
         stripeColor: Color = .clear,
-        stripeWidth: CGFloat = 3,
+        stripeWidth: CGFloat = 8,
         spacing: CGFloat = 24
     ) {
         self.color = color
