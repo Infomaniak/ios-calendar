@@ -65,13 +65,13 @@ public struct AccountsListContentView: View {
                     EmptyView()
                 } label: {
                     VStack(alignment: .leading, spacing: 0) {
-                        Text(CalendarResourcesStrings.addExternalCalendar)
+                        Text(CalendarResourcesStrings.addExternalCalendarTitle)
                             .font(.body.weight(.medium))
-                            .foregroundStyle(theme.color.textPrimary)
+                            .foregroundStyle(theme.color.contentPrimary)
 
-                        Text(CalendarResourcesStrings.urlSubscribe)
+                        Text(CalendarResourcesStrings.addExternalCalendarDescription)
                             .font(.body)
-                            .foregroundStyle(theme.color.textSecondary)
+                            .foregroundStyle(theme.color.contentSecondary)
                     }
                     .lineLimit(1)
                     .frame(maxWidth: .infinity, alignment: .leading)

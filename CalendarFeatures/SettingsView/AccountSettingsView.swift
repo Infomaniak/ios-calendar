@@ -56,14 +56,14 @@ public struct AccountSettingsView: View {
             Section {
                 Toggle(CalendarResourcesStrings.hideAccountToggle, isOn: $isAccountVisible)
                     .toggleStyle(SwitchToggleStyle())
-                Button(CalendarResourcesStrings.deleteAccount) {
+                Button(CalendarResourcesStrings.buttonDeleteAccount) {
                     presentedAccountDeletionToken = tokenStore.tokenFor(userId: user.id)?.apiToken
                 }
                 .font(.body)
-                .foregroundStyle(theme.color.textPrimary)
+                .foregroundStyle(theme.color.contentPrimary)
                 .disabled(true) // Temporarily disable it until the 403 issue is resolved
 
-                Button(CalendarResourcesStrings.logOutButton, role: .destructive) {
+                Button(CalendarResourcesStrings.buttonLogOut, role: .destructive) {
                     isShowingLogOutAlert = true
                 }
                 .frame(maxWidth: .infinity, alignment: .center)
@@ -75,17 +75,17 @@ public struct AccountSettingsView: View {
                     VStack(alignment: .leading, spacing: 0) {
                         Text(user.displayName)
                             .font(.title3.weight(.medium))
-                            .foregroundStyle(theme.color.textPrimary)
+                            .foregroundStyle(theme.color.contentPrimary)
                         Text(user.email)
                             .font(.title3)
-                            .foregroundStyle(theme.color.textSecondary)
+                            .foregroundStyle(theme.color.contentSecondary)
                     }
                     .lineLimit(1)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
             .alert(
-                CalendarResourcesStrings.signOutAccount(user.displayName),
+                CalendarResourcesStrings.signOutAccountAlertTitle(user.displayName),
                 isPresented: $isShowingLogOutAlert,
                 actions: {
                     Button(role: .destructive) {
@@ -99,17 +99,17 @@ public struct AccountSettingsView: View {
                             isShowingConfirmLogOutAlert = true
                         }
                     } label: {
-                        Text(CalendarResourcesStrings.signOutAccountConfirm)
+                        Text(CalendarResourcesStrings.signOutAccountAlertDescription)
                     }
                 },
                 message: {
                     Text(
-                        CalendarResourcesStrings.signOutAccountDescription
+                        CalendarResourcesStrings.signOutAccountAlertConfirm
                     )
                 }
             )
             .alert(
-                CalendarResourcesStrings.signOutAccountSuccessful,
+                CalendarResourcesStrings.signOutAccountSuccessfulAlertTitle,
                 isPresented: $isShowingConfirmLogOutAlert
             ) {
                 Button(role: .cancel) {
