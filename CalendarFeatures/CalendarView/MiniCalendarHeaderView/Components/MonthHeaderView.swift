@@ -23,14 +23,13 @@ import SwiftUI
 struct MonthHeaderView: View {
     @Environment(\.calendar) private var calendar
 
-    let startDate: Date
+    let page: ReferenceDatePage
     @Binding var selectedDate: Date
-    let datesWithEventDots: [Date: [Color]]
 
     private let maximumRowCount = 6
 
     private var monthStart: Date {
-        calendar.monthStart(for: startDate)
+        calendar.monthStart(for: page.referenceDate)
     }
 
     private var gridStart: Date {
@@ -47,52 +46,56 @@ struct MonthHeaderView: View {
     }
 
     var body: some View {
-        VStack(spacing: IKPadding.micro) {
+        Grid(alignment: .center, horizontalSpacing: IKPadding.micro, verticalSpacing: 0) {
             ForEach(0 ..< maximumRowCount, id: \.self) { row in
-                HStack(spacing: IKPadding.micro) {
+                GridRow {
                     ForEach(0 ..< 7, id: \.self) { column in
                         let dayIndex = row * 7 + column
-
-                        ZStack {
-                            if row >= rowCount {
-                                DayCellView(date: gridStart, eventDots: [])
-                                    .hidden()
-                                    .accessibilityHidden(true)
-                            } else if let dayDate = calendar.date(byAdding: .day, value: dayIndex, to: gridStart) {
-                                Button {
-                                    selectedDate = calendar.startOfDay(for: dayDate)
-                                } label: {
-                                    DayCellView(
-                                        date: dayDate,
-                                        isSelected: calendar.isDate(dayDate, inSameDayAs: selectedDate),
-                                        eventDots: datesWithEventDots[dayDate] ?? []
-                                    )
-                                    .opacity(
-                                        calendar.isDate(
-                                            dayDate,
-                                            equalTo: monthStart,
-                                            toGranularity: .month
-                                        ) ? 1 : 0.5
-                                    )
-                                }
-                                .buttonStyle(.plain)
-                            }
-                        }
-                        .frame(maxWidth: .infinity)
+                        cell(row: row, dayIndex: dayIndex)
+                            .aspectRatio(1, contentMode: .fit)
                     }
                 }
-                .geometryGroup()
             }
         }
-        .frame(maxWidth: .infinity)
+        .padding(.horizontal, value: .small)
+    }
+
+    private func cell(row: Int, dayIndex: Int) -> some View {
+        ZStack {
+            if row >= rowCount {
+                DayCellView(date: gridStart, eventDots: [])
+                    .hidden()
+                    .accessibilityHidden(true)
+            } else if let dayDate = calendar.date(byAdding: .day, value: dayIndex, to: gridStart) {
+                Button {
+                    selectedDate = calendar.startOfDay(for: dayDate)
+                } label: {
+                    DayCellView(
+                        date: dayDate,
+                        isSelected: calendar.isDate(dayDate, inSameDayAs: selectedDate),
+                        eventDots: page.datesWithEventDots[dayDate] ?? []
+                    )
+                    .opacity(
+                        calendar.isDate(
+                            dayDate,
+                            equalTo: monthStart,
+                            toGranularity: .month
+                        ) ? 1 : 0.5
+                    )
+                }
+                .buttonStyle(.plain)
+            }
+        }
     }
 }
 
 #Preview {
     @Previewable @State var selectedDate = Date()
     MonthHeaderView(
-        startDate: Calendar.current.monthStart(for: Date()),
-        selectedDate: $selectedDate,
-        datesWithEventDots: [:]
+        page: ReferenceDatePage(
+            referenceDate: Calendar.current.monthStart(for: Date()),
+            referenceDateInterval: MiniCalendarView.DisplayMode.month.referenceDateInterval
+        ),
+        selectedDate: $selectedDate
     )
 }

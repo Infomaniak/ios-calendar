@@ -21,6 +21,16 @@ import ESDSFoundation
 import SwiftUI
 import UIKit
 
+private struct TextCenterAlignment: AlignmentID {
+    static func defaultValue(in context: ViewDimensions) -> CGFloat {
+        context[VerticalAlignment.center]
+    }
+}
+
+extension VerticalAlignment {
+    static let textCenter = VerticalAlignment(TextCenterAlignment.self)
+}
+
 struct DayCellView: View {
     @Environment(\.calendar) private var calendar
     @Environment(\.esdsTheme) private var theme
@@ -41,30 +51,31 @@ struct DayCellView: View {
     }
 
     var body: some View {
-        VStack(spacing: 2) {
-            EventDotsView(eventDots: [])
-                .hidden()
-
-            ZStack {
-                Text("00")
-                    .hidden()
-                Text(date, format: .dateTime.day())
-            }
-
+        VStack(alignment: .center, spacing: 2) {
+            Text(date, format: .dateTime.day())
+                .alignmentGuide(.textCenter) { d in d[VerticalAlignment.center] }
             EventDotsView(eventDots: displayedEventDots)
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .init(horizontal: .center, vertical: .textCenter))
         .padding(value: .micro)
         .monospacedDigit()
         .font(.body.weight(.semibold))
-        .foregroundColor(theme.color.contentPrimary)
-        .background(isToday ? Color.accentColor : Color.clear, in: .circle)
-        .overlay {
-            if isSelected, !isToday {
-                Circle().stroke(Color.accentColor, lineWidth: 1)
-                    .transition(.scale(scale: 0.5, anchor: .center).combined(with: .opacity))
+        .foregroundColor(isToday ? theme.color.contentInverse : theme.color.contentPrimary)
+        .background {
+            if isToday {
+                Circle()
+                    .fill(.tint)
+                    .padding(value: .mini)
             }
         }
-        .padding(1)
+        .overlay {
+            if isSelected, !isToday {
+                Circle()
+                    .stroke(.tint)
+                    .transition(.scale(scale: 0.5, anchor: .center).combined(with: .opacity))
+                    .padding(value: .mini)
+            }
+        }
         .geometryGroup()
     }
 }
