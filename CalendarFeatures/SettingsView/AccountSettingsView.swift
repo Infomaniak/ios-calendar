@@ -36,13 +36,12 @@ public struct AccountSettingsView: View {
 
     @State private var isAccountVisible = false
     @State private var isShowingLogOutAlert = false
-    @State private var isShowingConfirmLogOutAlert = false
     @State private var delegate: AccountSettingsViewDelegate
     @State private var presentedAccountDeletionToken: ApiToken?
 
     private var user: UserProfile
 
-    private var iconSize: CGFloat = 48
+    private let iconSize: CGFloat = 48
 
     public init(
         user: UserProfile
@@ -69,12 +68,14 @@ public struct AccountSettingsView: View {
                 .frame(maxWidth: .infinity, alignment: .center)
             } header: {
                 HStack(spacing: IKPadding.medium) {
-                    AvatarView(rawAvatarURL: user.avatar, displayName: user.displayName,
-                               email: user.email, size: iconSize)
+                    AvatarView(rawAvatarURL: user.avatar,
+                               displayName: user.displayName,
+                               email: user.email,
+                               size: iconSize)
 
                     VStack(alignment: .leading, spacing: 0) {
                         Text(user.displayName)
-                            .font(.title3.weight(.medium))
+                            .font(.title3)
                             .foregroundStyle(theme.color.contentPrimary)
                         Text(user.email)
                             .font(.title3)
@@ -83,6 +84,7 @@ public struct AccountSettingsView: View {
                     .lineLimit(1)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
+                .padding(.vertical, value: .small)
             }
             .alert(
                 CalendarResourcesStrings.signOutAccountAlertTitle(user.displayName),
@@ -90,13 +92,8 @@ public struct AccountSettingsView: View {
                 actions: {
                     Button(role: .destructive) {
                         Task {
-                            do {
-                                try await accountManager.removeAccountFor(userId: user.id)
-                            } catch {
-                                Logger.general.error("Logout failed: \(error)")
-                            }
-
-                            isShowingConfirmLogOutAlert = true
+                            await accountManager.removeAccountFor(userId: user.id)
+                            dismiss()
                         }
                     } label: {
                         Text(CalendarResourcesStrings.signOutAccountAlertDescription)
@@ -108,16 +105,6 @@ public struct AccountSettingsView: View {
                     )
                 }
             )
-            .alert(
-                CalendarResourcesStrings.signOutAccountSuccessfulAlertTitle,
-                isPresented: $isShowingConfirmLogOutAlert
-            ) {
-                Button(role: .cancel) {
-                    dismiss()
-                } label: {
-                    Text(CalendarResourcesStrings.closeLabel)
-                }
-            }
             .sheet(item: $presentedAccountDeletionToken) { userToken in
                 DeleteAccountView(token: userToken, delegate: delegate)
             }
@@ -163,11 +150,7 @@ final class AccountSettingsViewDelegate: DeleteAccountDelegate {
 
     nonisolated func didCompleteDeleteAccount() {
         Task {
-            do {
-                try await accountManager.removeAccountFor(userId: userId)
-            } catch {
-                Logger.general.error("Logout failed: \(error)")
-            }
+            await accountManager.removeAccountFor(userId: userId)
         }
     }
 
