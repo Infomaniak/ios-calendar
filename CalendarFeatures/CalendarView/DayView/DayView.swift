@@ -177,7 +177,7 @@ struct DayContentView: View {
                 )
 
                 .modifier(GlassHeaderBarModifier {
-                    FullDayEventView(events: events.filter(\.isAllDay), date: date)
+                    DayHeaderView(events: events.filter(\.isAllDay), date: date)
                 })
             }
         }
@@ -227,6 +227,7 @@ struct GlassHeaderBarModifier<BarContent: View>: ViewModifier {
             content.safeAreaBar(edge: .top) {
                 barContent()
                     .padding(.horizontal, value: .medium)
+                    .glassEffect(.identity, in: Rectangle())
             }
         } else {
             content.safeAreaInset(edge: .top) {

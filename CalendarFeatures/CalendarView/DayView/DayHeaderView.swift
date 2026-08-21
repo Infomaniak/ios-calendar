@@ -21,7 +21,7 @@ import CalendarResources
 import DesignSystem
 import SwiftUI
 
-struct FullDayEventView: View {
+struct DayHeaderView: View {
     @Environment(\.esdsTheme) private var theme
 
     let events: [CalendarCoreUI.UIEvent]
@@ -48,25 +48,29 @@ struct FullDayEventView: View {
     var body: some View {
         VStack {
             HStack(spacing: 0) {
-                let weekNumber = Calendar.current.component(.weekOfYear, from: date)
-                Text(CalendarResourcesStrings.weekHeaderWeekNumber(weekNumber))
-                    .foregroundStyle(theme.color.contentTertiary)
-                    .padding(.trailing, IKPadding.medium)
-                    .frame(
-                        width: DayContentView.Constants.leadingInset,
-                        alignment: .trailing
-                    )
-
-                (
-                    Text(date, format: .dateTime.weekday(.wide))
-                        .fontWeight(.semibold)
-                        + Text(" – ")
-                        + Text(date, format: .dateTime.day().month())
+                Text(CalendarResourcesStrings.weekHeaderWeekNumber(
+                    Calendar.current.component(.weekOfYear, from: date)
+                ))
+                .font(.caption2)
+                .foregroundStyle(theme.color.contentTertiary)
+                .padding(.trailing, IKPadding.medium)
+                .frame(
+                    width: DayContentView.Constants.leadingInset,
+                    alignment: .trailing
                 )
-                .font(.body)
+
+                HStack(spacing: 2) {
+                    Text(date, format: .dateTime.weekday(.wide))
+                        .font(.footnote)
+                        .fontWeight(.semibold)
+                    Text("-")
+                    Text(date, format: .dateTime.day().month())
+                }
+                .font(.caption)
                 .foregroundStyle(theme.color.contentPrimary)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
+
             HStack(alignment: .top, spacing: 0) {
                 if !events.isEmpty {
                     Text(CalendarResourcesStrings.allDayLabel)
@@ -78,6 +82,7 @@ struct FullDayEventView: View {
                             alignment: .trailing
                         )
                         .multilineTextAlignment(.trailing)
+
                     ScrollView {
                         VStack(spacing: IKPadding.micro) {
                             ForEach(eventPairs, id: \.0.id) { firstEvent, secondEvent in
