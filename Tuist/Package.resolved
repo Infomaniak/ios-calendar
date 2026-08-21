@@ -1,5 +1,5 @@
 {
-  "originHash" : "72f49f2cfbfd9dbe5bfc8d135dfb60c7e37f2ac2c090cf714136366474503c34",
+  "originHash" : "4b8f63af9285b7028e56c13afb9521b6c366f9af463d4e42866b761cd6474de7",
   "pins" : [
     {
       "identity" : "alamofire",
@@ -24,8 +24,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core",
       "state" : {
-        "revision" : "c0bb8aec024f40da9d5f8698ce9d2b463d8c7b4f",
-        "version" : "19.1.1"
+        "revision" : "e667ed34941d4e06f0107d9633e2cc9438685fef",
+        "version" : "19.1.4"
       }
     },
     {
@@ -42,8 +42,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core-uikit",
       "state" : {
-        "revision" : "dd005b4e493c9f8c793d1d251eb54c8c315d602e",
-        "version" : "2.0.0"
+        "revision" : "10d7a7a4bcdef924d250a2d93e69d0bd233be9e8",
+        "version" : "2.0.1"
       }
     },
     {
@@ -67,10 +67,10 @@
     {
       "identity" : "ios-design-system",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Infomaniak/ios-design-system",
+      "location" : "https://github.com/Infomaniak/ios-design-system.git",
       "state" : {
-        "revision" : "f2c9af2a97e5a094eb8c9d0d884b75ce6b0a004e",
-        "version" : "0.2.0"
+        "revision" : "0c7db9142ac9101b207817d80df771e6ac7b5ab3",
+        "version" : "0.2.1"
       }
     },
     {
@@ -132,8 +132,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/multiplatform-calendar",
       "state" : {
-        "revision" : "f204af2520b4e6bb2ac5a034a304d47b9caac9e0",
-        "version" : "0.4.0"
+        "revision" : "7862a0fa3b0d7164e649f2cb17396df623be3b6a",
+        "version" : "0.6.0"
       }
     },
     {
@@ -186,8 +186,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getsentry/sentry-cocoa",
       "state" : {
-        "revision" : "afa7510e05b99f35c1febe47566bfd868fa53fb9",
-        "version" : "9.23.0"
+        "revision" : "cd213f98af160e6497eeff0707bc3f6a205b159c",
+        "version" : "9.26.0"
       }
     },
     {
@@ -195,8 +195,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/SnackBar.swift",
       "state" : {
-        "revision" : "7d8d20af50c6b744aa9791b597f7efbd0a15add2",
-        "version" : "1.2.0"
+        "revision" : "4c0d4fc65e8ef17477d6f0750ebbec066cde8cb0",
+        "version" : "1.2.1"
       }
     },
     {

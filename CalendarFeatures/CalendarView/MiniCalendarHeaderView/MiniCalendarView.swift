@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarCore
 import CalendarCoreUI
 import DesignSystem
 import InfiniteScrollViews
@@ -122,26 +123,29 @@ struct MiniCalendarView: View {
 
     @concurrent
     private func updateCalendarDotsFor(date: Date, calendar: Foundation.Calendar) async {
-        let components = calendar.dateComponents([.year, .month], from: date)
-        guard let year = components.year,
-              let month = components.month else { return }
+        guard let previousMonthDate = calendar.date(byAdding: .month, value: -1, to: date),
+              let nextMonthDate = calendar.date(byAdding: .month, value: 1, to: date),
+              let previousYearMonth = YearMonth.fromDate(date: previousMonthDate, calendar: calendar),
+              let nextYearMonth = YearMonth.fromDate(date: nextMonthDate, calendar: calendar) else {
+            return
+        }
 
         let referenceStartOfDayDate = calendar.startOfDay(for: date)
 
         @InjectService var calendarSDK: CalendarCoreGraph
-        for await colorsByDay in calendarSDK.calendarManager.observeMonthlyCalendarColors(month: .init(
-            year: Int32(year),
-            month: Int32(month)
-        )) {
+        for await colorsByDay in calendarSDK.calendarManager.observeMonthlyCalendarColors(
+            startMonth: previousYearMonth,
+            endMonth: nextYearMonth
+        ) {
             let datesWithEventDots: [Date: [Color]] = Dictionary(
-                uniqueKeysWithValues: colorsByDay.compactMap { dayDate, colors in
+                uniqueKeysWithValues: colorsByDay.compactMap { dayDate, visibleColors in
                     guard let date = calendar.date(from: .init(
                         year: Int(dayDate.year),
                         month: Int(dayDate.month.ordinal + 1),
                         day: Int(dayDate.day)
                     )) else { return nil }
 
-                    let colors = colors.map { Color(eventColor: $0.datavizContainerVariant) }
+                    let colors = visibleColors.map { Color(argb: $0.colors.sourceColor) }
                     let startOfDayDate = calendar.startOfDay(for: date)
                     return (startOfDayDate, colors)
                 }

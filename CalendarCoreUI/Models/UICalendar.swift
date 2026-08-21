@@ -26,13 +26,27 @@ public struct UICalendar: Identifiable, Equatable, Hashable, Sendable {
     public let color: Color
     public let accountId: Int
     public let isVisible: Bool
+    public let sourceColorArgb: Int32
 
-    public init(id: String, displayName: String, color: Color, accountId: Int, isVisible: Bool) {
+    public init(id: String, displayName: String, colorArgb: Int32, accountId: Int, isVisible: Bool) {
         self.id = id
         self.displayName = displayName
-        self.color = color
+        color = Color(argb: colorArgb)
+        sourceColorArgb = colorArgb
         self.accountId = accountId
         self.isVisible = isVisible
+    }
+
+    public static func == (lhs: UICalendar, rhs: UICalendar) -> Bool {
+        lhs.id == rhs.id &&
+            lhs.displayName == rhs.displayName &&
+            lhs.accountId == rhs.accountId &&
+            lhs.isVisible == rhs.isVisible &&
+            lhs.sourceColorArgb == rhs.sourceColorArgb
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(sourceColorArgb)
     }
 }
 
@@ -40,12 +54,19 @@ public extension UICalendar {
     init(calendar: MultiplatformCalendar.Calendar) {
         id = calendar.idValue
         displayName = calendar.displayName
-        color = Color(argb: calendar.colors.calendarSourceColor)
+        color = Color(argb: calendar.colors.sourceColor)
         accountId = Int(calendar.accountIdValue)
         isVisible = calendar.isVisible
+        sourceColorArgb = calendar.colors.sourceColor
     }
 }
 
 public extension UICalendar {
-    static let preview = UICalendar(id: "0", displayName: "John Appleseed - Personal", color: .red, accountId: 1, isVisible: true)
+    static let preview = UICalendar(
+        id: "0",
+        displayName: "John Appleseed - Personal",
+        colorArgb: Color.red.cgColor?.argb ?? 0,
+        accountId: 1,
+        isVisible: true
+    )
 }

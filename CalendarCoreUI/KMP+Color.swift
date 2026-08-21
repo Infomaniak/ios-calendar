@@ -18,7 +18,7 @@
 
 import SwiftUI
 
-extension Color {
+public extension Color {
     init(argb: Int32) {
         let value = UInt32(bitPattern: argb)
 
@@ -28,5 +28,20 @@ extension Color {
         let b = Double(value & 0xFF) / 255.0
 
         self.init(.sRGB, red: r, green: g, blue: b, opacity: a)
+    }
+}
+
+extension CGColor {
+    var argb: Int32 {
+        guard let components, components.count >= 4 else {
+            return 0
+        }
+
+        let a = UInt32(components[3] * 255.0) << 24
+        let r = UInt32(components[0] * 255.0) << 16
+        let g = UInt32(components[1] * 255.0) << 8
+        let b = UInt32(components[2] * 255.0)
+
+        return Int32(bitPattern: a | r | g | b)
     }
 }
