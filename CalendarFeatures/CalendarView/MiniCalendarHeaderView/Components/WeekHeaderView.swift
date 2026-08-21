@@ -44,10 +44,12 @@ struct WeekHeaderView: View {
                     }
                 }
                 .frame(maxWidth: .infinity)
+                .aspectRatio(1, contentMode: .fit)
             }
         }
         .geometryGroup()
         .frame(maxWidth: .infinity)
+        .padding(.horizontal, value: .small)
     }
 }
 

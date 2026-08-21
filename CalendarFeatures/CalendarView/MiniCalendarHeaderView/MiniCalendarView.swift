@@ -61,7 +61,7 @@ struct MiniCalendarView: View {
     @Binding var displayedPage: ReferenceDatePage
 
     var body: some View {
-        VStack(spacing: IKPadding.micro) {
+        VStack(spacing: 0) {
             DayOfWeekView()
             PagedInfiniteScrollView(
                 changeIndex: $displayedPage,
@@ -89,6 +89,7 @@ struct MiniCalendarView: View {
                 backgroundColor: .clear
             )
         }
+        .id(displayMode)
         .task(id: displayedPage.referenceDate) {
             await updateCalendarDotsFor(date: displayedPage.referenceDate, calendar: calendar)
         }

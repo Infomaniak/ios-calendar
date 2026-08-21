@@ -49,7 +49,6 @@ struct MiniCalendarHeaderViewModifier: ViewModifier {
                             selectedDate: $selectedDate,
                             displayedPage: $displayedPage
                         )
-                        .padding(.bottom, IKPadding.mini)
                     }
             } else {
                 content
@@ -59,7 +58,6 @@ struct MiniCalendarHeaderViewModifier: ViewModifier {
                             selectedDate: $selectedDate,
                             displayedPage: $displayedPage
                         )
-                        .padding(.bottom, IKPadding.mini)
                         .background(Material.bar)
                         .onAppear {
                             let navBarAppearance = UINavigationBarAppearance()

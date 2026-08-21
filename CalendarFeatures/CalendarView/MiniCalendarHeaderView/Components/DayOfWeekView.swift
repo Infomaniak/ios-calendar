@@ -40,6 +40,7 @@ struct DayOfWeekView: View {
                 .frame(maxWidth: .infinity)
             }
         }
+        .padding(.horizontal, value: .small)
     }
 }
 

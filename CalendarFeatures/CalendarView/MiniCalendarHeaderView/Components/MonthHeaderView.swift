@@ -46,44 +46,47 @@ struct MonthHeaderView: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
+        Grid(alignment: .center, horizontalSpacing: IKPadding.micro, verticalSpacing: 0) {
             ForEach(0 ..< maximumRowCount, id: \.self) { row in
-                HStack(spacing: IKPadding.micro) {
+                GridRow {
                     ForEach(0 ..< 7, id: \.self) { column in
                         let dayIndex = row * 7 + column
-
-                        ZStack {
-                            if row >= rowCount {
-                                DayCellView(date: gridStart, eventDots: [])
-                                    .hidden()
-                                    .accessibilityHidden(true)
-                            } else if let dayDate = calendar.date(byAdding: .day, value: dayIndex, to: gridStart) {
-                                Button {
-                                    selectedDate = calendar.startOfDay(for: dayDate)
-                                } label: {
-                                    DayCellView(
-                                        date: dayDate,
-                                        isSelected: calendar.isDate(dayDate, inSameDayAs: selectedDate),
-                                        eventDots: page.datesWithEventDots[dayDate] ?? []
-                                    )
-                                    .opacity(
-                                        calendar.isDate(
-                                            dayDate,
-                                            equalTo: monthStart,
-                                            toGranularity: .month
-                                        ) ? 1 : 0.5
-                                    )
-                                }
-                                .buttonStyle(.plain)
-                            }
-                        }
-                        .frame(maxWidth: .infinity)
+                        cell(row: row, dayIndex: dayIndex)
+                            .aspectRatio(1, contentMode: .fit)
                     }
                 }
-                .geometryGroup()
             }
         }
-        .frame(maxWidth: .infinity)
+        .padding(.horizontal, value: .small)
+    }
+
+    @ViewBuilder
+    private func cell(row: Int, dayIndex: Int) -> some View {
+        ZStack {
+            if row >= rowCount {
+                DayCellView(date: gridStart, eventDots: [])
+                    .hidden()
+                    .accessibilityHidden(true)
+            } else if let dayDate = calendar.date(byAdding: .day, value: dayIndex, to: gridStart) {
+                Button {
+                    selectedDate = calendar.startOfDay(for: dayDate)
+                } label: {
+                    DayCellView(
+                        date: dayDate,
+                        isSelected: calendar.isDate(dayDate, inSameDayAs: selectedDate),
+                        eventDots: page.datesWithEventDots[dayDate] ?? []
+                    )
+                    .opacity(
+                        calendar.isDate(
+                            dayDate,
+                            equalTo: monthStart,
+                            toGranularity: .month
+                        ) ? 1 : 0.5
+                    )
+                }
+                .buttonStyle(.plain)
+            }
+        }
     }
 }
 
