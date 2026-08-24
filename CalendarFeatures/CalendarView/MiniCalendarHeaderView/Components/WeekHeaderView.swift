@@ -22,6 +22,7 @@ import SwiftUI
 
 struct WeekHeaderView: View {
     @Environment(\.calendar) private var calendar
+    @Environment(MiniCalendarViewModel.self) private var viewModel
 
     let page: ReferenceDatePage
     @Binding var selectedDate: Date
@@ -37,7 +38,7 @@ struct WeekHeaderView: View {
                             DayCellView(
                                 date: dayDate,
                                 isSelected: calendar.isDate(dayDate, inSameDayAs: selectedDate),
-                                eventDots: page.datesWithEventDots[dayDate] ?? []
+                                eventDots: viewModel.eventDots(for: dayDate, calendar: calendar)
                             )
                         }
                         .buttonStyle(.plain)
@@ -62,4 +63,5 @@ struct WeekHeaderView: View {
         ),
         selectedDate: $selectedDate
     )
+    .environment(MiniCalendarViewModel())
 }
