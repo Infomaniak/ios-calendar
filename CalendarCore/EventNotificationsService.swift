@@ -92,6 +92,11 @@ final class EventNotificationsService: Sendable {
         let content = UNMutableNotificationContent()
         content.title = event.title
         content.body = alarm.description_ ?? event.location ?? "!Event Alarm"
+        content.sound = .default
+        content.categoryIdentifier = NotificationsHelper.CategoryIdentifier.eventAlarm
+        content.userInfo = [
+            NotificationsHelper.UserInfoKeys.eventId: event.masterEventIdValue
+        ]
         return UNNotificationRequest(identifier: notificationID(for: event, alarm: alarm), content: content, trigger: trigger)
     }
 
