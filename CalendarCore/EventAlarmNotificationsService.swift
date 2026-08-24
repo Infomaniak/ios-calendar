@@ -20,19 +20,18 @@ import Foundation
 import MultiplatformCalendar
 import UserNotifications
 
-final class EventNotificationsService: Sendable {
+final class EventAlarmNotificationsService: Sendable {
     private static let notificationIDPrefix = "event-alarm:"
+    private static let defaultWindowSize: TimeInterval = 60 * 60 * 24 * 3 // 3 days
 
-    let referenceDate: Date
     let windowSize: TimeInterval
 
-    init(referenceDate: Date = .now, windowSize: TimeInterval) {
-        self.referenceDate = referenceDate
+    init(windowSize: TimeInterval = EventAlarmNotificationsService.defaultWindowSize) {
         self.windowSize = windowSize
     }
 
     func handleEventsNotifications() async {
-        let rangeOfEvents = referenceDate ..< referenceDate.addingTimeInterval(windowSize)
+        let rangeOfEvents = Date.now ..< Date.now.addingTimeInterval(windowSize)
         let eventsWithNotifications = await eventsWithNotifications(rangeOfEvents)
 
         let pendingNotifications = await UNUserNotificationCenter.current().pendingNotificationRequests()
