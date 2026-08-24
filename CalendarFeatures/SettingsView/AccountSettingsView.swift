@@ -96,12 +96,12 @@ public struct AccountSettingsView: View {
                             dismiss()
                         }
                     } label: {
-                        Text(CalendarResourcesStrings.signOutAccountAlertDescription)
+                        Text(CalendarResourcesStrings.signOutAccountAlertConfirm)
                     }
                 },
                 message: {
                     Text(
-                        CalendarResourcesStrings.signOutAccountAlertConfirm
+                        CalendarResourcesStrings.signOutAccountAlertDescription
                     )
                 }
             )
