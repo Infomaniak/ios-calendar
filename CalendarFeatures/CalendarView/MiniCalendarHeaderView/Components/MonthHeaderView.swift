@@ -22,6 +22,7 @@ import SwiftUI
 
 struct MonthHeaderView: View {
     @Environment(\.calendar) private var calendar
+    @Environment(MiniCalendarViewModel.self) private var viewModel
 
     let page: ReferenceDatePage
     @Binding var selectedDate: Date
@@ -73,7 +74,7 @@ struct MonthHeaderView: View {
                     DayCellView(
                         date: dayDate,
                         isSelected: calendar.isDate(dayDate, inSameDayAs: selectedDate),
-                        eventDots: page.datesWithEventDots[dayDate] ?? []
+                        eventDots: viewModel.eventDots(for: dayDate, calendar: calendar)
                     )
                     .opacity(
                         calendar.isDate(
@@ -98,4 +99,5 @@ struct MonthHeaderView: View {
         ),
         selectedDate: $selectedDate
     )
+    .environment(MiniCalendarViewModel())
 }

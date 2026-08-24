@@ -22,17 +22,20 @@ import DesignSystem
 import InfiniteScrollViews
 import InfomaniakDI
 import MultiplatformCalendar
+import Observation
 import SwiftUI
 
 struct ReferenceDatePage: Hashable, Equatable {
     let referenceDate: Date
     let referenceDateInterval: Foundation.Calendar.Component
-    let datesWithEventDots: [Date: [Color]]
+}
 
-    init(referenceDate: Date, referenceDateInterval: Foundation.Calendar.Component, datesWithEventDots: [Date: [Color]] = [:]) {
-        self.referenceDate = referenceDate
-        self.referenceDateInterval = referenceDateInterval
-        self.datesWithEventDots = datesWithEventDots
+@Observable
+final class MiniCalendarViewModel {
+    var datesWithEventDots = [Date: [Color]]()
+
+    func eventDots(for date: Date, calendar: Foundation.Calendar) -> [Color] {
+        return datesWithEventDots[calendar.startOfDay(for: date)] ?? []
     }
 }
 
@@ -61,6 +64,8 @@ struct MiniCalendarView: View {
     @Binding var selectedDate: Date
     @Binding var displayedPage: ReferenceDatePage
 
+    @State private var viewModel = MiniCalendarViewModel()
+
     var body: some View {
         VStack(spacing: 0) {
             DayOfWeekView()
@@ -83,6 +88,7 @@ struct MiniCalendarView: View {
             )
         }
         .id(displayMode)
+        .environment(viewModel)
         .task(id: displayedPage.referenceDate) {
             await updateCalendarDotsFor(date: displayedPage.referenceDate, calendar: calendar)
         }
@@ -123,14 +129,12 @@ struct MiniCalendarView: View {
 
     @concurrent
     private func updateCalendarDotsFor(date: Date, calendar: Foundation.Calendar) async {
-        guard let previousMonthDate = calendar.date(byAdding: .month, value: -1, to: date),
-              let nextMonthDate = calendar.date(byAdding: .month, value: 1, to: date),
+        guard let previousMonthDate = calendar.date(byAdding: .month, value: -2, to: date),
+              let nextMonthDate = calendar.date(byAdding: .month, value: 2, to: date),
               let previousYearMonth = YearMonth.fromDate(date: previousMonthDate, calendar: calendar),
               let nextYearMonth = YearMonth.fromDate(date: nextMonthDate, calendar: calendar) else {
             return
         }
-
-        let referenceStartOfDayDate = calendar.startOfDay(for: date)
 
         @InjectService var calendarSDK: CalendarCoreGraph
         for await colorsByDay in calendarSDK.calendarManager.observeMonthlyCalendarColors(
@@ -152,11 +156,7 @@ struct MiniCalendarView: View {
             )
 
             await MainActor.run {
-                displayedPage = ReferenceDatePage(
-                    referenceDate: referenceStartOfDayDate,
-                    referenceDateInterval: displayMode.referenceDateInterval,
-                    datesWithEventDots: datesWithEventDots
-                )
+                viewModel.datesWithEventDots = datesWithEventDots
             }
         }
     }
