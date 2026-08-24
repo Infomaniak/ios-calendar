@@ -30,3 +30,14 @@ public extension KotlinInstant {
         Date(timeIntervalSince1970: TimeInterval(toEpochMilliseconds()) / 1000.0)
     }
 }
+
+public extension Kotlinx_datetimeLocalDateTime {
+    var swiftDate: Date? {
+        let components = DateComponents(
+            calendar: .current,
+            year: Int(year), month: Int(month.ordinal), day: Int(day),
+            hour: Int(hour), minute: Int(minute), second: Int(second)
+        )
+        return Calendar.current.date(from: components)
+    }
+}

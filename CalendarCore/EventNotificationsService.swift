@@ -85,29 +85,43 @@ final class EventNotificationsService: Sendable {
     }
 
     private func generateNotificationRequestForAlarm(_ alarm: EventAlarm, event: Event) -> UNNotificationRequest? {
+        guard let trigger = calendarTriggerForAlarm(alarm, event: event) else {
+            return nil
+        }
+
         let content = UNMutableNotificationContent()
         content.title = event.title
+        return UNNotificationRequest(identifier: notificationID(for: event, alarm: alarm), content: content, trigger: trigger)
+    }
 
-        let trigger: UNCalendarNotificationTrigger
+    private func calendarTriggerForAlarm(_ alarm: EventAlarm, event: Event) -> UNCalendarNotificationTrigger? {
         if let absoluteTrigger = alarm.trigger as? AlarmTriggerAbsolute {
             let components = Calendar.current.dateComponents(
                 [.year, .month, .day, .hour, .minute, .second],
                 from: absoluteTrigger.instant.date
             )
-            trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
-        } else if let relativeTrigger = alarm.trigger as? AlarmTriggerRelative {
-            let components = Calendar.current.dateComponents(
-                [.year, .month, .day, .hour, .minute, .second],
-                from: .now
-            )
-            // TODO: Compute date correctly
-            trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
-        } else {
-            return nil
+
+            return UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
         }
 
-        let id = notificationID(for: event, alarm: alarm)
-        return UNNotificationRequest(identifier: id, content: content, trigger: trigger)
+        if let relativeTrigger = alarm.trigger as? AlarmTriggerRelative {
+            var referenceDate: Date
+            switch relativeTrigger.relatedTo {
+            case .start:
+                referenceDate = event.timing.start.swiftDate ?? .now
+            case .end:
+                referenceDate = event.timing.end.swiftDate ?? .now
+            }
+
+            let components = Calendar.current.dateComponents(
+                [.year, .month, .day, .hour, .minute, .second],
+                from: referenceDate
+            )
+
+            return UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
+        }
+
+        return nil
     }
 
     private func notificationID(for event: Event, alarm: EventAlarm) -> String {
