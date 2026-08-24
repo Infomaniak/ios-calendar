@@ -74,7 +74,7 @@ struct EventCellStyle: ViewModifier {
             .foregroundStyle(foreground)
             .background(background.opacity(0.75))
             .overlay(alignment: .leading) {
-                colors.onDatavizContainer.frame(width: 4)
+                colors.onContainerColor.frame(width: 4)
             }
             .strikethrough(mode == .declined)
             .overlay(alignment: .leading) {
