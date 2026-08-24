@@ -220,15 +220,30 @@ struct DayContentView: View {
 }
 
 struct GlassHeaderBarModifier<BarContent: View>: ViewModifier {
+    @State private var barHeight: CGFloat = 0
+
     @ViewBuilder let barContent: () -> BarContent
 
     func body(content: Content) -> some View {
         if #available(iOS 26.0, *) {
-            content.safeAreaBar(edge: .top) {
-                barContent()
-                    .padding(.horizontal, value: .medium)
-                    .glassEffect(.identity, in: Rectangle())
-            }
+            content
+                .scrollEdgeEffectStyle(.hard, for: .top)
+                .safeAreaBar(edge: .top) {
+                    Color.clear
+                        .frame(height: barHeight)
+                        .glassEffect(.identity, in: Rectangle())
+                        .allowsHitTesting(false)
+                }
+                .overlay(alignment: .top) {
+                    barContent()
+                        .padding(.horizontal, value: .medium)
+                        .onGeometryChange(for: CGFloat.self) { proxy in
+                            proxy.size.height
+                        } action: { newHeight in
+                            guard barHeight != newHeight else { return }
+                            barHeight = newHeight
+                        }
+                }
         } else {
             content.safeAreaInset(edge: .top) {
                 barContent()
