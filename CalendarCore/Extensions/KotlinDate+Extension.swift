@@ -35,7 +35,7 @@ public extension Kotlinx_datetimeLocalDateTime {
     var swiftDate: Date? {
         let components = DateComponents(
             calendar: .current,
-            year: Int(year), month: Int(month.ordinal), day: Int(day),
+            year: Int(year), month: Int(month.ordinal + 1), day: Int(day),
             hour: Int(hour), minute: Int(minute), second: Int(second)
         )
         return Calendar.current.date(from: components)
