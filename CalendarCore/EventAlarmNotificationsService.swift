@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarResources
 import Foundation
 import InfomaniakDI
 import MultiplatformCalendar
@@ -142,7 +143,8 @@ public final class EventAlarmNotificationsService: Sendable {
 
         let content = UNMutableNotificationContent()
         content.title = alarmContext.event.title
-        content.body = alarmContext.alarm.description_ ?? alarmContext.event.location ?? "!Alarm notification"
+        content.body = alarmContext.alarm.description_ ?? alarmContext.event.location
+            ?? CalendarResourcesStrings.notificationDefaultDescription
         content.sound = .default
         content.categoryIdentifier = NotificationsHelper.CategoryIdentifier.eventAlarm
         content.userInfo = [
