@@ -24,6 +24,7 @@ struct MonthPickerView: View {
     @Environment(\.calendar) private var calendar
 
     @State private var currentPage: Date
+    @State private var scrollToIndex: Date?
 
     @Binding var selectedDate: Date
 
@@ -41,7 +42,8 @@ struct MonthPickerView: View {
                 changeIndex: currentPage,
                 increaseIndexAction: referenceDateAfter,
                 decreaseIndexAction: referenceDateBefore,
-                orientation: .horizontal
+                orientation: .horizontal,
+                scrollToIndex: $scrollToIndex
             ) { monthDate in
                 HStack(spacing: IKPadding.micro) {
                     if shouldDisplayYear(for: monthDate) {
@@ -57,6 +59,9 @@ struct MonthPickerView: View {
             }
         }
         .padding(.vertical, value: .mini)
+        .onChange(of: selectedDate) { _, newValue in
+            scrollToIndex = calendar.monthStart(for: newValue)
+        }
     }
 
     private func referenceDateAfter(_ page: Date) -> Date? {
