@@ -16,21 +16,10 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarCore
 import Foundation
 import MultiplatformCalendar
 import SwiftUI
-
-public extension Date {
-    var instant: KotlinInstant {
-        KotlinInstant.companion.fromEpochMilliseconds(epochMilliseconds: Int64(timeIntervalSince1970 * 1000))
-    }
-}
-
-extension KotlinInstant {
-    var date: Date {
-        Date(timeIntervalSince1970: TimeInterval(toEpochMilliseconds()) / 1000.0)
-    }
-}
 
 public extension UIEvent {
     struct Colors: Sendable, Equatable, Hashable {

@@ -16,10 +16,25 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Testing
+import Foundation
+import OSLog
+import UserNotifications
 
-struct CalendarTests {
-    @Test func example() {
-        // Write your test here and use APIs like `#expect(...)` to check expected conditions.
+public enum NotificationsHelper {
+    public enum CategoryIdentifier {
+        public static let eventAlarm = "com.calendar.notification.eventAlarm"
+    }
+
+    public enum UserInfoKeys {
+        public static let eventId = "event_id"
+    }
+
+    public static func askForPermissions() async {
+        let options: UNAuthorizationOptions = [.alert, .sound, .badge, .providesAppNotificationSettings]
+        do {
+            try await UNUserNotificationCenter.current().requestAuthorization(options: options)
+        } catch {
+            Logger.general.error("User has declined notifications")
+        }
     }
 }

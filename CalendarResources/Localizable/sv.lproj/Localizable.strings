@@ -88,6 +88,9 @@
 /* loco:6a2040c0637876be5f0ec2f2 */
 "monthTitle" = "Månad";
 
+/* loco:6a8db088bdcf38c11d0c8a94 */
+"notificationDefaultDescription" = "Händelsevarning";
+
 /* loco:6a4dec95c1907081d30570c2 */
 "onlineLabel" = "Online";
 

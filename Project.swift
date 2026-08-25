@@ -237,7 +237,7 @@ let project = Project(
             buildableFolders: [
                 .folder("\(Constants.projectName)Tests")
             ],
-            dependencies: [.target(name: Constants.projectName)]
+            dependencies: [.target(name: "\(Constants.projectName)Core")]
         ),
         .target(
             name: "\(Constants.projectName)UITests",

@@ -20,6 +20,7 @@ let packageSettings = PackageSettings(
         "InterAppLogin": .framework,
         "NukeUI": .framework,
         "Nuke": .framework,
+        "Sentry-Dynamic": .framework,
         "_LottieStub": .framework
     ]
 )
