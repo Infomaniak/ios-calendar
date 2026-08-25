@@ -24,11 +24,11 @@ import Sentry
 import UserNotifications
 
 // TODO: Function name should follow KMP function name
-protocol EventAlarmEventsProviding: Sendable {
+public protocol EventAlarmEventsProviding: Sendable {
     func eventAlarmsToDisplay(range: Range<Date>) async throws -> [MultiplatformCalendar.Event]
 }
 
-protocol EventAlarmNotificationCenter: Sendable {
+public protocol EventAlarmNotificationCenter: Sendable {
     func pendingNotificationRequests() async -> [UNNotificationRequest]
     func add(_ request: UNNotificationRequest) async throws
     func removePendingNotificationRequests(withIdentifiers identifiers: [String]) async
@@ -36,10 +36,11 @@ protocol EventAlarmNotificationCenter: Sendable {
 
 extension UNUserNotificationCenter: EventAlarmNotificationCenter {}
 
-final class EventAlarmNotificationsService: Sendable {
+public final class EventAlarmNotificationsService: Sendable {
     private static let notificationIDPrefix = "event-alarm:"
-    private static let defaultWindowSize: TimeInterval = 60 * 60 * 24 * 3 // 3 days
     private static let maximumNotificationsToSchedule = 64
+
+    public static let defaultWindowSize: TimeInterval = 60 * 60 * 24 * 3 // 3 days
 
     struct AlarmContext {
         let event: MultiplatformCalendar.Event
@@ -51,7 +52,7 @@ final class EventAlarmNotificationsService: Sendable {
     private let eventsProvider: EventAlarmEventsProviding
     private let notificationCenter: EventAlarmNotificationCenter
 
-    init(
+    public init(
         windowSize: TimeInterval = EventAlarmNotificationsService.defaultWindowSize,
         calendar: Foundation.Calendar = .current,
         eventsProvider: EventAlarmEventsProviding,
@@ -63,7 +64,7 @@ final class EventAlarmNotificationsService: Sendable {
         self.notificationCenter = notificationCenter
     }
 
-    func scheduleNotificationsForEventAlarms() async {
+    public func scheduleNotificationsForEventAlarms() async {
         let rangeOfEvents = Date.now ..< Date.now.addingTimeInterval(windowSize)
         guard let alarmContexts = await alarmContexts(rangeOfEvents) else {
             return

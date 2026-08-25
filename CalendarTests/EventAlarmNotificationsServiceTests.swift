@@ -60,7 +60,7 @@ struct EventAlarmNotificationsServiceTests {
     }
 
     @Test func requestsEventsForConfiguredWindow() async throws {
-        let windowSize: TimeInterval = 7_200
+        let windowSize: TimeInterval = 7200
         let eventsProvider = EventAlarmTestEventsProvider(events: [])
         let notificationCenter = EventAlarmTestNotificationCenter()
         let service = EventAlarmNotificationsService(
