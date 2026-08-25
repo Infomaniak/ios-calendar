@@ -32,9 +32,14 @@ public extension KotlinInstant {
 }
 
 public extension Kotlinx_datetimeLocalDateTime {
-    var swiftDate: Date? {
+    func date(timezone: Kotlinx_datetimeTimeZone?) -> Date? {
+        var dateTimeZone = Locale.current.timeZone
+        if let timezone, let parsedTimeZone = TimeZone(identifier: timezone.id) {
+            dateTimeZone = parsedTimeZone
+        }
+
         let components = DateComponents(
-            calendar: .current,
+            calendar: .current, timeZone: dateTimeZone,
             year: Int(year), month: Int(month.ordinal + 1), day: Int(day),
             hour: Int(hour), minute: Int(minute), second: Int(second)
         )
