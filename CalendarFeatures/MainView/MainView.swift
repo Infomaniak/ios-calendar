@@ -29,16 +29,23 @@ public struct MainView: View {
     public init() {}
 
     public var body: some View {
-        if horizontalSizeClass == .regular {
-            RegularMainView()
-                .task(id: calendarAccounts) {
-                    await syncCalendars()
-                }
-        } else {
-            CompactMainView()
-                .task(id: calendarAccounts) {
-                    await syncCalendars()
-                }
+        Group {
+            if horizontalSizeClass == .regular {
+                RegularMainView()
+            } else {
+                CompactMainView()
+            }
+        }
+        .task(id: calendarAccounts) {
+            await syncCalendars()
+        }
+        .sceneLifecycle(willEnterForeground: willEnterForeground)
+    }
+
+    private func willEnterForeground() {
+        Task {
+            @InjectService var eventAlarmNotification: EventAlarmNotificationsService
+            await eventAlarmNotification.scheduleNotificationsForEventAlarms()
         }
     }
 
