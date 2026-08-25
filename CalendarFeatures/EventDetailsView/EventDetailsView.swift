@@ -26,9 +26,6 @@ public struct EventDetailsView: View {
     @Environment(\.dismiss) private var dismiss
 
     private let event: CalendarCoreUI.UIEvent
-    @State private var color: Color
-    @State private var calendarColor: Color
-    @State private var isColorPickerPresented = false
     @State private var alarms: [UIEventAlarm]
     @State private var selectedStatus: UIParticipationStatus?
 
@@ -56,8 +53,6 @@ public struct EventDetailsView: View {
         event: CalendarCoreUI.UIEvent
     ) {
         self.event = event
-        _color = State(initialValue: Color(event.colors.onContainerColor))
-        _calendarColor = State(initialValue: Color(.gray))
         _alarms = State(initialValue: event.alarms)
         _selectedStatus = State(initialValue: event.user?.status)
     }
@@ -65,13 +60,81 @@ public struct EventDetailsView: View {
     public var body: some View {
         NavigationStack {
             Form {
-                EventTitleRow(
-                    title: event.title,
-                    calendarColor: event.colors.calendarSourceColor
-                )
+                Section {
+                    VStack(spacing: IKPadding.small) {
+                        EventTitleRow(
+                            title: event.title,
+                            calendarColor: event.colors.calendarSourceColor
+                        )
+
+                        DayRow(event: event)
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .listRowBackground(Color.clear)
+                .listRowSeparator(.hidden)
+
+                Section {
+                    ParticipantsSectionView(uniqueAttendees: uniqueAttendees)
+                }
+
+                Section {
+                    if let kMeetLinkString = event.kMeetLink,
+                       let kMeetLink = URL(string: kMeetLinkString) {
+                        OpenLinkRow(
+                            title: CalendarResourcesStrings.participateKMeetTitle,
+                            buttonTitle: CalendarResourcesStrings.buttonJoin,
+                            icon: CalendarResourcesAsset.Images.productKmeet.swiftUIImage,
+                            linkURL: kMeetLink,
+                            showLink: false
+                        )
+                    }
+
+                    if let address = event.location {
+                        LocationRow(address: address)
+                    }
+
+                    MeetingRoomView(roomTitle: "Salle Jules Verne", roomFloor: 3, roomCapacity: 20)
+                }
+
+                Section {
+                    // TODO: Use actual event link when available
+                    OpenLinkRow(
+                        title: CalendarResourcesStrings.urlLinkTitle,
+                        buttonTitle: CalendarResourcesStrings.openTitle,
+                        icon: CalendarResourcesAsset.Images.link.swiftUIImage,
+                        linkURL: URL(string: "https://www.infomaniak.com/fr")!,
+                        showLink: true
+                    )
+
+                    if let description = event.description, !description.isEmpty {
+                        DescriptionRow(description: description)
+                    }
+
+                    let eventFiles = [
+                        "Fichetechniquedubatiment_2025.pdf",
+                        "pointderdv.jpg",
+                        "plan.pdf",
+                        "plandureseau.json",
+                        "touteslesinfos.zip",
+                        "listedescontacts.xlsx"
+                    ] // TODO: Replace with actual event files when available
+                    ForEach(Array(eventFiles.enumerated()), id: \.offset) { fichier in
+                        HStack {
+                            LinkType(url: URL(string: fichier.element)!)?.icon
+                            Text(fichier.element)
+                        }
+                    }
+                }
+                if !alarms.isEmpty {
+                    Section {
+                        AlertsSectionView(alarms: $alarms)
+                    }
+                }
 
                 if let classification = event.classification {
                     Section {
+                        // TODO: Add another row for free/busy status when available
                         StatusRow(
                             text: classification == .private ? CalendarResourcesStrings.privateLabel :
                                 CalendarResourcesStrings.publicLabel,
@@ -82,50 +145,47 @@ public struct EventDetailsView: View {
                 }
 
                 Section {
-                    Toggle(CalendarResourcesStrings.allDayLabel, isOn: .constant(event.isAllDay))
-                        .disabled(true)
-                    DatePicker("Start Date", selection: .constant(event.startDate), displayedComponents: displayedComponents)
-                        .disabled(true)
-                    DatePicker("End Date", selection: .constant(event.endDate), displayedComponents: displayedComponents)
-                        .disabled(true)
-                    if let location = event.location, !location.isEmpty {
-                        LabeledContent(CalendarResourcesStrings.locationOrRoomLabel, value: location)
-                    }
-                } header: {
-                    Text("Date & Location")
-                }
-
-                CalendarSectionView(event: event, calendarColor: $calendarColor)
-
-                if !alarms.isEmpty {
-                    Section {
-                        AlertsSectionView(alarms: $alarms)
-                    } header: {
-                        Text("Alerts")
-                    }
-                }
-                ParticipantsSectionView(uniqueAttendees: uniqueAttendees)
-
-                if selectedStatus != nil {
-                    Section {
-                        HStack(spacing: IKPadding.medium) {
-                            ForEach([UIParticipationStatus.accepted, .declined, .tentative], id: \.self) { answer in
-                                AnswerButton(
-                                    answer: answer,
-                                    isSelected: selectedStatus == answer
-                                ) {
-                                    selectedStatus = answer
-                                }
-                            }
-                        }
-                        .frame(maxWidth: .infinity, alignment: .center)
-                        .listRowBackground(Color.clear)
-                    }
+                    EventCalendarRow(event: event)
                 }
             }
             .closeToolbarItem(dismiss: dismiss)
             .navigationTitle(CalendarResourcesStrings.eventTitle)
             .navigationBarTitleDisplayMode(.inline)
+            .listSectionSpacing(IKPadding.large)
+            .contentMargins(.top, 0, for: .scrollContent)
+            .modifier(AdaptiveSafeAreaBarModifier {
+                if selectedStatus != nil {
+                    HStack(spacing: IKPadding.medium) {
+                        ForEach([UIParticipationStatus.accepted, .declined, .tentative], id: \.self) { answer in
+                            AnswerButton(
+                                answer: answer,
+                                isSelected: selectedStatus == answer
+                            ) {
+                                selectedStatus = answer
+                            }
+                        }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .center)
+                }
+            })
+        }
+    }
+}
+
+struct AdaptiveSafeAreaBarModifier<BarContent: View>: ViewModifier {
+    @ViewBuilder let barContent: () -> BarContent
+
+    func body(content: Content) -> some View {
+        if #available(iOS 26.0, *) {
+            content.safeAreaBar(edge: .bottom) {
+                barContent()
+            }
+        } else {
+            content.safeAreaInset(edge: .bottom) {
+                barContent()
+                    .padding(.top, IKPadding.medium)
+                    .background(Material.bar)
+            }
         }
     }
 }

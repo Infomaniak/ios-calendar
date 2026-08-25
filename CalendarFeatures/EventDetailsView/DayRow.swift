@@ -28,10 +28,6 @@ public struct DayRow: View {
 
     public var body: some View {
         HStack(spacing: IKPadding.medium) {
-            CalendarResourcesAsset.Images.clock.swiftUIImage
-                .iconSize(IKIconSize.large)
-                .foregroundStyle(theme.color.contentSecondary)
-
             VStack(alignment: .leading) {
                 dateRangeText
                     .font(.body)

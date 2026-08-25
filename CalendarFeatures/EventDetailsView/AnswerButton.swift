@@ -82,7 +82,7 @@ struct AdaptiveGlassModifier: ViewModifier {
     func body(content: Content) -> some View {
         if #available(iOS 26.0, *) {
             content
-                .glassEffect(.clear.interactive())
+                .glassEffect(.regular.interactive())
         } else {
             content
                 .background(.ultraThinMaterial, in: Capsule())
