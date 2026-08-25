@@ -31,7 +31,9 @@ struct DayEventView: View {
         self.maxTextHeight = maxTextHeight
     }
 
-    private var height: CGFloat {
+    private let cellPadding: CGFloat = 1
+
+    private var cellHeight: CGFloat {
         let duration = event.endDate.timeIntervalSince(event.startDate)
         let hours = duration / 3600
 
@@ -39,19 +41,19 @@ struct DayEventView: View {
         return max(CGFloat(cappedHours) * pointsPerHour, 16)
     }
 
-    private var effectiveHeight: CGFloat {
-        maxTextHeight ?? height
+    private var textContentHeight: CGFloat {
+        maxTextHeight ?? cellHeight
     }
 
     private var isCompact: Bool {
-        effectiveHeight <= 24
+        textContentHeight <= 24
     }
 
     private var contentPadding: EdgeInsets {
         if isCompact {
             return EdgeInsets(top: 0, leading: IKPadding.mini, bottom: 0, trailing: IKPadding.mini)
         }
-        let topPadding = min(IKPadding.mini, effectiveHeight * 0.15)
+        let topPadding = min(IKPadding.mini, textContentHeight * 0.15)
         return EdgeInsets(top: topPadding, leading: IKPadding.mini, bottom: 0, trailing: IKPadding.mini)
     }
 
@@ -104,9 +106,10 @@ struct DayEventView: View {
                 .font(.caption.bold())
         }
         .padding(contentPadding)
-        .frame(maxHeight: effectiveHeight, alignment: isCompact ? .center : .top)
-        .frame(height: height, alignment: .top)
+        .frame(maxHeight: textContentHeight - cellPadding * 2, alignment: isCompact ? .center : .top)
+        .frame(height: cellHeight - cellPadding * 2, alignment: .top)
         .eventCellStyle(event: event, padding: 0)
+        .padding(cellPadding)
     }
 }
 
