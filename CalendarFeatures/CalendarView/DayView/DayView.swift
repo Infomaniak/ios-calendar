@@ -27,11 +27,17 @@ struct DayView: View {
     @Environment(DaysViewModel.self) private var daysViewModel
 
     @Binding var selectedEvent: CalendarCoreUI.UIEvent?
+    @Binding var miniCalendarHeight: CGFloat
 
     let date: Date
 
     var body: some View {
-        DayContentView(selectedEvent: $selectedEvent, date: date, events: daysViewModel.events(for: date, calendar: calendar))
+        DayContentView(
+            selectedEvent: $selectedEvent,
+            date: date,
+            events: daysViewModel.events(for: date, calendar: calendar),
+            miniCalendarHeight: miniCalendarHeight
+        )
     }
 }
 
@@ -76,6 +82,7 @@ struct DayContentView: View {
     @Binding var selectedEvent: CalendarCoreUI.UIEvent?
     let date: Date
     let events: [CalendarCoreUI.UIEvent]
+    let miniCalendarHeight: CGFloat
 
     private var hourMarks: [Date] {
         let startOfDay = Calendar.current.startOfDay(for: date)
@@ -175,8 +182,7 @@ struct DayContentView: View {
                             currentMagnification = 1.0
                         }
                 )
-
-                .modifier(GlassHeaderBarModifier {
+                .modifier(GlassHeaderBarModifier(miniCalendarHeight: miniCalendarHeight) {
                     DayHeaderView(events: events.filter(\.isAllDay), date: date)
                 })
             }
@@ -220,8 +226,9 @@ struct DayContentView: View {
 }
 
 struct GlassHeaderBarModifier<BarContent: View>: ViewModifier {
-    @State private var barHeight: CGFloat = 0
+    @State private var dayHeaderHeight: CGFloat = 0
 
+    let miniCalendarHeight: CGFloat
     @ViewBuilder let barContent: () -> BarContent
 
     func body(content: Content) -> some View {
@@ -230,7 +237,7 @@ struct GlassHeaderBarModifier<BarContent: View>: ViewModifier {
                 .scrollEdgeEffectStyle(.hard, for: .top)
                 .safeAreaBar(edge: .top) {
                     Color.clear
-                        .frame(height: barHeight)
+                        .frame(height: miniCalendarHeight + dayHeaderHeight)
                         .glassEffect(.identity, in: Rectangle())
                         .allowsHitTesting(false)
                 }
@@ -240,9 +247,10 @@ struct GlassHeaderBarModifier<BarContent: View>: ViewModifier {
                         .onGeometryChange(for: CGFloat.self) { proxy in
                             proxy.size.height
                         } action: { newHeight in
-                            guard barHeight != newHeight else { return }
-                            barHeight = newHeight
+                            guard dayHeaderHeight != newHeight else { return }
+                            dayHeaderHeight = newHeight
                         }
+                        .padding(.top, miniCalendarHeight)
                 }
         } else {
             content.safeAreaInset(edge: .top) {
@@ -255,5 +263,10 @@ struct GlassHeaderBarModifier<BarContent: View>: ViewModifier {
 }
 
 #Preview {
-    DayContentView(selectedEvent: .constant(nil), date: .now, events: [.preview, .preview])
+    DayContentView(
+        selectedEvent: .constant(nil),
+        date: .now,
+        events: [.preview, .preview],
+        miniCalendarHeight: 0
+    )
 }
