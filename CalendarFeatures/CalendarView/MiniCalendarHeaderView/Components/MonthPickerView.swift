@@ -22,7 +22,6 @@ import SwiftUI
 
 struct MonthPickerView: View {
     @Environment(\.calendar) private var calendar
-    @Environment(\.esdsTheme) private var theme
 
     @State private var currentPage: Date
 
@@ -34,35 +33,30 @@ struct MonthPickerView: View {
     }
 
     var body: some View {
-        InfiniteScrollView(
-            changeIndex: currentPage,
-            increaseIndexAction: referenceDateAfter,
-            decreaseIndexAction: referenceDateBefore,
-            orientation: .horizontal
-        ) { monthDate in
-            HStack(spacing: IKPadding.micro) {
-                if shouldDisplayYear(for: monthDate) {
-                    Text(monthDate, format: .dateTime.year())
-                        .font(.subheadline.weight(.semibold))
-                        .padding(.horizontal, IKPadding.small)
-                        .padding(.vertical, IKPadding.micro)
-                }
+        VStack {
+            Divider()
+                .padding(.horizontal, value: .small)
 
-                Button {
-                    selectedDate = monthDate
-                } label: {
-                    Text(monthDate, format: .dateTime.month(.abbreviated))
-                        .foregroundStyle(isSelected(monthDate) ? theme.color.contentInverse : theme.color.contentPrimary)
-                        .padding(.horizontal, IKPadding.small)
-                        .padding(.vertical, IKPadding.micro)
-                        .background(isSelected(monthDate) ? AnyShapeStyle(.tint) : AnyShapeStyle(theme.color.backgroundDisabled),
-                                    in: .capsule)
+            InfiniteScrollView(
+                changeIndex: currentPage,
+                increaseIndexAction: referenceDateAfter,
+                decreaseIndexAction: referenceDateBefore,
+                orientation: .horizontal
+            ) { monthDate in
+                HStack(spacing: IKPadding.micro) {
+                    if shouldDisplayYear(for: monthDate) {
+                        Text(monthDate, format: .dateTime.year())
+                            .font(.subheadline.weight(.semibold))
+                            .padding(.horizontal, IKPadding.small)
+                            .padding(.vertical, IKPadding.micro)
+                    }
+
+                    MonthButton(date: monthDate, selectedDate: $selectedDate)
                 }
-                .buttonStyle(.plain)
+                .padding(.horizontal, IKPadding.micro)
             }
-            .padding(.horizontal, IKPadding.micro)
         }
-        .padding(.bottom, value: .mini)
+        .padding(.vertical, value: .mini)
     }
 
     private func referenceDateAfter(_ page: Date) -> Date? {
@@ -76,9 +70,42 @@ struct MonthPickerView: View {
     private func shouldDisplayYear(for date: Date) -> Bool {
         return calendar.component(.month, from: date) == 1
     }
+}
 
-    private func isSelected(_ date: Date) -> Bool {
+private struct MonthButton: View {
+    @Environment(\.calendar) private var calendar
+    @Environment(\.esdsTheme) private var theme
+
+    let date: Date
+
+    @Binding var selectedDate: Date
+
+    private var isCurrentMonth: Bool {
+        return calendar.isDate(date, equalTo: .now, toGranularity: .month)
+    }
+
+    private var isSelected: Bool {
         return calendar.isDate(date, equalTo: selectedDate, toGranularity: .month)
+    }
+
+    var body: some View {
+        Button {
+            selectedDate = date
+        } label: {
+            Text(date, format: .dateTime.month(.abbreviated))
+                .foregroundStyle(isCurrentMonth ? theme.color.contentInverse : theme.color.contentPrimary)
+                .padding(.horizontal, IKPadding.small)
+                .padding(.vertical, IKPadding.micro)
+                .background(isCurrentMonth ? Color.accentColor : theme.color.backgroundDisabled, in: Capsule())
+                .overlay {
+                    if isSelected, !isCurrentMonth {
+                        Capsule()
+                            .strokeBorder(.tint)
+                    }
+                }
+                .geometryGroup()
+        }
+        .buttonStyle(.plain)
     }
 }
 
