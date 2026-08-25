@@ -38,7 +38,7 @@ extension UNUserNotificationCenter: EventAlarmNotificationCenter {}
 
 public final class EventAlarmNotificationsService: Sendable {
     private static let notificationIDPrefix = "event-alarm:"
-    private static let maximumNotificationsToSchedule = 64
+    private static let maximumNotificationsToSchedule = 50
 
     public static let defaultWindowSize: TimeInterval = 60 * 60 * 24 * 3 // 3 days
 
