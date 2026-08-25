@@ -166,9 +166,9 @@ public final class EventAlarmNotificationsService: Sendable {
             let referenceDate: Date?
             switch relativeTrigger.relatedTo {
             case .start:
-                referenceDate = alarmContext.event.timing.start.swiftDate
+                referenceDate = alarmContext.event.timing.start.date(timezone: alarmContext.event.timing.startTimeZone)
             case .end:
-                referenceDate = alarmContext.event.timing.end.swiftDate
+                referenceDate = alarmContext.event.timing.end.date(timezone: alarmContext.event.timing.endTimeZone)
             }
 
             guard let referenceDate else { return nil }
