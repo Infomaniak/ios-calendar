@@ -16,8 +16,10 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarResources
 import Foundation
 import MultiplatformCalendar
+import SwiftUI
 
 public enum UIParticipationStatus: String, Sendable, CaseIterable {
     case accepted
@@ -33,6 +35,33 @@ public extension UIParticipationStatus {
         case .declined: self = .declined
         case .tentative: self = .tentative
         case .needsAction: self = .needsAction
+        }
+    }
+
+    var name: String {
+        switch self {
+        case .accepted: return CalendarResourcesStrings.statusAcceptedLabel
+        case .tentative: return CalendarResourcesStrings.buttonMaybe
+        case .needsAction: return CalendarResourcesStrings.statusNeedsActionLabel
+        case .declined: return CalendarResourcesStrings.statusDeclinedLabel
+        }
+    }
+
+    var color: Color {
+        switch self {
+        case .accepted: return .green
+        case .tentative: return .gray
+        case .needsAction: return .orange
+        case .declined: return .red
+        }
+    }
+
+    var sortOrder: Int {
+        switch self {
+        case .accepted: return 0
+        case .tentative: return 1
+        case .needsAction: return 2
+        case .declined: return 3
         }
     }
 }

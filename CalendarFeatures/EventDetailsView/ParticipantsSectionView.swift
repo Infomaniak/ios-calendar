@@ -51,8 +51,12 @@ struct ParticipantsSectionView: View {
     var body: some View {
         if !uniqueAttendees.isEmpty {
             DisclosureGroup(isExpanded: $attendeesListIsOpen) {
-                ForEach(uniqueAttendees) { attendee in
-                    AttendeeRow(attendee: attendee, isOrganizer: attendee.isOrganizer)
+                ForEach(uniqueAttendees.sortedForDisplay()) { attendee in
+                    AccountCellView(rawAvatarURL: nil,
+                                    displayName: attendee.displayName ?? attendee.email,
+                                    email: attendee.email,
+                                    isOrganizer: attendee.isOrganizer,
+                                    status: attendee.status)
                 }
             } label: {
                 HStack(spacing: 0) {
@@ -90,6 +94,15 @@ struct ParticipantsSectionView: View {
                     .padding(.trailing, IKPadding.micro)
                 }
             }
+        }
+    }
+}
+
+private extension Array where Element == UIAttendee {
+    func sortedForDisplay() -> [UIAttendee] {
+        sorted {
+            if $0.isOrganizer != $1.isOrganizer { return $0.isOrganizer }
+            return $0.status.sortOrder < $1.status.sortOrder
         }
     }
 }

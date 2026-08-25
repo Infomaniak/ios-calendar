@@ -25,9 +25,6 @@
 /* loco:6a7c7c4523db46a469038b64 */
 "buttonMaybe" = "Vielleicht";
 
-/* loco:6a7c7c4523db46a469038b64 */
-"buttonMaybe" = "Vielleicht";
-
 /* loco:6a4deaee7855b4f804068862 */
 "buttonNavigate" = "Reiseroute";
 
@@ -144,6 +141,15 @@
 
 /* loco:6a631349aaecfe24ff0e28d2 */
 "startLabel" = "Anfang";
+
+/* loco:6a8d6455362429b2390bda72 */
+"statusAcceptedLabel" = "Angenommen";
+
+/* loco:6a8d6480c17afcf08b040832 */
+"statusDeclinedLabel" = "Abgelehnt";
+
+/* loco:6a8d6544c0a309a6c5026372 */
+"statusNeedsActionLabel" = "Ausstehend";
 
 /* loco:6a203f703a4a6492b407ce23 */
 "threeDaysTitle" = "Drei Tage";

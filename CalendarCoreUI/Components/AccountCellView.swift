@@ -31,13 +31,22 @@ public struct AccountCellView: View {
     let email: String
     let avatarSize: CGFloat
     let isOrganizer: Bool
+    let status: UIParticipationStatus?
 
-    public init(rawAvatarURL: String?, displayName: String, email: String, avatarSize: CGFloat = 40, isOrganizer: Bool = false) {
+    public init(
+        rawAvatarURL: String?,
+        displayName: String,
+        email: String,
+        avatarSize: CGFloat = 40,
+        isOrganizer: Bool = false,
+        status: UIParticipationStatus? = nil
+    ) {
         self.rawAvatarURL = rawAvatarURL
         self.displayName = displayName
         self.email = email
         self.avatarSize = avatarSize
         self.isOrganizer = isOrganizer
+        self.status = status
     }
 
     public var body: some View {
@@ -45,24 +54,26 @@ public struct AccountCellView: View {
             AvatarView(rawAvatarURL: rawAvatarURL, displayName: displayName, email: email, size: avatarSize)
 
             VStack(alignment: .leading, spacing: 0) {
-                HStack(spacing: IKPadding.mini) {
-                    Text(displayName)
-                        .font(.body.weight(.medium))
-                        .foregroundStyle(theme.color.contentPrimary)
+                Text(displayName)
+                    .foregroundStyle(theme.color.contentPrimary)
 
-                    if isOrganizer {
-                        Text(CalendarResourcesStrings.sectionOrganizerHeader)
-                            .font(.caption2)
-                            .padding(.horizontal, IKPadding.mini)
-                            .padding(.vertical, IKPadding.micro)
-                            .background(.secondary.opacity(0.15))
-                            .clipShape(Capsule())
-                    }
-                }
                 if displayName != email {
                     Text(email)
-                        .font(.body)
+                        .font(.subheadline)
                         .foregroundStyle(theme.color.contentSecondary)
+                }
+
+                HStack(spacing: 0) {
+                    if let status {
+                        Text(status.name)
+                            .font(.footnote.weight(.semibold))
+                            .foregroundStyle(status.color)
+                    }
+                    if isOrganizer {
+                        Text(" • \(CalendarResourcesStrings.sectionOrganizerHeader)")
+                            .font(.footnote)
+                            .foregroundStyle(theme.color.contentPrimary)
+                    }
                 }
             }
             .lineLimit(1)

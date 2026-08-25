@@ -142,6 +142,15 @@
 /* loco:6a631349aaecfe24ff0e28d2 */
 "startLabel" = "Början";
 
+/* loco:6a8d6455362429b2390bda72 */
+"statusAcceptedLabel" = "Godkänt";
+
+/* loco:6a8d6480c17afcf08b040832 */
+"statusDeclinedLabel" = "Avvisat";
+
+/* loco:6a8d6544c0a309a6c5026372 */
+"statusNeedsActionLabel" = "Väntar på beslut";
+
 /* loco:6a203f703a4a6492b407ce23 */
 "threeDaysTitle" = "Tre dagar";
 
