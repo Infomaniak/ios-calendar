@@ -17,8 +17,8 @@
  */
 
 import Foundation
-import UserNotifications
 import OSLog
+import UserNotifications
 
 public enum NotificationsHelper {
     public enum CategoryIdentifier {
