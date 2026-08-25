@@ -26,4 +26,8 @@ public extension Calendar {
     func monthStart(for date: Date) -> Date {
         dateInterval(of: .month, for: date)?.start ?? startOfDay(for: date)
     }
+
+    func yearStart(for date: Date) -> Date {
+        dateInterval(of: .year, for: date)?.start ?? startOfDay(for: date)
+    }
 }
