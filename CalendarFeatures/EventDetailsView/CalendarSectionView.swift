@@ -46,7 +46,7 @@ struct CalendarSectionView: View {
                     HStack {
                         Circle()
                             .fill(selectedCalendar.color)
-                            .frame(width: 12, height: 12)
+                            .frame(width: IKIconSize.small.rawValue, height: IKIconSize.small.rawValue)
                             .accessibilityHidden(true)
 
                         Text(selectedCalendar.displayName)

@@ -65,11 +65,9 @@ public struct EventDetailsView: View {
     public var body: some View {
         NavigationStack {
             Form {
-                EventSectionView(
+                EventTitleRow(
                     title: event.title,
-                    color: $color,
-                    calendarColor: $calendarColor,
-                    isColorPickerPresented: $isColorPickerPresented
+                    calendarColor: event.colors.calendarSourceColor
                 )
 
                 if let classification = event.classification {
