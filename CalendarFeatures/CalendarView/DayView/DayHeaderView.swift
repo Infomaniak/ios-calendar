@@ -19,6 +19,7 @@
 import CalendarCoreUI
 import CalendarResources
 import DesignSystem
+import ESDSFoundation
 import SwiftUI
 
 struct DayHeaderView: View {
@@ -53,11 +54,8 @@ struct DayHeaderView: View {
                 ))
                 .font(.caption2)
                 .foregroundStyle(theme.color.contentTertiary)
-                .padding(.trailing, IKPadding.medium)
-                .frame(
-                    width: DayContentView.Constants.leadingInset,
-                    alignment: .trailing
-                )
+                .padding(.trailing, value: .small)
+                .frame(width: DayContentView.Constants.leadingInset, alignment: .trailing)
 
                 HStack(spacing: 2) {
                     Text(date, format: .dateTime.weekday(.wide))
@@ -71,16 +69,13 @@ struct DayHeaderView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
-            HStack(alignment: .top, spacing: 0) {
-                if !events.isEmpty {
+            if !events.isEmpty {
+                HStack(alignment: .top, spacing: 0) {
                     Text(CalendarResourcesStrings.allDayLabel)
                         .font(.caption2)
                         .foregroundStyle(theme.color.contentTertiary)
-                        .padding(.trailing, IKPadding.medium)
-                        .frame(
-                            width: DayContentView.Constants.leadingInset,
-                            alignment: .trailing
-                        )
+                        .padding(.trailing, value: .small)
+                        .frame(width: DayContentView.Constants.leadingInset, alignment: .trailing)
                         .multilineTextAlignment(.trailing)
 
                     ScrollView {
@@ -105,12 +100,7 @@ struct DayHeaderView: View {
                 }
             }
         }
-        .padding(.bottom, events.isEmpty ? IKPadding.medium : 0)
-        .overlay(alignment: .bottom) {
-            Divider()
-                .frame(height: 1)
-                .overlay(theme.color.borderDim2Default)
-        }
+        .padding(.bottom, events.isEmpty ? IKPadding.mini : 0)
     }
 }
 
