@@ -89,7 +89,7 @@ struct MiniCalendarView: View {
             .id(displayMode)
 
             if displayMode == .month {
-                MonthPickerView(selectedDate: $selectedDate)
+                MonthPickerView(selectedDate: $selectedDate, displayedPage: $displayedPage)
             }
         }
         .environment(viewModel)

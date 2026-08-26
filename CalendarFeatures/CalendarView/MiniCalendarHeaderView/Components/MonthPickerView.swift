@@ -24,13 +24,14 @@ struct MonthPickerView: View {
     @Environment(\.calendar) private var calendar
 
     @State private var currentPage: Date
-    @State private var scrollToIndex: Date?
 
     @Binding var selectedDate: Date
+    @Binding var displayedPage: ReferenceDatePage
 
-    init(selectedDate: Binding<Date>) {
+    init(selectedDate: Binding<Date>, displayedPage: Binding<ReferenceDatePage>) {
         _selectedDate = selectedDate
-        _currentPage = State(initialValue: Calendar.current.monthStart(for: selectedDate.wrappedValue))
+        _displayedPage = displayedPage
+        _currentPage = State(initialValue: Calendar.current.monthStart(for: displayedPage.wrappedValue.referenceDate))
     }
 
     var body: some View {
@@ -38,30 +39,37 @@ struct MonthPickerView: View {
             Divider()
                 .padding(.horizontal, value: .small)
 
-            InfiniteScrollView(
-                changeIndex: currentPage,
-                increaseIndexAction: referenceDateAfter,
-                decreaseIndexAction: referenceDateBefore,
-                orientation: .horizontal,
-                scrollToIndex: $scrollToIndex
-            ) { monthDate in
-                HStack(spacing: IKPadding.micro) {
-                    if shouldDisplayYear(for: monthDate) {
-                        Text(monthDate, format: .dateTime.year())
-                            .font(.subheadline.weight(.semibold))
-                            .padding(.horizontal, IKPadding.small)
-                            .padding(.vertical, IKPadding.micro)
-                    }
+            InfiniteScrollViewReader { proxy in
+                InfiniteScrollView(
+                    changeIndex: currentPage,
+                    increaseIndexAction: referenceDateAfter,
+                    decreaseIndexAction: referenceDateBefore,
+                    orientation: .horizontal,
+                ) { monthDate in
+                    HStack(spacing: IKPadding.micro) {
+                        if shouldDisplayYear(for: monthDate) {
+                            Text(monthDate, format: .dateTime.year())
+                                .font(.subheadline.weight(.semibold))
+                                .padding(.horizontal, IKPadding.small)
+                                .padding(.vertical, IKPadding.micro)
+                        }
 
-                    MonthButton(date: monthDate, selectedDate: $selectedDate)
+                        MonthButton(
+                            date: monthDate,
+                            selectedDate: $selectedDate,
+                            displayedPage: $displayedPage
+                        )
+                    }
+                    .padding(.horizontal, IKPadding.micro)
                 }
-                .padding(.horizontal, IKPadding.micro)
+                .onChange(of: displayedPage.referenceDate) { _, newValue in
+                    withAnimation {
+                        proxy.scrollTo(calendar.monthStart(for: newValue))
+                    }
+                }
             }
         }
         .padding(.vertical, value: .mini)
-        .onChange(of: selectedDate) { _, newValue in
-            scrollToIndex = calendar.monthStart(for: newValue)
-        }
     }
 
     private func referenceDateAfter(_ page: Date) -> Date? {
@@ -84,13 +92,14 @@ private struct MonthButton: View {
     let date: Date
 
     @Binding var selectedDate: Date
+    @Binding var displayedPage: ReferenceDatePage
 
     private var isCurrentMonth: Bool {
         return calendar.isDate(date, equalTo: .now, toGranularity: .month)
     }
 
     private var isSelected: Bool {
-        return calendar.isDate(date, equalTo: selectedDate, toGranularity: .month)
+        return calendar.isDate(date, equalTo: displayedPage.referenceDate, toGranularity: .month)
     }
 
     var body: some View {
@@ -116,5 +125,9 @@ private struct MonthButton: View {
 
 #Preview {
     @Previewable @State var selectedDate = Date()
-    MonthPickerView(selectedDate: $selectedDate)
+    @Previewable @State var displayedPage = ReferenceDatePage(
+        referenceDate: Date(),
+        referenceDateInterval: .month
+    )
+    MonthPickerView(selectedDate: $selectedDate, displayedPage: $displayedPage)
 }
