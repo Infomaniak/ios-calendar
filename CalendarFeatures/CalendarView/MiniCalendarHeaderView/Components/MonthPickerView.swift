@@ -110,11 +110,14 @@ private struct MonthButton: View {
                 .foregroundStyle(isCurrentMonth ? theme.color.contentInverse : theme.color.contentPrimary)
                 .padding(.horizontal, IKPadding.small)
                 .padding(.vertical, IKPadding.micro)
-                .background(isCurrentMonth ? Color.accentColor : theme.color.backgroundDisabled, in: Capsule())
+                .background(
+                    isCurrentMonth ? Color.accentColor : theme.color.backgroundDatavizGrayDim1Default.opacity(0.1),
+                    in: Capsule()
+                )
                 .overlay {
                     if isSelected, !isCurrentMonth {
                         Capsule()
-                            .strokeBorder(.tint)
+                            .strokeBorder(Color.accentColor)
                     }
                 }
                 .geometryGroup()
