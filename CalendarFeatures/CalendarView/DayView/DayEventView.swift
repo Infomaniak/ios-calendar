@@ -23,17 +23,19 @@ import SwiftUI
 struct DayEventView: View {
     let event: CalendarCoreUI.UIEvent
     let pointsPerHour: CGFloat
-    let maxTextHeight: CGFloat?
+    let maxVisibleHeight: CGFloat?
 
-    init(event: CalendarCoreUI.UIEvent, pointsPerHour: CGFloat, maxTextHeight: CGFloat? = nil) {
+    init(event: CalendarCoreUI.UIEvent, pointsPerHour: CGFloat, maxVisibleHeight: CGFloat? = nil) {
         self.event = event
         self.pointsPerHour = pointsPerHour
-        self.maxTextHeight = maxTextHeight
+        self.maxVisibleHeight = maxVisibleHeight
     }
 
-    private let cellPadding: CGFloat = 1
+    private var visibleContentHeight: CGFloat {
+        return maxVisibleHeight ?? cellFullHeight
+    }
 
-    private var cellHeight: CGFloat {
+    private var cellFullHeight: CGFloat {
         let duration = event.endDate.timeIntervalSince(event.startDate)
         let hours = duration / 3600
 
@@ -41,75 +43,73 @@ struct DayEventView: View {
         return max(CGFloat(cappedHours) * pointsPerHour, 16)
     }
 
-    private var textContentHeight: CGFloat {
-        maxTextHeight ?? cellHeight
-    }
-
-    private var isCompact: Bool {
-        textContentHeight <= 24
-    }
-
-    private var contentPadding: EdgeInsets {
-        if isCompact {
-            return EdgeInsets(top: 0, leading: IKPadding.mini, bottom: 0, trailing: IKPadding.mini)
-        }
-        let topPadding = min(IKPadding.mini, textContentHeight * 0.15)
-        return EdgeInsets(top: topPadding, leading: IKPadding.mini, bottom: 0, trailing: IKPadding.mini)
-    }
-
     var body: some View {
         ViewThatFits(in: .vertical) {
-            VStack(alignment: .leading, spacing: 0) {
-                HStack {
-                    Text(event.title)
-                        .font(.caption.bold())
-                        .frame(maxWidth: .infinity, alignment: .leading)
+            largeCell
+            mediumCell
+            smallCell
+            compactCell
+        }
+        .padding(.horizontal, value: .mini)
+        .frame(maxHeight: visibleContentHeight, alignment: .top)
+        .frame(height: cellFullHeight, alignment: .top)
+        .eventCellStyle(event: event, padding: 0)
+    }
 
-                    EventIconsView(event: event, shouldShowLocationIcon: false)
-                }
-
-                if let location = event.location, !location.isEmpty {
-                    Text(location)
-                        .font(.caption2)
-                        .lineLimit(1)
-                }
-
-                Text(event.startDate ..< event.endDate, format: .eventTimeBounds)
-                    .font(.caption2)
-            }
-
-            VStack(alignment: .leading, spacing: 0) {
-                HStack {
-                    Text(event.title)
-                        .font(.caption.bold())
-                        .frame(maxWidth: .infinity, alignment: .leading)
-
-                    EventIconsView(event: event, shouldShowLocationIcon: false)
-                }
-
-                if let location = event.location, !location.isEmpty {
-                    Text(location)
-                        .font(.caption2)
-                        .lineLimit(1)
-                }
-            }
-
+    private var largeCell: some View {
+        VStack(alignment: .leading, spacing: 2) {
             HStack {
                 Text(event.title)
                     .font(.caption.bold())
                     .frame(maxWidth: .infinity, alignment: .leading)
 
-                EventIconsView(event: event)
+                EventIconsView(event: event, shouldShowLocationIcon: false)
             }
 
+            if let location = event.location {
+                Text(location)
+                    .font(.caption2)
+                    .lineLimit(1)
+            }
+
+            Text(event.startDate ..< event.endDate, format: .eventTimeBounds)
+                .font(.caption2)
+        }
+        .padding(.vertical, value: .mini)
+    }
+
+    private var mediumCell: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            HStack {
+                Text(event.title)
+                    .font(.caption.bold())
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                EventIconsView(event: event, shouldShowLocationIcon: false)
+            }
+
+            if let location = event.location {
+                Text(location)
+                    .font(.caption2)
+                    .lineLimit(1)
+            }
+        }
+        .padding(.vertical, value: .mini)
+    }
+
+    private var smallCell: some View {
+        HStack {
             Text(event.title)
                 .font(.caption.bold())
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            EventIconsView(event: event)
         }
-        .padding(contentPadding)
-        .frame(maxHeight: textContentHeight - cellPadding * 2, alignment: isCompact ? .center : .top)
-        .frame(height: cellHeight - cellPadding * 2, alignment: .top)
-        .eventCellStyle(event: event, padding: 0)
-        .padding(cellPadding)
+    }
+
+    private var compactCell: some View {
+        Text(event.title)
+            .font(.caption.bold())
     }
 }
 

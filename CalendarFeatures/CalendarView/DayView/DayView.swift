@@ -140,7 +140,7 @@ struct DayContentView: View {
                                     DayEventView(
                                         event: event,
                                         pointsPerHour: effectivePointsPerHour,
-                                        maxTextHeight: coveredTextHeights[index]
+                                        maxVisibleHeight: coveredTextHeights[index]
                                     )
                                 }
                                 .buttonStyle(.plain)

@@ -72,14 +72,10 @@ struct EventCellStyle: ViewModifier {
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(padding)
             .foregroundStyle(foreground)
-            .background(background.opacity(0.75))
-            .overlay(alignment: .leading) {
-                colors.onContainerColor.frame(width: 4)
-            }
+            .background(background)
             .strikethrough(mode == .declined)
             .overlay(alignment: .leading) {
-                Rectangle()
-                    .fill(colors.onContainerColor)
+                colors.onContainerColor
                     .frame(width: 4)
             }
             .clipShape(.rect(cornerRadius: 8))
