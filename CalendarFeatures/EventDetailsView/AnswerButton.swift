@@ -41,6 +41,7 @@ struct AnswerButton: View {
             .adaptiveGlass()
         }
         .buttonStyle(.plain)
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 
     private var foregroundColor: Color {
