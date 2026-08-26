@@ -91,8 +91,7 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
     public let startDate: Date
     public let endDate: Date
     public let isAllDay: Bool
-    public let startTimeZone: TimeZone?
-    public let endTimeZone: TimeZone?
+    public let timing: UITiming
 
     public let calendarId: String
     public let alarms: [UIEventAlarm]
@@ -119,8 +118,7 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
         attendees: [UIAttendee],
         colors: UIEvent.Colors,
         classification: UIClassification? = .public,
-        startTimeZone: TimeZone? = nil,
-        endTimeZone: TimeZone? = nil
+        timing: UITiming
     ) {
         self.id = id
         self.title = title
@@ -136,8 +134,7 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
         self.attendees = attendees
         self.colors = colors
         self.classification = classification
-        self.startTimeZone = startTimeZone
-        self.endTimeZone = endTimeZone
+        self.timing = timing
     }
 }
 
@@ -159,8 +156,7 @@ public extension UIEvent {
         startDate = eventDaySlice.displayStartInstant().date
         endDate = eventDaySlice.displayEndInstant().date
         isAllDay = eventDaySlice.isAllDay
-        startTimeZone = event.timing.startTimeZone.flatMap { TimeZone(identifier: $0.id) }
-        endTimeZone = event.timing.endTimeZone.flatMap { TimeZone(identifier: $0.id) }
+        timing = UITiming(eventTiming: event.timing)
 
         calendarId = event.calendarIdValue
 
@@ -197,7 +193,8 @@ public extension UIEvent {
         calendarId: "0",
         alarms: UIEventAlarm.previews,
         attendees: UIAttendee.previews,
-        colors: .preview
+        colors: .preview,
+        timing: .preview
     )
 
     static let preview = UIEvent(
@@ -209,7 +206,8 @@ public extension UIEvent {
         location: "1 Infinite Loop",
         calendarId: "0",
         attendees: UIAttendee.previews,
-        colors: .preview
+        colors: .preview,
+        timing: .preview
     )
 
     static let shortPreview = UIEvent(
@@ -221,7 +219,8 @@ public extension UIEvent {
         calendarId: "0",
         user: UIAttendee(displayName: "Tim Cook", email: "tim@apple.com", status: .accepted),
         attendees: UIAttendee.previews,
-        colors: .preview
+        colors: .preview,
+        timing: .preview
     )
     static let mediumPreview = UIEvent(
         id: "2",
@@ -232,7 +231,8 @@ public extension UIEvent {
         calendarId: "0",
         user: UIAttendee(displayName: "Tim Cook", email: "tim@apple.com", status: .needsAction),
         attendees: [],
-        colors: .preview
+        colors: .preview,
+        timing: .preview
     )
     static let longPreview = UIEvent(
         id: "3",
@@ -243,7 +243,8 @@ public extension UIEvent {
         calendarId: "0",
         user: UIAttendee(displayName: "Tim Cook", email: "tim@apple.com", status: .declined),
         attendees: UIAttendee.previews,
-        colors: .preview
+        colors: .preview,
+        timing: .preview
     )
 
     static let random100Events: [UIEvent] = (0 ..< 100).map { index in
@@ -258,7 +259,8 @@ public extension UIEvent {
             status: .confirmed,
             calendarId: "0",
             attendees: UIAttendee.previews,
-            colors: .preview
+            colors: .preview,
+            timing: .preview
         )
     }
 }

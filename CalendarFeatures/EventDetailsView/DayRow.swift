@@ -24,79 +24,132 @@ import SwiftUI
 
 public struct DayRow: View {
     @Environment(\.esdsTheme) private var theme
+    @Environment(\.calendar) private var calendar
+
     let event: CalendarCoreUI.UIEvent
 
+    private var isMultiDay: Bool {
+        return !calendar.isDate(event.timing.start, inSameDayAs: event.timing.end)
+    }
+
+    private var startDate: Date {
+        isMultiDay ? event.timing.start : event.startDate
+    }
+
+    private var endDate: Date {
+        isMultiDay ? event.timing.end : event.endDate
+    }
+
     public var body: some View {
-        HStack(spacing: IKPadding.medium) {
-            VStack(alignment: .leading) {
-                dateRangeText
-                    .font(.body)
-                    .foregroundStyle(theme.color.contentPrimary)
+        VStack(alignment: .leading) {
+            Text(eventDateRange)
+                .font(.body)
+                .foregroundStyle(theme.color.contentPrimary)
 
-                if let timeZoneRangeText {
-                    Text(timeZoneRangeText)
-                        .font(.subheadline)
-                        .foregroundStyle(theme.color.contentSecondary)
-                }
-
-                Text("Chaque semaine le mercredi") // TODO: Use event recurrence
+            if let eventTimeZoneRange {
+                Text(eventTimeZoneRange)
                     .font(.subheadline)
-                    .foregroundStyle(theme.color.contentBrandDefault)
+                    .foregroundStyle(theme.color.contentSecondary)
             }
+
+            Text("Chaque semaine le mercredi") // TODO: Use event recurrence
+                .font(.subheadline)
+                .foregroundStyle(theme.color.contentBrandDefault)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
-    private var dateRangeText: Text {
-        let date = Text(event.startDate, format: .dateTime.month(.wide).day().weekday(.wide))
+    private var eventDateRange: String {
+        if event.isAllDay {
+            let date = event.startDate.formatted(
+                .dateTime
+                    .weekday(.wide)
+                    .month(.wide)
+                    .day()
+            )
 
-        let detail = event.isAllDay ? CalendarResourcesStrings.allDayLabel : timeRange(in: .current)
-
-        return date + Text(" - \(detail)")
-    }
-
-    private var timeZoneRangeText: String? {
-        guard let startTimeZone = event.startTimeZone,
-              let endTimeZone = event.endTimeZone else { return nil }
-
-        if startTimeZone == endTimeZone {
-            return "\(timeRange(in: startTimeZone)) (\(formattedTimeZone(for: event.startDate, in: startTimeZone)))"
+            return "\(date) - \(CalendarResourcesStrings.allDayLabel)"
         }
 
-        return [
-            formattedTime(for: event.startDate, in: startTimeZone),
-            "(\(formattedTimeZone(for: event.startDate, in: startTimeZone)))",
-            "-",
-            formattedTime(for: event.endDate, in: endTimeZone),
-            "(\(formattedTimeZone(for: event.endDate, in: endTimeZone)))"
-        ]
-        .joined(separator: " ")
+        return dateTimeRange(in: calendar.timeZone)
     }
 
-    private func timeRange(in timeZone: TimeZone) -> String {
-        (event.startDate ..< event.endDate)
-            .formatted(
-                Date.IntervalFormatStyle(
-                    date: .omitted,
+    private var eventTimeZoneRange: String? {
+        guard
+            !event.isAllDay,
+            let startTimeZone = event.timing.startTimeZone,
+            let endTimeZone = event.timing.endTimeZone,
+            startTimeZone.secondsFromGMT() != calendar.timeZone.secondsFromGMT() ||
+            endTimeZone.secondsFromGMT() != calendar.timeZone.secondsFromGMT()
+        else {
+            return nil
+        }
+
+        if startTimeZone.secondsFromGMT() == endTimeZone.secondsFromGMT() {
+            let range = formattedRange(in: startTimeZone, includesDate: isMultiDay)
+            let timeZone = formattedTimeZone(for: startDate, in: startTimeZone)
+
+            return "\(range) (\(timeZone))"
+        }
+
+        let start = formattedDateTime(startDate, in: startTimeZone, includesDate: isMultiDay)
+        let end = formattedDateTime(endDate, in: endTimeZone, includesDate: isMultiDay)
+
+        return "\(start) - \(end)"
+    }
+
+    private func dateTimeRange(in timeZone: TimeZone) -> String {
+        var style = Date.IntervalFormatStyle()
+            .weekday(.wide)
+            .month(.wide)
+            .day()
+            .hour()
+            .minute()
+        style.timeZone = timeZone
+
+        return (startDate ..< endDate)
+            .formatted(style)
+    }
+
+    private func formattedRange(
+        in timeZone: TimeZone,
+        includesDate: Bool
+    ) -> String {
+        let style = Date.IntervalFormatStyle(
+            date: includesDate ? .abbreviated : .omitted,
+            time: .shortened,
+            locale: .current,
+            timeZone: timeZone
+        )
+
+        return (startDate ..< endDate)
+            .formatted(style)
+    }
+
+    private func formattedDateTime(
+        _ date: Date,
+        in timeZone: TimeZone,
+        includesDate: Bool
+    ) -> String {
+        let dateTime =
+            date.formatted(
+                Date.FormatStyle(
+                    date: includesDate ? .abbreviated : .omitted,
                     time: .shortened,
                     locale: .current,
                     timeZone: timeZone
                 )
             )
+
+        let timeZone = formattedTimeZone(for: date, in: timeZone)
+
+        return "\(dateTime) (\(timeZone))"
     }
 
-    private func formattedTime(for date: Date, in timeZone: TimeZone) -> String {
-        date.formatted(
-            Date.FormatStyle(
-                date: .omitted,
-                time: .shortened,
-                locale: .current,
-                timeZone: timeZone
-            )
-        )
-    }
-
-    private func formattedTimeZone(for date: Date, in timeZone: TimeZone) -> String {
+    private func formattedTimeZone(
+        for date: Date,
+        in timeZone: TimeZone
+    ) -> String {
         date.formatted(
             Date.FormatStyle(
                 date: .omitted,
