@@ -16,7 +16,7 @@
       "location" : "https://github.com/Infomaniak/Eventually.git",
       "state" : {
         "branch" : "main",
-        "revision" : "abb3115ba6a1624c5ff2d48d509d18b5737f3612"
+        "revision" : "328eeebf0f0bc9c610c289874ea496fb2f1ee558"
       }
     },
     {
@@ -25,7 +25,7 @@
       "location" : "https://github.com/Infomaniak/InfiniteScrollViews",
       "state" : {
         "branch" : "feat/custom-background-color",
-        "revision" : "9f7b9762e953ef8b60484729c5d25f83254d11fa"
+        "revision" : "b75767800feec61bd936aafb2716bcf8ed148d86"
       }
     },
     {

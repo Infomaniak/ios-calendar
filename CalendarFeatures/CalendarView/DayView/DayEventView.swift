@@ -40,7 +40,9 @@ struct DayEventView: View {
         let hours = duration / 3600
 
         let cappedHours = min(max(hours, 0.25), 24)
-        return max(CGFloat(cappedHours) * pointsPerHour, 16)
+
+        let eventHeight = CGFloat(cappedHours) * pointsPerHour
+        return max(eventHeight - 2 * 1, 16)
     }
 
     var body: some View {

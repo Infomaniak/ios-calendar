@@ -43,6 +43,9 @@ struct DayView: View {
 
 struct DayContentView: View {
     enum Constants {
+        static let layoutHorizontalSpacing = IKPadding.micro
+        static let layoutVerticalSpacing: CGFloat = 1
+
         static let verticalInset = DayTimelineView.Constants.labelFontSize / 2
 
         static let leadingInset: CGFloat = {
@@ -130,7 +133,8 @@ struct DayContentView: View {
                         EventuallyLayout(
                             startOfDay: calendar.startOfDay(for: date),
                             hourSlotHeight: effectivePointsPerHour,
-                            horizontalHourSlotHeight: horizontalPointsPerHour
+                            horizontalHourSlotHeight: horizontalPointsPerHour,
+                            config: .init(hSpacing: Constants.layoutHorizontalSpacing, vSpacing: Constants.layoutVerticalSpacing)
                         ) { textHeights in
                             guard coveredTextHeights != textHeights else { return }
                             coveredTextHeights = textHeights
