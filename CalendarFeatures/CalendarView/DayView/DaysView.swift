@@ -76,12 +76,19 @@ struct DaysView: View {
     @State private var viewModel = DaysViewModel()
     @State private var selectedEvent: CalendarCoreUI.UIEvent?
 
+    @Binding var miniCalendarHeight: CGFloat
+
     var body: some View {
         @Bindable var mainViewState = mainViewState
 
         PagedInfiniteDateView(selectedDate: $mainViewState.selectedDate) { date in
-            DayView(selectedEvent: $selectedEvent, date: date)
+            DayView(
+                selectedEvent: $selectedEvent,
+                miniCalendarHeight: $miniCalendarHeight,
+                date: date
+            )
         }
+        .modifier(IgnoreTopSafeAreaModifier())
         .ignoresSafeArea(.all, edges: .bottom)
         .environment(viewModel)
         .sheet(item: $selectedEvent) { event in
@@ -116,6 +123,17 @@ struct DaysView: View {
     }
 }
 
+private struct IgnoreTopSafeAreaModifier: ViewModifier {
+    func body(content: Content) -> some View {
+        if #available(iOS 26.0, *) {
+            content
+                .ignoresSafeArea(.all, edges: .top)
+        } else {
+            content
+        }
+    }
+}
+
 #Preview {
-    DaysView()
+    DaysView(miniCalendarHeight: .constant(0))
 }

@@ -1,5 +1,5 @@
 {
-  "originHash" : "4b8f63af9285b7028e56c13afb9521b6c366f9af463d4e42866b761cd6474de7",
+  "originHash" : "75ad5b981faea89036472a873aa20845a4d2a4bbc7b9492a09fbd1e090fc267c",
   "pins" : [
     {
       "identity" : "alamofire",
@@ -11,12 +11,21 @@
       }
     },
     {
+      "identity" : "eventually",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Infomaniak/Eventually.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "328eeebf0f0bc9c610c289874ea496fb2f1ee558"
+      }
+    },
+    {
       "identity" : "infinitescrollviews",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/InfiniteScrollViews",
       "state" : {
         "branch" : "feat/custom-background-color",
-        "revision" : "9f7b9762e953ef8b60484729c5d25f83254d11fa"
+        "revision" : "b75767800feec61bd936aafb2716bcf8ed148d86"
       }
     },
     {

@@ -1,0 +1,114 @@
+/*
+ Infomaniak Calendar - iOS App
+ Copyright (C) 2026 Infomaniak Network SA
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+import CalendarCoreUI
+import CalendarResources
+import DesignSystem
+import ESDSFoundation
+import SwiftUI
+
+struct DayHeaderView: View {
+    @Environment(\.esdsTheme) private var theme
+
+    let events: [CalendarCoreUI.UIEvent]
+    let date: Date
+
+    private var visibleRowCount: Int {
+        min(eventPairs.count, 2)
+    }
+
+    private var headerHeight: CGFloat {
+        let rowHeight = 16 + DayContentView.Constants.verticalInset * 2 + IKPadding.mini
+        let extraPadding = eventPairs.count > 2 ? IKPadding.mini : 0
+        return CGFloat(visibleRowCount) * rowHeight + extraPadding
+    }
+
+    private var eventPairs: [(CalendarCoreUI.UIEvent, CalendarCoreUI.UIEvent?)] {
+        stride(from: 0, to: events.count, by: 2).map { index in
+            let firstEvent = events[index]
+            let secondEvent = (index + 1 < events.count) ? events[index + 1] : nil
+            return (firstEvent, secondEvent)
+        }
+    }
+
+    var body: some View {
+        VStack {
+            HStack(spacing: 0) {
+                Text(CalendarResourcesStrings.weekHeaderWeekNumber(
+                    Calendar.current.component(.weekOfYear, from: date)
+                ))
+                .font(.caption2)
+                .foregroundStyle(theme.color.contentTertiary)
+                .padding(.trailing, value: .small)
+                .frame(width: DayContentView.Constants.leadingInset, alignment: .trailing)
+
+                HStack(spacing: 2) {
+                    Text(date, format: .dateTime.weekday(.wide))
+                        .font(.footnote)
+                        .fontWeight(.semibold)
+                    Text("-")
+                    Text(date, format: .dateTime.day().month())
+                }
+                .font(.caption)
+                .foregroundStyle(theme.color.contentPrimary)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+
+            if !events.isEmpty {
+                HStack(alignment: .top, spacing: 0) {
+                    Text(CalendarResourcesStrings.allDayLabel)
+                        .font(.caption2)
+                        .foregroundStyle(theme.color.contentTertiary)
+                        .padding(.trailing, value: .small)
+                        .frame(width: DayContentView.Constants.leadingInset, alignment: .trailing)
+                        .multilineTextAlignment(.trailing)
+
+                    ScrollView {
+                        VStack(spacing: IKPadding.micro) {
+                            ForEach(eventPairs, id: \.0.id) { firstEvent, secondEvent in
+                                HStack(spacing: IKPadding.micro) {
+                                    Text(firstEvent.title)
+                                        .allDayEventStyle(for: firstEvent)
+
+                                    if let secondEvent {
+                                        Text(secondEvent.title)
+                                            .allDayEventStyle(for: secondEvent)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    .scrollDisabled(eventPairs.count <= 2)
+                    .frame(height: headerHeight)
+                    .contentMargins(.bottom, IKPadding.micro, for: .scrollContent)
+                    .contentMargins(.top, 0, for: .scrollContent)
+                }
+            }
+        }
+        .padding(.bottom, events.isEmpty ? IKPadding.mini : 0)
+    }
+}
+
+private extension View {
+    func allDayEventStyle(for event: CalendarCoreUI.UIEvent) -> some View {
+        font(.caption.bold())
+            .lineLimit(1)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .eventCellStyle(event: event)
+    }
+}

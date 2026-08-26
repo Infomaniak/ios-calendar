@@ -131,7 +131,12 @@ public extension UIEvent {
         id = "\(eventDaySlice.position.index)-\(event.occurrenceIdValue)"
         title = event.title
         status = event.status
-        location = event.location
+
+        if let location = event.location, !location.isEmpty {
+            self.location = location
+        } else {
+            location = nil
+        }
 
         startDate = eventDaySlice.displayStartInstant().date
         endDate = eventDaySlice.displayEndInstant().date

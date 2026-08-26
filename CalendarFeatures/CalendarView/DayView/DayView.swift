@@ -19,6 +19,7 @@
 import CalendarCoreUI
 import DesignSystem
 import ESDSFoundation
+import Eventually
 import SwiftUI
 
 struct DayView: View {
@@ -26,16 +27,25 @@ struct DayView: View {
     @Environment(DaysViewModel.self) private var daysViewModel
 
     @Binding var selectedEvent: CalendarCoreUI.UIEvent?
+    @Binding var miniCalendarHeight: CGFloat
 
     let date: Date
 
     var body: some View {
-        DayContentView(selectedEvent: $selectedEvent, date: date, events: daysViewModel.events(for: date, calendar: calendar))
+        DayContentView(
+            selectedEvent: $selectedEvent,
+            date: date,
+            events: daysViewModel.events(for: date, calendar: calendar),
+            miniCalendarHeight: miniCalendarHeight
+        )
     }
 }
 
 struct DayContentView: View {
     enum Constants {
+        static let layoutHorizontalSpacing = IKPadding.micro
+        static let layoutVerticalSpacing: CGFloat = 1
+
         static let verticalInset = DayTimelineView.Constants.labelFontSize / 2
 
         static let leadingInset: CGFloat = {
@@ -54,8 +64,10 @@ struct DayContentView: View {
         // swiftlint:disable:next nesting
         enum PointsPerHour {
             static let minimum: CGFloat = 40
-            static let `default`: CGFloat = 60
+            static let `default`: CGFloat = 64
             static let maximum: CGFloat = 100
+
+            static let horizontalRelayoutStep: CGFloat = 8
         }
     }
 
@@ -68,10 +80,12 @@ struct DayContentView: View {
     @State private var pointsPerHour = Constants.PointsPerHour.default
     @State private var currentMagnification: CGFloat = 1.0
 
-    @Binding var selectedEvent: CalendarCoreUI.UIEvent?
+    @State private var coveredTextHeights: [Int: CGFloat] = [:]
 
+    @Binding var selectedEvent: CalendarCoreUI.UIEvent?
     let date: Date
     let events: [CalendarCoreUI.UIEvent]
+    let miniCalendarHeight: CGFloat
 
     private var hourMarks: [Date] {
         let startOfDay = Calendar.current.startOfDay(for: date)
@@ -103,6 +117,10 @@ struct DayContentView: View {
     var body: some View {
         GeometryReader { proxy in
             TimelineView(.everyMinute) { timeline in
+                let horizontalPointsPerHour = horizontalLayoutPointsPerHour(
+                    for: effectivePointsPerHour
+                )
+
                 ScrollView {
                     ZStack(alignment: .top) {
                         DayTimelineView(
@@ -112,30 +130,37 @@ struct DayContentView: View {
                         )
                         .padding(.horizontal, value: .medium)
 
-                        DayViewLayout(
-                            calendar: calendar,
-                            verticalInset: Self.Constants.verticalInset,
-                            leadingInset: Self.Constants.leadingInset + IKPadding.medium,
-                            trailingInset: IKPadding.medium,
-                            pointsPerHour: effectivePointsPerHour
-                        ) {
-                            ForEach(events) { event in
+                        EventuallyLayout(
+                            startOfDay: calendar.startOfDay(for: date),
+                            hourSlotHeight: effectivePointsPerHour,
+                            horizontalHourSlotHeight: horizontalPointsPerHour,
+                            config: .init(hSpacing: Constants.layoutHorizontalSpacing, vSpacing: Constants.layoutVerticalSpacing)
+                        ) { textHeights in
+                            guard coveredTextHeights != textHeights else { return }
+                            coveredTextHeights = textHeights
+                        } {
+                            ForEach(Array(events.filter { !$0.isAllDay }.enumerated()), id: \.element.id) { index, event in
                                 Button { selectedEvent = event } label: {
-                                    DayEventView(event: event, pointsPerHour: effectivePointsPerHour)
+                                    DayEventView(
+                                        event: event,
+                                        pointsPerHour: effectivePointsPerHour,
+                                        maxVisibleHeight: coveredTextHeights[index]
+                                    )
                                 }
                                 .buttonStyle(.plain)
-                                .tag(event.startDate)
+                                .eventuallyDateIntervalLayout(DateInterval(start: event.startDate, end: event.endDate))
                             }
                         }
+                        .padding(.leading, Self.Constants.leadingInset + IKPadding.medium)
+                        .padding(.trailing, value: .medium)
+                        .padding(.vertical, Self.Constants.verticalInset)
 
                         if calendar.isDate(date, inSameDayAs: timeline.date) {
-                            let indicatorPosition = timeIndicatorPosition(at: timeline.date)
-
                             TimelineIndicatorView(date: timeline.date)
                                 .padding(.leading, value: .medium)
-                                .visualEffect { content, visualProxy in
+                                .visualEffect { content, proxy in
                                     content
-                                        .offset(y: -visualProxy.size.height / 2 + indicatorPosition)
+                                        .offset(y: -proxy.size.height / 2 + timeIndicatorPosition(at: timeline.date))
                                 }
                         }
                     }
@@ -161,6 +186,9 @@ struct DayContentView: View {
                             currentMagnification = 1.0
                         }
                 )
+                .modifier(GlassHeaderBarModifier(miniCalendarHeight: miniCalendarHeight) {
+                    DayHeaderView(events: events.filter(\.isAllDay), date: date)
+                })
             }
         }
     }
@@ -182,8 +210,67 @@ struct DayContentView: View {
             scrollPosition.scrollTo(y: storedScrollPosition)
         }
     }
+
+    private func horizontalLayoutPointsPerHour(
+        for livePointsPerHour: CGFloat
+    ) -> CGFloat {
+        guard Self.Constants.PointsPerHour.horizontalRelayoutStep > 0 else {
+            return livePointsPerHour
+        }
+
+        let stepIndex = ((livePointsPerHour - Self.Constants.PointsPerHour.minimum) /
+            Self.Constants.PointsPerHour.horizontalRelayoutStep)
+            .rounded(.toNearestOrAwayFromZero)
+        let snappedValue = Self.Constants.PointsPerHour.minimum + stepIndex *
+            Self.Constants.PointsPerHour.horizontalRelayoutStep
+
+        return min(max(snappedValue, Self.Constants.PointsPerHour.minimum),
+                   Self.Constants.PointsPerHour.maximum)
+    }
+}
+
+struct GlassHeaderBarModifier<BarContent: View>: ViewModifier {
+    @State private var dayHeaderHeight: CGFloat = 0
+
+    let miniCalendarHeight: CGFloat
+    @ViewBuilder let barContent: () -> BarContent
+
+    func body(content: Content) -> some View {
+        if #available(iOS 26.0, *) {
+            content
+                .scrollEdgeEffectStyle(.hard, for: .top)
+                .safeAreaBar(edge: .top) {
+                    Color.clear
+                        .frame(height: miniCalendarHeight + dayHeaderHeight)
+                        .glassEffect(.identity, in: Rectangle())
+                        .allowsHitTesting(false)
+                }
+                .overlay(alignment: .top) {
+                    barContent()
+                        .padding(.horizontal, value: .medium)
+                        .onGeometryChange(for: CGFloat.self) { proxy in
+                            proxy.size.height
+                        } action: { newHeight in
+                            guard dayHeaderHeight != newHeight else { return }
+                            dayHeaderHeight = newHeight
+                        }
+                        .padding(.top, miniCalendarHeight)
+                }
+        } else {
+            content.safeAreaInset(edge: .top) {
+                barContent()
+                    .padding(.horizontal, value: .medium)
+                    .background(Material.bar)
+            }
+        }
+    }
 }
 
 #Preview {
-    DayContentView(selectedEvent: .constant(nil), date: .now, events: [.preview, .preview])
+    DayContentView(
+        selectedEvent: .constant(nil),
+        date: .now,
+        events: [.preview, .preview],
+        miniCalendarHeight: 0
+    )
 }

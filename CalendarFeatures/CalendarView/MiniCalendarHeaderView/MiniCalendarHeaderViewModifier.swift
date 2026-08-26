@@ -26,10 +26,16 @@ struct MiniCalendarHeaderViewModifier: ViewModifier {
     @State private var displayedPage: ReferenceDatePage
 
     @Binding var selectedDate: Date
+    @Binding var miniCalendarHeight: CGFloat
 
-    init(selectedDate: Binding<Date>, initialDisplayMode: MiniCalendarView.DisplayMode = .week) {
+    init(
+        selectedDate: Binding<Date>,
+        miniCalendarHeight: Binding<CGFloat>,
+        initialDisplayMode: MiniCalendarView.DisplayMode = .week
+    ) {
         _displayMode = State(initialValue: initialDisplayMode)
         _selectedDate = selectedDate
+        _miniCalendarHeight = miniCalendarHeight
         _displayedPage = State(initialValue: ReferenceDatePage(
             referenceDate: initialDisplayMode.referenceDate(
                 for: selectedDate.wrappedValue,
@@ -43,16 +49,21 @@ struct MiniCalendarHeaderViewModifier: ViewModifier {
         Group {
             if #available(iOS 26.0, *) {
                 content
-                    .safeAreaBar(edge: .top) {
+                    .safeAreaInset(edge: .top, spacing: 0) {
                         MiniCalendarView(
                             displayMode: $displayMode,
                             selectedDate: $selectedDate,
                             displayedPage: $displayedPage
                         )
+                        .onGeometryChange(for: CGFloat.self) { proxy in
+                            proxy.size.height
+                        } action: { newHeight in
+                            miniCalendarHeight = newHeight
+                        }
                     }
             } else {
                 content
-                    .safeAreaInset(edge: .top) {
+                    .safeAreaInset(edge: .top, spacing: 0) {
                         MiniCalendarView(
                             displayMode: $displayMode,
                             selectedDate: $selectedDate,

@@ -59,6 +59,8 @@ public struct CalendarView: View {
 
     @SceneStorage("SelectedMode") private var selectedMode: CalendarViewMode = .day
 
+    @State private var miniCalendarHeight: CGFloat = 0
+
     public init() {}
 
     public var body: some View {
@@ -68,7 +70,7 @@ public struct CalendarView: View {
             case .planning:
                 PlanningView(calendarAccounts: calendarAccounts)
             case .day:
-                DaysView()
+                DaysView(miniCalendarHeight: $miniCalendarHeight)
             case .week:
                 WeekView()
             case .threeDays:
@@ -77,7 +79,10 @@ public struct CalendarView: View {
                 MonthView()
             }
         }
-        .modifier(MiniCalendarHeaderViewModifier(selectedDate: $mainViewState.selectedDate))
+        .modifier(MiniCalendarHeaderViewModifier(
+            selectedDate: $mainViewState.selectedDate,
+            miniCalendarHeight: $miniCalendarHeight
+        ))
         .toolbar {
             ToolbarItem(placement: .bottomBar) {
                 Picker(selection: $selectedMode) {
