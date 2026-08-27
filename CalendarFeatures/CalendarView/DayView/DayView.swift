@@ -22,11 +22,6 @@ import ESDSFoundation
 import Eventually
 import SwiftUI
 
-private struct DayViewZoomFocus {
-    let date: Date
-    let verticalPosition: CGFloat
-}
-
 struct DayView: View {
     @Environment(\.calendar) private var calendar
     @Environment(DaysViewModel.self) private var daysViewModel
@@ -50,7 +45,6 @@ struct DayContentView: View {
     enum Constants {
         static let layoutHorizontalSpacing = IKPadding.micro
         static let layoutVerticalSpacing: CGFloat = 1
-        static let zoomSensitivity: CGFloat = 0.66
 
         static let verticalInset = DayTimelineView.Constants.labelFontSize / 2
 
@@ -74,6 +68,10 @@ struct DayContentView: View {
             static let maximum: CGFloat = 112
 
             static let horizontalRelayoutStep: CGFloat = 8
+
+            static func clamped(_ value: CGFloat) -> CGFloat {
+                return min(max(value, PointsPerHour.minimum), PointsPerHour.maximum)
+            }
         }
     }
 
@@ -86,7 +84,6 @@ struct DayContentView: View {
 
     @State private var pointsPerHour = Constants.PointsPerHour.default
     @State private var currentMagnification: CGFloat = 1.0
-    @State private var zoomFocus: DayViewZoomFocus?
 
     @State private var coveredTextHeights: [Int: CGFloat] = [:]
 
@@ -115,7 +112,7 @@ struct DayContentView: View {
     }
 
     private var effectivePointsPerHour: CGFloat {
-        return clampedPointsPerHour(pointsPerHour * currentMagnification)
+        return Constants.PointsPerHour.clamped(pointsPerHour * currentMagnification)
     }
 
     private var viewHeight: CGFloat {
@@ -164,11 +161,12 @@ struct DayContentView: View {
                         .padding(.vertical, Self.Constants.verticalInset)
 
                         if calendar.isDate(date, inSameDayAs: timeline.date) {
+                            let timeIndicatorPosition = timeIndicatorPosition(at: timeline.date)
                             TimelineIndicatorView(date: timeline.date)
                                 .padding(.leading, value: .medium)
                                 .visualEffect { content, proxy in
                                     content
-                                        .offset(y: -proxy.size.height / 2 + timeIndicatorPosition(at: timeline.date))
+                                        .offset(y: -proxy.size.height / 2 + timeIndicatorPosition)
                                 }
                         }
                     }
@@ -186,42 +184,19 @@ struct DayContentView: View {
                 .onAppear {
                     scrollToCorrectPosition(proxy)
                 }
-                .simultaneousGesture(
-                    MagnifyGesture()
-                        .onChanged { value in
-                            let focus = zoomFocus ?? zoomFocus(at: value.startLocation.y)
-                            zoomFocus = focus
-
-                            let magnification = adjustedMagnification(value.magnification)
-                            let newPointsPerHour = clampedPointsPerHour(pointsPerHour * magnification)
-                            currentMagnification = magnification
-                            scroll(to: focus, pointsPerHour: newPointsPerHour)
-                        }
-                        .onEnded { value in
-                            let magnification = adjustedMagnification(value.magnification)
-                            let newPointsPerHour = clampedPointsPerHour(pointsPerHour * magnification)
-                            if let zoomFocus {
-                                scroll(to: zoomFocus, pointsPerHour: newPointsPerHour)
-                            }
-
-                            pointsPerHour = newPointsPerHour
-                            currentMagnification = 1.0
-                            zoomFocus = nil
-                        }
+                .dayViewZoom(
+                    pointsPerHour: $pointsPerHour,
+                    currentMagnification: $currentMagnification,
+                    scrollPosition: $scrollPosition,
+                    date: date,
+                    scrollOffset: scrollOffset,
+                    maximumElapsedHours: CGFloat(hourMarks.count - 1)
                 )
                 .modifier(GlassHeaderBarModifier(miniCalendarHeight: miniCalendarHeight) {
                     DayHeaderView(events: events.filter(\.isAllDay), date: date)
                 })
             }
         }
-    }
-
-    private func clampedPointsPerHour(_ value: CGFloat) -> CGFloat {
-        return min(max(value, Constants.PointsPerHour.minimum), Constants.PointsPerHour.maximum)
-    }
-
-    private func adjustedMagnification(_ magnification: CGFloat) -> CGFloat {
-        return 1 + (magnification - 1) * Constants.zoomSensitivity
     }
 
     private func timeIndicatorPosition(at date: Date) -> CGFloat {
@@ -236,21 +211,6 @@ struct DayContentView: View {
         } else {
             scrollPosition.scrollTo(y: storedScrollPosition)
         }
-    }
-
-    private func zoomFocus(at verticalPosition: CGFloat) -> DayViewZoomFocus {
-        let focusPosition = scrollOffset + verticalPosition - Self.Constants.verticalInset
-        let elapsedHours = focusPosition / pointsPerHour
-        let clampedElapsedHours = min(max(elapsedHours, 0), CGFloat(hourMarks.count - 1))
-        let focusDate = calendar.startOfDay(for: date).addingTimeInterval(TimeInterval(clampedElapsedHours) * 3600)
-
-        return DayViewZoomFocus(date: focusDate, verticalPosition: verticalPosition)
-    }
-
-    private func scroll(to focus: DayViewZoomFocus, pointsPerHour: CGFloat) {
-        let elapsedHours = focus.date.timeIntervalSince(calendar.startOfDay(for: date)) / 3600
-        let focusPosition = elapsedHours * pointsPerHour + Self.Constants.verticalInset
-        scrollPosition.scrollTo(y: focusPosition - focus.verticalPosition)
     }
 
     private func horizontalLayoutPointsPerHour(
