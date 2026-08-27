@@ -41,7 +41,7 @@ struct CalendarApp: App {
                 .esdsTheme(.calendar)
         }
         .backgroundTask(.appRefresh(EventAlarmBackgroundTaskHelper.identifier)) {
-            EventAlarmBackgroundTaskHelper.schedule()
+            EventAlarmBackgroundTaskHelper().schedule()
 
             @InjectService var eventAlarmNotification: EventAlarmNotificationsService
             await eventAlarmNotification.scheduleNotificationsForEventAlarms()
@@ -57,7 +57,7 @@ struct CalendarApp: App {
 
     private func didEnterBackground() {
         Task {
-            await EventAlarmBackgroundTaskHelper.scheduleIfNecessary()
+            await EventAlarmBackgroundTaskHelper().scheduleIfNecessary()
         }
     }
 }

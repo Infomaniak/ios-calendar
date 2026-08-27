@@ -21,19 +21,21 @@ import InfomaniakDI
 import MultiplatformCalendar
 import OSLog
 
-public enum EventAlarmBackgroundTaskHelper {
+public struct EventAlarmBackgroundTaskHelper {
     public static let identifier = "com.infomaniak.calendar.refresh-event-alarms"
 
-    public static func scheduleIfNecessary() async {
+    public init() {}
+
+    public func scheduleIfNecessary() async {
         @LazyInjectService var accountManager: AccountManager
         guard await !accountManager.calendarAccounts.isEmpty else {
             return
         }
 
-        EventAlarmBackgroundTaskHelper.schedule()
+        schedule()
     }
 
-    public static func schedule() {
+    public func schedule() {
         let request = BGAppRefreshTaskRequest(identifier: EventAlarmBackgroundTaskHelper.identifier)
         request.earliestBeginDate = Date(timeIntervalSinceNow: 15 * 60)
 
