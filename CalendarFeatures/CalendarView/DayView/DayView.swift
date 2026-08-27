@@ -81,9 +81,11 @@ struct DayContentView: View {
 
     @SceneStorage("DayViewScrollPosition") private var storedScrollPosition = 0.0
     @State private var scrollPosition = ScrollPosition()
+    @State private var scrollOffset: CGFloat = 0
 
     @State private var pointsPerHour = Constants.PointsPerHour.default
     @State private var currentMagnification: CGFloat = 1.0
+    @State private var zoomFocus: DayViewZoomFocus?
 
     @State private var coveredTextHeights: [Int: CGFloat] = [:]
 
@@ -173,8 +175,10 @@ struct DayContentView: View {
                 }
                 .scrollPosition($scrollPosition)
                 .onScrollGeometryChange(for: CGFloat.self) { scrollProxy in
-                    scrollProxy.contentOffset.y
+                    return scrollProxy.contentOffset.y + scrollProxy.contentInsets.top
                 } action: { _, newValue in
+                    scrollOffset = newValue
+
                     guard mainViewState.selectedDate == date else { return }
                     storedScrollPosition = Double(newValue)
                 }
@@ -185,10 +189,21 @@ struct DayContentView: View {
                     MagnifyGesture()
                         .onChanged { value in
                             currentMagnification = value.magnification
+
+                            let focus = zoomFocus ?? zoomFocus(at: value.startLocation.y)
+                            zoomFocus = focus
+
+                            scroll(to: focus, pointsPerHour: effectivePointsPerHour)
                         }
                         .onEnded { value in
-                            pointsPerHour = clampedPointsPerHour(pointsPerHour * value.magnification)
+                            let newPointsPerHour = clampedPointsPerHour(pointsPerHour * value.magnification)
+                            if let zoomFocus {
+                                scroll(to: zoomFocus, pointsPerHour: newPointsPerHour)
+                            }
+
+                            pointsPerHour = newPointsPerHour
                             currentMagnification = 1.0
+                            zoomFocus = nil
                         }
                 )
                 .modifier(GlassHeaderBarModifier(miniCalendarHeight: miniCalendarHeight) {
@@ -214,6 +229,20 @@ struct DayContentView: View {
         } else {
             scrollPosition.scrollTo(y: storedScrollPosition)
         }
+    }
+
+    private func zoomFocus(at verticalPosition: CGFloat) -> DayViewZoomFocus {
+        let elapsedHours = (scrollOffset + verticalPosition) / effectivePointsPerHour
+        let clampedElapsedHours = min(max(elapsedHours, 0), CGFloat(hourMarks.count - 1))
+        let focusDate = calendar.startOfDay(for: date).addingTimeInterval(TimeInterval(clampedElapsedHours) * 3600)
+
+        return DayViewZoomFocus(date: focusDate, verticalPosition: verticalPosition)
+    }
+
+    private func scroll(to focus: DayViewZoomFocus, pointsPerHour: CGFloat) {
+        let elapsedHours = focus.date.timeIntervalSince(calendar.startOfDay(for: date)) / 3600
+        let focusPosition = elapsedHours * pointsPerHour + Self.Constants.verticalInset
+        scrollPosition.scrollTo(y: focusPosition - focus.verticalPosition)
     }
 
     private func horizontalLayoutPointsPerHour(
