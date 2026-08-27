@@ -75,7 +75,7 @@ public struct EventDetailsView: View {
                 .listRowSeparator(.hidden)
 
                 Section {
-                    ParticipantsSectionView(uniqueAttendees: uniqueAttendees)
+                    ParticipantsRow(uniqueAttendees: uniqueAttendees)
                 }
 
                 Section {

@@ -23,10 +23,10 @@ import ESDSFoundation
 import InfomaniakCoreSwiftUI
 import SwiftUI
 
-struct ParticipantsSectionView: View {
+struct ParticipantsRow: View {
     @Environment(\.esdsTheme) private var theme
 
-    @State private var attendeesListIsOpen = false
+    @State private var showParticipants = false
 
     var uniqueAttendees: [UIAttendee]
 
@@ -50,14 +50,8 @@ struct ParticipantsSectionView: View {
 
     var body: some View {
         if !uniqueAttendees.isEmpty {
-            DisclosureGroup(isExpanded: $attendeesListIsOpen) {
-                ForEach(uniqueAttendees.sortedForDisplay()) { attendee in
-                    AccountCellView(rawAvatarURL: nil,
-                                    displayName: attendee.displayName ?? attendee.email,
-                                    email: attendee.email,
-                                    isOrganizer: attendee.isOrganizer,
-                                    status: attendee.status)
-                }
+            Button {
+                showParticipants = true
             } label: {
                 HStack(spacing: 0) {
                     CalendarResourcesAsset.Images.usersStacked.swiftUIImage
@@ -76,33 +70,36 @@ struct ParticipantsSectionView: View {
                     .padding(.leading, IKPadding.medium)
                     .frame(maxWidth: .infinity, alignment: .leading)
 
-                    HStack(spacing: -IKPadding.mini) {
-                        ForEach(Array(visibleAttendees.enumerated()), id: \.element) { attendee in
-                            AvatarView(rawAvatarURL: nil,
-                                       displayName: attendee.element.displayName ?? attendee.element.email,
-                                       email: attendee.element.email,
-                                       size: IKIconSize.large.rawValue)
-                        }
-                        if uniqueAttendees.count > 4 {
-                            InitialsView(initials: "+\(uniqueAttendees.count - 4)",
-                                         backgroundColor: theme.color.backgroundElevationSurfacePressed,
-                                         foregroundColor: theme.color.backgroundBrandDefault,
-                                         size: IKIconSize.large.rawValue)
-                        }
-                    }
-                    .compositingGroup()
-                    .padding(.trailing, IKPadding.micro)
+                    AttendeesAvatarStack
+
+                    CalendarResourcesAsset.Images.chevronRight.swiftUIImage
+                        .iconSize(IKIconSize.large)
+                        .foregroundStyle(theme.color.contentTertiary)
                 }
+            }
+            .navigationDestination(isPresented: $showParticipants) {
+                ParticipantsListView(uniqueAttendees: uniqueAttendees)
             }
         }
     }
-}
 
-private extension Array where Element == UIAttendee {
-    func sortedForDisplay() -> [UIAttendee] {
-        sorted {
-            if $0.isOrganizer != $1.isOrganizer { return $0.isOrganizer }
-            return $0.status.sortOrder < $1.status.sortOrder
+    private var AttendeesAvatarStack: some View {
+        HStack(spacing: -IKPadding.mini) {
+            ForEach(Array(visibleAttendees.enumerated()), id: \.element) { attendee in
+                AvatarView(rawAvatarURL: nil,
+                           displayName: attendee.element.displayName ?? attendee.element.email,
+                           email: attendee.element.email,
+                           size: IKIconSize.large.rawValue)
+            }
+
+            if uniqueAttendees.count > 4 {
+                InitialsView(initials: "+\(uniqueAttendees.count - 4)",
+                             backgroundColor: theme.color.backgroundElevationSurfacePressed,
+                             foregroundColor: theme.color.backgroundBrandDefault,
+                             size: IKIconSize.large.rawValue)
+            }
         }
+        .compositingGroup()
+        .padding(.trailing, IKPadding.micro)
     }
 }
