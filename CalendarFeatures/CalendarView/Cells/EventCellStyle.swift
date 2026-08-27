@@ -60,7 +60,12 @@ struct EventCellStyle: ViewModifier {
         case .default, .declined:
             colors.containerColor
         case .maybe:
-            DiagonalStripesView(color: colors.containerColor)
+            DiagonalStripesView(
+                color: colors.containerColor,
+                stripeColor: colors.containerVariantColor,
+                stripeWidth: 6,
+                spacing: 24
+            )
         case .pending:
             colors.containerVariantColor
         }
