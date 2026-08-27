@@ -50,6 +50,7 @@ struct DayContentView: View {
     enum Constants {
         static let layoutHorizontalSpacing = IKPadding.micro
         static let layoutVerticalSpacing: CGFloat = 1
+        static let zoomSensitivity: CGFloat = 0.66
 
         static let verticalInset = DayTimelineView.Constants.labelFontSize / 2
 
@@ -188,15 +189,17 @@ struct DayContentView: View {
                 .simultaneousGesture(
                     MagnifyGesture()
                         .onChanged { value in
-                            currentMagnification = value.magnification
-
                             let focus = zoomFocus ?? zoomFocus(at: value.startLocation.y)
                             zoomFocus = focus
 
-                            scroll(to: focus, pointsPerHour: effectivePointsPerHour)
+                            let magnification = adjustedMagnification(value.magnification)
+                            let newPointsPerHour = clampedPointsPerHour(pointsPerHour * magnification)
+                            currentMagnification = magnification
+                            scroll(to: focus, pointsPerHour: newPointsPerHour)
                         }
                         .onEnded { value in
-                            let newPointsPerHour = clampedPointsPerHour(pointsPerHour * value.magnification)
+                            let magnification = adjustedMagnification(value.magnification)
+                            let newPointsPerHour = clampedPointsPerHour(pointsPerHour * magnification)
                             if let zoomFocus {
                                 scroll(to: zoomFocus, pointsPerHour: newPointsPerHour)
                             }
@@ -217,6 +220,10 @@ struct DayContentView: View {
         return min(max(value, Constants.PointsPerHour.minimum), Constants.PointsPerHour.maximum)
     }
 
+    private func adjustedMagnification(_ magnification: CGFloat) -> CGFloat {
+        return 1 + (magnification - 1) * Constants.zoomSensitivity
+    }
+
     private func timeIndicatorPosition(at date: Date) -> CGFloat {
         let elapsedTime = date.timeIntervalSince(calendar.startOfDay(for: date)) / 3600
         return elapsedTime * effectivePointsPerHour + Self.Constants.verticalInset
@@ -232,7 +239,8 @@ struct DayContentView: View {
     }
 
     private func zoomFocus(at verticalPosition: CGFloat) -> DayViewZoomFocus {
-        let elapsedHours = (scrollOffset + verticalPosition) / effectivePointsPerHour
+        let focusPosition = scrollOffset + verticalPosition - Self.Constants.verticalInset
+        let elapsedHours = focusPosition / pointsPerHour
         let clampedElapsedHours = min(max(elapsedHours, 0), CGFloat(hourMarks.count - 1))
         let focusDate = calendar.startOfDay(for: date).addingTimeInterval(TimeInterval(clampedElapsedHours) * 3600)
 
