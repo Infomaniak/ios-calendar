@@ -52,9 +52,7 @@ public struct DayRow: View {
                     .foregroundStyle(theme.color.contentSecondary)
             }
 
-            Text("Chaque semaine le mercredi") // TODO: Use event recurrence
-                .font(.subheadline)
-                .foregroundStyle(theme.color.contentBrandDefault)
+            // TODO: Show event recurrence information when available
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }

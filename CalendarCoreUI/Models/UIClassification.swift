@@ -30,7 +30,7 @@ public extension UIClassification {
     init?(classification: MultiplatformCalendar.Classification?) {
         guard let classification else {
             self = .public
-            return
+            return nil
         }
         switch onEnum(of: classification) {
         case .public: self = .public

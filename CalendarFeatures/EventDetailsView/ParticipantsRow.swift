@@ -43,7 +43,7 @@ struct ParticipantsRow: View {
         ]
 
         return UIParticipationStatus.allCases.compactMap { status in
-            let count = uniqueAttendees.filter { $0.status == status }.count
+            let count = uniqueAttendees.count { $0.status == status }
             return count > 0 ? formatters[status]?(count) : nil
         }.joined(separator: ", ")
     }
@@ -70,7 +70,7 @@ struct ParticipantsRow: View {
                     .padding(.leading, IKPadding.medium)
                     .frame(maxWidth: .infinity, alignment: .leading)
 
-                    AttendeesAvatarStack
+                    attendeesAvatarStack
 
                     CalendarResourcesAsset.Images.chevronRight.swiftUIImage
                         .iconSize(IKIconSize.large)
@@ -83,12 +83,12 @@ struct ParticipantsRow: View {
         }
     }
 
-    private var AttendeesAvatarStack: some View {
+    private var attendeesAvatarStack: some View {
         HStack(spacing: -IKPadding.mini) {
-            ForEach(Array(visibleAttendees.enumerated()), id: \.element) { attendee in
+            ForEach(visibleAttendees) { attendee in
                 AvatarView(rawAvatarURL: nil,
-                           displayName: attendee.element.displayName ?? attendee.element.email,
-                           email: attendee.element.email,
+                           displayName: attendee.displayName ?? attendee.email,
+                           email: attendee.email,
                            size: IKIconSize.large.rawValue)
             }
 

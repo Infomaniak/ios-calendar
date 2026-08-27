@@ -41,14 +41,6 @@ public struct EventDetailsView: View {
         email.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
     }
 
-    private var displayedComponents: DatePickerComponents {
-        if event.isAllDay {
-            return [.date]
-        } else {
-            return [.date, .hourAndMinute]
-        }
-    }
-
     public init(
         event: CalendarCoreUI.UIEvent
     ) {
@@ -94,7 +86,7 @@ public struct EventDetailsView: View {
                         LocationRow(address: address)
                     }
 
-                    MeetingRoomView(roomTitle: "Salle Jules Verne", roomFloor: 3, roomCapacity: 20)
+                    // TODO: Show meeting room information when available
                 }
 
                 Section {
@@ -102,20 +94,7 @@ public struct EventDetailsView: View {
                         DescriptionRow(description: description)
                     }
 
-                    let eventFiles = [
-                        "Fichetechniquedubatiment_2025.pdf",
-                        "pointderdv.jpg",
-                        "plan.pdf",
-                        "plandureseau.json",
-                        "touteslesinfos.zip",
-                        "listedescontacts.xlsx"
-                    ] // TODO: Replace with actual event files when available
-                    ForEach(Array(eventFiles.enumerated()), id: \.offset) { fichier in
-                        HStack {
-                            LinkType(url: URL(string: fichier.element)!)?.icon
-                            Text(fichier.element)
-                        }
-                    }
+                    // TODO: Show attachments when available
                 }
                 if !alarms.isEmpty {
                     Section {
@@ -152,6 +131,7 @@ public struct EventDetailsView: View {
                                 answer: answer,
                                 isSelected: selectedStatus == answer
                             ) {
+                                // TODO: Update the event's participation status when the user selects an answer
                                 selectedStatus = answer
                             }
                         }

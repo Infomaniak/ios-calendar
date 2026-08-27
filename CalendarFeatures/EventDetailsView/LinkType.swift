@@ -22,7 +22,7 @@ import SwiftUI
 public enum LinkType {
     case pdf, jpg, json, zip, xlsx
 
-    init?(url: URL) {
+    public init?(url: URL) {
         switch url.pathExtension.lowercased() {
         case "pdf": self = .pdf
         case "jpg", "jpeg": self = .jpg

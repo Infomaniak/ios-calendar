@@ -46,7 +46,7 @@ public struct LocationRow: View {
                 Spacer()
 
                 CalendarResourcesAsset.Images.chevronRight.swiftUIImage
-                    .iconSize(IKIconSize.medium)
+                    .iconSize(IKIconSize.large)
                     .foregroundStyle(theme.color.contentTertiary)
             }
         }

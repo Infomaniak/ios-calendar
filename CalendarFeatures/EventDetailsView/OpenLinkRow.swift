@@ -68,6 +68,7 @@ public struct OpenLinkRow: View {
                 CalendarResourcesAsset.Images.squareArrowOutUpRight.swiftUIImage
                     .iconSize(IKIconSize.large)
             }
+            .accessibilityLabel(CalendarResourcesStrings.shareLabel)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
