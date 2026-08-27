@@ -107,11 +107,13 @@ struct DayEventView: View {
 
             EventIconsView(event: event)
         }
+        .padding(.vertical, value: .mini)
     }
 
     private var compactCell: some View {
         Text(event.title)
             .font(.caption.bold())
+            .padding(.vertical, 2)
     }
 }
 
