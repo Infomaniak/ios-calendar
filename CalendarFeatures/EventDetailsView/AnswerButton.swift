@@ -20,6 +20,7 @@ import CalendarCoreUI
 import CalendarResources
 import DesignSystem
 import ESDSFoundation
+import InfomaniakCoreUIResources
 import SwiftUI
 
 struct AnswerButton: View {
@@ -70,9 +71,9 @@ public extension UIParticipationStatus {
 
     var buttonTitle: String {
         switch self {
-        case .accepted: CalendarResourcesStrings.buttonYes
-        case .declined: CalendarResourcesStrings.buttonNo
-        case .tentative: CalendarResourcesStrings.buttonMaybe
+        case .accepted: InfomaniakCoreUIResources.CoreUILocalizable.buttonYes
+        case .declined: InfomaniakCoreUIResources.CoreUILocalizable.buttonNo
+        case .tentative: InfomaniakCoreUIResources.CoreUILocalizable.buttonMaybe
         default:
             ""
         }

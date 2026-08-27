@@ -18,6 +18,7 @@
 
 import CalendarResources
 import Foundation
+import InfomaniakCoreUIResources
 import MultiplatformCalendar
 import SwiftUI
 
@@ -41,7 +42,7 @@ public extension UIParticipationStatus {
     var name: String {
         switch self {
         case .accepted: return CalendarResourcesStrings.statusAcceptedLabel
-        case .tentative: return CalendarResourcesStrings.buttonMaybe
+        case .tentative: return InfomaniakCoreUIResources.CoreUILocalizable.buttonMaybe
         case .needsAction: return CalendarResourcesStrings.statusNeedsActionLabel
         case .declined: return CalendarResourcesStrings.statusDeclinedLabel
         }

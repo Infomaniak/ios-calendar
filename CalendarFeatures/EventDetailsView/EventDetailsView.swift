@@ -98,15 +98,6 @@ public struct EventDetailsView: View {
                 }
 
                 Section {
-                    // TODO: Use actual event link when available
-                    OpenLinkRow(
-                        title: CalendarResourcesStrings.urlLinkTitle,
-                        buttonTitle: CalendarResourcesStrings.openTitle,
-                        icon: CalendarResourcesAsset.Images.link.swiftUIImage,
-                        linkURL: URL(string: "https://www.infomaniak.com/fr")!,
-                        showLink: true
-                    )
-
                     if let description = event.description, !description.isEmpty {
                         DescriptionRow(description: description)
                     }

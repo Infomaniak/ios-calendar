@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+
 <plist version="1.0">
   <dict>
     <key>attendeesAcceptedCount</key>
@@ -16,6 +17,10 @@
         <string>%d zaakceptowany</string>
         <key>few</key>
         <string>%d zaakceptowani</string>
+        <key>many</key>
+        <string>%d zaakceptowanych</string>
+        <key>other</key>
+        <string>%d zaakceptowanych</string>
       </dict>
     </dict>
     <key>attendeesCount</key>

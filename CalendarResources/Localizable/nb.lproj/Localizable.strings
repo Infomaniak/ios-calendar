@@ -22,20 +22,11 @@
 /* loco:6a7dc73c5274e3e0960fab50 */
 "buttonLogOut" = "Logg ut";
 
-/* loco:6a7c7c4523db46a469038b64 */
-"buttonMaybe" = "Kanskje";
-
 /* loco:6a4deaee7855b4f804068862 */
 "buttonNavigate" = "Reiserute";
 
-/* loco:6a7c7c2db1e5bd1671017cba */
-"buttonNo" = "Nei";
-
 /* loco:6a4deb24e064eb69fa065712 */
 "buttonShow" = "Vis";
-
-/* loco:6a7c7c2123db46a469038b62 */
-"buttonYes" = "Ja";
 
 /* loco:6a742d5283e910cbff0a9742 */
 "calendarsMenuSectionTitle" = "Kalendere";
@@ -88,6 +79,12 @@
 /* loco:6a2040c0637876be5f0ec2f2 */
 "monthTitle" = "Måned";
 
+/* loco:6a8ed23a8523fc2ec50554a2 */
+"notificationTypeEmail" = "E-post";
+
+/* loco:6a8ed665614bffbffe09a5d2 */
+"notificationTypePush" = "Varsel";
+
 /* loco:6a4dec95c1907081d30570c2 */
 "onlineLabel" = "På nettet";
 
@@ -127,6 +124,9 @@
 /* loco:6a3e20aad4ed90a7ed0b19e7 */
 "settingsTitle" = "Innstillinger";
 
+/* loco:6a8ffaf68264ef70e80f7612 */
+"shareLabel" = "Del";
+
 /* loco:6a7dc86fe6fe7c2bcf0f4274 */
 "signOutAccountAlertConfirm" = "Logg ut av kontoen";
 
@@ -156,9 +156,6 @@
 
 /* loco:6a63118bfc3889d1fb077fc2 */
 "titleLabel" = "Tittel";
-
-/* loco:6a858f2fd3e38fa80607d215 */
-"urlLinkTitle" = "URL-lenke";
 
 /* loco:6a33b6883afea93d8b078502 */
 "weekHeaderWeekNumber" = "U%d";
