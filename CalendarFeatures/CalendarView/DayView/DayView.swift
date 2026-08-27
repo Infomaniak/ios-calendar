@@ -44,7 +44,7 @@ struct DayView: View {
 struct DayContentView: View {
     enum Constants {
         static let layoutHorizontalSpacing = IKPadding.micro
-        static let layoutVerticalSpacing: CGFloat = 1
+        static let layoutVerticalSpacing: CGFloat = 1.5
 
         static let verticalInset = DayTimelineView.Constants.labelFontSize / 2
 
@@ -158,7 +158,7 @@ struct DayContentView: View {
                         }
                         .padding(.leading, Self.Constants.leadingInset + IKPadding.medium)
                         .padding(.trailing, value: .medium)
-                        .padding(.vertical, Self.Constants.verticalInset)
+                        .padding(.vertical, Self.Constants.verticalInset - DayTimelineView.Constants.indexHeight / 2)
 
                         if calendar.isDate(date, inSameDayAs: timeline.date) {
                             let timeIndicatorPosition = timeIndicatorPosition(at: timeline.date)
