@@ -22,6 +22,11 @@ import ESDSFoundation
 import Eventually
 import SwiftUI
 
+private struct DayViewZoomFocus {
+    let date: Date
+    let verticalPosition: CGFloat
+}
+
 struct DayView: View {
     @Environment(\.calendar) private var calendar
     @Environment(DaysViewModel.self) private var daysViewModel
