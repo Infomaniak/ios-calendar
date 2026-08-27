@@ -35,7 +35,7 @@ struct MonthPickerView: View {
     }
 
     var body: some View {
-        VStack {
+        VStack(spacing: IKPadding.small) {
             Divider()
                 .padding(.horizontal, value: .small)
 
@@ -49,7 +49,7 @@ struct MonthPickerView: View {
                     HStack(spacing: IKPadding.micro) {
                         if shouldDisplayYear(for: monthDate) {
                             Text(monthDate, format: .dateTime.year())
-                                .font(.subheadline.weight(.semibold))
+                                .font(.subheadline.weight(.emphasized))
                                 .padding(.horizontal, IKPadding.small)
                                 .padding(.vertical, IKPadding.micro)
                         }
