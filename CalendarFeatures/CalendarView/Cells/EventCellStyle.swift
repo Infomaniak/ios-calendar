@@ -74,17 +74,17 @@ struct EventCellStyle: ViewModifier {
             .foregroundStyle(foreground)
             .background(background)
             .strikethrough(mode == .declined)
-            .overlay(alignment: .leading) {
-                colors.onContainerColor
-                    .frame(width: 4)
-            }
-            .clipShape(.rect(cornerRadius: 8))
             .overlay {
                 if mode == .pending {
                     RoundedRectangle(cornerRadius: 8)
-                        .strokeBorder(colors.onContainerColor, lineWidth: 1)
+                        .strokeBorder(colors.sourceColor, lineWidth: 1)
                 }
             }
+            .overlay(alignment: .leading) {
+                colors.calendarSourceColor
+                    .frame(width: 4)
+            }
+            .clipShape(.rect(cornerRadius: 8))
     }
 
     private static func computeMode(for event: CalendarCoreUI.UIEvent) -> Mode {
