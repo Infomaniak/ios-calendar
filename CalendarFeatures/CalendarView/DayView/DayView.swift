@@ -63,11 +63,15 @@ struct DayContentView: View {
 
         // swiftlint:disable:next nesting
         enum PointsPerHour {
-            static let minimum: CGFloat = 40
+            static let minimum: CGFloat = 48
             static let `default`: CGFloat = 64
-            static let maximum: CGFloat = 100
+            static let maximum: CGFloat = 112
 
             static let horizontalRelayoutStep: CGFloat = 8
+
+            static func clamped(_ value: CGFloat) -> CGFloat {
+                return min(max(value, PointsPerHour.minimum), PointsPerHour.maximum)
+            }
         }
     }
 
@@ -76,6 +80,7 @@ struct DayContentView: View {
 
     @SceneStorage("DayViewScrollPosition") private var storedScrollPosition = 0.0
     @State private var scrollPosition = ScrollPosition()
+    @State private var scrollOffset: CGFloat = 0
 
     @State private var pointsPerHour = Constants.PointsPerHour.default
     @State private var currentMagnification: CGFloat = 1.0
@@ -107,7 +112,7 @@ struct DayContentView: View {
     }
 
     private var effectivePointsPerHour: CGFloat {
-        return clampedPointsPerHour(pointsPerHour * currentMagnification)
+        return Constants.PointsPerHour.clamped(pointsPerHour * currentMagnification)
     }
 
     private var viewHeight: CGFloat {
@@ -156,11 +161,12 @@ struct DayContentView: View {
                         .padding(.vertical, Self.Constants.verticalInset)
 
                         if calendar.isDate(date, inSameDayAs: timeline.date) {
+                            let timeIndicatorPosition = timeIndicatorPosition(at: timeline.date)
                             TimelineIndicatorView(date: timeline.date)
                                 .padding(.leading, value: .medium)
                                 .visualEffect { content, proxy in
                                     content
-                                        .offset(y: -proxy.size.height / 2 + timeIndicatorPosition(at: timeline.date))
+                                        .offset(y: -proxy.size.height / 2 + timeIndicatorPosition)
                                 }
                         }
                     }
@@ -168,33 +174,29 @@ struct DayContentView: View {
                 }
                 .scrollPosition($scrollPosition)
                 .onScrollGeometryChange(for: CGFloat.self) { scrollProxy in
-                    scrollProxy.contentOffset.y
+                    return scrollProxy.contentOffset.y + scrollProxy.contentInsets.top
                 } action: { _, newValue in
+                    scrollOffset = newValue
+
                     guard mainViewState.selectedDate == date else { return }
                     storedScrollPosition = Double(newValue)
                 }
                 .onAppear {
                     scrollToCorrectPosition(proxy)
                 }
-                .simultaneousGesture(
-                    MagnifyGesture()
-                        .onChanged { value in
-                            currentMagnification = value.magnification
-                        }
-                        .onEnded { value in
-                            pointsPerHour = clampedPointsPerHour(pointsPerHour * value.magnification)
-                            currentMagnification = 1.0
-                        }
+                .dayViewZoom(
+                    pointsPerHour: $pointsPerHour,
+                    currentMagnification: $currentMagnification,
+                    scrollPosition: $scrollPosition,
+                    date: date,
+                    scrollOffset: scrollOffset,
+                    maximumElapsedHours: CGFloat(hourMarks.count - 1)
                 )
                 .modifier(GlassHeaderBarModifier(miniCalendarHeight: miniCalendarHeight) {
                     DayHeaderView(events: events.filter(\.isAllDay), date: date)
                 })
             }
         }
-    }
-
-    private func clampedPointsPerHour(_ value: CGFloat) -> CGFloat {
-        return min(max(value, Constants.PointsPerHour.minimum), Constants.PointsPerHour.maximum)
     }
 
     private func timeIndicatorPosition(at date: Date) -> CGFloat {
