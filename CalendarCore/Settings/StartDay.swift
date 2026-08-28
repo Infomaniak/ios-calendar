@@ -19,7 +19,7 @@
 import Foundation
 import SwiftUI
 
-public enum StartDay: String, CaseIterable, Sendable {
+public enum StartDay: String, CaseIterable, Sendable, SettingsOptionEnum {
     case monday
     case tuesday
     case wednesday
@@ -45,5 +45,13 @@ public enum StartDay: String, CaseIterable, Sendable {
         case .sunday:
             return "Sunday"
         }
+    }
+
+    public var image: Image? {
+        nil
+    }
+
+    public var hint: String? {
+        nil
     }
 }

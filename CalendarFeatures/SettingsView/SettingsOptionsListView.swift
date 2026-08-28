@@ -17,30 +17,45 @@
  */
 
 import CalendarCore
-import CalendarResources
 import ESDSFoundation
 import SwiftUI
 
-public struct DefaultEventDurationSettingsView: View {
+public struct SettingsOptionsListView<Option: SettingsOptionEnum & CaseIterable & Equatable & Hashable>: View
+    where Option.AllCases: RandomAccessCollection {
     @Environment(\.esdsTheme) private var theme
 
-    @State private var defaultEventDuration: DefaultEventDuration = UserDefaults.standard.defaultEventDuration
+    private let navigationTitle: String
+    private let header: String?
+    private let values: Option.AllCases
+    @Binding private var selection: Option
 
-    public init() {}
+    public init(
+        navigationTitle: String,
+        header: String? = nil,
+        values: Option.AllCases = Option.allCases,
+        selection: Binding<Option>
+    ) {
+        self.navigationTitle = navigationTitle
+        self.header = header
+        self.values = values
+        _selection = selection
+    }
 
     public var body: some View {
         List {
-            Section(header: Text("Durée d'un évènement")) {
-                ForEach(DefaultEventDuration.allCases, id: \.self) { duration in
+            Section(header: header.map(Text.init)) {
+                ForEach(values, id: \.self) { value in
                     Button {
-                        defaultEventDuration = duration
-                        UserDefaults.standard.defaultEventDuration = duration
+                        selection = value
                     } label: {
                         HStack {
-                            Text(duration.title)
+                            if let image = value.image {
+                                image
+                            }
+                            Text(value.title)
                                 .frame(maxWidth: .infinity, alignment: .leading)
 
-                            if duration == defaultEventDuration {
+                            if value == selection {
                                 Image(systemName: "checkmark")
                                     .foregroundStyle(theme.color.contentPrimary)
                             }
@@ -52,11 +67,7 @@ public struct DefaultEventDurationSettingsView: View {
                 }
             }
         }
-        .navigationTitle("Durée d'un évènement par défaut")
+        .navigationTitle(navigationTitle)
         .navigationBarTitleDisplayMode(.inline)
     }
-}
-
-#Preview {
-    DefaultEventDurationSettingsView()
 }

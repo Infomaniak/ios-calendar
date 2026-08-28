@@ -19,7 +19,7 @@
 import Foundation
 import SwiftUI
 
-public enum DefaultEventDuration: CaseIterable, Sendable {
+public enum DefaultEventDuration: CaseIterable, Sendable, Equatable, Hashable, SettingsOptionEnum {
     case fifteenminutes
     case twentynminutes
     case thirtyminutes
@@ -29,7 +29,7 @@ public enum DefaultEventDuration: CaseIterable, Sendable {
     case onehourandthirtyminutes
     case onehourandfortyfiveminutes
     case twohours
-//    case personalization(value: Int)
+    //    case personalization(value: Int)
 
     public static var allCases: [DefaultEventDuration] {
         [.fifteenminutes, .twentynminutes, .thirtyminutes, .fortyfiveminutes,
@@ -48,13 +48,13 @@ public enum DefaultEventDuration: CaseIterable, Sendable {
         case .onehourandthirtyminutes: return 90
         case .onehourandfortyfiveminutes: return 105
         case .twohours: return 120
-//        case .personalization(let value): return value
+            //        case .personalization(let value): return value
         }
     }
 
     public init(minutes: Int) {
         self = Self.allCases.first { $0.minutes == minutes } ?? .thirtyminutes
-//        ?? .personalization(value: minutes)
+        //        ?? .personalization(value: minutes)
     }
 
     public var title: String {
@@ -91,5 +91,13 @@ public enum DefaultEventDuration: CaseIterable, Sendable {
 //                return "\(minutes) min"
 //            }
         }
+    }
+
+    public var image: Image? {
+        nil
+    }
+
+    public var hint: String? {
+        nil
     }
 }
