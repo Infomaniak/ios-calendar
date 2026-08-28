@@ -22,16 +22,16 @@ import ESDSFoundation
 import SwiftUI
 
 public struct GeneralSettingsView: View {
+    @Environment(SettingsStore.self) private var settings
     @Environment(\.esdsTheme) private var theme
-
-    @AppStorage(UserDefaults.standard.key(.isShowWeekends), store: .standard)
-    private var isShowWeekends: Bool = DefaultPreferences.isShowWeekends
 
     @State private var defaultEventDuration: DefaultEventDuration = UserDefaults.standard.defaultEventDuration
 
     public init() {}
 
     public var body: some View {
+        @Bindable var settings = settings
+
         List {
             Section {
                 NavigationLink(destination: EmptyView()) {
@@ -43,25 +43,43 @@ public struct GeneralSettingsView: View {
             }
 
             Section {
-                NavigationLink(destination: ThemeSettingsView()) {
+                NavigationLink {
+                    SettingsOptionsListView(
+                        navigationTitle: "Thème",
+                        header: "Choix du thème",
+                        selection: $settings.theme
+                    )
+                } label: {
                     Text("Thème")
                 }
 
-                NavigationLink(destination: StartDaySettingsView()) {
+                NavigationLink {
+                    SettingsOptionsListView(
+                        navigationTitle: "Début de la semaine",
+                        header: "La semaine commence le",
+                        selection: $settings.startDay
+                    )
+                } label: {
                     Text("Début de la semaine")
                 }
 
-                Toggle("Afficher les week-ends", isOn: $isShowWeekends)
+                Toggle("Afficher les week-ends", isOn: $settings.isShowWeekends)
                     .toggleStyle(SwitchToggleStyle())
             } header: {
                 Text("Par défaut")
             }
 
             Section {
-                NavigationLink(destination: DefaultEventDurationSettingsView()) {
+                NavigationLink {
+                    SettingsOptionsListView(
+                        navigationTitle: "Durée d'un évènement par défaut",
+                        header: "Durée d'un évènement",
+                        selection: $settings.defaultEventDuration
+                    )
+                } label: {
                     VStack(alignment: .leading) {
                         Text("Durée d'un évènement par défaut")
-                        Text(defaultEventDuration.title)
+                        Text(settings.defaultEventDuration.title)
                             .foregroundStyle(theme.color.contentSecondary)
                     }
                 }

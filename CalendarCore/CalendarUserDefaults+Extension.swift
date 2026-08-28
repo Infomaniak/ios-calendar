@@ -43,6 +43,15 @@ public extension UserDefaults {
         }
     }
 
+    var startDay: StartDay {
+        get {
+            return StartDay(rawValue: string(forKey: key(.startDay)) ?? "") ?? DefaultPreferences.startDay
+        }
+        set {
+            setValue(newValue.rawValue, forKey: key(.startDay))
+        }
+    }
+
     var isShowWeekends: Bool {
         get {
             if object(forKey: key(.isShowWeekends)) == nil {
