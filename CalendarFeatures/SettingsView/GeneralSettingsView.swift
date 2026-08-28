@@ -39,7 +39,7 @@ public struct GeneralSettingsView: View {
             }
 
             Section {
-                NavigationLink(destination: EmptyView()) {
+                NavigationLink(destination: ThemeSettingsView()) {
                     Text("Thème")
                 }
 
