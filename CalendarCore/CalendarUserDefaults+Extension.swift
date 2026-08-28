@@ -29,6 +29,7 @@ public protocol SettingsOptionEnum {
 public extension UserDefaults.Keys {
     static let theme = UserDefaults.Keys(rawValue: "theme")
     static let startDay = UserDefaults.Keys(rawValue: "startDay")
+    static let isShowWeekends = UserDefaults.Keys(rawValue: "isShowWeekends")
 }
 
 public extension UserDefaults {
@@ -41,12 +42,15 @@ public extension UserDefaults {
         }
     }
 
-    var startDay: StartDay {
+    var isShowWeekends: Bool {
         get {
-            return StartDay(rawValue: string(forKey: key(.startDay)) ?? "") ?? DefaultPreferences.startDay
+            if object(forKey: key(.isShowWeekends)) == nil {
+                set(DefaultPreferences.isShowWeekends, forKey: key(.isShowWeekends))
+            }
+            return bool(forKey: key(.isShowWeekends))
         }
         set {
-            setValue(newValue.rawValue, forKey: key(.startDay))
+            set(newValue, forKey: key(.isShowWeekends))
         }
     }
 }
