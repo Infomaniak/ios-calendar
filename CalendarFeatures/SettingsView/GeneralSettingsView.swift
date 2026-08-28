@@ -86,11 +86,11 @@ public struct GeneralSettingsView: View {
             } header: {
                 Text("Évènement")
             }
-            
+
             Section {
                 Toggle("Heure locale", isOn: $settings.isLocalTime)
                     .toggleStyle(SwitchToggleStyle())
-                
+
                 NavigationLink {
                     EmptyView()
                 } label: {

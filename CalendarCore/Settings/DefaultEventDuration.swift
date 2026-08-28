@@ -29,7 +29,7 @@ public enum DefaultEventDuration: CaseIterable, Sendable, Equatable, Hashable, S
     case onehourandthirtyminutes
     case onehourandfortyfiveminutes
     case twohours
-    //    case personalization(value: Int)
+    case personalization(value: Int)
 
     public static var allCases: [DefaultEventDuration] {
         [.fifteenminutes, .twentynminutes, .thirtyminutes, .fortyfiveminutes,
@@ -48,13 +48,12 @@ public enum DefaultEventDuration: CaseIterable, Sendable, Equatable, Hashable, S
         case .onehourandthirtyminutes: return 90
         case .onehourandfortyfiveminutes: return 105
         case .twohours: return 120
-            //        case .personalization(let value): return value
+        case .personalization(let value): return value
         }
     }
 
     public init(minutes: Int) {
-        self = Self.allCases.first { $0.minutes == minutes } ?? .thirtyminutes
-        //        ?? .personalization(value: minutes)
+        self = Self.allCases.first { $0.minutes == minutes } ?? .personalization(value: minutes)
     }
 
     public var title: String {
@@ -77,19 +76,19 @@ public enum DefaultEventDuration: CaseIterable, Sendable, Equatable, Hashable, S
             return "1 h 45 min"
         case .twohours:
             return "2 h"
-//        case .personalization(let minutes):
-//            let hours = minutes / 60
-//            let remainingMinutes = minutes % 60
-//
-//            if hours > 0 {
-//                if remainingMinutes > 0 {
-//                    return "\(hours) h \(remainingMinutes) min"
-//                } else {
-//                    return "\(hours) h"
-//                }
-//            } else {
-//                return "\(minutes) min"
-//            }
+        case .personalization(let minutes):
+            let hours = minutes / 60
+            let remainingMinutes = minutes % 60
+
+            if hours > 0 {
+                if remainingMinutes > 0 {
+                    return "\(hours) h \(remainingMinutes) min"
+                } else {
+                    return "\(hours) h"
+                }
+            } else {
+                return "\(minutes) min"
+            }
         }
     }
 

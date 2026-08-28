@@ -37,7 +37,7 @@ public final class SettingsStore {
     public var defaultEventDuration: DefaultEventDuration {
         didSet { UserDefaults.standard.defaultEventDuration = defaultEventDuration }
     }
-    
+
     public var isLocalTime: Bool {
         didSet { UserDefaults.standard.isLocalTime = isLocalTime }
     }
