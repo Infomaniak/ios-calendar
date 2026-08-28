@@ -43,7 +43,7 @@ public struct GeneralSettingsView: View {
                     Text("Thème")
                 }
 
-                NavigationLink(destination: EmptyView()) {
+                NavigationLink(destination: StartDaySettingsView()) {
                     Text("Début de la semaine")
                 }
 
