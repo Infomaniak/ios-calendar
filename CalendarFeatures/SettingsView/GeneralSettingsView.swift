@@ -18,12 +18,14 @@
 
 import CalendarResources
 import ESDSFoundation
+import CalendarCore
 import SwiftUI
 
 public struct GeneralSettingsView: View {
     @Environment(\.esdsTheme) private var theme
 
-    @State private var isShowWeekend = true
+    @AppStorage(UserDefaults.standard.key(.isShowWeekends), store: .standard)
+    private var isShowWeekends: Bool = DefaultPreferences.isShowWeekends
 
     public init() {}
 
@@ -47,7 +49,7 @@ public struct GeneralSettingsView: View {
                     Text("Début de la semaine")
                 }
 
-                Toggle("Afficher les week-ends", isOn: $isShowWeekend)
+                Toggle("Afficher les week-ends", isOn: $isShowWeekends)
                     .toggleStyle(SwitchToggleStyle())
             } header: {
                 Text("Par défaut")
