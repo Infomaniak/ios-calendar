@@ -86,6 +86,23 @@ public struct GeneralSettingsView: View {
             } header: {
                 Text("Évènement")
             }
+            
+            Section {
+                Toggle("Heure locale", isOn: $settings.isLocalTime)
+                    .toggleStyle(SwitchToggleStyle())
+                
+                NavigationLink {
+                    EmptyView()
+                } label: {
+                    VStack(alignment: .leading) {
+                        Text("Fuseau horaire")
+                        Text("Heure d'été d'Europe centrale")
+                            .foregroundStyle(theme.color.contentSecondary)
+                    }
+                }
+            } header: {
+                Text("Fuseau horaire")
+            }
         }
     }
 }
