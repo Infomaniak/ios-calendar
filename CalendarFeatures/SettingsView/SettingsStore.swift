@@ -37,11 +37,16 @@ public final class SettingsStore {
     public var defaultEventDuration: DefaultEventDuration {
         didSet { UserDefaults.standard.defaultEventDuration = defaultEventDuration }
     }
+    
+    public var isLocalTime: Bool {
+        didSet { UserDefaults.standard.isLocalTime = isLocalTime }
+    }
 
     public init() {
         theme = UserDefaults.standard.theme
         startDay = UserDefaults.standard.startDay
         isShowWeekends = UserDefaults.standard.isShowWeekends
         defaultEventDuration = UserDefaults.standard.defaultEventDuration
+        isLocalTime = UserDefaults.standard.isLocalTime
     }
 }
