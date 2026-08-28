@@ -86,8 +86,12 @@ struct MiniCalendarView: View {
                 navigationOrientation: .horizontal,
                 backgroundColor: .clear
             )
+            .id(displayMode)
+
+            if displayMode == .month {
+                MonthPickerView(selectedDate: $selectedDate, displayedPage: $displayedPage)
+            }
         }
-        .id(displayMode)
         .environment(viewModel)
         .task(id: displayedPage.referenceDate) {
             await updateCalendarDotsFor(date: displayedPage.referenceDate, calendar: calendar)
