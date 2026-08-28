@@ -17,9 +17,26 @@
  */
 
 import Foundation
+import InfomaniakCore
+import SwiftUI
 
-public enum DefaultPreferences {
-    public static let matomoAuthorized = true
-    public static let sentryAuthorized = true
-    public static let theme = Theme.system
+public protocol SettingsOptionEnum {
+    var title: String { get }
+    var image: Image? { get }
+    var hint: String? { get }
+}
+
+public extension UserDefaults.Keys {
+    static let theme = UserDefaults.Keys(rawValue: "theme")
+}
+
+public extension UserDefaults {
+    var theme: Theme {
+        get {
+            return Theme(rawValue: string(forKey: key(.theme)) ?? "") ?? DefaultPreferences.theme
+        }
+        set {
+            setValue(newValue.rawValue, forKey: key(.theme))
+        }
+    }
 }
