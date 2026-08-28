@@ -35,6 +35,8 @@ struct DayTimelineView: View {
         static let labelSpacing: CGFloat = IKPadding.small
 
         static let dateFormater: Date.FormatStyle = .dateTime.hour().minute()
+
+        static let indexHeight: CGFloat = 0.5
     }
 
     private var hourMarks: [Date] {
@@ -64,12 +66,11 @@ struct DayTimelineView: View {
                 for (index, mark) in hourMarks.enumerated() {
                     guard let hourSymbol = context.resolveSymbol(id: mark) else { continue }
 
-                    let yPosition = CGFloat(index) * pointsPerHour + hourSymbol.size.height / 2
-                    context.stroke(
-                        Path(CGRect(x: leadingOffset, y: yPosition - 0.25, width: size.width, height: 0.5)),
-                        with: .color(theme.color.borderDim2Default),
-                        style: .init(lineWidth: 0.5)
-                    )
+                    let yPosition = CGFloat(index) * pointsPerHour + DayContentView.Constants.verticalInset
+                    var path = Path()
+                    path.move(to: CGPoint(x: leadingOffset, y: yPosition - Constants.indexHeight / 2))
+                    path.addLine(to: CGPoint(x: size.width, y: yPosition - Constants.indexHeight / 2))
+                    context.stroke(path, with: .color(theme.color.borderDim2Default), lineWidth: Constants.indexHeight)
 
                     context.draw(
                         hourSymbol,

@@ -42,7 +42,7 @@ struct DayEventView: View {
         let cappedHours = min(max(hours, 0.25), 24)
 
         let eventHeight = CGFloat(cappedHours) * pointsPerHour
-        return max(eventHeight - 2 * 1, 16)
+        return max(eventHeight - 2 * DayContentView.Constants.layoutVerticalSpacing, 16)
     }
 
     var body: some View {
