@@ -20,29 +20,42 @@ import CalendarResources
 import ESDSFoundation
 import SwiftUI
 
-public struct SettingsView: View {
+public struct GeneralSettingsView: View {
     @Environment(\.esdsTheme) private var theme
+
+    @State private var isShowWeekend = true
 
     public init() {}
 
     public var body: some View {
         List {
             Section {
-                NavigationLink {
-                    GeneralSettingsView()
-                } label: {
-                    Text("Général")
-                        .foregroundStyle(theme.color.contentPrimary)
+                NavigationLink(destination: EmptyView()) {
+                    Text("Calendrier par défaut")
                 }
+                .disabled(true)
             } header: {
-                Text("Réglages")
+                Text("Par défaut")
+            }
+
+            Section {
+                NavigationLink(destination: EmptyView()) {
+                    Text("Thème")
+                }
+
+                NavigationLink(destination: EmptyView()) {
+                    Text("Début de la semaine")
+                }
+
+                Toggle("Afficher les week-ends", isOn: $isShowWeekend)
+                    .toggleStyle(SwitchToggleStyle())
+            } header: {
+                Text("Par défaut")
             }
         }
-        .navigationTitle(CalendarResourcesStrings.settingsTitle)
-        .navigationBarTitleDisplayMode(.inline)
     }
 }
 
 #Preview {
-    SettingsView()
+    GeneralSettingsView()
 }
