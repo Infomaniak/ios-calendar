@@ -30,6 +30,7 @@ public extension UserDefaults.Keys {
     static let theme = UserDefaults.Keys(rawValue: "theme")
     static let startDay = UserDefaults.Keys(rawValue: "startDay")
     static let isShowWeekends = UserDefaults.Keys(rawValue: "isShowWeekends")
+    static let defaultEventDuration = UserDefaults.Keys(rawValue: "defaultEventDuration")
 }
 
 public extension UserDefaults {
@@ -51,6 +52,16 @@ public extension UserDefaults {
         }
         set {
             set(newValue, forKey: key(.isShowWeekends))
+        }
+    }
+
+    var defaultEventDuration: DefaultEventDuration {
+        get {
+            let minutes = integer(forKey: key(.defaultEventDuration))
+            return minutes == 0 ? DefaultPreferences.defaultEventDuration : DefaultEventDuration(minutes: minutes)
+        }
+        set {
+            setValue(newValue.minutes, forKey: key(.defaultEventDuration))
         }
     }
 }
