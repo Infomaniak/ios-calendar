@@ -57,7 +57,7 @@ public struct DiagonalStripesView: View {
             lines.addLine(to: CGPoint(x: offset + size.height, y: size.height))
             offset += step
         }
-        return lines.strokedPath(StrokeStyle(lineWidth: stripeWidth))
+        return lines.strokedPath(StrokeStyle(lineWidth: stripeWidth, lineCap: .round))
     }
 }
 

@@ -35,6 +35,7 @@ extension KotlinInstant {
 public extension UIEvent {
     struct Colors: Sendable, Equatable, Hashable {
         public let calendarSourceColor: Color
+        public let sourceColor: Color
         public let containerColor: Color
         public let onContainerColor: Color
         public let containerVariantColor: Color
@@ -44,20 +45,23 @@ public extension UIEvent {
 
         public init(
             calendarSourceColor: Color,
+            sourceColor: Color,
             containerColor: Color,
             onContainerColor: Color,
             containerVariantColor: Color,
             onContainerVariantColor: Color
         ) {
+            self.sourceColor = sourceColor
             self.calendarSourceColor = calendarSourceColor
             self.containerColor = containerColor
             self.onContainerColor = onContainerColor
             self.containerVariantColor = containerVariantColor
             self.onContainerVariantColor = onContainerVariantColor
-            sourceColorArgb = containerColor.cgColor?.argb ?? 0
+            sourceColorArgb = sourceColor.cgColor?.argb ?? 0
         }
 
         public init(eventColors: EventColors) {
+            sourceColor = Color(argb: eventColors.sourceColor)
             calendarSourceColor = Color(argb: eventColors.calendarSourceColor)
             containerColor = Color(argb: eventColors.containerColor)
             onContainerColor = Color(eventColor: eventColors.onContainerColor)
@@ -243,10 +247,11 @@ public extension UIEvent {
 
 public extension UIEvent.Colors {
     static let preview = UIEvent.Colors(
-        calendarSourceColor: Color.purple,
-        containerColor: Color.purple.opacity(0.2),
-        onContainerColor: Color.purple,
-        containerVariantColor: Color.purple.opacity(0.2),
-        onContainerVariantColor: Color.purple.opacity(0.7)
+        calendarSourceColor: Color.green,
+        sourceColor: Color.orange,
+        containerColor: Color.orange.opacity(0.2),
+        onContainerColor: Color(red: 1, green: 0.2, blue: 0),
+        containerVariantColor: Color.orange.opacity(0.1),
+        onContainerVariantColor: Color(red: 1, green: 0.2, blue: 0)
     )
 }
