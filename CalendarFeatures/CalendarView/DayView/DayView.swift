@@ -172,6 +172,7 @@ struct DayContentView: View {
                     }
                     .frame(height: viewHeight)
                 }
+                .contentMargins(.vertical, IKPadding.medium, for: .scrollContent)
                 .scrollPosition($scrollPosition)
                 .onScrollGeometryChange(for: CGFloat.self) { scrollProxy in
                     return scrollProxy.contentOffset.y + scrollProxy.contentInsets.top
