@@ -27,6 +27,8 @@ public struct GeneralSettingsView: View {
     @AppStorage(UserDefaults.standard.key(.isShowWeekends), store: .standard)
     private var isShowWeekends: Bool = DefaultPreferences.isShowWeekends
 
+    @State private var defaultEventDuration: DefaultEventDuration = UserDefaults.standard.defaultEventDuration
+
     public init() {}
 
     public var body: some View {
@@ -56,10 +58,10 @@ public struct GeneralSettingsView: View {
             }
 
             Section {
-                NavigationLink(destination: EmptyView()) {
+                NavigationLink(destination: DefaultEventDurationSettingsView()) {
                     VStack(alignment: .leading) {
                         Text("Durée d'un évènement par défaut")
-                        Text("30 minutes")
+                        Text(defaultEventDuration.title)
                             .foregroundStyle(theme.color.contentSecondary)
                     }
                 }
