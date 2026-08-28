@@ -16,13 +16,30 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarResources
+import ESDSFoundation
 import SwiftUI
 
 public struct SettingsView: View {
+    @Environment(\.esdsTheme) private var theme
+
     public init() {}
 
     public var body: some View {
-        EmptyView()
+        List {
+            Section {
+                NavigationLink {
+                    EmptyView()
+                } label: {
+                    Text("Général")
+                        .foregroundStyle(theme.color.contentPrimary)
+                }
+            } header: {
+                Text("Réglages")
+            }
+        }
+        .navigationTitle(CalendarResourcesStrings.settingsTitle)
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 
