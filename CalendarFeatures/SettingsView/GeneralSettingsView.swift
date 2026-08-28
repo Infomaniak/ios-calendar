@@ -16,9 +16,9 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarCore
 import CalendarResources
 import ESDSFoundation
-import CalendarCore
 import SwiftUI
 
 public struct GeneralSettingsView: View {
@@ -53,6 +53,18 @@ public struct GeneralSettingsView: View {
                     .toggleStyle(SwitchToggleStyle())
             } header: {
                 Text("Par défaut")
+            }
+
+            Section {
+                NavigationLink(destination: EmptyView()) {
+                    VStack(alignment: .leading) {
+                        Text("Durée d'un évènement par défaut")
+                        Text("30 minutes")
+                            .foregroundStyle(theme.color.contentSecondary)
+                    }
+                }
+            } header: {
+                Text("Évènement")
             }
         }
     }
