@@ -23,4 +23,5 @@ public enum DefaultPreferences {
     public static let sentryAuthorized = true
     public static let theme = Theme.system
     public static let startDay = StartDay.monday
+    public static let isShowWeekends = true
 }
