@@ -24,4 +24,5 @@ public enum DefaultPreferences {
     public static let theme = Theme.system
     public static let startDay = StartDay.monday
     public static let isShowWeekends = true
+    public static let defaultEventDuration = DefaultEventDuration.thirtyminutes
 }
