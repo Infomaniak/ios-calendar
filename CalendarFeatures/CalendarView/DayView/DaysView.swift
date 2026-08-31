@@ -18,7 +18,6 @@
 
 import CalendarCore
 import CalendarCoreUI
-import CalendarEventDetailsView
 import InfiniteScrollViews
 import InfomaniakDI
 import MultiplatformCalendar
@@ -69,12 +68,9 @@ private struct PagedInfiniteDateView<Content: View>: View {
 
 struct DaysView: View {
     @Environment(\.calendar) private var calendar
-
     @Environment(MainViewState.self) private var mainViewState
     @Environment(\.calendarAccounts) private var calendarAccounts
-
     @State private var viewModel = DaysViewModel()
-    @State private var selectedEvent: CalendarCoreUI.UIEvent?
 
     @Binding var miniCalendarHeight: CGFloat
 
@@ -83,7 +79,6 @@ struct DaysView: View {
 
         PagedInfiniteDateView(selectedDate: $mainViewState.selectedDate) { date in
             DayView(
-                selectedEvent: $selectedEvent,
                 miniCalendarHeight: $miniCalendarHeight,
                 date: date
             )
@@ -91,9 +86,6 @@ struct DaysView: View {
         .modifier(IgnoreTopSafeAreaModifier())
         .ignoresSafeArea(.all, edges: .bottom)
         .environment(viewModel)
-        .sheet(item: $selectedEvent) { event in
-            EventDetailsView(event: event)
-        }
         .task(id: mainViewState.selectedDate) {
             await observeCalendars(mainViewState.selectedDate)
         }
