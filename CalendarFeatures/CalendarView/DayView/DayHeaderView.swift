@@ -24,6 +24,7 @@ import SwiftUI
 
 struct DayHeaderView: View {
     @Environment(\.esdsTheme) private var theme
+    @Environment(MainViewState.self) private var mainViewState
 
     let events: [CalendarCoreUI.UIEvent]
     let date: Date
@@ -82,12 +83,16 @@ struct DayHeaderView: View {
                         VStack(spacing: IKPadding.micro) {
                             ForEach(eventPairs, id: \.0.id) { firstEvent, secondEvent in
                                 HStack(spacing: IKPadding.micro) {
-                                    Text(firstEvent.title)
-                                        .allDayEventStyle(for: firstEvent)
+                                    EventDetailsPopoverButton(event: firstEvent) {
+                                        Text(firstEvent.title)
+                                            .allDayEventStyle(for: firstEvent)
+                                    }
 
                                     if let secondEvent {
-                                        Text(secondEvent.title)
-                                            .allDayEventStyle(for: secondEvent)
+                                        EventDetailsPopoverButton(event: secondEvent) {
+                                            Text(secondEvent.title)
+                                                .allDayEventStyle(for: secondEvent)
+                                        }
                                     }
                                 }
                             }

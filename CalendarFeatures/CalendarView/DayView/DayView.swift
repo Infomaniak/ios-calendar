@@ -141,14 +141,13 @@ struct DayContentView: View {
                             coveredTextHeights = textHeights
                         } {
                             ForEach(Array(events.filter { !$0.isAllDay }.enumerated()), id: \.element.id) { index, event in
-                                Button { selectedEvent = event } label: {
+                                EventDetailsPopoverButton(event: event) {
                                     DayEventView(
                                         event: event,
                                         pointsPerHour: effectivePointsPerHour,
                                         maxVisibleHeight: coveredTextHeights[index]
                                     )
                                 }
-                                .buttonStyle(.plain)
                                 .eventuallyDateIntervalLayout(DateInterval(start: event.startDate, end: event.endDate))
                             }
                         }
