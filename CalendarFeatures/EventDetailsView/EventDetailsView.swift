@@ -102,14 +102,13 @@ public struct EventDetailsView: View {
                     }
                 }
 
-                if let classification = event.classification {
+                if let classification = event.classification, let icon = classification.icon,
+                   let text = classification.text {
                     Section {
                         // TODO: Add another row for free/busy status when available
                         StatusRow(
-                            text: classification == .private ? CalendarResourcesStrings.privateLabel :
-                                CalendarResourcesStrings.publicLabel,
-                            icon: classification == .private ? CalendarResourcesAsset.Images.lock.swiftUIImage :
-                                CalendarResourcesAsset.Images.lockOpen.swiftUIImage
+                            text: text,
+                            icon: icon
                         )
                     }
                 }

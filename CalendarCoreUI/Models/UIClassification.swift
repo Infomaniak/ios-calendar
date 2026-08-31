@@ -16,14 +16,38 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarResources
 import Foundation
 import MultiplatformCalendar
+import SwiftUI
 
 public enum UIClassification: String, Sendable, CaseIterable {
     case `public`
     case `private`
     case confidential
     case custom
+
+    public var text: String? {
+        switch self {
+        case .public:
+            return CalendarResourcesStrings.publicLabel
+        case .private:
+            return CalendarResourcesStrings.privateLabel
+        default:
+            return nil
+        }
+    }
+
+    public var icon: Image? {
+        switch self {
+        case .public:
+            return CalendarResourcesAsset.Images.lockOpen.swiftUIImage
+        case .private:
+            return CalendarResourcesAsset.Images.lock.swiftUIImage
+        default:
+            return nil
+        }
+    }
 }
 
 public extension UIClassification {
