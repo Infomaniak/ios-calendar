@@ -22,6 +22,7 @@ import Foundation
 @Observable
 public final class MainViewState {
     public var selectedDate: Date
+    public var presentedEvent: UIEvent?
 
     public init(selectedDate: Date = Date()) {
         self.selectedDate = selectedDate
