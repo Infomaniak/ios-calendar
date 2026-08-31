@@ -29,37 +29,23 @@ public struct DayRow: View {
     let event: CalendarCoreUI.UIEvent
 
     private var isMultiDay: Bool {
-        return !calendar.isDate(event.timing.start, inSameDayAs: event.timing.end)
-    }
-
-    private var startDate: Date {
-        isMultiDay ? event.timing.start : event.startDate
-    }
-
-    private var endDate: Date {
-        isMultiDay ? event.timing.end : event.endDate
-    }
-
-    public var body: some View {
-        VStack(alignment: .leading) {
-            Text(eventDateRange)
-                .font(.body)
-                .foregroundStyle(theme.color.contentPrimary)
-
-            if let eventTimeZoneRange {
-                Text(eventTimeZoneRange)
-                    .font(.subheadline)
-                    .foregroundStyle(theme.color.contentSecondary)
-            }
-
-            // TODO: Show event recurrence information when available
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
+        let endDate = event.timing.end.addingTimeInterval(-1)
+        return !calendar.isDate(event.timing.start, inSameDayAs: endDate)
     }
 
     private var eventDateRange: String {
         if event.isAllDay {
-            let date = event.startDate.formatted(
+            if isMultiDay {
+                let style = Date.FormatStyle()
+                    .weekday(.wide)
+                    .month(.wide)
+                    .day()
+                let start = event.timing.start.formatted(style)
+                let end = event.timing.end.addingTimeInterval(-1).formatted(style)
+                return "\(start) - \(end)"
+            }
+
+            let date = event.timing.start.formatted(
                 .dateTime
                     .weekday(.wide)
                     .month(.wide)
@@ -85,15 +71,32 @@ public struct DayRow: View {
 
         if startTimeZone.secondsFromGMT() == endTimeZone.secondsFromGMT() {
             let range = formattedRange(in: startTimeZone, includesDate: isMultiDay)
-            let timeZone = formattedTimeZone(for: startDate, in: startTimeZone)
+            let timeZone = formattedTimeZone(for: event.timing.start, in: startTimeZone)
 
             return "\(range) (\(timeZone))"
         }
 
-        let start = formattedDateTime(startDate, in: startTimeZone, includesDate: isMultiDay)
-        let end = formattedDateTime(endDate, in: endTimeZone, includesDate: isMultiDay)
+        let start = formattedDateTime(event.timing.start, in: startTimeZone, includesDate: isMultiDay)
+        let end = formattedDateTime(event.timing.end, in: endTimeZone, includesDate: isMultiDay)
 
         return "\(start) - \(end)"
+    }
+
+    public var body: some View {
+        VStack(alignment: .leading) {
+            Text(eventDateRange)
+                .font(.body)
+                .foregroundStyle(theme.color.contentPrimary)
+
+            if let eventTimeZoneRange {
+                Text(eventTimeZoneRange)
+                    .font(.subheadline)
+                    .foregroundStyle(theme.color.contentSecondary)
+            }
+
+            // TODO: Show event recurrence information when available
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     private func dateTimeRange(in timeZone: TimeZone) -> String {
@@ -105,7 +108,7 @@ public struct DayRow: View {
             .minute()
         style.timeZone = timeZone
 
-        return (startDate ..< endDate)
+        return (event.timing.start ..< event.timing.end)
             .formatted(style)
     }
 
@@ -120,7 +123,7 @@ public struct DayRow: View {
             timeZone: timeZone
         )
 
-        return (startDate ..< endDate)
+        return (event.timing.start ..< event.timing.end)
             .formatted(style)
     }
 
@@ -158,4 +161,12 @@ public struct DayRow: View {
             .timeZone(.localizedGMT(.short))
         )
     }
+}
+
+#Preview {
+    DayRow(event: CalendarCoreUI.UIEvent.preview)
+}
+
+#Preview {
+    DayRow(event: CalendarCoreUI.UIEvent.longPreview)
 }

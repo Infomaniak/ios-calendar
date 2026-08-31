@@ -189,7 +189,7 @@ struct DayContentView: View {
                     maximumElapsedHours: CGFloat(hourMarks.count - 1)
                 )
                 .modifier(GlassHeaderBarModifier(miniCalendarHeight: miniCalendarHeight) {
-                    DayHeaderView(events: events.filter(\.isAllDay), date: date)
+                    DayHeaderView(selectedEvent: $selectedEvent, events: events.filter(\.isAllDay), date: date)
                 })
             }
         }
