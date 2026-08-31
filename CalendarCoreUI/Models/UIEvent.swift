@@ -86,7 +86,7 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
     public let description: String?
     public let status: EventStatus?
     public let location: String?
-    public let kMeetLink: String? = nil // TODO: Get it from Event
+    public let kMeetLink: URL? = nil // TODO: Get it from Event
 
     public let startDate: Date
     public let endDate: Date

@@ -39,6 +39,10 @@ public struct EventDetailsView: View {
         }
     }
 
+    private var hasLocationSection: Bool {
+        event.kMeetLink != nil || event.location != nil
+    }
+
     private let navigationTitleThreshold = 4.0
 
     public init(
@@ -78,32 +82,34 @@ public struct EventDetailsView: View {
                     ParticipantsRow(uniqueAttendees: uniqueAttendees)
                 }
 
-                Section {
-                    if let kMeetLinkString = event.kMeetLink,
-                       let kMeetLink = URL(string: kMeetLinkString) {
-                        OpenLinkRow(
-                            title: CalendarResourcesStrings.participateKMeetTitle,
-                            buttonTitle: CalendarResourcesStrings.buttonJoin,
-                            icon: CalendarResourcesAsset.Images.productKmeet.swiftUIImage,
-                            linkURL: kMeetLink,
-                            showLink: false
-                        )
-                    }
+                if hasLocationSection {
+                    Section {
+                        if let kMeetLink = event.kMeetLink {
+                            OpenLinkRow(
+                                title: CalendarResourcesStrings.participateKMeetTitle,
+                                buttonTitle: CalendarResourcesStrings.buttonJoin,
+                                icon: CalendarResourcesAsset.Images.productKmeet.swiftUIImage,
+                                linkURL: kMeetLink,
+                                showLink: false
+                            )
+                        }
 
-                    if let address = event.location {
-                        LocationRow(address: address)
-                    }
+                        if let address = event.location {
+                            LocationRow(address: address)
+                        }
 
-                    // TODO: Show meeting room information when available
+                        // TODO: Show meeting room information when available
+                    }
                 }
 
-                Section {
-                    if let description = event.description, !description.isEmpty {
+                if let description = event.description, !description.isEmpty {
+                    Section {
                         DescriptionRow(description: description)
                     }
 
                     // TODO: Show attachments when available using FileTypeProvider
                 }
+
                 if !alarms.isEmpty {
                     Section {
                         AlertsSectionView(alarms: $alarms)
