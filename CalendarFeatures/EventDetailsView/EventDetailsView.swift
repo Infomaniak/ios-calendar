@@ -27,6 +27,7 @@ public struct EventDetailsView: View {
 
     @State private var alarms: [UIEventAlarm]
     @State private var selectedStatus: UIParticipationStatus?
+    @State private var showNavigationTitle = false
 
     private let event: CalendarCoreUI.UIEvent
 
@@ -37,6 +38,8 @@ public struct EventDetailsView: View {
             seenEmails.insert(attendee.email).inserted
         }
     }
+
+    private let navigationTitleThreshold = 4.0
 
     public init(
         event: CalendarCoreUI.UIEvent
@@ -55,6 +58,15 @@ public struct EventDetailsView: View {
                             title: event.title,
                             eventColor: event.colors.sourceColor
                         )
+                        .onGeometryChange(for: Bool.self) { geometry in
+                            let frame = geometry.frame(in: .scrollView(axis: .vertical))
+
+                            return frame.minY <= frame.height * navigationTitleThreshold
+                        } action: { showTitle in
+                            guard showNavigationTitle != showTitle else { return }
+
+                            showNavigationTitle = showTitle
+                        }
 
                         DayRow(event: event)
                     }
@@ -114,7 +126,13 @@ public struct EventDetailsView: View {
                 }
             }
             .closeToolbarItem(dismiss: dismiss)
-            .navigationTitle(CalendarResourcesStrings.eventTitle)
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Text(event.title)
+                        .lineLimit(1)
+                        .opacity(showNavigationTitle ? 1 : 0)
+                }
+            }
             .navigationBarTitleDisplayMode(.inline)
             .listSectionSpacing(IKPadding.large)
             .contentMargins(.top, 0, for: .scrollContent)
