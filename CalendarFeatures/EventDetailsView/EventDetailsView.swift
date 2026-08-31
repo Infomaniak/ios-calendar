@@ -90,7 +90,7 @@ public struct EventDetailsView: View {
                         DescriptionRow(description: description)
                     }
 
-                    // TODO: Show attachments when available
+                    // TODO: Show attachments when available using FileTypeProvider
                 }
                 if !alarms.isEmpty {
                     Section {
