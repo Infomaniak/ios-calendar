@@ -26,20 +26,20 @@ struct EventTitleRow: View {
     @Environment(\.esdsTheme) private var theme
 
     private let title: String
-    private let calendarColor: Color
+    private let eventColor: Color
 
     init(
         title: String,
-        calendarColor: Color
+        eventColor: Color
     ) {
         self.title = title
-        self.calendarColor = calendarColor
+        self.eventColor = eventColor
     }
 
     var body: some View {
         HStack {
             Circle()
-                .fill(calendarColor)
+                .fill(eventColor)
                 .frame(width: IKIconSize.medium.rawValue, height: IKIconSize.medium.rawValue)
 
             Text(title)
@@ -53,6 +53,6 @@ struct EventTitleRow: View {
 #Preview {
     EventTitleRow(
         title: UIEvent.preview.title,
-        calendarColor: .green
+        eventColor: .green
     )
 }

@@ -56,7 +56,7 @@ public struct EventDetailsView: View {
                     VStack(spacing: IKPadding.small) {
                         EventTitleRow(
                             title: event.title,
-                            calendarColor: event.colors.calendarSourceColor
+                            eventColor: event.colors.sourceColor
                         )
 
                         DayRow(event: event)
