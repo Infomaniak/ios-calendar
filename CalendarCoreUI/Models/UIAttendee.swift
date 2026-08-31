@@ -88,7 +88,7 @@ public struct UIAttendee: Sendable, Equatable, Hashable, Identifiable {
 public extension UIAttendee {
     init(attendee: MultiplatformCalendar.Attendee) {
         displayName = attendee.displayName
-        email = attendee.email
+        email = attendee.email.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
         status = UIParticipationStatus(participationStatus: attendee.status)
         isOrganizer = attendee.isOrganizer
     }

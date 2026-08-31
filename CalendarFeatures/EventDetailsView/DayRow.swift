@@ -96,7 +96,6 @@ public struct DayRow: View {
 
             // TODO: Show event recurrence information when available
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     private func dateTimeRange(in timeZone: TimeZone) -> String {

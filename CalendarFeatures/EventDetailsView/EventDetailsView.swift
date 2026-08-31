@@ -25,20 +25,17 @@ import SwiftUI
 public struct EventDetailsView: View {
     @Environment(\.dismiss) private var dismiss
 
-    private let event: CalendarCoreUI.UIEvent
     @State private var alarms: [UIEventAlarm]
     @State private var selectedStatus: UIParticipationStatus?
+
+    private let event: CalendarCoreUI.UIEvent
 
     private var uniqueAttendees: [UIAttendee] {
         var seenEmails = Set<String>()
 
         return event.attendees.filter { attendee in
-            seenEmails.insert(normalizedEmail(attendee.email)).inserted
+            seenEmails.insert(attendee.email).inserted
         }
-    }
-
-    private func normalizedEmail(_ email: String) -> String {
-        email.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
     }
 
     public init(
@@ -53,7 +50,7 @@ public struct EventDetailsView: View {
         NavigationStack {
             Form {
                 Section {
-                    VStack(spacing: IKPadding.small) {
+                    VStack(alignment: .leading, spacing: IKPadding.small) {
                         EventTitleRow(
                             title: event.title,
                             eventColor: event.colors.sourceColor
@@ -62,7 +59,6 @@ public struct EventDetailsView: View {
                         DayRow(event: event)
                     }
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
                 .listRowBackground(Color.clear)
                 .listRowSeparator(.hidden)
 

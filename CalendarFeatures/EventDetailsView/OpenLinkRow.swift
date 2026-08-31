@@ -70,6 +70,5 @@ public struct OpenLinkRow: View {
             }
             .accessibilityLabel(CalendarResourcesStrings.shareLabel)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }

@@ -25,16 +25,8 @@ import SwiftUI
 struct EventTitleRow: View {
     @Environment(\.esdsTheme) private var theme
 
-    private let title: String
-    private let eventColor: Color
-
-    init(
-        title: String,
-        eventColor: Color
-    ) {
-        self.title = title
-        self.eventColor = eventColor
-    }
+    let title: String
+    let eventColor: Color
 
     var body: some View {
         HStack {
@@ -43,7 +35,6 @@ struct EventTitleRow: View {
                 .frame(width: IKIconSize.medium.rawValue, height: IKIconSize.medium.rawValue)
 
             Text(title)
-                .frame(maxWidth: .infinity, alignment: .leading)
                 .font(.title3.weight(.semibold))
                 .foregroundStyle(theme.color.contentPrimary)
         }
