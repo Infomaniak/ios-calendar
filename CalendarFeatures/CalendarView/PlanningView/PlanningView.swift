@@ -18,7 +18,6 @@
 
 import CalendarCore
 import CalendarCoreUI
-import CalendarEventDetailsView
 import DesignSystem
 import Foundation
 import SwiftUI
@@ -54,11 +53,6 @@ public struct PlanningView: View {
                 return
             }
             planningViewModel.scrollTarget = newValue
-        }
-        .sheet(item: $planningViewModel.selectedEvent) { event in
-            EventDetailsView(
-                event: event
-            )
         }
         .id(calendarAccounts)
     }

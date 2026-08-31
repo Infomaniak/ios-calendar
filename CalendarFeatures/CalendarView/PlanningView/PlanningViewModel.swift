@@ -23,7 +23,7 @@ import InfomaniakDI
 import MultiplatformCalendar
 
 @MainActor @Observable
-class PlanningViewModel {
+final class PlanningViewModel {
     nonisolated static let daysBeforeToday = 10000
     nonisolated static let daysAfterToday = 10000
     nonisolated static let observeRadiusDays = 42
@@ -45,8 +45,6 @@ class PlanningViewModel {
     @ObservationIgnored private var currentObserveTask: Task<Void, Never>?
 
     private let calendarAccounts: [CalendarAccount.ID: CalendarAccount]
-
-    var selectedEvent: CalendarCoreUI.UIEvent?
 
     init(calendarAccounts: [CalendarAccount.ID: CalendarAccount]) {
         self.calendarAccounts = calendarAccounts

@@ -134,12 +134,9 @@ struct PlanningCollectionView: UIViewRepresentable {
 
             allDayCellRegistration = .init { cell, _, event in
                 cell.contentConfiguration = UIHostingConfiguration {
-                    Button {
-                        planningViewModel.selectedEvent = event
-                    } label: {
+                    EventDetailsPopoverButton(event: event) {
                         PlanningDayEventView(event: event)
                     }
-                    .buttonStyle(.plain)
                 }
                 .margins(.all, 0)
                 .minSize(height: PlanningLayoutMetrics.eventRowMinHeight)
@@ -151,12 +148,9 @@ struct PlanningCollectionView: UIViewRepresentable {
 
             eventCellRegistration = .init { cell, _, event in
                 cell.contentConfiguration = UIHostingConfiguration {
-                    Button {
-                        planningViewModel.selectedEvent = event
-                    } label: {
+                    EventDetailsPopoverButton(event: event) {
                         PlanningEventView(event: event)
                     }
-                    .buttonStyle(.plain)
                 }
                 .margins(.all, 0)
                 .minSize(height: PlanningLayoutMetrics.eventRowMinHeight)
