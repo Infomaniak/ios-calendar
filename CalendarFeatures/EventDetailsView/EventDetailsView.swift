@@ -118,7 +118,7 @@ public struct EventDetailsView: View {
             .navigationBarTitleDisplayMode(.inline)
             .listSectionSpacing(IKPadding.large)
             .contentMargins(.top, 0, for: .scrollContent)
-            .modifier(AdaptiveSafeAreaBarModifier {
+            .safeAreaInset(edge: .bottom) {
                 if selectedStatus != nil {
                     HStack(spacing: IKPadding.medium) {
                         ForEach([UIParticipationStatus.accepted, .declined, .tentative], id: \.self) { answer in
@@ -133,24 +133,6 @@ public struct EventDetailsView: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .center)
                 }
-            })
-        }
-    }
-}
-
-struct AdaptiveSafeAreaBarModifier<BarContent: View>: ViewModifier {
-    @ViewBuilder let barContent: () -> BarContent
-
-    func body(content: Content) -> some View {
-        if #available(iOS 26.0, *) {
-            content.safeAreaBar(edge: .bottom) {
-                barContent()
-            }
-        } else {
-            content.safeAreaInset(edge: .bottom) {
-                barContent()
-                    .padding(.top, IKPadding.medium)
-                    .background(Material.bar)
             }
         }
     }
