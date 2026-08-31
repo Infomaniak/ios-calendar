@@ -28,28 +28,26 @@ struct WeekHeaderView: View {
     @Binding var selectedDate: Date
 
     var body: some View {
-        HStack(spacing: 0) {
-            ForEach(0 ..< 7, id: \.self) { dayIndex in
-                ZStack {
-                    if let dayDate = calendar.date(byAdding: .day, value: dayIndex, to: page.referenceDate) {
-                        Button {
-                            selectedDate = calendar.startOfDay(for: dayDate)
-                        } label: {
-                            DayCellView(
-                                date: dayDate,
-                                isSelected: calendar.isDate(dayDate, inSameDayAs: selectedDate),
-                                eventDots: viewModel.eventDots(for: dayDate, calendar: calendar)
-                            )
+        Grid(alignment: .center, horizontalSpacing: IKPadding.micro, verticalSpacing: 0) {
+            GridRow {
+                ForEach(0 ..< 7, id: \.self) { column in
+                    ZStack {
+                        if let dayDate = calendar.date(byAdding: .day, value: column, to: page.referenceDate) {
+                            Button {
+                                selectedDate = calendar.startOfDay(for: dayDate)
+                            } label: {
+                                DayCellView(
+                                    date: dayDate,
+                                    isSelected: calendar.isDate(dayDate, inSameDayAs: selectedDate),
+                                    eventDots: viewModel.eventDots(for: dayDate, calendar: calendar)
+                                )
+                            }
+                            .buttonStyle(.plain)
                         }
-                        .buttonStyle(.plain)
                     }
                 }
-                .frame(maxWidth: .infinity)
-                .aspectRatio(1, contentMode: .fit)
             }
         }
-        .geometryGroup()
-        .frame(maxWidth: .infinity)
         .padding(.horizontal, value: .small)
     }
 }

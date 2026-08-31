@@ -53,7 +53,6 @@ struct MonthHeaderView: View {
                     ForEach(0 ..< 7, id: \.self) { column in
                         let dayIndex = row * 7 + column
                         cell(row: row, dayIndex: dayIndex)
-                            .aspectRatio(1, contentMode: .fit)
                     }
                 }
             }
