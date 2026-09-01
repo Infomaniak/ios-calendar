@@ -23,7 +23,7 @@ import SwiftUI
 public struct RegularMainView: View {
     public var body: some View {
         NavigationSplitView {
-            CalendarListView()
+            CalendarListView(isCompact: false)
         } detail: {
             NavigationStack {
                 CalendarView()

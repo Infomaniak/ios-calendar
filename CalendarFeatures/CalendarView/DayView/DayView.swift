@@ -26,14 +26,12 @@ struct DayView: View {
     @Environment(\.calendar) private var calendar
     @Environment(DaysViewModel.self) private var daysViewModel
 
-    @Binding var selectedEvent: CalendarCoreUI.UIEvent?
     @Binding var miniCalendarHeight: CGFloat
 
     let date: Date
 
     var body: some View {
         DayContentView(
-            selectedEvent: $selectedEvent,
             date: date,
             events: daysViewModel.events(for: date, calendar: calendar),
             miniCalendarHeight: miniCalendarHeight
@@ -84,10 +82,8 @@ struct DayContentView: View {
 
     @State private var pointsPerHour = Constants.PointsPerHour.default
     @State private var currentMagnification: CGFloat = 1.0
-
     @State private var coveredTextHeights: [Int: CGFloat] = [:]
 
-    @Binding var selectedEvent: CalendarCoreUI.UIEvent?
     let date: Date
     let events: [CalendarCoreUI.UIEvent]
     let miniCalendarHeight: CGFloat
@@ -145,14 +141,13 @@ struct DayContentView: View {
                             coveredTextHeights = textHeights
                         } {
                             ForEach(Array(events.filter { !$0.isAllDay }.enumerated()), id: \.element.id) { index, event in
-                                Button { selectedEvent = event } label: {
+                                EventDetailsPopoverButton(event: event) {
                                     DayEventView(
                                         event: event,
                                         pointsPerHour: effectivePointsPerHour,
                                         maxVisibleHeight: coveredTextHeights[index]
                                     )
                                 }
-                                .buttonStyle(.plain)
                                 .eventuallyDateIntervalLayout(DateInterval(start: event.startDate, end: event.endDate))
                             }
                         }
@@ -271,9 +266,9 @@ struct GlassHeaderBarModifier<BarContent: View>: ViewModifier {
 
 #Preview {
     DayContentView(
-        selectedEvent: .constant(nil),
         date: .now,
         events: [.preview, .preview],
         miniCalendarHeight: 0
     )
+    .environment(MainViewState())
 }

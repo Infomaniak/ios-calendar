@@ -32,6 +32,8 @@ extension VerticalAlignment {
 }
 
 struct DayCellView: View {
+    static let maxHeight: CGFloat = 48
+
     @Environment(\.calendar) private var calendar
     @Environment(\.esdsTheme) private var theme
 
@@ -56,9 +58,10 @@ struct DayCellView: View {
                 .alignmentGuide(.textCenter) { d in d[VerticalAlignment.center] }
             EventDotsView(eventDots: displayedEventDots)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .init(horizontal: .center, vertical: .textCenter))
         .padding(value: .micro)
         .monospacedDigit()
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .init(horizontal: .center, vertical: .textCenter))
+        .frame(height: Self.maxHeight)
         .font(.body.weight(.semibold))
         .foregroundColor(isToday ? theme.color.contentInverse : theme.color.contentPrimary)
         .background {

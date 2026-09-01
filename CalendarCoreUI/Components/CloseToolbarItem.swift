@@ -16,15 +16,25 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Foundation
+import CalendarResources
+import SwiftUI
 
-@MainActor
-@Observable
-public final class MainViewState {
-    public var selectedDate: Date
-    public var presentedEvent: UIEvent?
+public extension View {
+    func closeToolbarItem(_ close: @escaping () -> Void) -> some View {
+        toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                if #available(iOS 26.0, *) {
+                    Button(role: .close, action: close)
+                } else {
+                    Button(action: close) {
+                        Label(CalendarResourcesStrings.closeLabel, systemImage: "xmark")
+                    }
+                }
+            }
+        }
+    }
 
-    public init(selectedDate: Date = Date()) {
-        self.selectedDate = selectedDate
+    func closeToolbarItem(dismiss: DismissAction) -> some View {
+        closeToolbarItem(dismiss.callAsFunction)
     }
 }

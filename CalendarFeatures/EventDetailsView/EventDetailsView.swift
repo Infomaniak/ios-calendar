@@ -95,17 +95,7 @@ public struct EventDetailsView: View {
                 }
                 ParticipantsSectionView(uniqueAttendees: uniqueAttendees)
             }
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    if #available(iOS 26.0, *) {
-                        Button(role: .close, action: dismiss.callAsFunction)
-                    } else {
-                        Button(action: dismiss.callAsFunction) {
-                            Label(CalendarResourcesStrings.closeLabel, systemImage: "xmark")
-                        }
-                    }
-                }
-            }
+            .closeToolbarItem(dismiss: dismiss)
             .navigationTitle(CalendarResourcesStrings.eventTitle)
             .navigationBarTitleDisplayMode(.inline)
         }

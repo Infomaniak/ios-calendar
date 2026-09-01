@@ -18,6 +18,7 @@
 
 import CalendarCalendarListView
 import CalendarCalendarView
+import CalendarCoreUI
 import CalendarResources
 import SwiftUI
 
@@ -48,18 +49,8 @@ struct CalendarListSheetView: View {
 
     var body: some View {
         NavigationStack {
-            CalendarListView()
-                .toolbar {
-                    ToolbarItem(placement: .cancellationAction) {
-                        if #available(iOS 26.0, *) {
-                            Button(role: .close, action: dismiss.callAsFunction)
-                        } else {
-                            Button(action: dismiss.callAsFunction) {
-                                Label(CalendarResourcesStrings.closeLabel, systemImage: "xmark")
-                            }
-                        }
-                    }
-                }
+            CalendarListView(isCompact: true)
+                .closeToolbarItem(dismiss: dismiss)
                 .navigationBarTitleDisplayMode(.inline)
         }
     }
