@@ -32,14 +32,20 @@ public struct CalendarListView: View {
 
     @State private var indexedCalendars = [Int: [UICalendar]]()
 
-    public init() {}
+    let isCompact: Bool
+
+    public init(isCompact: Bool) {
+        self.isCompact = isCompact
+    }
 
     public var body: some View {
         List {
             CalendarListContentView(indexedCalendars: indexedCalendars)
 
             Section {
-                NavigationLink(destination: AccountsListContentView()) {
+                AdaptativeNavigationLink(isCompact: isCompact) {
+                    AccountsListContentView()
+                } label: {
                     Label {
                         Text(CalendarResourcesStrings.accountsTitle)
                             .foregroundStyle(theme.color.contentPrimary)
@@ -48,7 +54,9 @@ public struct CalendarListView: View {
                     }
                 }
 
-                NavigationLink(destination: SettingsView()) {
+                AdaptativeNavigationLink(isCompact: isCompact) {
+                    SettingsView()
+                } label: {
                     Label {
                         Text(CalendarResourcesStrings.settingsTitle)
                             .foregroundStyle(theme.color.contentPrimary)

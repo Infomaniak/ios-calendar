@@ -16,18 +16,25 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import CalendarCalendarListView
-import CalendarCalendarView
+import CalendarResources
 import SwiftUI
 
-public struct RegularMainView: View {
-    public var body: some View {
-        NavigationSplitView {
-            CalendarListView(isCompact: false)
-        } detail: {
-            NavigationStack {
-                CalendarView()
+public extension View {
+    func closeToolbarItem(_ close: @escaping () -> Void) -> some View {
+        toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                if #available(iOS 26.0, *) {
+                    Button(role: .close, action: close)
+                } else {
+                    Button(action: close) {
+                        Label(CalendarResourcesStrings.closeLabel, systemImage: "xmark")
+                    }
+                }
             }
         }
+    }
+
+    func closeToolbarItem(dismiss: DismissAction) -> some View {
+        closeToolbarItem(dismiss.callAsFunction)
     }
 }
