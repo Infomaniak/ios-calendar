@@ -83,10 +83,7 @@ struct MiniCalendarHeaderViewModifier: ViewModifier {
             if #available(iOS 26.0, *) {
                 ToolbarItem(placement: .principal) {
                     Button(action: switchDisplayMode) {
-                        HStack {
-                            Text(displayedPage.referenceDate, format: .dateTime.year().month(.wide))
-                            Image(systemName: "chevron.down")
-                        }
+                        AnimatedTitleView(date: displayedPage.referenceDate)
                     }
                 }
                 .sharedBackgroundVisibility(.hidden)
@@ -96,10 +93,9 @@ struct MiniCalendarHeaderViewModifier: ViewModifier {
                         .frame(width: 96)
                 }
                 .sharedBackgroundVisibility(.hidden)
-
             } else {
                 ToolbarItem(placement: .topBarLeading) {
-                    Text(displayedPage.referenceDate, format: .dateTime.year().month(.wide))
+                    AnimatedTitleView(date: displayedPage.referenceDate)
                 }
             }
 
