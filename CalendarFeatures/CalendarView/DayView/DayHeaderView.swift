@@ -25,8 +25,6 @@ import SwiftUI
 struct DayHeaderView: View {
     @Environment(\.esdsTheme) private var theme
 
-    @Binding var selectedEvent: CalendarCoreUI.UIEvent?
-
     let events: [CalendarCoreUI.UIEvent]
     let date: Date
 
