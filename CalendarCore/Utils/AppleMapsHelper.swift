@@ -17,6 +17,8 @@
  */
 
 import Foundation
+import MapKit
+import SwiftUI
 
 public struct AppleMapsHelper: Sendable {
     private let scheme = "https"
@@ -32,5 +34,24 @@ public struct AppleMapsHelper: Sendable {
             URLQueryItem(name: "q", value: address)
         ]
         return components.url
+    }
+
+    public func geocode(_ address: String) async -> CLLocationCoordinate2D? {
+        do {
+            if #available(iOS 26.0, *) {
+                guard let request = MKGeocodingRequest(addressString: address) else {
+                    return nil
+                }
+
+                return try await request.mapItems.first?.location.coordinate
+            } else {
+                let geocoder = CLGeocoder()
+                let placemarks = try await geocoder.geocodeAddressString(address)
+
+                return placemarks.first?.location?.coordinate
+            }
+        } catch {
+            return nil
+        }
     }
 }

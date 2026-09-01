@@ -20,11 +20,17 @@ import CalendarCore
 import CalendarResources
 import DesignSystem
 import ESDSFoundation
+import MapKit
 import SwiftUI
 
 public struct LocationRow: View {
     @Environment(\.openURL) private var openURL
     @Environment(\.esdsTheme) private var theme
+
+    @State private var coordinate: CLLocationCoordinate2D?
+
+    static let mapSize: CGFloat = 92
+
     let address: String
 
     private func openInMaps() {
@@ -40,15 +46,44 @@ public struct LocationRow: View {
                 CalendarResourcesAsset.Images.mapPin.swiftUIImage
                     .iconSize(IKIconSize.large)
                     .foregroundStyle(theme.color.contentSecondary)
+
                 Text(address)
                     .foregroundStyle(theme.color.contentPrimary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .multilineTextAlignment(.leading)
 
-                Spacer()
-
-                CalendarResourcesAsset.Images.chevronRight.swiftUIImage
-                    .iconSize(IKIconSize.large)
-                    .foregroundStyle(theme.color.contentTertiary)
+                if let coordinate {
+                    Map(
+                        initialPosition: .region(
+                            MKCoordinateRegion(
+                                center: coordinate,
+                                latitudinalMeters: 600,
+                                longitudinalMeters: 600
+                            )
+                        ),
+                        interactionModes: []
+                    ) {
+                        Marker("", coordinate: coordinate)
+                    }
+                    .frame(width: Self.mapSize, height: Self.mapSize)
+                    .mapPreviewClipShape()
+                    .allowsHitTesting(false)
+                }
             }
+        }
+        .task {
+            coordinate = await AppleMapsHelper().geocode(address)
+        }
+    }
+}
+
+private extension View {
+    @ViewBuilder
+    func mapPreviewClipShape() -> some View {
+        if #available(iOS 26.0, *) {
+            clipShape(ConcentricRectangle(corners: .concentric, isUniform: true))
+        } else {
+            clipShape(RoundedRectangle(cornerRadius: 8))
         }
     }
 }
