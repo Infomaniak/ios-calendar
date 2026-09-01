@@ -26,11 +26,11 @@ struct ParticipantsListView: View {
     var body: some View {
         List {
             ForEach(uniqueAttendees.sortedForDisplay()) { attendee in
-                AccountCellView(rawAvatarURL: nil,
-                                displayName: attendee.displayName ?? attendee.email,
-                                email: attendee.email,
-                                isOrganizer: attendee.isOrganizer,
-                                status: attendee.status)
+                ParticipantCellView(rawAvatarURL: nil,
+                                    displayName: attendee.displayName ?? attendee.email,
+                                    email: attendee.email,
+                                    isOrganizer: attendee.isOrganizer,
+                                    status: attendee.status)
             }
         }
         .navigationTitle(CalendarResourcesStrings.participantsLabel(uniqueAttendees.count))

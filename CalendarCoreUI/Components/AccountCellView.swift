@@ -23,7 +23,7 @@ import InfomaniakCore
 import InfomaniakCoreSwiftUI
 import SwiftUI
 
-public struct AccountCellView: View {
+public struct ParticipantCellView: View {
     @Environment(\.esdsTheme) private var theme
 
     let rawAvatarURL: String?
@@ -31,15 +31,15 @@ public struct AccountCellView: View {
     let email: String
     let avatarSize: CGFloat
     let isOrganizer: Bool
-    let status: UIParticipationStatus?
+    let status: UIParticipationStatus
 
     public init(
         rawAvatarURL: String?,
         displayName: String,
         email: String,
         avatarSize: CGFloat = 40,
-        isOrganizer: Bool = false,
-        status: UIParticipationStatus? = nil
+        isOrganizer: Bool,
+        status: UIParticipationStatus
     ) {
         self.rawAvatarURL = rawAvatarURL
         self.displayName = displayName
@@ -50,6 +50,82 @@ public struct AccountCellView: View {
     }
 
     public var body: some View {
+        AccountCellContentView(
+            rawAvatarURL: rawAvatarURL,
+            displayName: displayName,
+            email: email,
+            avatarSize: avatarSize
+        ) {
+            HStack(spacing: 0) {
+                Text(status.name)
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(status.color)
+
+                if isOrganizer {
+                    Text(" • \(CalendarResourcesStrings.sectionOrganizerHeader)")
+                        .font(.footnote)
+                        .foregroundStyle(theme.color.contentPrimary)
+                }
+            }
+        }
+    }
+}
+
+public struct AccountCellView: View {
+    let rawAvatarURL: String?
+    let displayName: String
+    let email: String
+    let avatarSize: CGFloat
+
+    public init(
+        rawAvatarURL: String?,
+        displayName: String,
+        email: String,
+        avatarSize: CGFloat = 40
+    ) {
+        self.rawAvatarURL = rawAvatarURL
+        self.displayName = displayName
+        self.email = email
+        self.avatarSize = avatarSize
+    }
+
+    public var body: some View {
+        AccountCellContentView(
+            rawAvatarURL: rawAvatarURL,
+            displayName: displayName,
+            email: email,
+            avatarSize: avatarSize
+        ) {
+            EmptyView()
+        }
+    }
+}
+
+private struct AccountCellContentView<AdditionalContent: View>: View {
+    @Environment(\.esdsTheme) private var theme
+
+    let rawAvatarURL: String?
+    let displayName: String
+    let email: String
+    let avatarSize: CGFloat
+
+    private let additionalContent: () -> AdditionalContent
+
+    init(
+        rawAvatarURL: String?,
+        displayName: String,
+        email: String,
+        avatarSize: CGFloat = 40,
+        @ViewBuilder additionalContent: @escaping () -> AdditionalContent
+    ) {
+        self.rawAvatarURL = rawAvatarURL
+        self.displayName = displayName
+        self.email = email
+        self.avatarSize = avatarSize
+        self.additionalContent = additionalContent
+    }
+
+    var body: some View {
         HStack {
             AvatarView(rawAvatarURL: rawAvatarURL, displayName: displayName, email: email, size: avatarSize)
 
@@ -63,18 +139,7 @@ public struct AccountCellView: View {
                         .foregroundStyle(theme.color.contentSecondary)
                 }
 
-                HStack(spacing: 0) {
-                    if let status {
-                        Text(status.name)
-                            .font(.footnote.weight(.semibold))
-                            .foregroundStyle(status.color)
-                    }
-                    if isOrganizer {
-                        Text(" • \(CalendarResourcesStrings.sectionOrganizerHeader)")
-                            .font(.footnote)
-                            .foregroundStyle(theme.color.contentPrimary)
-                    }
-                }
+                additionalContent()
             }
             .lineLimit(1)
             .frame(maxWidth: .infinity, alignment: .leading)
