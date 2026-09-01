@@ -32,12 +32,6 @@ struct EventCalendarRow: View {
 
     let event: CalendarCoreUI.UIEvent?
 
-    init(
-        event: CalendarCoreUI.UIEvent?,
-    ) {
-        self.event = event
-    }
-
     var body: some View {
         VStack {
             if let selectedCalendar {
@@ -56,6 +50,7 @@ struct EventCalendarRow: View {
                         CalendarResourcesAsset.Images.productCalendar.swiftUIImage
                             .iconSize(IKIconSize.large)
                             .foregroundStyle(theme.color.contentSecondary)
+                            .accessibilityHidden(true)
                         Text(CalendarResourcesStrings.sectionCalendarHeader)
                             .font(.body)
                             .foregroundStyle(theme.color.contentPrimary)

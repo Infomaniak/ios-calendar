@@ -78,19 +78,27 @@ public enum UIAlarmAction: Identifiable, Sendable, Hashable {
 
     public var id: String {
         switch self {
-        case .display: return "display"
-        case .audio: return "audio"
-        case .email: return "email"
-        case .unknown(let raw): return "unknown_\(raw)"
+        case .display:
+            return "display"
+        case .audio:
+            return "audio"
+        case .email:
+            return "email"
+        case .unknown(let raw):
+            return "unknown_\(raw)"
         }
     }
 
     public var label: String {
         switch self {
-        case .display: return CalendarResourcesStrings.notificationTypePush
-        case .audio: return "Notification audio"
-        case .email: return CalendarResourcesStrings.notificationTypeEmail
-        case .unknown(let raw): return raw
+        case .display:
+            return CalendarResourcesStrings.notificationTypePush
+        case .audio:
+            return "Notification audio"
+        case .email:
+            return CalendarResourcesStrings.notificationTypeEmail
+        case .unknown(let raw):
+            return raw
         }
     }
 

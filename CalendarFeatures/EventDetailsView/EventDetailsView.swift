@@ -45,9 +45,7 @@ public struct EventDetailsView: View {
 
     private let navigationTitleThreshold = 4.0
 
-    public init(
-        event: CalendarCoreUI.UIEvent
-    ) {
+    public init(event: CalendarCoreUI.UIEvent) {
         self.event = event
         _alarms = State(initialValue: event.alarms)
         _selectedStatus = State(initialValue: event.user?.status)
@@ -120,10 +118,7 @@ public struct EventDetailsView: View {
                    let text = classification.text {
                     Section {
                         // TODO: Add another row for free/busy status when available
-                        StatusRow(
-                            text: text,
-                            icon: icon
-                        )
+                        StatusRow(text: text, icon: icon)
                     }
                 }
 
@@ -131,6 +126,7 @@ public struct EventDetailsView: View {
                     EventCalendarRow(event: event)
                 }
             }
+            .scrollBounceBehavior(.basedOnSize)
             .closeToolbarItem(dismiss: dismiss)
             .toolbar {
                 ToolbarItem(placement: .principal) {

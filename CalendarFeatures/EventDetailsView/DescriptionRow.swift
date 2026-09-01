@@ -21,26 +21,30 @@ import DesignSystem
 import ESDSFoundation
 import SwiftUI
 
-public struct DescriptionRow: View {
+struct DescriptionRow: View {
     @Environment(\.esdsTheme) private var theme
+
     @State private var isExpanded = false
     @State private var isTruncated = false
     @State private var fullHeight: CGFloat = 0
 
     let description: String
 
-    public var body: some View {
+    var body: some View {
         HStack(alignment: .top, spacing: 0) {
             CalendarResourcesAsset.Images.listLeft.swiftUIImage
                 .iconSize(IKIconSize.large)
+                .accessibilityHidden(true)
                 .foregroundStyle(theme.color.contentSecondary)
                 .padding(.trailing, IKPadding.medium)
 
             VStack(alignment: .leading) {
                 Text(CalendarResourcesStrings.descriptionTitle)
                     .foregroundStyle(theme.color.contentPrimary)
+
                 Text(description)
                     .lineLimit(isExpanded ? nil : 2)
+                    .textSelection(.enabled)
                     .foregroundStyle(theme.color.contentSecondary)
                     .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { visibleHeight in
                         if fullHeight > visibleHeight + 1 {
@@ -63,10 +67,11 @@ public struct DescriptionRow: View {
                     .rotationEffect(.degrees(isExpanded ? 180 : 0))
                     .foregroundStyle(theme.color.contentTertiary)
                     .frame(height: 20, alignment: .center)
+                    .accessibilityHidden(true)
             }
         }
         .frame(maxHeight: .infinity, alignment: .top)
-        .contentShape(Rectangle())
+        .contentShape(.rect)
         .onTapGesture {
             guard isTruncated else { return }
             withAnimation {

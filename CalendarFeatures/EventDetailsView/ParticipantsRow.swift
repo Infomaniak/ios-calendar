@@ -28,7 +28,7 @@ struct ParticipantsRow: View {
 
     @State private var showParticipants = false
 
-    var uniqueAttendees: [UIAttendee]
+    let uniqueAttendees: [UIAttendee]
 
     private var visibleAttendees: [UIAttendee] {
         Array(uniqueAttendees.prefix(4))

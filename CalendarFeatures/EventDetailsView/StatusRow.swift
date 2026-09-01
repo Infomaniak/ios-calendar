@@ -17,19 +17,22 @@
  */
 
 import DesignSystem
+import ESDSFoundation
 import SwiftUI
 
-public struct StatusRow: View {
+struct StatusRow: View {
     @Environment(\.esdsTheme) private var theme
 
     let text: String
     let icon: Image
 
-    public var body: some View {
+    var body: some View {
         HStack {
             icon
                 .iconSize(IKIconSize.large)
                 .foregroundStyle(theme.color.contentSecondary)
+                .accessibilityHidden(true)
+
             Text(text)
                 .font(.body)
                 .foregroundStyle(theme.color.contentPrimary)

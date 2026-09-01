@@ -21,7 +21,7 @@ import DesignSystem
 import ESDSFoundation
 import SwiftUI
 
-public struct OpenLinkRow: View {
+struct OpenLinkRow: View {
     @Environment(\.esdsTheme) private var theme
     @Environment(\.openURL) private var openURL
 
@@ -31,12 +31,13 @@ public struct OpenLinkRow: View {
     let linkURL: URL
     let showLink: Bool
 
-    public var body: some View {
+    var body: some View {
         HStack(spacing: 0) {
             icon
                 .iconSize(IKIconSize.large)
                 .foregroundStyle(theme.color.contentSecondary)
                 .padding(.trailing, IKPadding.medium)
+                .accessibilityHidden(true)
 
             VStack(alignment: .leading) {
                 Text(title)

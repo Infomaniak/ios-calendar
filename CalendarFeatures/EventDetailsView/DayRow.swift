@@ -22,7 +22,9 @@ import DesignSystem
 import ESDSFoundation
 import SwiftUI
 
-public struct DayRow: View {
+struct DayRow: View {
+    private static let allDateFormatStyle: Date.FormatStyle = .dateTime.weekday(.wide).month(.wide).day()
+
     @Environment(\.esdsTheme) private var theme
     @Environment(\.calendar) private var calendar
 
@@ -36,22 +38,12 @@ public struct DayRow: View {
     private var eventDateRange: String {
         if event.isAllDay {
             if isMultiDay {
-                let style = Date.FormatStyle()
-                    .weekday(.wide)
-                    .month(.wide)
-                    .day()
-                let start = event.timing.start.formatted(style)
-                let end = event.timing.end.addingTimeInterval(-1).formatted(style)
+                let start = event.timing.start.formatted(Self.allDateFormatStyle)
+                let end = event.timing.end.addingTimeInterval(-1).formatted(Self.allDateFormatStyle)
                 return "\(start) - \(end)"
             }
 
-            let date = event.timing.start.formatted(
-                .dateTime
-                    .weekday(.wide)
-                    .month(.wide)
-                    .day()
-            )
-
+            let date = event.timing.start.formatted(Self.allDateFormatStyle)
             return "\(date) - \(CalendarResourcesStrings.allDayLabel)"
         }
 
@@ -82,7 +74,7 @@ public struct DayRow: View {
         return "\(start) - \(end)"
     }
 
-    public var body: some View {
+    var body: some View {
         VStack(alignment: .leading) {
             Text(eventDateRange)
                 .font(.body)

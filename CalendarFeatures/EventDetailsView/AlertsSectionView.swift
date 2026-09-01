@@ -25,11 +25,8 @@ import SwiftUI
 
 struct AlertsSectionView: View {
     @Environment(\.esdsTheme) private var theme
-    @Binding private var alarms: [UIEventAlarm]
 
-    init(alarms: Binding<[UIEventAlarm]>) {
-        _alarms = alarms
-    }
+    @Binding var alarms: [UIEventAlarm]
 
     var body: some View {
         ForEach(alarms.indices, id: \.self) { index in
@@ -41,10 +38,15 @@ struct AlertsSectionView: View {
                     alarms[index].action.icon
                         .iconSize(IKIconSize.large)
                         .foregroundStyle(theme.color.contentSecondary)
+                        .accessibilityHidden(true)
                     Text(alarms[index].action.label)
                         .foregroundStyle(theme.color.contentPrimary)
                 }
             }
         }
     }
+}
+
+#Preview {
+    AlertsSectionView(alarms: .constant([.preview]))
 }

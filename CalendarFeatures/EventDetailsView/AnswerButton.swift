@@ -34,6 +34,11 @@ struct AnswerButton: View {
         Button(action: action) {
             HStack(spacing: IKPadding.micro) {
                 answer.icon
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 20, height: 20)
+                    .accessibilityHidden(true)
+
                 Text(answer.buttonTitle)
             }
             .foregroundStyle(foregroundColor)
@@ -62,18 +67,25 @@ struct AnswerButton: View {
 public extension UIParticipationStatus {
     var icon: Image {
         switch self {
-        case .accepted: CalendarResourcesAsset.Images.circleCheck.swiftUIImage
-        case .declined: CalendarResourcesAsset.Images.circleCross.swiftUIImage
-        case .tentative: CalendarResourcesAsset.Images.circleQuestion.swiftUIImage
-        case .needsAction: CalendarResourcesAsset.Images.clock.swiftUIImage
+        case .accepted:
+            CalendarResourcesAsset.Images.circleCheck.swiftUIImage
+        case .declined:
+            CalendarResourcesAsset.Images.circleCross.swiftUIImage
+        case .tentative:
+            CalendarResourcesAsset.Images.circleQuestion.swiftUIImage
+        case .needsAction:
+            CalendarResourcesAsset.Images.clock.swiftUIImage
         }
     }
 
     var buttonTitle: String {
         switch self {
-        case .accepted: InfomaniakCoreUIResources.CoreUILocalizable.buttonYes
-        case .declined: InfomaniakCoreUIResources.CoreUILocalizable.buttonNo
-        case .tentative: InfomaniakCoreUIResources.CoreUILocalizable.buttonMaybe
+        case .accepted:
+            InfomaniakCoreUIResources.CoreUILocalizable.buttonYes
+        case .declined:
+            InfomaniakCoreUIResources.CoreUILocalizable.buttonNo
+        case .tentative:
+            InfomaniakCoreUIResources.CoreUILocalizable.buttonMaybe
         default:
             ""
         }
