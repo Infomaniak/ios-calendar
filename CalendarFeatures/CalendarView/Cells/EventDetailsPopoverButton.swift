@@ -24,7 +24,7 @@ struct EventDetailsPopoverButton<Label: View>: View {
     @Environment(MainViewState.self) private var mainViewState
 
     let event: CalendarCoreUI.UIEvent
-    @ViewBuilder let label: () -> Label
+    @ViewBuilder let label: Label
 
     private var presentedEvent: Binding<CalendarCoreUI.UIEvent?> {
         return Binding(
@@ -40,14 +40,12 @@ struct EventDetailsPopoverButton<Label: View>: View {
     }
 
     var body: some View {
-        Button {
-            mainViewState.presentedEvent = event
-        } label: {
-            label()
-        }
-        .buttonStyle(.plain)
-        .popover(item: presentedEvent) { event in
-            EventDetailsView(event: event)
-        }
+        Button { mainViewState.presentedEvent = event } label: { label }
+            .buttonStyle(.plain)
+            .popover(item: presentedEvent) { event in
+                EventDetailsView(event: event)
+                    .scrollBounceBehavior(.basedOnSize)
+                    .selfSizingPopover(idealWidth: 400)
+            }
     }
 }
