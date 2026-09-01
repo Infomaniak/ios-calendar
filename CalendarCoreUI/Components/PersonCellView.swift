@@ -50,7 +50,7 @@ public struct ParticipantCellView: View {
     }
 
     public var body: some View {
-        AccountCellContentView(
+        PersonCellView(
             rawAvatarURL: rawAvatarURL,
             displayName: displayName,
             email: email,
@@ -90,18 +90,16 @@ public struct AccountCellView: View {
     }
 
     public var body: some View {
-        AccountCellContentView(
+        PersonCellView<EmptyView>(
             rawAvatarURL: rawAvatarURL,
             displayName: displayName,
             email: email,
             avatarSize: avatarSize
-        ) {
-            EmptyView()
-        }
+        )
     }
 }
 
-private struct AccountCellContentView<AdditionalContent: View>: View {
+private struct PersonCellView<AdditionalContent: View>: View {
     @Environment(\.esdsTheme) private var theme
 
     let rawAvatarURL: String?
@@ -109,20 +107,33 @@ private struct AccountCellContentView<AdditionalContent: View>: View {
     let email: String
     let avatarSize: CGFloat
 
-    private let additionalContent: () -> AdditionalContent
+    private let additionalContent: AdditionalContent?
 
     init(
         rawAvatarURL: String?,
         displayName: String,
         email: String,
         avatarSize: CGFloat = 40,
-        @ViewBuilder additionalContent: @escaping () -> AdditionalContent
+        @ViewBuilder additionalContent: () -> AdditionalContent
     ) {
         self.rawAvatarURL = rawAvatarURL
         self.displayName = displayName
         self.email = email
         self.avatarSize = avatarSize
-        self.additionalContent = additionalContent
+        self.additionalContent = additionalContent()
+    }
+
+    init(
+        rawAvatarURL: String?,
+        displayName: String,
+        email: String,
+        avatarSize: CGFloat = 40
+    ) {
+        self.rawAvatarURL = rawAvatarURL
+        self.displayName = displayName
+        self.email = email
+        self.avatarSize = avatarSize
+        additionalContent = nil
     }
 
     var body: some View {
@@ -139,10 +150,11 @@ private struct AccountCellContentView<AdditionalContent: View>: View {
                         .foregroundStyle(theme.color.contentSecondary)
                 }
 
-                additionalContent()
+                if let additionalContent {
+                    additionalContent
+                }
             }
             .lineLimit(1)
-            .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 }
