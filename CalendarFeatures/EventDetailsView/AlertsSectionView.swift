@@ -19,21 +19,34 @@
 import CalendarCoreUI
 import CalendarResources
 import DesignSystem
+import ESDSFoundation
 import InfomaniakCoreSwiftUI
 import SwiftUI
 
 struct AlertsSectionView: View {
-    @Binding private var alarms: [UIEventAlarm]
+    @Environment(\.esdsTheme) private var theme
 
-    init(alarms: Binding<[UIEventAlarm]>) {
-        _alarms = alarms
-    }
+    @Binding var alarms: [UIEventAlarm]
 
     var body: some View {
         ForEach(alarms.indices, id: \.self) { index in
-            LabeledContent(alarms[index].action.label) {
+            LabeledContent {
                 Text(alarms[index].offset.rawValue)
+                    .foregroundStyle(theme.color.contentSecondary)
+            } label: {
+                HStack(spacing: IKPadding.mini) {
+                    alarms[index].action.icon
+                        .iconSize(IKIconSize.large)
+                        .foregroundStyle(theme.color.contentSecondary)
+                        .accessibilityHidden(true)
+                    Text(alarms[index].action.label)
+                        .foregroundStyle(theme.color.contentPrimary)
+                }
             }
         }
     }
+}
+
+#Preview {
+    AlertsSectionView(alarms: .constant([.preview]))
 }

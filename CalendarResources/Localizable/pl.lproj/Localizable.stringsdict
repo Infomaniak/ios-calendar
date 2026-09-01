@@ -3,6 +3,94 @@
 
 <plist version="1.0">
   <dict>
+    <key>attendeesAcceptedCount</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>%d zaakceptowany</string>
+        <key>few</key>
+        <string>%d zaakceptowani</string>
+        <key>many</key>
+        <string>%d zaakceptowanych</string>
+        <key>other</key>
+        <string>%d zaakceptowanych</string>
+      </dict>
+    </dict>
+    <key>attendeesCount</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>%d gość</string>
+        <key>few</key>
+        <string>%d gości</string>
+      </dict>
+    </dict>
+    <key>attendeesDeclinedCount</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>%d odrzucony</string>
+        <key>few</key>
+        <string>%d odrzucone</string>
+        <key>many</key>
+        <string>%d odrzucone</string>
+        <key>other</key>
+        <string>%d odrzucone</string>
+      </dict>
+    </dict>
+    <key>attendeesPendingCount</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>%d oczekujący</string>
+        <key>few</key>
+        <string>%d oczekujących</string>
+      </dict>
+    </dict>
+    <key>attendeesTentativeCount</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>%d może</string>
+        <key>few</key>
+        <string>%d może</string>
+      </dict>
+    </dict>
     <key>moreParticipantsLabel</key>
     <dict>
       <key>NSStringLocalizedFormatKey</key>
@@ -41,6 +129,26 @@
         <string>%d uczestników</string>
         <key>other</key>
         <string>%d uczestników</string>
+      </dict>
+    </dict>
+    <key>roomSeatsLabel</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>%d miejsce</string>
+        <key>few</key>
+        <string>%d miejsc</string>
+        <key>many</key>
+        <string>%d miejsc</string>
+        <key>other</key>
+        <string>%d miejsc</string>
       </dict>
     </dict>
   </dict>

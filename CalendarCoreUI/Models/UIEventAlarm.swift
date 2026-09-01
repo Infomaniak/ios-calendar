@@ -16,8 +16,10 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarResources
 import Foundation
 @preconcurrency import MultiplatformCalendar
+import SwiftUI
 
 public struct UIEventAlarm: Sendable, Hashable {
     public let action: UIAlarmAction
@@ -76,19 +78,38 @@ public enum UIAlarmAction: Identifiable, Sendable, Hashable {
 
     public var id: String {
         switch self {
-        case .display: return "display"
-        case .audio: return "audio"
-        case .email: return "email"
-        case .unknown(let raw): return "unknown_\(raw)"
+        case .display:
+            return "display"
+        case .audio:
+            return "audio"
+        case .email:
+            return "email"
+        case .unknown(let raw):
+            return "unknown_\(raw)"
         }
     }
 
     public var label: String {
         switch self {
-        case .display: return "Notification"
-        case .audio: return "Notification audio"
-        case .email: return "Email"
-        case .unknown(let raw): return raw
+        case .display:
+            return CalendarResourcesStrings.notificationTypePush
+        case .audio:
+            return "Notification audio"
+        case .email:
+            return CalendarResourcesStrings.notificationTypeEmail
+        case .unknown(let raw):
+            return raw
+        }
+    }
+
+    public var icon: Image {
+        switch self {
+        case .display:
+            return CalendarResourcesAsset.Images.bubbleTopRightCircle.swiftUIImage
+        case .audio:
+            return CalendarResourcesAsset.Images.bell.swiftUIImage
+        default:
+            return CalendarResourcesAsset.Images.bell.swiftUIImage
         }
     }
 }

@@ -25,79 +25,135 @@ import SwiftUI
 public struct EventDetailsView: View {
     @Environment(\.dismiss) private var dismiss
 
-    private let event: CalendarCoreUI.UIEvent
-    @State private var color: Color
-    @State private var calendarColor: Color
-    @State private var isColorPickerPresented = false
     @State private var alarms: [UIEventAlarm]
+    @State private var selectedStatus: UIParticipationStatus?
+    @State private var showNavigationTitle = false
+
+    private let event: CalendarCoreUI.UIEvent
 
     private var uniqueAttendees: [UIAttendee] {
         var seenEmails = Set<String>()
 
         return event.attendees.filter { attendee in
-            seenEmails.insert(normalizedEmail(attendee.email)).inserted
+            seenEmails.insert(attendee.email).inserted
         }
     }
 
-    private func normalizedEmail(_ email: String) -> String {
-        email.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+    private var hasLocationSection: Bool {
+        event.kMeetLink != nil || event.location != nil
     }
 
-    private var displayedComponents: DatePickerComponents {
-        if event.isAllDay {
-            return [.date]
-        } else {
-            return [.date, .hourAndMinute]
-        }
-    }
+    private let navigationTitleThreshold = 4.0
 
-    public init(
-        event: CalendarCoreUI.UIEvent
-    ) {
+    public init(event: CalendarCoreUI.UIEvent) {
         self.event = event
-        _color = State(initialValue: Color(event.colors.onContainerColor))
-        _calendarColor = State(initialValue: Color(.gray))
         _alarms = State(initialValue: event.alarms)
+        _selectedStatus = State(initialValue: event.user?.status)
     }
 
     public var body: some View {
         NavigationStack {
             Form {
-                EventSectionView(
-                    title: event.title,
-                    color: $color,
-                    calendarColor: $calendarColor,
-                    isColorPickerPresented: $isColorPickerPresented
-                )
+                Section {
+                    VStack(alignment: .leading, spacing: IKPadding.small) {
+                        EventTitleRow(
+                            title: event.title,
+                            eventColor: event.colors.sourceColor
+                        )
+                        .onGeometryChange(for: Bool.self) { geometry in
+                            let frame = geometry.frame(in: .scrollView(axis: .vertical))
+
+                            return frame.minY <= frame.height * navigationTitleThreshold
+                        } action: { showTitle in
+                            guard showNavigationTitle != showTitle else { return }
+
+                            showNavigationTitle = showTitle
+                        }
+
+                        DayRow(event: event)
+                    }
+                }
+                .listRowBackground(Color.clear)
+                .listRowSeparator(.hidden)
 
                 Section {
-                    Toggle(CalendarResourcesStrings.allDayLabel, isOn: .constant(event.isAllDay))
-                        .disabled(true)
-                    DatePicker("Start Date", selection: .constant(event.startDate), displayedComponents: displayedComponents)
-                        .disabled(true)
-                    DatePicker("End Date", selection: .constant(event.endDate), displayedComponents: displayedComponents)
-                        .disabled(true)
-                    if let location = event.location, !location.isEmpty {
-                        LabeledContent(CalendarResourcesStrings.locationOrRoomLabel, value: location)
-                    }
-                } header: {
-                    Text("Date & Location")
+                    ParticipantsRow(uniqueAttendees: uniqueAttendees)
                 }
 
-                CalendarSectionView(event: event, calendarColor: $calendarColor)
+                if hasLocationSection {
+                    Section {
+                        if let kMeetLink = event.kMeetLink {
+                            OpenLinkRow(
+                                title: CalendarResourcesStrings.participateKMeetTitle,
+                                buttonTitle: CalendarResourcesStrings.buttonJoin,
+                                icon: CalendarResourcesAsset.Images.productKmeet.swiftUIImage,
+                                linkURL: kMeetLink,
+                                showLink: false
+                            )
+                        }
+
+                        if let address = event.location {
+                            LocationRow(address: address)
+                        }
+
+                        // TODO: Show meeting room information when available
+                    }
+                }
+
+                if let description = event.description, !description.isEmpty {
+                    Section {
+                        DescriptionRow(description: description)
+                    }
+
+                    // TODO: Show attachments when available using FileTypeProvider
+                }
 
                 if !alarms.isEmpty {
                     Section {
                         AlertsSectionView(alarms: $alarms)
-                    } header: {
-                        Text("Alerts")
                     }
                 }
-                ParticipantsSectionView(uniqueAttendees: uniqueAttendees)
+
+                if let classification = event.classification, let icon = classification.icon,
+                   let text = classification.text {
+                    Section {
+                        // TODO: Add another row for free/busy status when available
+                        StatusRow(text: text, icon: icon)
+                    }
+                }
+
+                Section {
+                    EventCalendarRow(event: event)
+                }
             }
+            .scrollBounceBehavior(.basedOnSize)
             .closeToolbarItem(dismiss: dismiss)
-            .navigationTitle(CalendarResourcesStrings.eventTitle)
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Text(event.title)
+                        .lineLimit(1)
+                        .opacity(showNavigationTitle ? 1 : 0)
+                }
+            }
             .navigationBarTitleDisplayMode(.inline)
+            .listSectionSpacing(IKPadding.large)
+            .contentMargins(.top, 0, for: .scrollContent)
+            .safeAreaInset(edge: .bottom) {
+                if selectedStatus != nil {
+                    HStack(spacing: IKPadding.medium) {
+                        ForEach([UIParticipationStatus.accepted, .declined, .tentative], id: \.self) { answer in
+                            AnswerButton(
+                                answer: answer,
+                                isSelected: selectedStatus == answer
+                            ) {
+                                // TODO: Update the event's participation status when the user selects an answer
+                                selectedStatus = answer
+                            }
+                        }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .center)
+                }
+            }
         }
     }
 }

@@ -16,23 +16,70 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarResources
+import ESDSFoundation
 import Foundation
+import InfomaniakCoreUIResources
 import MultiplatformCalendar
+import SwiftUI
 
-public enum UIParticipationStatus: String, Sendable {
+public enum UIParticipationStatus: String, Sendable, CaseIterable {
     case accepted
-    case declined
     case tentative
     case needsAction
+    case declined
 }
 
 public extension UIParticipationStatus {
     init(participationStatus: MultiplatformCalendar.ParticipationStatus) {
         switch participationStatus {
-        case .accepted: self = .accepted
-        case .declined: self = .declined
-        case .tentative: self = .tentative
-        case .needsAction: self = .needsAction
+        case .accepted:
+            self = .accepted
+        case .declined:
+            self = .declined
+        case .tentative:
+            self = .tentative
+        case .needsAction:
+            self = .needsAction
+        }
+    }
+
+    var name: String {
+        switch self {
+        case .accepted:
+            return CalendarResourcesStrings.statusAcceptedLabel
+        case .tentative:
+            return InfomaniakCoreUIResources.CoreUILocalizable.buttonMaybe
+        case .needsAction:
+            return CalendarResourcesStrings.statusNeedsActionLabel
+        case .declined:
+            return CalendarResourcesStrings.statusDeclinedLabel
+        }
+    }
+
+    func color(theme: ESDSTheme) -> Color {
+        switch self {
+        case .accepted:
+            return theme.color.contentFeedbackSuccessDefault
+        case .tentative:
+            return theme.color.contentDisabled
+        case .needsAction:
+            return theme.color.contentFeedbackWarningDefault
+        case .declined:
+            return theme.color.contentFeedbackErrorDefault
+        }
+    }
+
+    var sortOrder: Int {
+        switch self {
+        case .accepted:
+            return 0
+        case .tentative:
+            return 1
+        case .needsAction:
+            return 2
+        case .declined:
+            return 3
         }
     }
 }
@@ -58,7 +105,7 @@ public struct UIAttendee: Sendable, Equatable, Hashable, Identifiable {
 public extension UIAttendee {
     init(attendee: MultiplatformCalendar.Attendee) {
         displayName = attendee.displayName
-        email = attendee.email
+        email = attendee.email.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
         status = UIParticipationStatus(participationStatus: attendee.status)
         isOrganizer = attendee.isOrganizer
     }

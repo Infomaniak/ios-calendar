@@ -3,6 +3,86 @@
 
 <plist version="1.0">
   <dict>
+    <key>attendeesAcceptedCount</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>%d hyväksytty</string>
+        <key>other</key>
+        <string>%d hyväksyttyä</string>
+      </dict>
+    </dict>
+    <key>attendeesCount</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>%d vieras</string>
+        <key>other</key>
+        <string>%d vierasta</string>
+      </dict>
+    </dict>
+    <key>attendeesDeclinedCount</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>%d hylätty</string>
+        <key>other</key>
+        <string>%d hylättyä</string>
+      </dict>
+    </dict>
+    <key>attendeesPendingCount</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>%d odottaa</string>
+        <key>other</key>
+        <string>%d odottaa</string>
+      </dict>
+    </dict>
+    <key>attendeesTentativeCount</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>%d ehkä</string>
+        <key>other</key>
+        <string>%d ehkä</string>
+      </dict>
+    </dict>
     <key>moreParticipantsLabel</key>
     <dict>
       <key>NSStringLocalizedFormatKey</key>
@@ -33,6 +113,22 @@
         <string>%d osallistuja</string>
         <key>other</key>
         <string>%d osallistujaa</string>
+      </dict>
+    </dict>
+    <key>roomSeatsLabel</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>%d paikkaa</string>
+        <key>other</key>
+        <string>%d paikkaa</string>
       </dict>
     </dict>
   </dict>

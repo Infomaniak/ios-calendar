@@ -19,45 +19,44 @@
 import CalendarCoreUI
 import CalendarResources
 import DesignSystem
+import ESDSFoundation
 import InfomaniakCoreSwiftUI
 import InfomaniakDI
 @preconcurrency import MultiplatformCalendar
 import SwiftUI
 
-struct CalendarSectionView: View {
+struct EventCalendarRow: View {
+    @Environment(\.esdsTheme) private var theme
+
     @State private var selectedCalendar: UICalendar?
-    @State private var availableCalendars: [UICalendar] = []
-    @Binding private var calendarColor: Color
 
     let event: CalendarCoreUI.UIEvent?
 
-    init(
-        event: CalendarCoreUI.UIEvent?,
-        calendarColor: Binding<Color> = .constant(.gray)
-    ) {
-        self.event = event
-        _calendarColor = calendarColor
-    }
-
     var body: some View {
-        Section {
+        VStack {
             if let selectedCalendar {
                 LabeledContent {
                     HStack {
                         Circle()
                             .fill(selectedCalendar.color)
-                            .frame(width: 12, height: 12)
+                            .frame(width: IKIconSize.small.rawValue, height: IKIconSize.small.rawValue)
                             .accessibilityHidden(true)
 
                         Text(selectedCalendar.displayName)
                             .lineLimit(1)
                     }
                 } label: {
-                    Text(CalendarResourcesStrings.sectionCalendarHeader)
+                    HStack {
+                        CalendarResourcesAsset.Images.productCalendar.swiftUIImage
+                            .iconSize(IKIconSize.large)
+                            .foregroundStyle(theme.color.contentSecondary)
+                            .accessibilityHidden(true)
+                        Text(CalendarResourcesStrings.sectionCalendarHeader)
+                            .font(.body)
+                            .foregroundStyle(theme.color.contentPrimary)
+                    }
                 }
             }
-        } header: {
-            Text(CalendarResourcesStrings.sectionCalendarHeader)
         }
         .task {
             await observeCalendars()
@@ -67,17 +66,15 @@ struct CalendarSectionView: View {
     private func observeCalendars() async {
         @InjectService var calendarSDK: CalendarCoreGraph
         for await calendars in calendarSDK.calendarManager.observeCalendars() {
-            let uiCalendars = calendars.map { UICalendar(calendar: $0) }
-            availableCalendars = uiCalendars
+            let availableCalendars = calendars.map { UICalendar(calendar: $0) }
 
             if let event {
-                selectedCalendar = uiCalendars.first { $0.id == event.calendarId }
+                selectedCalendar = availableCalendars.first { $0.id == event.calendarId }
             }
-            calendarColor = selectedCalendar?.color ?? .gray
         }
     }
 }
 
 #Preview {
-    CalendarSectionView(event: UIEvent.preview)
+    EventCalendarRow(event: UIEvent.preview)
 }

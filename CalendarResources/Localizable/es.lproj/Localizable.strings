@@ -22,20 +22,11 @@
 /* loco:6a7dc73c5274e3e0960fab50 */
 "buttonLogOut" = "Cerrar sesión";
 
-/* loco:6a7c7c4523db46a469038b64 */
-"buttonMaybe" = "Quizás";
-
 /* loco:6a4deaee7855b4f804068862 */
 "buttonNavigate" = "Itinerario";
 
-/* loco:6a7c7c2db1e5bd1671017cba */
-"buttonNo" = "No";
-
 /* loco:6a4deb24e064eb69fa065712 */
 "buttonShow" = "Mostrar";
-
-/* loco:6a7c7c2123db46a469038b62 */
-"buttonYes" = "Sí";
 
 /* loco:6a742d5283e910cbff0a9742 */
 "calendarsMenuSectionTitle" = "Calendarios";
@@ -88,6 +79,12 @@
 /* loco:6a2040c0637876be5f0ec2f2 */
 "monthTitle" = "Mes";
 
+/* loco:6a8ed23a8523fc2ec50554a2 */
+"notificationTypeEmail" = "Correo electrónico";
+
+/* loco:6a8ed665614bffbffe09a5d2 */
+"notificationTypePush" = "Notificación";
+
 /* loco:6a4dec95c1907081d30570c2 */
 "onlineLabel" = "En línea";
 
@@ -127,6 +124,9 @@
 /* loco:6a3e20aad4ed90a7ed0b19e7 */
 "settingsTitle" = "Configuración";
 
+/* loco:6a8ffaf68264ef70e80f7612 */
+"shareLabel" = "Compartir";
+
 /* loco:6a7dc86fe6fe7c2bcf0f4274 */
 "signOutAccountAlertConfirm" = "Cerrar sesión en la cuenta";
 
@@ -142,14 +142,20 @@
 /* loco:6a631349aaecfe24ff0e28d2 */
 "startLabel" = "Inicio";
 
+/* loco:6a8d6455362429b2390bda72 */
+"statusAcceptedLabel" = "Aceptado";
+
+/* loco:6a8d6480c17afcf08b040832 */
+"statusDeclinedLabel" = "Rechazado";
+
+/* loco:6a8d6544c0a309a6c5026372 */
+"statusNeedsActionLabel" = "Pendiente";
+
 /* loco:6a203f703a4a6492b407ce23 */
 "threeDaysTitle" = "Tres días";
 
 /* loco:6a63118bfc3889d1fb077fc2 */
 "titleLabel" = "Título";
-
-/* loco:6a858f2fd3e38fa80607d215 */
-"urlLinkTitle" = "Enlace URL";
 
 /* loco:6a33b6883afea93d8b078502 */
 "weekHeaderWeekNumber" = "Sem.%d";

@@ -19,20 +19,31 @@
 import CalendarCoreUI
 import CalendarResources
 import DesignSystem
-import InfomaniakCoreSwiftUI
+import ESDSFoundation
 import SwiftUI
 
-struct AttendeeRow: View {
-    let attendee: UIAttendee
-    let isOrganizer: Bool
+struct EventTitleRow: View {
+    @Environment(\.esdsTheme) private var theme
+
+    let title: String
+    let eventColor: Color
 
     var body: some View {
-        AccountCellView(
-            rawAvatarURL: nil,
-            displayName: attendee.displayName ?? attendee.email,
-            email: attendee.email,
-            avatarSize: IKIconSize.large.rawValue,
-            isOrganizer: isOrganizer
-        )
+        HStack {
+            Circle()
+                .fill(eventColor)
+                .frame(width: IKIconSize.medium.rawValue, height: IKIconSize.medium.rawValue)
+
+            Text(title)
+                .font(.title3.weight(.semibold))
+                .foregroundStyle(theme.color.contentPrimary)
+        }
     }
+}
+
+#Preview {
+    EventTitleRow(
+        title: UIEvent.preview.title,
+        eventColor: .green
+    )
 }

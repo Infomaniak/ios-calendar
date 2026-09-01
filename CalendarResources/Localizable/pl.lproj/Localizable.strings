@@ -22,20 +22,11 @@
 /* loco:6a7dc73c5274e3e0960fab50 */
 "buttonLogOut" = "Wyloguj się";
 
-/* loco:6a7c7c4523db46a469038b64 */
-"buttonMaybe" = "Może";
-
 /* loco:6a4deaee7855b4f804068862 */
 "buttonNavigate" = "Trasa";
 
-/* loco:6a7c7c2db1e5bd1671017cba */
-"buttonNo" = "Nie";
-
 /* loco:6a4deb24e064eb69fa065712 */
 "buttonShow" = "Pokaż";
-
-/* loco:6a7c7c2123db46a469038b62 */
-"buttonYes" = "Tak";
 
 /* loco:6a742d5283e910cbff0a9742 */
 "calendarsMenuSectionTitle" = "Kalendarze";
@@ -88,6 +79,12 @@
 /* loco:6a2040c0637876be5f0ec2f2 */
 "monthTitle" = "Miesiąc";
 
+/* loco:6a8ed23a8523fc2ec50554a2 */
+"notificationTypeEmail" = "E-mail";
+
+/* loco:6a8ed665614bffbffe09a5d2 */
+"notificationTypePush" = "Powiadomienie";
+
 /* loco:6a4dec95c1907081d30570c2 */
 "onlineLabel" = "Online";
 
@@ -127,6 +124,9 @@
 /* loco:6a3e20aad4ed90a7ed0b19e7 */
 "settingsTitle" = "Ustawienia";
 
+/* loco:6a8ffaf68264ef70e80f7612 */
+"shareLabel" = "Udostępnij";
+
 /* loco:6a7dc86fe6fe7c2bcf0f4274 */
 "signOutAccountAlertConfirm" = "Wyloguj się z konta";
 
@@ -142,14 +142,20 @@
 /* loco:6a631349aaecfe24ff0e28d2 */
 "startLabel" = "Początek";
 
+/* loco:6a8d6455362429b2390bda72 */
+"statusAcceptedLabel" = "Zaakceptowano";
+
+/* loco:6a8d6480c17afcf08b040832 */
+"statusDeclinedLabel" = "Odrzucono";
+
+/* loco:6a8d6544c0a309a6c5026372 */
+"statusNeedsActionLabel" = "W toku";
+
 /* loco:6a203f703a4a6492b407ce23 */
 "threeDaysTitle" = "Trzy dni";
 
 /* loco:6a63118bfc3889d1fb077fc2 */
 "titleLabel" = "Tytuł";
-
-/* loco:6a858f2fd3e38fa80607d215 */
-"urlLinkTitle" = "Link URL";
 
 /* loco:6a33b6883afea93d8b078502 */
 "weekHeaderWeekNumber" = "Tydz.%d";
