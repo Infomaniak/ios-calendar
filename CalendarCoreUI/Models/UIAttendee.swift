@@ -17,6 +17,7 @@
  */
 
 import CalendarResources
+import ESDSFoundation
 import Foundation
 import InfomaniakCoreUIResources
 import MultiplatformCalendar
@@ -32,37 +33,53 @@ public enum UIParticipationStatus: String, Sendable, CaseIterable {
 public extension UIParticipationStatus {
     init(participationStatus: MultiplatformCalendar.ParticipationStatus) {
         switch participationStatus {
-        case .accepted: self = .accepted
-        case .declined: self = .declined
-        case .tentative: self = .tentative
-        case .needsAction: self = .needsAction
+        case .accepted:
+            self = .accepted
+        case .declined:
+            self = .declined
+        case .tentative:
+            self = .tentative
+        case .needsAction:
+            self = .needsAction
         }
     }
 
     var name: String {
         switch self {
-        case .accepted: return CalendarResourcesStrings.statusAcceptedLabel
-        case .tentative: return InfomaniakCoreUIResources.CoreUILocalizable.buttonMaybe
-        case .needsAction: return CalendarResourcesStrings.statusNeedsActionLabel
-        case .declined: return CalendarResourcesStrings.statusDeclinedLabel
+        case .accepted:
+            return CalendarResourcesStrings.statusAcceptedLabel
+        case .tentative:
+            return InfomaniakCoreUIResources.CoreUILocalizable.buttonMaybe
+        case .needsAction:
+            return CalendarResourcesStrings.statusNeedsActionLabel
+        case .declined:
+            return CalendarResourcesStrings.statusDeclinedLabel
         }
     }
 
-    var color: Color {
+    func color(theme: ESDSTheme) -> Color {
         switch self {
-        case .accepted: return .green
-        case .tentative: return .gray
-        case .needsAction: return .orange
-        case .declined: return .red
+        case .accepted:
+            return theme.color.backgroundFeedbackSuccessDim1Default
+        case .tentative:
+            return theme.color.contentDisabled
+        case .needsAction:
+            return theme.color.backgroundFeedbackWarningDim1Default
+        case .declined:
+            return theme.color.backgroundFeedbackErrorDim1Default
         }
     }
 
     var sortOrder: Int {
         switch self {
-        case .accepted: return 0
-        case .tentative: return 1
-        case .needsAction: return 2
-        case .declined: return 3
+        case .accepted:
+            return 0
+        case .tentative:
+            return 1
+        case .needsAction:
+            return 2
+        case .declined:
+            return 3
         }
     }
 }

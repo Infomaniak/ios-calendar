@@ -59,7 +59,7 @@ public struct ParticipantCellView: View {
             HStack(spacing: 0) {
                 Text(status.name)
                     .font(.footnote.weight(.semibold))
-                    .foregroundStyle(status.color)
+                    .foregroundStyle(status.color(theme: theme))
 
                 if isOrganizer {
                     Text(" • \(CalendarResourcesStrings.sectionOrganizerHeader)")
