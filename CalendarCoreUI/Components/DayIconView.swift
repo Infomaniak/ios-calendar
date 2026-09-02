@@ -23,7 +23,7 @@ public struct TodayIconView: View {
     public init() {}
 
     public var body: some View {
-        TimelineView(.everyMinute) { timeline in
+        TimelineView(.everyDay) { timeline in
             DayIconView(date: timeline.date)
         }
     }
@@ -34,7 +34,7 @@ struct DayIconView: View {
 
     var body: some View {
         RoundedRectangle(cornerRadius: 4)
-            .stroke(.black, lineWidth: 1.5)
+            .stroke(.foreground, lineWidth: 1.5)
             .overlay {
                 Text(date, format: .dateTime.day())
                     .font(.system(size: 64, weight: .medium, design: .rounded))
