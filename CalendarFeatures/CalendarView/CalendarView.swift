@@ -110,10 +110,10 @@ public struct CalendarView: View {
             }
 
             ToolbarItem(placement: .bottomBar) {
-                Button(CalendarResourcesStrings.contentDescriptionToday, systemImage: "calendar") {
-                    withAnimation {
-                        mainViewState.selectedDate = Calendar.current.startOfDay(for: Date())
-                    }
+                Button {
+                    mainViewState.selectedDate = Calendar.current.startOfDay(for: Date())
+                } label: {
+                    TodayIconView()
                 }
             }
 
