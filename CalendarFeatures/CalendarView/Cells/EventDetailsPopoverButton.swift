@@ -44,7 +44,6 @@ struct EventDetailsPopoverButton<Label: View>: View {
             .buttonStyle(.plain)
             .popover(item: presentedEvent) { event in
                 EventDetailsView(event: event)
-                    .scrollBounceBehavior(.basedOnSize)
                     .selfSizingPopover(idealWidth: 400)
             }
     }

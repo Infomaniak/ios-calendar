@@ -43,8 +43,6 @@ public struct EventDetailsView: View {
         event.kMeetLink != nil || event.location != nil
     }
 
-    private let navigationTitleThreshold = 4.0
-
     public init(event: CalendarCoreUI.UIEvent) {
         self.event = event
         _alarms = State(initialValue: event.alarms)
@@ -60,14 +58,13 @@ public struct EventDetailsView: View {
                             title: event.title,
                             eventColor: event.colors.sourceColor
                         )
-                        .onGeometryChange(for: Bool.self) { geometry in
-                            let frame = geometry.frame(in: .scrollView(axis: .vertical))
-
-                            return frame.minY <= frame.height * navigationTitleThreshold
-                        } action: { showTitle in
-                            guard showNavigationTitle != showTitle else { return }
-
-                            showNavigationTitle = showTitle
+                        .onScrollVisibilityChange(threshold: 0.5) { isVisible in
+                            // onScrollVisibilityChange is broken for versions before iOS 27.0
+                            if #available(iOS 27.0, *) {
+                                withAnimation {
+                                    showNavigationTitle = !isVisible
+                                }
+                            }
                         }
 
                         DayRow(event: event)
@@ -130,9 +127,12 @@ public struct EventDetailsView: View {
             .closeToolbarItem(dismiss: dismiss)
             .toolbar {
                 ToolbarItem(placement: .principal) {
-                    Text(event.title)
-                        .lineLimit(1)
-                        .opacity(showNavigationTitle ? 1 : 0)
+                    if #available(iOS 27.0, *) {
+                        Text(event.title)
+                            .opacity(showNavigationTitle ? 1 : 0)
+                    } else {
+                        Text(CalendarResourcesStrings.eventTitle)
+                    }
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
