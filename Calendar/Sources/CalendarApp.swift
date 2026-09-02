@@ -19,6 +19,7 @@
 import CalendarCore
 import CalendarCoreUI
 import CalendarRootView
+import CalendarSettingsView
 import ESDSCalendar
 import InfomaniakCore
 import InfomaniakDI
@@ -37,6 +38,7 @@ struct CalendarApp: App {
         WindowGroup {
             RootView()
                 .environmentObject(rootViewState)
+                .environment(SettingsStore())
                 .sceneLifecycle(willEnterForeground: willEnterForeground)
                 .esdsTheme(.calendar)
         }

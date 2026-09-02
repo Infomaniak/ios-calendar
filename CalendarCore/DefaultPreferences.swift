@@ -21,4 +21,9 @@ import Foundation
 public enum DefaultPreferences {
     public static let matomoAuthorized = true
     public static let sentryAuthorized = true
+    public static let theme = Theme.system
+    public static let startDay = StartDay.monday
+    public static let isShowWeekends = true
+    public static let defaultEventDuration = DefaultEventDuration.thirtyminutes
+    public static let isLocalTime = true
 }
