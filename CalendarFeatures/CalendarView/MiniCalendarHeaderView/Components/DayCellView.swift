@@ -79,6 +79,7 @@ struct DayCellView: View {
                     .padding(value: .mini)
             }
         }
+        .animation(.default.speed(2.5), value: isSelected)
         .geometryGroup()
     }
 }

@@ -70,6 +70,7 @@ struct DaysView: View {
     @Environment(\.calendar) private var calendar
     @Environment(MainViewState.self) private var mainViewState
     @Environment(\.calendarAccounts) private var calendarAccounts
+
     @State private var viewModel = DaysViewModel()
 
     @Binding var miniCalendarHeight: CGFloat
@@ -86,6 +87,12 @@ struct DaysView: View {
         .modifier(IgnoreTopSafeAreaModifier())
         .ignoresSafeArea(.all, edges: .bottom)
         .environment(viewModel)
+        .sensoryFeedback(trigger: mainViewState.selectedDate) { oldValue, newValue in
+            guard !calendar.isDate(oldValue, inSameDayAs: newValue) else {
+                return nil
+            }
+            return .selection
+        }
         .task(id: mainViewState.selectedDate) {
             await observeCalendars(mainViewState.selectedDate)
         }
