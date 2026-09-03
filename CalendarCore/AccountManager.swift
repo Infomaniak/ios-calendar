@@ -81,6 +81,9 @@ public actor AccountManager {
         deviceManager.forgetLocalDeviceHash(forUserId: userId)
 
         calendarAccountsStreamContinuation.yield(Array(calendarAccounts.values))
+
+        @InjectService var eventAlarmNotification: EventAlarmNotificationsService
+        await eventAlarmNotification.scheduleNotificationsForEventAlarms()
     }
 
     private func calendarAccountFor(token: ApiToken) async throws -> CalendarAccount {

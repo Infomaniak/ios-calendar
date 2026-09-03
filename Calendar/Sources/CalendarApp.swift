@@ -37,8 +37,14 @@ struct CalendarApp: App {
         WindowGroup {
             RootView()
                 .environmentObject(rootViewState)
-                .sceneLifecycle(willEnterForeground: willEnterForeground)
+                .sceneLifecycle(willEnterForeground: willEnterForeground, didEnterBackground: didEnterBackground)
                 .esdsTheme(.calendar)
+        }
+        .backgroundTask(.appRefresh(EventAlarmBackgroundTaskHelper.identifier)) {
+            EventAlarmBackgroundTaskHelper().schedule()
+
+            @InjectService var eventAlarmNotification: EventAlarmNotificationsService
+            await eventAlarmNotification.scheduleNotificationsForEventAlarms()
         }
     }
 
@@ -46,6 +52,12 @@ struct CalendarApp: App {
         if rootViewState.state != .onboarding && rootViewState.state != .preloading {
             @InjectService var appLaunchCounter: AppLaunchCounter
             appLaunchCounter.increase()
+        }
+    }
+
+    private func didEnterBackground() {
+        Task {
+            await EventAlarmBackgroundTaskHelper().scheduleIfNecessary()
         }
     }
 }
