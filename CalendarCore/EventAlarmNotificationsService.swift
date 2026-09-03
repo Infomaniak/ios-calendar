@@ -186,8 +186,13 @@ public final class EventAlarmNotificationsService: Sendable {
         return nil
     }
 
-    // TODO: KMP should compute a unique identifier for each alarm
+    // TODO:
+    //  - KMP should return the uid property of an alarm
+    //  - check if the uid of the alarm change when a property of the alarm change (e.g. type, trigger, etc.)
     private func notificationID(for alarmContext: AlarmContext) -> String {
-        return "\(Self.notificationIDPrefix)\(alarmContext.event.masterEventIdValue):\(alarmContext.alarm.hash())"
+        let eventID = alarmContext.event.masterEventIdValue
+        let alarmID = "\(alarmContext.alarm.hash())"
+
+        return "\(Self.notificationIDPrefix)\(eventID):\(alarmID)"
     }
 }
