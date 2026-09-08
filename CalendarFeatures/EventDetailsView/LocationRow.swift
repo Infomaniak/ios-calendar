@@ -17,15 +17,14 @@
  */
 
 import CalendarCore
+import CalendarCoreUI
 import CalendarResources
 import DesignSystem
-import ESDSFoundation
 import MapKit
 import SwiftUI
 
 public struct LocationRow: View {
     @Environment(\.openURL) private var openURL
-    @Environment(\.esdsTheme) private var theme
 
     @State private var coordinate: CLLocationCoordinate2D?
 
@@ -42,13 +41,9 @@ public struct LocationRow: View {
         Button {
             openInMaps()
         } label: {
-            HStack(spacing: IKPadding.medium) {
-                CalendarResourcesAsset.Images.mapPin.swiftUIImage
-                    .iconSize(IKIconSize.large)
-                    .foregroundStyle(theme.color.contentSecondary)
-
-                Text(address)
-                    .foregroundStyle(theme.color.contentPrimary)
+            HStack(spacing: IKPadding.mini) {
+                Label(address, image: CalendarResourcesAsset.Images.mapPin)
+                    .labelStyle(.formLabel)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .multilineTextAlignment(.leading)
 
