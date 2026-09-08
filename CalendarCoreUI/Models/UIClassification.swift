@@ -55,11 +55,16 @@ public extension UIClassification {
             self = .public
             return nil
         }
+
         switch onEnum(of: classification) {
-        case .public: self = .public
-        case .private: self = .private
-        case .confidential: self = .confidential
-        case .custom: self = .custom
+        case .public:
+            self = .public
+        case .private:
+            self = .private
+        case .confidential:
+            self = .confidential
+        case .custom:
+            self = .custom
         }
     }
 }
