@@ -16,31 +16,30 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import CalendarCoreUI
-import CalendarResources
 import DesignSystem
 import ESDSFoundation
-import InfomaniakCoreSwiftUI
 import SwiftUI
 
-struct AlertsSectionView: View {
+public struct FormLabelStyle: LabelStyle {
     @Environment(\.esdsTheme) private var theme
 
-    @Binding var alarms: [UIEventAlarm]
+    public init() {}
 
-    var body: some View {
-        ForEach(alarms.indices, id: \.self) { index in
-            LabeledContent {
-                Text(alarms[index].offset.rawValue)
-                    .foregroundStyle(theme.color.contentSecondary)
-            } label: {
-                Label(alarms[index].action.label, image: alarms[index].action.icon)
-                    .labelStyle(.formLabel)
-            }
+    public func makeBody(configuration: Configuration) -> some View {
+        HStack(spacing: IKPadding.mini) {
+            configuration.icon
+                .frame(width: IKIconSize.large.rawValue, height: IKIconSize.large.rawValue)
+                .foregroundStyle(theme.color.contentSecondary)
+                .accessibilityHidden(true)
+
+            configuration.title
+                .foregroundStyle(theme.color.contentPrimary)
         }
     }
 }
 
-#Preview {
-    AlertsSectionView(alarms: .constant([.preview]))
+public extension LabelStyle where Self == FormLabelStyle {
+    static var formLabel: FormLabelStyle {
+        FormLabelStyle()
+    }
 }

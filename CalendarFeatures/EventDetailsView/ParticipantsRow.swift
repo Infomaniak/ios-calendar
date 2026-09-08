@@ -54,21 +54,20 @@ struct ParticipantsRow: View {
                 showParticipants = true
             } label: {
                 HStack(spacing: 0) {
-                    CalendarResourcesAsset.Images.usersStacked.swiftUIImage
-                        .iconSize(IKIconSize.large)
-                        .foregroundStyle(theme.color.contentSecondary)
+                    Label {
+                        VStack(alignment: .leading) {
+                            Text(CalendarResourcesStrings.participantsLabel(uniqueAttendees.count))
+                                .font(.body)
 
-                    VStack(alignment: .leading) {
-                        Text(CalendarResourcesStrings.participantsLabel(uniqueAttendees.count))
-                            .font(.body)
-                            .foregroundStyle(theme.color.contentPrimary)
-
-                        Text(participationSummary)
-                            .font(.subheadline)
-                            .foregroundStyle(theme.color.contentSecondary)
+                            Text(participationSummary)
+                                .font(.subheadline)
+                                .foregroundStyle(theme.color.contentSecondary)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    } icon: {
+                        CalendarResourcesAsset.Images.usersStacked.swiftUIImage
                     }
-                    .padding(.leading, IKPadding.medium)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .labelStyle(.formLabel)
 
                     attendeesAvatarStack
 
