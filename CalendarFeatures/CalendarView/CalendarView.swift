@@ -18,6 +18,7 @@
 
 import CalendarCore
 import CalendarCoreUI
+import CalendarCreateEditEventView
 import CalendarResources
 import SwiftUI
 
@@ -83,6 +84,11 @@ public struct CalendarView: View {
             selectedDate: $mainViewState.selectedDate,
             miniCalendarHeight: $miniCalendarHeight
         ))
+        .sheet(isPresented: $mainViewState.isShowingEventCreation) {
+            NavigationStack {
+                EditEventView(event: nil)
+            }
+        }
         .toolbar {
             ToolbarItem(placement: .bottomBar) {
                 Picker(selection: $selectedMode) {
@@ -122,13 +128,10 @@ public struct CalendarView: View {
             }
 
             ToolbarItem(placement: .bottomBar) {
-                if #available(iOS 26.0, *) {
-                    Button("New", systemImage: "plus") {}
-                        .buttonStyle(.glassProminent)
-                } else {
-                    Button("New", systemImage: "plus") {}
-                        .buttonStyle(.borderedProminent)
+                Button("New", systemImage: "plus") {
+                    mainViewState.isShowingEventCreation = true
                 }
+                .buttonStyle(.borderedProminent)
             }
         }
     }
