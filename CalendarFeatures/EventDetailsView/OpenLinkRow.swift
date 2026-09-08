@@ -16,9 +16,11 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarCoreUI
 import CalendarResources
 import DesignSystem
 import ESDSFoundation
+import InfomaniakCoreSwiftUI
 import SwiftUI
 
 struct OpenLinkRow: View {
@@ -33,24 +35,22 @@ struct OpenLinkRow: View {
 
     var body: some View {
         HStack(spacing: 0) {
-            icon
-                .iconSize(IKIconSize.large)
-                .foregroundStyle(theme.color.contentSecondary)
-                .padding(.trailing, IKPadding.medium)
-                .accessibilityHidden(true)
+            Label {
+                VStack(alignment: .leading) {
+                    Text(title)
 
-            VStack(alignment: .leading) {
-                Text(title)
-                    .foregroundStyle(theme.color.contentPrimary)
-
-                if showLink {
-                    Text("\(linkURL.absoluteString)")
-                        .lineLimit(1)
-                        .font(.footnote)
-                        .foregroundStyle(theme.color.contentSecondary)
+                    if showLink {
+                        Text("\(linkURL.absoluteString)")
+                            .lineLimit(1)
+                            .font(.footnote)
+                            .foregroundStyle(theme.color.contentSecondary)
+                    }
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            } icon: {
+                icon
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
+            .labelStyle(.formLabel)
 
             Button {
                 openURL(linkURL)
