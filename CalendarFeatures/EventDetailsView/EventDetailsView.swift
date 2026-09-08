@@ -73,8 +73,10 @@ public struct EventDetailsView: View {
                 .listRowBackground(Color.clear)
                 .listRowSeparator(.hidden)
 
-                Section {
-                    ParticipantsRow(uniqueAttendees: uniqueAttendees)
+                if !uniqueAttendees.isEmpty {
+                    Section {
+                        ParticipantsRow(attendees: uniqueAttendees)
+                    }
                 }
 
                 if hasLocationSection {

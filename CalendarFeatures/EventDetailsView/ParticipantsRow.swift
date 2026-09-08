@@ -28,10 +28,10 @@ struct ParticipantsRow: View {
 
     @State private var showParticipants = false
 
-    let uniqueAttendees: [UIAttendee]
+    let attendees: [UIAttendee]
 
-    private var visibleAttendees: [UIAttendee] {
-        Array(uniqueAttendees.prefix(4))
+    private var attendeesListForStack: [UIAttendee] {
+        Array(attendees.prefix(4))
     }
 
     private var participationSummary: String {
@@ -43,59 +43,61 @@ struct ParticipantsRow: View {
         ]
 
         return UIParticipationStatus.allCases.compactMap { status in
-            let count = uniqueAttendees.count { $0.status == status }
+            let count = attendees.count { $0.status == status }
             return count > 0 ? formatters[status]?(count) : nil
         }.joined(separator: ", ")
     }
 
     var body: some View {
-        if !uniqueAttendees.isEmpty {
-            Button {
-                showParticipants = true
-            } label: {
-                HStack(spacing: 0) {
-                    Label {
-                        VStack(alignment: .leading) {
-                            Text(CalendarResourcesStrings.participantsLabel(uniqueAttendees.count))
-                                .font(.body)
+        Button {
+            showParticipants = true
+        } label: {
+            HStack(spacing: 0) {
+                Label {
+                    VStack(alignment: .leading) {
+                        Text(CalendarResourcesStrings.participantsLabel(attendees.count))
+                            .font(.body)
 
-                            Text(participationSummary)
-                                .font(.subheadline)
-                                .foregroundStyle(theme.color.contentSecondary)
-                        }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    } icon: {
-                        CalendarResourcesAsset.Images.usersStacked.swiftUIImage
+                        Text(participationSummary)
+                            .font(.subheadline)
+                            .foregroundStyle(theme.color.contentSecondary)
                     }
-                    .labelStyle(.formLabel)
-
-                    attendeesAvatarStack
-
-                    CalendarResourcesAsset.Images.chevronRight.swiftUIImage
-                        .iconSize(IKIconSize.large)
-                        .foregroundStyle(theme.color.contentTertiary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                } icon: {
+                    CalendarResourcesAsset.Images.usersStacked.swiftUIImage
                 }
+                .labelStyle(.formLabel)
+
+                attendeesAvatarStack
+
+                CalendarResourcesAsset.Images.chevronRight.swiftUIImage
+                    .iconSize(IKIconSize.large)
+                    .foregroundStyle(theme.color.contentTertiary)
             }
-            .navigationDestination(isPresented: $showParticipants) {
-                ParticipantsListView(uniqueAttendees: uniqueAttendees)
-            }
+        }
+        .navigationDestination(isPresented: $showParticipants) {
+            ParticipantsListView(uniqueAttendees: attendees)
         }
     }
 
     private var attendeesAvatarStack: some View {
         HStack(spacing: -IKPadding.mini) {
-            ForEach(visibleAttendees) { attendee in
-                AvatarView(rawAvatarURL: nil,
-                           displayName: attendee.displayName ?? attendee.email,
-                           email: attendee.email,
-                           size: IKIconSize.large.rawValue)
+            ForEach(attendeesListForStack) { attendee in
+                AvatarView(
+                    rawAvatarURL: nil,
+                    displayName: attendee.displayName ?? attendee.email,
+                    email: attendee.email,
+                    size: IKIconSize.large.rawValue
+                )
             }
 
-            if uniqueAttendees.count > 4 {
-                InitialsView(initials: "+\(uniqueAttendees.count - 4)",
-                             backgroundColor: theme.color.backgroundElevationSurfacePressed,
-                             foregroundColor: theme.color.backgroundBrandDefault,
-                             size: IKIconSize.large.rawValue)
+            if attendees.count > 4 {
+                InitialsView(
+                    initials: "+\(attendees.count - 4)",
+                    backgroundColor: theme.color.backgroundElevationSurfacePressed,
+                    foregroundColor: theme.color.backgroundBrandDefault,
+                    size: IKIconSize.large.rawValue
+                )
             }
         }
         .compositingGroup()
