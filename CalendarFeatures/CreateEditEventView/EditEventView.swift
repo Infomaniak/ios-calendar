@@ -17,9 +17,11 @@
  */
 
 import CalendarCoreUI
+import CalendarResources
+import DesignSystem
 import SwiftUI
 
-struct UIDraftEvent: Sendable, Equatable {
+struct UIDraftEvent: Equatable {
     var calendar: UICalendar?
 
     var title = ""
@@ -31,10 +33,14 @@ struct UIDraftEvent: Sendable, Equatable {
     var isOccupied = true
     var isPrivate = false
 
+    var classification: UIClassification {
+        return isPrivate ? .private : .public
+    }
+
     init() {}
 
     init(event: CalendarCoreUI.UIEvent) {
-        self.title = event.title
+        title = event.title
     }
 }
 
@@ -74,20 +80,30 @@ public struct EditEventView: View {
     public var body: some View {
         Form {
             Section {
-                TextField("Title", text: $draft.title)
+                TextField("!Title", text: $draft.title)
             }
 
             Section {
-                Toggle("Toute la journée", isOn: $draft.allDay)
-                DatePicker("Début", selection: $draft.startDate, displayedComponents: datePickerComponents)
+                Toggle("!Toute la journée", isOn: $draft.allDay)
+                DatePicker("!Début", selection: $draft.startDate, displayedComponents: datePickerComponents)
                     .datePickerStyle(.compact)
-                DatePicker("Fin", selection: $draft.endDate, displayedComponents: datePickerComponents)
+                DatePicker("!Fin", selection: $draft.endDate, displayedComponents: datePickerComponents)
                     .datePickerStyle(.compact)
             }
 
             Section {
-                // Occupés
-                // Private
+                Toggle(isOn: $draft.isOccupied) {
+                    Label("!Occupé(e)", image: CalendarResourcesAsset.Images.briefcase)
+                        .labelStyle(.formLabel)
+                }
+                Toggle(isOn: $draft.isPrivate) {
+                    Label {
+                        Text("!Privé")
+                    } icon: {
+                        BouncyLock(isUnlocked: draft.isPrivate)
+                    }
+                    .labelStyle(.formLabel)
+                }
             }
 
             if draft.calendar != nil {
@@ -107,7 +123,8 @@ public struct EditEventView: View {
                 Button {
                     // TODO: Confirm
                 } label: {
-                    Text("Valider")
+                    Label("!Confirmer", image: CalendarResourcesAsset.Images.check)
+                        .labelStyle(.iconOnly)
                 }
                 .buttonStyle(.borderedProminent)
             }
