@@ -34,15 +34,6 @@ public struct GeneralSettingsView: View {
 
         List {
             Section {
-                NavigationLink(destination: EmptyView()) {
-                    Text("Calendrier par défaut")
-                }
-                .disabled(true)
-            } header: {
-                Text("Par défaut")
-            }
-
-            Section {
                 NavigationLink {
                     SettingsOptionsListView(
                         navigationTitle: "Thème",
