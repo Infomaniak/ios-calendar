@@ -25,7 +25,7 @@ struct PlanningDayEventView: View {
 
     var body: some View {
         HStack {
-            Text(event.title)
+            Text(event.displayTitle)
                 .lineLimit(1)
                 .font(.caption.bold())
                 .frame(maxWidth: .infinity, alignment: .leading)

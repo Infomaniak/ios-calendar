@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarResources
 import Foundation
 import MultiplatformCalendar
 import SwiftUI
@@ -121,7 +122,7 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
         timing: UITiming
     ) {
         self.id = id
-        self.title = title
+        self.title = title.trimmingCharacters(in: .whitespacesAndNewlines)
         self.description = description
         self.startDate = startDate
         self.endDate = endDate
@@ -136,6 +137,16 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
         self.classification = classification
         self.timing = timing
     }
+
+    public var displayTitle: AttributedString {
+        guard title.isEmpty else {
+            return AttributedString(title)
+        }
+
+        var untitledLabel = AttributedString(CalendarResourcesStrings.eventUntitledLabel)
+        untitledLabel.inlinePresentationIntent = .emphasized
+        return untitledLabel
+    }
 }
 
 public extension UIEvent {
@@ -143,7 +154,7 @@ public extension UIEvent {
         let event = eventDaySlice.event
 
         id = "\(eventDaySlice.position.index)-\(event.occurrenceIdValue)"
-        title = event.title
+        title = event.title.trimmingCharacters(in: .whitespacesAndNewlines)
         description = event.description_
         status = event.status
 
