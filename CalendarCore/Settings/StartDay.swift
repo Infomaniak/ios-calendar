@@ -16,33 +16,42 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import CalendarResources
-import ESDSFoundation
+import Foundation
 import SwiftUI
 
-public struct SettingsView: View {
-    @Environment(\.esdsTheme) private var theme
+public enum StartDay: String, CaseIterable, Sendable, SettingsOptionEnum {
+    case monday
+    case tuesday
+    case wednesday
+    case thursday
+    case friday
+    case saturday
+    case sunday
 
-    public init() {}
-
-    public var body: some View {
-        List {
-            Section {
-                NavigationLink {
-                    GeneralSettingsView()
-                } label: {
-                    Text("Général")
-                        .foregroundStyle(theme.color.contentPrimary)
-                }
-            } header: {
-                Text("Réglages")
-            }
+    public var title: String {
+        switch self {
+        case .monday:
+            return "Monday"
+        case .tuesday:
+            return "Tuesday"
+        case .wednesday:
+            return "Wednesday"
+        case .thursday:
+            return "Thursday"
+        case .friday:
+            return "Friday"
+        case .saturday:
+            return "Saturday"
+        case .sunday:
+            return "Sunday"
         }
-        .navigationTitle(CalendarResourcesStrings.settingsTitle)
-        .navigationBarTitleDisplayMode(.inline)
     }
-}
 
-#Preview {
-    SettingsView()
+    public var image: Image? {
+        nil
+    }
+
+    public var hint: String? {
+        nil
+    }
 }
