@@ -30,6 +30,8 @@ struct UIDraftEvent: Equatable {
     var startDate = Date()
     var endDate = Date().addingTimeInterval(60 * 60) // TODO: Use UserDefaults
 
+    var attendees = [UIAttendee]()
+
     var isOccupied = true
     var isPrivate = false
 
@@ -61,6 +63,10 @@ enum EditionMode {
 public struct EditEventView: View {
     @State private var draft: UIDraftEvent
 
+    @State private var isNavigatingToAttendeesList = false
+
+    @FocusState private var isTitleFocused: Bool
+
     private let editionMode: EditionMode
 
     private var datePickerComponents: DatePickerComponents {
@@ -81,6 +87,7 @@ public struct EditEventView: View {
         Form {
             Section {
                 TextField("!Title", text: $draft.title)
+                    .focused($isTitleFocused)
             }
 
             Section {
@@ -89,6 +96,17 @@ public struct EditEventView: View {
                     .datePickerStyle(.compact)
                 DatePicker("!Fin", selection: $draft.endDate, displayedComponents: datePickerComponents)
                     .datePickerStyle(.compact)
+            }
+
+            Section {
+                Button {
+                    isNavigatingToAttendeesList = true
+                } label: {
+                    EventAttendeesCell(attendees: draft.attendees)
+                }
+                .navigationDestination(isPresented: $isNavigatingToAttendeesList) {
+                    Text("Hello")
+                }
             }
 
             Section {
@@ -114,6 +132,11 @@ public struct EditEventView: View {
                         Text("Calendrier")
                     }
                 }
+            }
+        }
+        .onAppear {
+            if case .create = editionMode {
+                isTitleFocused = true
             }
         }
         .navigationTitle(Text(editionMode.navigationTitle))
