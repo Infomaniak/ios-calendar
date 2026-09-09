@@ -55,7 +55,7 @@ public struct EventDetailsView: View {
                 Section {
                     VStack(alignment: .leading, spacing: IKPadding.small) {
                         EventTitleRow(
-                            title: event.title,
+                            title: event.displayTitle,
                             eventColor: event.colors.sourceColor
                         )
                         .onScrollVisibilityChange(threshold: 0.5) { isVisible in
@@ -128,7 +128,7 @@ public struct EventDetailsView: View {
             .toolbar {
                 ToolbarItem(placement: .principal) {
                     if #available(iOS 27.0, *) {
-                        Text(event.title)
+                        Text(event.displayTitle)
                             .opacity(showNavigationTitle ? 1 : 0)
                     } else {
                         Text(CalendarResourcesStrings.eventTitle)
