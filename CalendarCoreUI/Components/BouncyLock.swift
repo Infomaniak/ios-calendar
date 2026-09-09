@@ -48,7 +48,7 @@ public struct BouncyLock: View {
                     SpringKeyframe(1, duration: 0.38, spring: .bouncy)
                 }
                 KeyframeTrack(\.rotation) {
-                    CubicKeyframe((isUnlocked ? -7 : 7), duration: 0.12)
+                    CubicKeyframe(isUnlocked ? -7 : 7, duration: 0.12)
                     SpringKeyframe(0, duration: 0.36, spring: .bouncy)
                 }
             }

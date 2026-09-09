@@ -16,14 +16,13 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import CalendarCoreUI
 import CalendarResources
 import DesignSystem
 import ESDSFoundation
 import InfomaniakCoreSwiftUI
 import SwiftUI
 
-struct ParticipantsRow: View {
+public struct EventAttendeesCell: View {
     @Environment(\.esdsTheme) private var theme
 
     @State private var showParticipants = false
@@ -48,35 +47,40 @@ struct ParticipantsRow: View {
         }.joined(separator: ", ")
     }
 
-    var body: some View {
-        Button {
-            showParticipants = true
-        } label: {
-            HStack(spacing: 0) {
-                Label {
+    public init(attendees: [UIAttendee]) {
+        self.attendees = attendees
+    }
+
+    public var body: some View {
+        HStack(spacing: IKPadding.micro) {
+            Label {
+                if attendees.isEmpty {
+                    Text("!Invités")
+                } else {
                     VStack(alignment: .leading) {
                         Text(CalendarResourcesStrings.participantsLabel(attendees.count))
-                            .font(.body)
 
                         Text(participationSummary)
                             .font(.subheadline)
                             .foregroundStyle(theme.color.contentSecondary)
                     }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                } icon: {
-                    CalendarResourcesAsset.Images.usersStacked.swiftUIImage
                 }
-                .labelStyle(.formLabel)
-
-                attendeesAvatarStack
-
-                CalendarResourcesAsset.Images.chevronRight.swiftUIImage
-                    .iconSize(IKIconSize.large)
-                    .foregroundStyle(theme.color.contentTertiary)
+            } icon: {
+                CalendarResourcesAsset.Images.usersStacked.swiftUIImage
             }
-        }
-        .navigationDestination(isPresented: $showParticipants) {
-            ParticipantsListView(uniqueAttendees: attendees)
+            .labelStyle(.formLabel)
+            .frame(maxWidth: .infinity, alignment: .leading)
+
+            if attendees.isEmpty {
+                Text("!Aucun")
+                    .foregroundStyle(theme.color.contentSecondary)
+            } else {
+                attendeesAvatarStack
+            }
+
+            CalendarResourcesAsset.Images.chevronRight.swiftUIImage
+                .iconSize(IKIconSize.large)
+                .foregroundStyle(theme.color.contentTertiary)
         }
     }
 
@@ -101,6 +105,5 @@ struct ParticipantsRow: View {
             }
         }
         .compositingGroup()
-        .padding(.trailing, IKPadding.micro)
     }
 }
