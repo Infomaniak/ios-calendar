@@ -34,14 +34,8 @@ struct AlertsSectionView: View {
                 Text(alarms[index].offset.rawValue)
                     .foregroundStyle(theme.color.contentSecondary)
             } label: {
-                HStack(spacing: IKPadding.mini) {
-                    alarms[index].action.icon
-                        .iconSize(IKIconSize.large)
-                        .foregroundStyle(theme.color.contentSecondary)
-                        .accessibilityHidden(true)
-                    Text(alarms[index].action.label)
-                        .foregroundStyle(theme.color.contentPrimary)
-                }
+                Label(alarms[index].action.label, image: alarms[index].action.icon)
+                    .labelStyle(.formLabel)
             }
         }
     }

@@ -16,17 +16,15 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Foundation
+import CalendarResources
+import SwiftUI
 
-@MainActor
-@Observable
-public final class MainViewState {
-    public var selectedDate: Date
-    public var presentedEvent: UIEvent?
-
-    public var isShowingEventCreation = false
-
-    public init(selectedDate: Date = Date()) {
-        self.selectedDate = selectedDate
+public extension Label where Title == Text, Icon == Image {
+    init(_ title: String, image: CalendarResourcesImages) {
+        self.init {
+            Text(title)
+        } icon: {
+            image.swiftUIImage
+        }
     }
 }

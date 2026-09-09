@@ -19,7 +19,6 @@
 import CalendarResources
 import Foundation
 import MultiplatformCalendar
-import SwiftUI
 
 public enum UIClassification: String, Sendable, CaseIterable {
     case `public`
@@ -38,12 +37,12 @@ public enum UIClassification: String, Sendable, CaseIterable {
         }
     }
 
-    public var icon: Image? {
+    public var icon: CalendarResourcesImages? {
         switch self {
         case .public:
-            return CalendarResourcesAsset.Images.lockOpen.swiftUIImage
+            return CalendarResourcesAsset.Images.lockOpen
         case .private:
-            return CalendarResourcesAsset.Images.lock.swiftUIImage
+            return CalendarResourcesAsset.Images.lock
         default:
             return nil
         }
@@ -56,11 +55,16 @@ public extension UIClassification {
             self = .public
             return nil
         }
+
         switch onEnum(of: classification) {
-        case .public: self = .public
-        case .private: self = .private
-        case .confidential: self = .confidential
-        case .custom: self = .custom
+        case .public:
+            self = .public
+        case .private:
+            self = .private
+        case .confidential:
+            self = .confidential
+        case .custom:
+            self = .custom
         }
     }
 }

@@ -16,16 +16,30 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
+import ESDSFoundation
 import SwiftUI
 
-public struct CreateEditEventView: View {
+public struct FormLabelStyle: LabelStyle {
+    @Environment(\.esdsTheme) private var theme
+
     public init() {}
 
-    public var body: some View {
-        EmptyView()
+    public func makeBody(configuration: Configuration) -> some View {
+        HStack(spacing: IKPadding.mini) {
+            configuration.icon
+                .frame(width: IKIconSize.large.rawValue, height: IKIconSize.large.rawValue)
+                .foregroundStyle(theme.color.contentSecondary)
+                .accessibilityHidden(true)
+
+            configuration.title
+                .foregroundStyle(theme.color.contentPrimary)
+        }
     }
 }
 
-#Preview {
-    CreateEditEventView()
+public extension LabelStyle where Self == FormLabelStyle {
+    static var formLabel: FormLabelStyle {
+        FormLabelStyle()
+    }
 }
