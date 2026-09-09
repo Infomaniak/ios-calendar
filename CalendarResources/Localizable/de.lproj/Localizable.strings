@@ -67,6 +67,10 @@
 /* loco:6a6315016659664bd10ce392 */
 "eventTitle" = "Veranstaltung";
 
+/* loco:6aa129c47fd12759da096043
+ * Keep the parentheses in every translation. */
+"eventUntitledLabel" = "(Ohne Titel)";
+
 /* loco:6a3e2023d4ed90a7ed0b19e5 */
 "helpTitle" = "Hilfe";
 
