@@ -91,10 +91,8 @@ public struct EditEventView: View {
 
             Section {
                 Toggle("!Toute la journée", isOn: $draft.allDay)
-                DatePicker("!Début", selection: $draft.startDate, displayedComponents: datePickerComponents)
-                    .datePickerStyle(.compact)
-                DatePicker("!Fin", selection: $draft.endDate, displayedComponents: datePickerComponents)
-                    .datePickerStyle(.compact)
+                ExpandableDatePicker(date: $draft.startDate, label: "!Début", canSelectHour: !draft.allDay)
+                ExpandableDatePicker(date: $draft.endDate, label: "!Fin", canSelectHour: !draft.allDay)
             }
 
             Section {
