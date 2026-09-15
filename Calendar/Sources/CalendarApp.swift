@@ -19,7 +19,6 @@
 import CalendarCore
 import CalendarCoreUI
 import CalendarRootView
-import CalendarSettingsView
 import ESDSCalendar
 import InfomaniakCore
 import InfomaniakDI
@@ -33,12 +32,20 @@ struct CalendarApp: App {
     private let dependencyInjectionHook = CalendarTargetAssembly()
 
     @StateObject private var rootViewState = RootViewState()
+    @AppStorage(UserDefaults.shared.key(.firstWeekday), store: .shared)
+    private var firstWeekday = DefaultPreferences.firstWeekday
+
+    private var calendar: Calendar {
+        var calendar = Calendar.autoupdatingCurrent
+        calendar.firstWeekday = firstWeekday
+        return calendar
+    }
 
     var body: some Scene {
         WindowGroup {
             RootView()
                 .environmentObject(rootViewState)
-                .environment(SettingsStore())
+                .environment(\.calendar, calendar)
                 .sceneLifecycle(willEnterForeground: willEnterForeground)
                 .esdsTheme(.calendar)
         }

@@ -28,15 +28,21 @@ public protocol SettingsOptionEnum {
 
 public extension UserDefaults.Keys {
     static let theme = UserDefaults.Keys(rawValue: "theme")
-    static let startDay = UserDefaults.Keys(rawValue: "startDay")
-    static let isShowWeekends = UserDefaults.Keys(rawValue: "isShowWeekends")
+    static let firstWeekday = UserDefaults.Keys(rawValue: "firstWeekday")
+    static let displayWeekends = UserDefaults.Keys(rawValue: "displayWeekends")
     static let defaultEventDuration = UserDefaults.Keys(rawValue: "defaultEventDuration")
-    static let isLocalTime = UserDefaults.Keys(rawValue: "isLocalTime")
+    static let useDeviceTimeZone = UserDefaults.Keys(rawValue: "useDeviceTimeZone")
+    static let timeZoneIdentifier = UserDefaults.Keys(rawValue: "timeZoneIdentifier")
 }
 
 public extension UserDefaults {
+    nonisolated(unsafe) static let shared = UserDefaults(suiteName: "group.\(CalendarTargetAssembly.bundleId)")!
+
     var theme: Theme {
         get {
+            if object(forKey: key(.theme)) == nil {
+                set(DefaultPreferences.theme.rawValue, forKey: key(.theme))
+            }
             return Theme(rawValue: string(forKey: key(.theme)) ?? "") ?? DefaultPreferences.theme
         }
         set {
@@ -44,46 +50,58 @@ public extension UserDefaults {
         }
     }
 
-    var startDay: StartDay {
+    var firstWeekday: Int {
         get {
-            return StartDay(rawValue: string(forKey: key(.startDay)) ?? "") ?? DefaultPreferences.startDay
+            if object(forKey: key(.firstWeekday)) == nil {
+                set(DefaultPreferences.firstWeekday, forKey: key(.firstWeekday))
+            }
+            return integer(forKey: key(.firstWeekday))
         }
         set {
-            setValue(newValue.rawValue, forKey: key(.startDay))
+            setValue(newValue, forKey: key(.firstWeekday))
         }
     }
 
-    var isShowWeekends: Bool {
+    var displayWeekends: Bool {
         get {
-            if object(forKey: key(.isShowWeekends)) == nil {
-                set(DefaultPreferences.isShowWeekends, forKey: key(.isShowWeekends))
+            if object(forKey: key(.displayWeekends)) == nil {
+                set(DefaultPreferences.displayWeekends, forKey: key(.displayWeekends))
             }
-            return bool(forKey: key(.isShowWeekends))
+            return bool(forKey: key(.displayWeekends))
         }
         set {
-            set(newValue, forKey: key(.isShowWeekends))
+            set(newValue, forKey: key(.displayWeekends))
         }
     }
 
     var defaultEventDuration: DefaultEventDuration {
         get {
-            let minutes = integer(forKey: key(.defaultEventDuration))
-            return minutes == 0 ? DefaultPreferences.defaultEventDuration : DefaultEventDuration(minutes: minutes)
+            let rawValue = integer(forKey: key(.defaultEventDuration))
+            return rawValue == 0 ? DefaultPreferences.defaultEventDuration : DefaultEventDuration(rawValue: rawValue)
         }
         set {
-            setValue(newValue.minutes, forKey: key(.defaultEventDuration))
+            setValue(newValue.rawValue, forKey: key(.defaultEventDuration))
         }
     }
 
-    var isLocalTime: Bool {
+    var useLocalTime: Bool {
         get {
-            if object(forKey: key(.isLocalTime)) == nil {
-                set(DefaultPreferences.isLocalTime, forKey: key(.isLocalTime))
+            if object(forKey: key(.useDeviceTimeZone)) == nil {
+                set(DefaultPreferences.useLocalTime, forKey: key(.useDeviceTimeZone))
             }
-            return bool(forKey: key(.isLocalTime))
+            return bool(forKey: key(.useDeviceTimeZone))
         }
         set {
-            set(newValue, forKey: key(.isLocalTime))
+            set(newValue, forKey: key(.useDeviceTimeZone))
+        }
+    }
+
+    var timeZoneIdentifier: String {
+        get {
+            return string(forKey: key(.timeZoneIdentifier)) ?? DefaultPreferences.timeZoneIdentifier
+        }
+        set {
+            set(newValue, forKey: key(.timeZoneIdentifier))
         }
     }
 }

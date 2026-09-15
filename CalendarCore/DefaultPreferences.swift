@@ -17,13 +17,15 @@
  */
 
 import Foundation
+import SwiftUI
 
 public enum DefaultPreferences {
     public static let matomoAuthorized = true
     public static let sentryAuthorized = true
-    public static let theme = Theme.system
-    public static let startDay = StartDay.monday
-    public static let isShowWeekends = true
-    public static let defaultEventDuration = DefaultEventDuration.thirtyminutes
-    public static let isLocalTime = true
+    public static let theme: Theme = .system
+    public static let firstWeekday = Calendar.autoupdatingCurrent.firstWeekday
+    public static let displayWeekends = true
+    public static let defaultEventDuration = DefaultEventDuration.thirtyMinutes
+    public static let useLocalTime = true
+    public static let timeZoneIdentifier = TimeZone.current.identifier
 }
