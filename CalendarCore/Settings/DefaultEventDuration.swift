@@ -17,86 +17,68 @@
  */
 
 import Foundation
-import SwiftUI
 
-public enum DefaultEventDuration: CaseIterable, Sendable, Equatable, Hashable, SettingsOptionEnum {
-    case fifteenminutes
-    case twentynminutes
-    case thirtyminutes
-    case fortyfiveminutes
-    case onehour
-    case onehourandfifteenminutes
-    case onehourandthirtyminutes
-    case onehourandfortyfiveminutes
-    case twohours
-    case personalization(value: Int)
+public enum DefaultEventDuration: Sendable, Equatable, Hashable, RawRepresentable {
+    private static let minimumTimeInterval: TimeInterval = 60
 
-    public static var allCases: [DefaultEventDuration] {
-        [.fifteenminutes, .twentynminutes, .thirtyminutes, .fortyfiveminutes,
-         .onehour, .onehourandfifteenminutes, .onehourandthirtyminutes,
-         .onehourandfortyfiveminutes, .twohours]
-    }
+    case fifteenMinutes
+    case twentyMinutes
+    case thirtyMinutes
+    case fortyFiveMinutes
+    case oneHour
+    case oneHourAndFifteenMinutes
+    case oneHourAndThirtyMinutes
+    case oneHourAndFortyFiveMinutes
+    case twoHours
+    case custom(TimeInterval)
 
-    public var minutes: Int {
+    public static let defaultCases: [DefaultEventDuration] = [
+        .fifteenMinutes,
+        .twentyMinutes,
+        .thirtyMinutes,
+        .fortyFiveMinutes,
+        .oneHour,
+        .oneHourAndFifteenMinutes,
+        .oneHourAndThirtyMinutes,
+        .oneHourAndFortyFiveMinutes,
+        .twoHours
+    ]
+
+    public var timeInterval: TimeInterval {
         switch self {
-        case .fifteenminutes: return 15
-        case .twentynminutes: return 20
-        case .thirtyminutes: return 30
-        case .fortyfiveminutes: return 45
-        case .onehour: return 60
-        case .onehourandfifteenminutes: return 75
-        case .onehourandthirtyminutes: return 90
-        case .onehourandfortyfiveminutes: return 105
-        case .twohours: return 120
-        case .personalization(let value): return value
+        case .fifteenMinutes:
+            return 15 * 60
+        case .twentyMinutes:
+            return 20 * 60
+        case .thirtyMinutes:
+            return 30 * 60
+        case .fortyFiveMinutes:
+            return 45 * 60
+        case .oneHour:
+            return 60 * 60
+        case .oneHourAndFifteenMinutes:
+            return 75 * 60
+        case .oneHourAndThirtyMinutes:
+            return 90 * 60
+        case .oneHourAndFortyFiveMinutes:
+            return 105 * 60
+        case .twoHours:
+            return 120 * 60
+        case .custom(let timeInterval):
+            return max(timeInterval, Self.minimumTimeInterval)
         }
     }
 
-    public init(minutes: Int) {
-        self = Self.allCases.first { $0.minutes == minutes } ?? .personalization(value: minutes)
+    public init(timeInterval: TimeInterval) {
+        let timeInterval = max(timeInterval, Self.minimumTimeInterval)
+        self = Self.defaultCases.first { $0.timeInterval == timeInterval } ?? .custom(timeInterval)
     }
 
-    public var title: String {
-        switch self {
-        case .fifteenminutes:
-            return "15 min"
-        case .twentynminutes:
-            return "20 min"
-        case .thirtyminutes:
-            return "30 min"
-        case .fortyfiveminutes:
-            return "45 min"
-        case .onehour:
-            return "1 h"
-        case .onehourandfifteenminutes:
-            return "1 h 15 min"
-        case .onehourandthirtyminutes:
-            return "1 h 30 min"
-        case .onehourandfortyfiveminutes:
-            return "1 h 45 min"
-        case .twohours:
-            return "2 h"
-        case .personalization(let minutes):
-            let hours = minutes / 60
-            let remainingMinutes = minutes % 60
-
-            if hours > 0 {
-                if remainingMinutes > 0 {
-                    return "\(hours) h \(remainingMinutes) min"
-                } else {
-                    return "\(hours) h"
-                }
-            } else {
-                return "\(minutes) min"
-            }
-        }
+    public init(rawValue: Int) {
+        self.init(timeInterval: TimeInterval(rawValue))
     }
 
-    public var image: Image? {
-        nil
-    }
-
-    public var hint: String? {
-        nil
+    public var rawValue: Int {
+        Int(timeInterval)
     }
 }

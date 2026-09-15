@@ -17,20 +17,23 @@
  */
 
 import Foundation
+import InfomaniakCoreUIResources
 import SwiftUI
 
-public enum Theme: String, CaseIterable, SettingsOptionEnum, Sendable {
+public enum Theme: String, CaseIterable, Sendable {
+    case system
     case light
     case dark
-    case system
 
-    public var interfaceStyle: UIUserInterfaceStyle {
-        let styles: [Theme: UIUserInterfaceStyle] = [
-            .light: .light,
-            .dark: .dark,
-            .system: .unspecified
-        ]
-        return styles[self] ?? .unspecified
+    public var title: String {
+        switch self {
+        case .light:
+            return CoreUILocalizable.themeLight
+        case .dark:
+            return CoreUILocalizable.themeDark
+        case .system:
+            return CoreUILocalizable.themeSystem
+        }
     }
 
     public var colorScheme: ColorScheme? {
@@ -42,31 +45,5 @@ public enum Theme: String, CaseIterable, SettingsOptionEnum, Sendable {
         case .system:
             return nil
         }
-    }
-
-    public var title: String {
-        switch self {
-        case .light:
-            return "Clair"
-        case .dark:
-            return "Sombre"
-        case .system:
-            return "Système"
-        }
-    }
-
-    public var image: Image? {
-        switch self {
-        case .light:
-            return Image(systemName: "sun.max")
-        case .dark:
-            return Image(systemName: "moon.fill")
-        case .system:
-            return Image(systemName: "iphone.gen3.sizes")
-        }
-    }
-
-    public var hint: String? {
-        return nil
     }
 }

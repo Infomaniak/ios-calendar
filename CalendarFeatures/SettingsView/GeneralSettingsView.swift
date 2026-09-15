@@ -19,85 +19,109 @@
 import CalendarCore
 import CalendarResources
 import ESDSFoundation
+import InfomaniakCoreUIResources
 import SwiftUI
 
 public struct GeneralSettingsView: View {
-    @Environment(SettingsStore.self) private var settings
     @Environment(\.esdsTheme) private var theme
+    @Environment(\.calendar) private var calendar
 
-    @State private var defaultEventDuration: DefaultEventDuration = UserDefaults.standard.defaultEventDuration
+    @AppStorage(UserDefaults.shared.key(.theme), store: .shared)
+    private var appTheme = DefaultPreferences.theme
+    @AppStorage(UserDefaults.shared.key(.firstWeekday), store: .shared)
+    private var firstWeekday = DefaultPreferences.firstWeekday
+    @AppStorage(UserDefaults.shared.key(.displayWeekends), store: .shared)
+    private var displayWeekends = DefaultPreferences.displayWeekends
+    @AppStorage(UserDefaults.shared.key(.defaultEventDuration), store: .shared)
+    private var defaultEventDuration = DefaultPreferences.defaultEventDuration
+    @AppStorage(UserDefaults.shared.key(.useDeviceTimeZone), store: .shared)
+    private var useSystemTimeZone = DefaultPreferences.useLocalTime
+    @AppStorage(UserDefaults.shared.key(.timeZoneIdentifier), store: .shared)
+    private var timeZoneIdentifier = DefaultPreferences.timeZoneIdentifier
+
+    private var weekdayIndices: [Int] {
+        let symbols = calendar.weekdaySymbols
+        let firstWeekdayIndex = calendar.firstWeekday - 1
+        guard symbols.indices.contains(firstWeekdayIndex) else {
+            return Array(symbols.indices)
+        }
+
+        return Array(symbols.indices[firstWeekdayIndex...]) + Array(symbols.indices[..<firstWeekdayIndex])
+    }
+
+    private var selectedTimeZone: TimeZone {
+        TimeZone(identifier: timeZoneIdentifier) ?? .current
+    }
+
+    private var selectedTimeZoneBinding: Binding<TimeZone> {
+        Binding {
+            selectedTimeZone
+        } set: { timeZone in
+            timeZoneIdentifier = timeZone.identifier
+        }
+    }
 
     public init() {}
 
     public var body: some View {
-        @Bindable var settings = settings
-
         List {
             Section {
-                NavigationLink {
-                    SettingsOptionsListView(
-                        navigationTitle: "Thème",
-                        header: "Choix du thème",
-                        selection: $settings.theme
-                    )
-                } label: {
-                    Text("Thème")
+                Picker(CoreUILocalizable.themeTitle, selection: $appTheme) {
+                    ForEach(Theme.allCases, id: \.self) { theme in
+                        Text(theme.title)
+                            .tag(theme)
+                    }
                 }
+                .pickerStyle(.navigationLink)
 
-                NavigationLink {
-                    SettingsOptionsListView(
-                        navigationTitle: "Début de la semaine",
-                        header: "La semaine commence le",
-                        selection: $settings.startDay
-                    )
-                } label: {
-                    Text("Début de la semaine")
+                Picker(CalendarResourcesStrings.generalSettingsStartOfWeekLabel, selection: $firstWeekday) {
+                    ForEach(weekdayIndices, id: \.self) { weekdayIndex in
+                        Text(calendar.weekdaySymbols[weekdayIndex].localizedCapitalized)
+                            .tag(weekdayIndex + 1)
+                    }
                 }
+                .pickerStyle(.navigationLink)
 
-                Toggle("Afficher les week-ends", isOn: $settings.isShowWeekends)
-                    .toggleStyle(SwitchToggleStyle())
+                Toggle(CalendarResourcesStrings.generalSettingsShowWeekendsLabel, isOn: $displayWeekends)
+                    .toggleStyle(.switch)
             } header: {
-                Text("Par défaut")
+                Text(CalendarResourcesStrings.generalSettingsDisplayLabel)
             }
 
             Section {
+                Picker(CalendarResourcesStrings.generalSettingsDefaultEventDurationLabel, selection: $defaultEventDuration) {
+                    ForEach(DefaultEventDuration.defaultCases, id: \.self) { duration in
+                        Text(
+                            Duration.seconds(duration.timeInterval)
+                                .formatted(.units(allowed: [.hours, .minutes], width: .condensedAbbreviated))
+                        )
+                        .tag(duration)
+                    }
+                }
+                .pickerStyle(.navigationLink)
+
+                Toggle(CalendarResourcesStrings.generalSettingsUseDeviceTimeZoneLabel, isOn: $useSystemTimeZone)
+                    .toggleStyle(.switch)
+
                 NavigationLink {
-                    SettingsOptionsListView(
-                        navigationTitle: "Durée d'un évènement par défaut",
-                        header: "Durée d'un évènement",
-                        selection: $settings.defaultEventDuration
-                    )
+                    TimeZonePickerView(selection: selectedTimeZoneBinding)
                 } label: {
                     VStack(alignment: .leading) {
-                        Text("Durée d'un évènement par défaut")
-                        Text(settings.defaultEventDuration.title)
+                        Text(CalendarResourcesStrings.generalSettingsTimeZoneLabel)
+                        Text(selectedTimeZone.localizedName(for: .generic, locale: Locale.autoupdatingCurrent) ?? selectedTimeZone
+                            .identifier)
                             .foregroundStyle(theme.color.contentSecondary)
                     }
                 }
             } header: {
-                Text("Évènement")
-            }
-
-            Section {
-                Toggle("Heure locale", isOn: $settings.isLocalTime)
-                    .toggleStyle(SwitchToggleStyle())
-
-                NavigationLink {
-                    EmptyView()
-                } label: {
-                    VStack(alignment: .leading) {
-                        Text("Fuseau horaire")
-                        Text("Heure d'été d'Europe centrale")
-                            .foregroundStyle(theme.color.contentSecondary)
-                    }
-                }
-            } header: {
-                Text("Fuseau horaire")
+                Text(CalendarResourcesStrings.calendarsMenuSectionTitle)
             }
         }
     }
 }
 
 #Preview {
-    GeneralSettingsView()
+    NavigationStack {
+        GeneralSettingsView()
+    }
 }
