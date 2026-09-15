@@ -62,7 +62,6 @@ enum EditionMode {
 
 public struct EditEventView: View {
     @State private var draft: UIDraftEvent
-
     @State private var isNavigatingToAttendeesList = false
 
     @FocusState private var isTitleFocused: Bool
@@ -118,7 +117,7 @@ public struct EditEventView: View {
                     Label {
                         Text("!Privé")
                     } icon: {
-                        BouncyLock(isUnlocked: draft.isPrivate)
+                        BouncyLock(isUnlocked: !draft.isPrivate)
                     }
                     .labelStyle(.formLabel)
                 }
