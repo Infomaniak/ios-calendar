@@ -162,7 +162,7 @@ struct NextEventContentCardView: View {
                 .lineLimit(1)
 
             VStack(alignment: .leading, spacing: theme.spacing.sm) {
-                Text(event.title)
+                Text(event.displayTitle)
                     .font(.system(
                         size: lerp(a: Constants.titleCollapsedFontSize, b: Constants.titleExpandedFontSize),
                         weight: .semibold

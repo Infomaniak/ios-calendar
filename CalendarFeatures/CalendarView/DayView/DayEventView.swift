@@ -61,7 +61,7 @@ struct DayEventView: View {
     private var largeCell: some View {
         VStack(alignment: .leading, spacing: 2) {
             HStack {
-                Text(event.title)
+                Text(event.displayTitle)
                     .font(.caption.bold())
                     .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -83,7 +83,7 @@ struct DayEventView: View {
     private var mediumCell: some View {
         VStack(alignment: .leading, spacing: 2) {
             HStack {
-                Text(event.title)
+                Text(event.displayTitle)
                     .font(.caption.bold())
                     .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -101,7 +101,7 @@ struct DayEventView: View {
 
     private var smallCell: some View {
         HStack {
-            Text(event.title)
+            Text(event.displayTitle)
                 .font(.caption.bold())
                 .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -111,7 +111,7 @@ struct DayEventView: View {
     }
 
     private var compactCell: some View {
-        Text(event.title)
+        Text(event.displayTitle)
             .font(.caption.bold())
             .padding(.vertical, 2)
     }

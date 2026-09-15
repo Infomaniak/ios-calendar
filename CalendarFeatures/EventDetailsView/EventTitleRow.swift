@@ -25,7 +25,7 @@ import SwiftUI
 struct EventTitleRow: View {
     @Environment(\.esdsTheme) private var theme
 
-    let title: String
+    let title: AttributedString
     let eventColor: Color
 
     var body: some View {
@@ -43,7 +43,7 @@ struct EventTitleRow: View {
 
 #Preview {
     EventTitleRow(
-        title: UIEvent.preview.title,
+        title: UIEvent.preview.displayTitle,
         eventColor: .green
     )
 }

@@ -52,7 +52,7 @@ struct PlanningEventView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .font(.caption2)
 
-                Text(event.title)
+                Text(event.displayTitle)
                     .lineLimit(1)
                     .font(.caption.bold())
             }

@@ -83,13 +83,13 @@ struct DayHeaderView: View {
                             ForEach(eventPairs, id: \.0.id) { firstEvent, secondEvent in
                                 HStack(spacing: IKPadding.micro) {
                                     EventDetailsPopoverButton(event: firstEvent) {
-                                        Text(firstEvent.title)
+                                        Text(firstEvent.displayTitle)
                                             .allDayEventStyle(for: firstEvent)
                                     }
 
                                     if let secondEvent {
                                         EventDetailsPopoverButton(event: secondEvent) {
-                                            Text(secondEvent.title)
+                                            Text(secondEvent.displayTitle)
                                                 .allDayEventStyle(for: secondEvent)
                                         }
                                     }
