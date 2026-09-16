@@ -32,6 +32,7 @@ struct CalendarApp: App {
     private let dependencyInjectionHook = CalendarTargetAssembly()
 
     @StateObject private var rootViewState = RootViewState()
+
     @AppStorage(UserDefaults.shared.key(.firstWeekday), store: .shared)
     private var firstWeekday = DefaultPreferences.firstWeekday
 

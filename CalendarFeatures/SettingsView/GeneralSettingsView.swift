@@ -36,8 +36,8 @@ public struct GeneralSettingsView: View {
     private var defaultEventDuration = DefaultPreferences.defaultEventDuration
     @AppStorage(UserDefaults.shared.key(.useSystemTimeZone), store: .shared)
     private var useSystemTimeZone = DefaultPreferences.useLocalTime
-    @AppStorage(UserDefaults.shared.key(.timeZoneIdentifier), store: .shared)
-    private var timeZoneIdentifier = DefaultPreferences.timeZoneIdentifier
+    @AppStorage(UserDefaults.shared.key(.customTimeZoneIdentifier), store: .shared)
+    private var customTimeZoneIdentifier = DefaultPreferences.timeZoneIdentifier
 
     private var weekdayIndices: [Int] {
         let symbols = calendar.weekdaySymbols
@@ -47,18 +47,6 @@ public struct GeneralSettingsView: View {
         }
 
         return Array(symbols.indices[firstWeekdayIndex...]) + Array(symbols.indices[..<firstWeekdayIndex])
-    }
-
-    private var selectedTimeZone: TimeZone {
-        TimeZone(identifier: timeZoneIdentifier) ?? .current
-    }
-
-    private var selectedTimeZoneBinding: Binding<TimeZone> {
-        Binding {
-            selectedTimeZone
-        } set: { timeZone in
-            timeZoneIdentifier = timeZone.identifier
-        }
     }
 
     public init() {}
@@ -102,15 +90,17 @@ public struct GeneralSettingsView: View {
 
                 Toggle(CalendarResourcesStrings.generalSettingsUseDeviceTimeZoneLabel, isOn: $useSystemTimeZone)
                     .toggleStyle(.switch)
+                    .onChange(of: useSystemTimeZone) { _, newValue in
+                        guard newValue else { return }
+                        customTimeZoneIdentifier = TimeZone.autoupdatingCurrent.identifier
+                    }
 
                 NavigationLink {
-                    TimeZonePickerView(selection: selectedTimeZoneBinding)
+                    EmptyView()
                 } label: {
                     VStack(alignment: .leading) {
                         Text(CalendarResourcesStrings.generalSettingsTimeZoneLabel)
-                        Text(selectedTimeZone.localizedName(for: .generic, locale: Locale.autoupdatingCurrent) ?? selectedTimeZone
-                            .identifier)
-                            .foregroundStyle(theme.color.contentSecondary)
+                        Text(TimeZone(identifier: customTimeZoneIdentifier)?.localizedName(for: .generic, locale: .autoupdatingCurrent) ?? customTimeZoneIdentifier)
                     }
                 }
                 .disabled(useSystemTimeZone)
