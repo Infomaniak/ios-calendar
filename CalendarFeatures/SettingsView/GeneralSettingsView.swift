@@ -34,7 +34,7 @@ public struct GeneralSettingsView: View {
     private var displayWeekends = DefaultPreferences.displayWeekends
     @AppStorage(UserDefaults.shared.key(.defaultEventDuration), store: .shared)
     private var defaultEventDuration = DefaultPreferences.defaultEventDuration
-    @AppStorage(UserDefaults.shared.key(.useDeviceTimeZone), store: .shared)
+    @AppStorage(UserDefaults.shared.key(.useSystemTimeZone), store: .shared)
     private var useSystemTimeZone = DefaultPreferences.useLocalTime
     @AppStorage(UserDefaults.shared.key(.timeZoneIdentifier), store: .shared)
     private var timeZoneIdentifier = DefaultPreferences.timeZoneIdentifier
@@ -113,6 +113,7 @@ public struct GeneralSettingsView: View {
                             .foregroundStyle(theme.color.contentSecondary)
                     }
                 }
+                .disabled(useSystemTimeZone)
             } header: {
                 Text(CalendarResourcesStrings.calendarsMenuSectionTitle)
             }
