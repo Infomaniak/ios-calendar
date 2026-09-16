@@ -113,7 +113,8 @@ public struct EditEventView: View {
                     expandedPickerId: $expandedDatePickerId,
                     id: .end,
                     label: "!Fin",
-                    canSelectHour: !draft.allDay
+                    canSelectHour: !draft.allDay,
+                    range: draft.startDate ... Date.distantFuture
                 )
             }
 

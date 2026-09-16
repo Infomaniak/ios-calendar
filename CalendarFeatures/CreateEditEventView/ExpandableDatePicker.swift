@@ -40,6 +40,7 @@ struct ExpandableDatePicker<ID: Hashable>: View {
     let id: ID
     let label: String
     let canSelectHour: Bool
+    var range: ClosedRange<Date> = Date.distantPast ... Date.distantFuture
 
     private var timeFormatStyle: Date.FormatStyle {
         if timeZone.secondsFromGMT(for: date) != calendar.timeZone.secondsFromGMT(for: date) {
@@ -84,13 +85,13 @@ struct ExpandableDatePicker<ID: Hashable>: View {
         }
 
         if expandedPickerId == id, expandedComponent == .date {
-            DatePicker("!Select date", selection: $date, displayedComponents: .date)
+            DatePicker("!Select date", selection: $date, in: range, displayedComponents: .date)
                 .datePickerStyle(.graphical)
                 .labelsHidden()
         }
 
         if expandedPickerId == id, expandedComponent == .hour {
-            DatePicker("!Select hour", selection: $date, displayedComponents: .hourAndMinute)
+            DatePicker("!Select hour", selection: $date, in: range, displayedComponents: .hourAndMinute)
                 .datePickerStyle(.wheel)
                 .labelsHidden()
 
