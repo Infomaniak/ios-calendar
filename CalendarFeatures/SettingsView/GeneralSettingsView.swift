@@ -103,16 +103,12 @@ public struct GeneralSettingsView: View {
 
                 Toggle(CalendarResourcesStrings.generalSettingsUseDeviceTimeZoneLabel, isOn: $useSystemTimeZone)
                     .toggleStyle(.switch)
-                    .onChange(of: useSystemTimeZone) { _, newValue in
-                        guard newValue else { return }
-                        customTimeZoneIdentifier = TimeZone.current.identifier
-                    }
 
                 NavigationLink {
                     TimeZoneListView(timeZone: customTimeZoneBinding, referenceDate: .now)
                 } label: {
                     LabeledContent {
-                        Text(customTimeZone.formattedIdentifier)
+                        Text(useSystemTimeZone ? TimeZone.current.formattedIdentifier : customTimeZone.formattedIdentifier)
                     } label: {
                         Text(CalendarResourcesStrings.timeZoneLabel)
                     }
