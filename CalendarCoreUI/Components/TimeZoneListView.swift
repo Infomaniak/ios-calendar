@@ -16,17 +16,19 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarCore
+import CalendarResources
 import Foundation
 import SwiftUI
 
-struct TimeZoneListView: View {
+public struct TimeZoneListView: View {
     @Environment(\.dismiss) private var dismiss
 
     @State private var search = ""
 
-    @Binding var timeZone: TimeZone
+    @Binding private var timeZone: TimeZone
 
-    let referenceDate: Date
+    private let referenceDate: Date
 
     private var visibleTimeZones: [TimeZone] {
         guard !search.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
@@ -47,7 +49,12 @@ struct TimeZoneListView: View {
         .compactMap(TimeZone.init(identifier:))
         .sorted { $0.formattedIdentifier < $1.formattedIdentifier }
 
-    var body: some View {
+    public init(timeZone: Binding<TimeZone>, referenceDate: Date) {
+        _timeZone = timeZone
+        self.referenceDate = referenceDate
+    }
+
+    public var body: some View {
         List(visibleTimeZones, id: \.identifier) { timeZone in
             Button {
                 self.timeZone = timeZone
@@ -70,7 +77,7 @@ struct TimeZoneListView: View {
             }
         }
         .searchable(text: $search)
-        .navigationTitle("!Fuseau horaire")
+        .navigationTitle(CalendarResourcesStrings.timeZoneLabel)
         .toolbarTitleDisplayMode(.inline)
         .foregroundStyle(.primary)
     }
