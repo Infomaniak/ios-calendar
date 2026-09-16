@@ -35,10 +35,8 @@ public struct GeneralSettingsView: View {
     private var displayWeekends = DefaultPreferences.displayWeekends
     @AppStorage(UserDefaults.shared.key(.defaultEventDuration), store: .shared)
     private var defaultEventDuration = DefaultPreferences.defaultEventDuration
-    @AppStorage(UserDefaults.shared.key(.useSystemTimeZone), store: .shared)
-    private var useSystemTimeZone = DefaultPreferences.useLocalTime
     @AppStorage(UserDefaults.shared.key(.customTimeZoneIdentifier), store: .shared)
-    private var customTimeZoneIdentifier = DefaultPreferences.timeZoneIdentifier
+    private var customTimeZoneIdentifier: String?
 
     private var weekdayIndices: [Int] {
         let symbols = calendar.weekdaySymbols
@@ -51,7 +49,15 @@ public struct GeneralSettingsView: View {
     }
 
     private var customTimeZone: TimeZone {
-        TimeZone(identifier: customTimeZoneIdentifier) ?? .current
+        customTimeZoneIdentifier.flatMap(TimeZone.init(identifier:)) ?? .current
+    }
+
+    private var useSystemTimeZoneBinding: Binding<Bool> {
+        Binding {
+            customTimeZoneIdentifier == nil
+        } set: { useSystemTimeZone in
+            customTimeZoneIdentifier = useSystemTimeZone ? nil : TimeZone.current.identifier
+        }
     }
 
     private var customTimeZoneBinding: Binding<TimeZone> {
@@ -101,19 +107,22 @@ public struct GeneralSettingsView: View {
                 }
                 .pickerStyle(.navigationLink)
 
-                Toggle(CalendarResourcesStrings.generalSettingsUseDeviceTimeZoneLabel, isOn: $useSystemTimeZone)
-                    .toggleStyle(.switch)
+                Toggle(
+                    CalendarResourcesStrings.generalSettingsUseDeviceTimeZoneLabel,
+                    isOn: useSystemTimeZoneBinding
+                )
+                .toggleStyle(.switch)
 
                 NavigationLink {
                     TimeZoneListView(timeZone: customTimeZoneBinding, referenceDate: .now)
                 } label: {
                     LabeledContent {
-                        Text(useSystemTimeZone ? TimeZone.current.formattedIdentifier : customTimeZone.formattedIdentifier)
+                        Text(customTimeZone.formattedIdentifier)
                     } label: {
                         Text(CalendarResourcesStrings.timeZoneLabel)
                     }
                 }
-                .disabled(useSystemTimeZone)
+                .disabled(customTimeZoneIdentifier == nil)
             } header: {
                 Text(CalendarResourcesStrings.calendarsMenuSectionTitle)
             }

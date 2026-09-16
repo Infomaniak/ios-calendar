@@ -26,6 +26,4 @@ public enum DefaultPreferences {
     public static let firstWeekday = Calendar.autoupdatingCurrent.firstWeekday
     public static let displayWeekends = true
     public static let defaultEventDuration = DefaultEventDuration.thirtyMinutes
-    public static let useLocalTime = true
-    public static let timeZoneIdentifier = TimeZone.current.identifier
 }

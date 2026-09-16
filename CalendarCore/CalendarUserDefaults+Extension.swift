@@ -31,7 +31,6 @@ public extension UserDefaults.Keys {
     static let firstWeekday = UserDefaults.Keys(rawValue: "firstWeekday")
     static let displayWeekends = UserDefaults.Keys(rawValue: "displayWeekends")
     static let defaultEventDuration = UserDefaults.Keys(rawValue: "defaultEventDuration")
-    static let useSystemTimeZone = UserDefaults.Keys(rawValue: "useSystemTimeZone")
     static let customTimeZoneIdentifier = UserDefaults.Keys(rawValue: "customTimeZoneIdentifier")
 }
 
@@ -84,21 +83,9 @@ public extension UserDefaults {
         }
     }
 
-    var useLocalTime: Bool {
+    var timeZoneIdentifier: String? {
         get {
-            if object(forKey: key(.useSystemTimeZone)) == nil {
-                set(DefaultPreferences.useLocalTime, forKey: key(.useSystemTimeZone))
-            }
-            return bool(forKey: key(.useSystemTimeZone))
-        }
-        set {
-            set(newValue, forKey: key(.useSystemTimeZone))
-        }
-    }
-
-    var timeZoneIdentifier: String {
-        get {
-            return string(forKey: key(.customTimeZoneIdentifier)) ?? DefaultPreferences.timeZoneIdentifier
+            return string(forKey: key(.customTimeZoneIdentifier))
         }
         set {
             set(newValue, forKey: key(.customTimeZoneIdentifier))

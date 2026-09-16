@@ -34,16 +34,14 @@ struct CalendarApp: App {
     @AppStorage(UserDefaults.shared.key(.firstWeekday), store: .shared)
     private var firstWeekday = DefaultPreferences.firstWeekday
     @AppStorage(UserDefaults.shared.key(.customTimeZoneIdentifier), store: .shared)
-    private var customTimeZoneIdentifier = DefaultPreferences.timeZoneIdentifier
-    @AppStorage(UserDefaults.shared.key(.useSystemTimeZone), store: .shared)
-    private var useSystemTimeZone = DefaultPreferences.useLocalTime
+    private var customTimeZoneIdentifier: String?
 
     @StateObject private var rootViewState = RootViewState()
 
     private var calendar: Calendar {
         var calendar = Calendar.autoupdatingCurrent
         calendar.firstWeekday = firstWeekday
-        if !useSystemTimeZone,
+        if let customTimeZoneIdentifier,
            let customTimeZone = TimeZone(identifier: customTimeZoneIdentifier) {
             calendar.timeZone = customTimeZone
         }
