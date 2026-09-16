@@ -17,6 +17,7 @@
  */
 
 import CalendarCore
+import CalendarCoreUI
 import CalendarResources
 import ESDSFoundation
 import InfomaniakCoreUIResources
@@ -47,6 +48,18 @@ public struct GeneralSettingsView: View {
         }
 
         return Array(symbols.indices[firstWeekdayIndex...]) + Array(symbols.indices[..<firstWeekdayIndex])
+    }
+
+    private var customTimeZone: TimeZone {
+        TimeZone(identifier: customTimeZoneIdentifier) ?? .current
+    }
+
+    private var customTimeZoneBinding: Binding<TimeZone> {
+        Binding {
+            customTimeZone
+        } set: { timeZone in
+            customTimeZoneIdentifier = timeZone.identifier
+        }
     }
 
     public init() {}
@@ -96,12 +109,12 @@ public struct GeneralSettingsView: View {
                     }
 
                 NavigationLink {
-                    EmptyView()
+                    TimeZoneListView(timeZone: customTimeZoneBinding, referenceDate: .now)
                 } label: {
-                    VStack(alignment: .leading) {
-                        Text(CalendarResourcesStrings.generalSettingsTimeZoneLabel)
-                        Text(TimeZone(identifier: customTimeZoneIdentifier)?
-                            .localizedName(for: .generic, locale: .current) ?? customTimeZoneIdentifier)
+                    LabeledContent {
+                        Text(customTimeZone.formattedIdentifier)
+                    } label: {
+                        Text(CalendarResourcesStrings.timeZoneLabel)
                     }
                 }
                 .disabled(useSystemTimeZone)
