@@ -28,7 +28,9 @@ struct UIDraftEvent: Equatable {
 
     var allDay = false
     var startDate = Date()
+    var startTimeZone = TimeZone.current
     var endDate = Date().addingTimeInterval(60 * 60) // TODO: Use UserDefaults
+    var endTimeZone = TimeZone.current
 
     var attendees = [UIAttendee]()
 
@@ -61,7 +63,13 @@ enum EditionMode {
 }
 
 public struct EditEventView: View {
+    private enum DatePickerId {
+        case start
+        case end
+    }
+
     @State private var draft: UIDraftEvent
+    @State private var expandedDatePickerId: DatePickerId?
     @State private var isNavigatingToAttendeesList = false
 
     @FocusState private var isTitleFocused: Bool
@@ -91,8 +99,22 @@ public struct EditEventView: View {
 
             Section {
                 Toggle("!Toute la journée", isOn: $draft.allDay)
-                ExpandableDatePicker(date: $draft.startDate, label: "!Début", canSelectHour: !draft.allDay)
-                ExpandableDatePicker(date: $draft.endDate, label: "!Fin", canSelectHour: !draft.allDay)
+                ExpandableDatePicker(
+                    date: $draft.startDate,
+                    timeZone: $draft.startTimeZone,
+                    expandedPickerId: $expandedDatePickerId,
+                    id: .start,
+                    label: "!Début",
+                    canSelectHour: !draft.allDay
+                )
+                ExpandableDatePicker(
+                    date: $draft.endDate,
+                    timeZone: $draft.endTimeZone,
+                    expandedPickerId: $expandedDatePickerId,
+                    id: .end,
+                    label: "!Fin",
+                    canSelectHour: !draft.allDay
+                )
             }
 
             Section {
