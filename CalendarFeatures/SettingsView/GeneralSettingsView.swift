@@ -92,7 +92,7 @@ public struct GeneralSettingsView: View {
                     .toggleStyle(.switch)
                     .onChange(of: useSystemTimeZone) { _, newValue in
                         guard newValue else { return }
-                        customTimeZoneIdentifier = TimeZone.autoupdatingCurrent.identifier
+                        customTimeZoneIdentifier = TimeZone.current.identifier
                     }
 
                 NavigationLink {
@@ -100,7 +100,8 @@ public struct GeneralSettingsView: View {
                 } label: {
                     VStack(alignment: .leading) {
                         Text(CalendarResourcesStrings.generalSettingsTimeZoneLabel)
-                        Text(TimeZone(identifier: customTimeZoneIdentifier)?.localizedName(for: .generic, locale: .autoupdatingCurrent) ?? customTimeZoneIdentifier)
+                        Text(TimeZone(identifier: customTimeZoneIdentifier)?
+                            .localizedName(for: .generic, locale: .current) ?? customTimeZoneIdentifier)
                     }
                 }
                 .disabled(useSystemTimeZone)

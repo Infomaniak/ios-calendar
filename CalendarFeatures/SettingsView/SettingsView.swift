@@ -17,12 +17,9 @@
  */
 
 import CalendarResources
-import ESDSFoundation
 import SwiftUI
 
 public struct SettingsView: View {
-    @Environment(\.esdsTheme) private var theme
-
     public init() {}
 
     public var body: some View {
@@ -31,11 +28,8 @@ public struct SettingsView: View {
                 NavigationLink {
                     GeneralSettingsView()
                 } label: {
-                    Text("Général")
-                        .foregroundStyle(theme.color.contentPrimary)
+                    Text(CalendarResourcesStrings.generalSettingsTitle)
                 }
-            } header: {
-                Text("Réglages")
             }
         }
         .navigationTitle(CalendarResourcesStrings.settingsTitle)
