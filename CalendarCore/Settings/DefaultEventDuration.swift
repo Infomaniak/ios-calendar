@@ -30,7 +30,6 @@ public enum DefaultEventDuration: Sendable, Equatable, Hashable, RawRepresentabl
     case oneHourAndThirtyMinutes
     case oneHourAndFortyFiveMinutes
     case twoHours
-    case custom(TimeInterval)
 
     public static let defaultCases: [DefaultEventDuration] = [
         .fifteenMinutes,
@@ -64,14 +63,12 @@ public enum DefaultEventDuration: Sendable, Equatable, Hashable, RawRepresentabl
             return 105 * 60
         case .twoHours:
             return 120 * 60
-        case .custom(let timeInterval):
-            return max(timeInterval, Self.minimumTimeInterval)
         }
     }
 
     public init(timeInterval: TimeInterval) {
         let timeInterval = max(timeInterval, Self.minimumTimeInterval)
-        self = Self.defaultCases.first { $0.timeInterval == timeInterval } ?? .custom(timeInterval)
+        self = Self.defaultCases.first { $0.timeInterval == timeInterval } ?? .thirtyMinutes
     }
 
     public init(rawValue: Int) {

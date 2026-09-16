@@ -32,7 +32,7 @@ public extension UserDefaults.Keys {
     static let displayWeekends = UserDefaults.Keys(rawValue: "displayWeekends")
     static let defaultEventDuration = UserDefaults.Keys(rawValue: "defaultEventDuration")
     static let useSystemTimeZone = UserDefaults.Keys(rawValue: "useSystemTimeZone")
-    static let timeZoneIdentifier = UserDefaults.Keys(rawValue: "timeZoneIdentifier")
+    static let customTimeZoneIdentifier = UserDefaults.Keys(rawValue: "customTimeZoneIdentifier")
 }
 
 public extension UserDefaults {
@@ -98,10 +98,10 @@ public extension UserDefaults {
 
     var timeZoneIdentifier: String {
         get {
-            return string(forKey: key(.timeZoneIdentifier)) ?? DefaultPreferences.timeZoneIdentifier
+            return string(forKey: key(.customTimeZoneIdentifier)) ?? DefaultPreferences.timeZoneIdentifier
         }
         set {
-            set(newValue, forKey: key(.timeZoneIdentifier))
+            set(newValue, forKey: key(.customTimeZoneIdentifier))
         }
     }
 }
