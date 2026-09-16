@@ -30,7 +30,7 @@ struct AttendeesListView: View {
         if !search.isEmpty {
             filteredAttendees = attendees.filter {
                 $0.displayName?.localizedCaseInsensitiveContains(search) == true ||
-                $0.email.localizedCaseInsensitiveContains(search)
+                    $0.email.localizedCaseInsensitiveContains(search)
             }
         }
 
