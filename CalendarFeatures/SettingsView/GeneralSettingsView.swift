@@ -127,6 +127,8 @@ public struct GeneralSettingsView: View {
                 Text(CalendarResourcesStrings.calendarsMenuSectionTitle)
             }
         }
+        .navigationTitle(CalendarResourcesStrings.generalSettingsTitle)
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 
