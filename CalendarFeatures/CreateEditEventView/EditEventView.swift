@@ -22,46 +22,19 @@ import DesignSystem
 import InfomaniakDI
 import MultiplatformCalendar
 import SwiftUI
+import UIKit
 
-struct UIDraftEvent: Equatable {
-    var calendar: UICalendar?
-
-    var title = ""
-
-    var allDay = false
-    var startDate = Date()
-    var startTimeZone = TimeZone.current
-    var endDate = Date().addingTimeInterval(60 * 60) // TODO: Use UserDefaults
-    var endTimeZone = TimeZone.current
-
-    var attendees = [UIAttendee]()
-
-    var isOccupied = true
-    var isPrivate = false
-
-    var classification: UIClassification {
-        return isPrivate ? .private : .public
-    }
-
-    init(calendar: UICalendar?) {
-        self.calendar = calendar
-    }
-
-    init(event: CalendarCoreUI.UIEvent) {
-        title = event.title
-    }
-}
-
-enum EditionMode {
-    case create
-    case edit(origin: CalendarCoreUI.UIEvent)
+public enum EditionMode {
+    case new
+    case editEvent(origin: CalendarCoreUI.UIEvent, calendar: UICalendar)
+    case editDraft(draft: UIDraftEvent)
 
     var navigationTitle: String {
         switch self {
-        case .create:
-            return "Create Event"
-        case .edit:
-            return "Edit Event"
+        case .new:
+            return "!Create Event"
+        case .editEvent, .editDraft:
+            return "!Edit Event"
         }
     }
 }
@@ -87,15 +60,17 @@ public struct EditEventView: View {
         draft.allDay ? .date : [.date, .hourAndMinute]
     }
 
-    public init(event: CalendarCoreUI.UIEvent? = nil, completion: @escaping () -> Void = {}) {
-        if let event {
-            _draft = State(wrappedValue: UIDraftEvent(event: event))
-            editionMode = .edit(origin: event)
-        } else {
-            _draft = State(wrappedValue: UIDraftEvent(calendar: nil))
-            editionMode = .create
+    public init(editionMode: EditionMode, completion: @escaping () -> Void = {}) {
+        switch editionMode {
+        case .new:
+            _draft = State(wrappedValue: UIDraftEvent.empty())
+        case .editEvent(let origin, let calendar):
+            _draft = State(wrappedValue: UIDraftEvent.fromEvent(origin, calendar: calendar))
+        case .editDraft(let draft):
+            _draft = State(wrappedValue: draft)
         }
 
+        self.editionMode = editionMode
         self.completion = completion
     }
 
@@ -161,7 +136,7 @@ public struct EditEventView: View {
             Section {
                 Picker(selection: $draft.calendar) {
                     ForEach(availableCalendars) { calendar in
-                        Text(calendar.displayName)
+                        CalendarCell(calendar: calendar)
                             .tag(calendar)
                     }
                 } label: {
@@ -193,7 +168,7 @@ public struct EditEventView: View {
     }
 
     private func focusTitleIfNecessary() {
-        if case .create = editionMode {
+        if case .new = editionMode {
             isTitleFocused = true
         }
     }
@@ -214,7 +189,7 @@ public struct EditEventView: View {
     VStack {}
         .sheet(isPresented: .constant(true)) {
             NavigationStack {
-                EditEventView {}
+                EditEventView(editionMode: .new) {}
             }
             .interactiveDismissDisabled()
         }
