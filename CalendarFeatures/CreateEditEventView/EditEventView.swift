@@ -19,6 +19,8 @@
 import CalendarCoreUI
 import CalendarResources
 import DesignSystem
+import InfomaniakDI
+import MultiplatformCalendar
 import SwiftUI
 
 struct UIDraftEvent: Equatable {
@@ -41,7 +43,9 @@ struct UIDraftEvent: Equatable {
         return isPrivate ? .private : .public
     }
 
-    init() {}
+    init(calendar: UICalendar?) {
+        self.calendar = calendar
+    }
 
     init(event: CalendarCoreUI.UIEvent) {
         title = event.title
@@ -68,6 +72,8 @@ public struct EditEventView: View {
         case end
     }
 
+    @State private var availableCalendars = [UICalendar]()
+
     @State private var draft: UIDraftEvent
     @State private var expandedDatePickerId: DatePickerId?
     @State private var isNavigatingToAttendeesList = false
@@ -75,19 +81,22 @@ public struct EditEventView: View {
     @FocusState private var isTitleFocused: Bool
 
     private let editionMode: EditionMode
+    private let completion: () -> Void
 
     private var datePickerComponents: DatePickerComponents {
         draft.allDay ? .date : [.date, .hourAndMinute]
     }
 
-    public init(event: CalendarCoreUI.UIEvent? = nil) {
+    public init(event: CalendarCoreUI.UIEvent? = nil, completion: @escaping () -> Void = {}) {
         if let event {
             _draft = State(wrappedValue: UIDraftEvent(event: event))
             editionMode = .edit(origin: event)
         } else {
-            _draft = State(wrappedValue: UIDraftEvent())
+            _draft = State(wrappedValue: UIDraftEvent(calendar: nil))
             editionMode = .create
         }
+
+        self.completion = completion
     }
 
     public var body: some View {
@@ -130,7 +139,7 @@ public struct EditEventView: View {
                     EventAttendeesCell(attendees: draft.attendees)
                 }
                 .navigationDestination(isPresented: $isNavigatingToAttendeesList) {
-                    Text("Hello")
+                    Text("Not editable yet.")
                 }
             }
 
@@ -149,20 +158,22 @@ public struct EditEventView: View {
                 }
             }
 
-            if draft.calendar != nil {
-                Section {
-                    Picker(selection: $draft.calendar) {
-                        Text("ToDo")
-                    } label: {
-                        Text("Calendrier")
+            Section {
+                Picker(selection: $draft.calendar) {
+                    ForEach(availableCalendars) { calendar in
+                        Text(calendar.displayName)
+                            .tag(calendar)
                     }
+                } label: {
+                    Text("!Calendriers")
                 }
             }
         }
         .onAppear {
-            if case .create = editionMode {
-                isTitleFocused = true
-            }
+            focusTitleIfNecessary()
+        }
+        .task {
+            await observeCalendars()
         }
         .navigationTitle(Text(editionMode.navigationTitle))
         .toolbarTitleDisplayMode(.inline)
@@ -170,6 +181,7 @@ public struct EditEventView: View {
             ToolbarItem(placement: .confirmationAction) {
                 Button {
                     // TODO: Confirm
+                    completion()
                 } label: {
                     Label("!Confirmer", image: CalendarResourcesAsset.Images.check)
                         .labelStyle(.iconOnly)
@@ -177,8 +189,23 @@ public struct EditEventView: View {
                 .buttonStyle(.borderedProminent)
             }
         }
-        .closeToolbarItem {
-            // TODO: Cancel
+        .closeToolbarItem(completion)
+    }
+
+    private func focusTitleIfNecessary() {
+        if case .create = editionMode {
+            isTitleFocused = true
+        }
+    }
+
+    private func observeCalendars() async {
+        @InjectService var calendarSDK: CalendarCoreGraph
+        for await calendars in calendarSDK.calendarManager.observeCalendars() {
+            availableCalendars = calendars.map { UICalendar(calendar: $0) }
+
+            if draft.calendar == nil {
+                draft.calendar = availableCalendars.first
+            }
         }
     }
 }
@@ -187,7 +214,7 @@ public struct EditEventView: View {
     VStack {}
         .sheet(isPresented: .constant(true)) {
             NavigationStack {
-                EditEventView()
+                EditEventView {}
             }
             .interactiveDismissDisabled()
         }

@@ -86,7 +86,9 @@ public struct CalendarView: View {
         ))
         .sheet(isPresented: $mainViewState.isShowingEventCreation) {
             NavigationStack {
-                EditEventView(event: nil)
+                EditEventView(event: nil) {
+                    mainViewState.isShowingEventCreation = false
+                }
             }
         }
         .toolbar {
