@@ -83,6 +83,7 @@ public struct EditEventView: View {
 
             Section {
                 Toggle("!Toute la journée", isOn: $draft.allDay)
+
                 ExpandableDatePicker(
                     date: $draft.startDate,
                     timeZone: $draft.startTimeZone,
@@ -92,10 +93,12 @@ public struct EditEventView: View {
                     canSelectHour: !draft.allDay
                 )
                 .onChange(of: draft.startTimeZone) { oldValue, newValue in
-                    if oldValue == draft.endTimeZone {
-                        draft.endTimeZone = newValue
-                    }
+                    shiftEndTimeZoneIfNecessary(oldValue: oldValue, newValue: newValue)
                 }
+                .onChange(of: draft.startDate) { oldValue, newValue in
+                    shiftEndDateIfNecessary(oldValue: oldValue, newValue: newValue)
+                }
+
                 ExpandableDatePicker(
                     date: $draft.endDate,
                     timeZone: $draft.endTimeZone,
@@ -170,6 +173,22 @@ public struct EditEventView: View {
     private func focusTitleIfNecessary() {
         if case .new = editionMode {
             isTitleFocused = true
+        }
+    }
+
+    private func shiftEndTimeZoneIfNecessary(oldValue: TimeZone, newValue: TimeZone) {
+        if oldValue == draft.endTimeZone {
+            draft.endTimeZone = newValue
+        }
+    }
+
+    private func shiftEndDateIfNecessary(oldValue: Date, newValue: Date) {
+        let startDate = newValue.addingTimeInterval(Double(draft.startTimeZone.secondsFromGMT(for: newValue)))
+        let endDate = draft.endDate.addingTimeInterval(Double(draft.endTimeZone.secondsFromGMT(for: draft.endDate)))
+
+        if startDate >= endDate {
+            let previousDuration = draft.endDate.timeIntervalSince(oldValue)
+            draft.endDate = newValue.addingTimeInterval(previousDuration)
         }
     }
 
