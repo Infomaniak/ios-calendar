@@ -94,8 +94,8 @@ struct ParticipantsRow: View {
 
             if uniqueAttendees.count > 4 {
                 InitialsView(initials: "+\(uniqueAttendees.count - 4)",
-                             backgroundColor: theme.color.backgroundElevationSurfacePressed,
-                             foregroundColor: theme.color.backgroundBrandDefault,
+                             backgroundColor: theme.color.backgroundDatavizGrayDim2,
+                             foregroundColor: theme.color.contentOnDatavizGrayDim1,
                              size: IKIconSize.large.rawValue)
             }
         }
