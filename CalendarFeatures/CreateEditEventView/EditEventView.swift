@@ -107,6 +107,11 @@ public struct EditEventView: View {
                     label: "!Début",
                     canSelectHour: !draft.allDay
                 )
+                .onChange(of: draft.startTimeZone) { oldValue, newValue in
+                    if oldValue == draft.endTimeZone {
+                        draft.endTimeZone = newValue
+                    }
+                }
                 ExpandableDatePicker(
                     date: $draft.endDate,
                     timeZone: $draft.endTimeZone,
