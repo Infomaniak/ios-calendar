@@ -53,6 +53,7 @@ struct CalendarApp: App {
             RootView()
                 .environmentObject(rootViewState)
                 .environment(\.calendar, calendar)
+                .environment(\.timeZone, calendar.timeZone)
                 .sceneLifecycle(willEnterForeground: willEnterForeground)
                 .esdsTheme(.calendar)
         }
