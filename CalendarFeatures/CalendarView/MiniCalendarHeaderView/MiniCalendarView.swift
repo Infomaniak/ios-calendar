@@ -19,7 +19,6 @@
 import CalendarCore
 import CalendarCoreUI
 import DesignSystem
-import InfiniteScrollViews
 import InfomaniakDI
 import MultiplatformCalendar
 import Observation
@@ -69,24 +68,11 @@ struct MiniCalendarView: View {
     var body: some View {
         VStack(spacing: 0) {
             DayOfWeekView()
-            PagedInfiniteScrollView(
-                changeIndex: $displayedPage,
-                content: { page in
-                    switch displayMode {
-                    case .month:
-                        MonthHeaderView(page: page, selectedDate: $selectedDate)
-                    case .week:
-                        WeekHeaderView(page: page, selectedDate: $selectedDate)
-                    }
-                },
-                increaseIndexAction: referenceDateAfter,
-                decreaseIndexAction: referenceDateBefore,
-                shouldAnimateBetween: shouldAnimateBetween,
-                transitionStyle: .scroll,
-                navigationOrientation: .horizontal,
-                backgroundColor: .clear
+            MiniCalendarPager(
+                displayMode: displayMode,
+                selectedDate: $selectedDate,
+                displayedPage: $displayedPage
             )
-            .id(displayMode)
 
             if displayMode == .month {
                 MonthPickerView(selectedDate: $selectedDate, displayedPage: $displayedPage)
@@ -104,31 +90,6 @@ struct MiniCalendarView: View {
                 )
             }
         }
-    }
-
-    private func shouldAnimateBetween(targetPage: ReferenceDatePage,
-                                      currentPage: ReferenceDatePage) -> (Bool, UIPageViewController.NavigationDirection) {
-        guard targetPage.referenceDateInterval == currentPage.referenceDateInterval else {
-            return (false, .forward)
-        }
-
-        let targetDate = targetPage.referenceDate
-        let currentDate = currentPage.referenceDate
-        return (targetDate != currentDate, targetDate > currentDate ? .forward : .reverse)
-    }
-
-    private func referenceDateAfter(_ page: ReferenceDatePage) -> ReferenceDatePage? {
-        guard let date = calendar.date(byAdding: displayMode.referenceDateInterval, value: 1, to: page.referenceDate) else {
-            return nil
-        }
-        return ReferenceDatePage(referenceDate: date, referenceDateInterval: displayMode.referenceDateInterval)
-    }
-
-    private func referenceDateBefore(_ page: ReferenceDatePage) -> ReferenceDatePage? {
-        guard let date = calendar.date(byAdding: displayMode.referenceDateInterval, value: -1, to: page.referenceDate) else {
-            return nil
-        }
-        return ReferenceDatePage(referenceDate: date, referenceDateInterval: displayMode.referenceDateInterval)
     }
 
     @concurrent
