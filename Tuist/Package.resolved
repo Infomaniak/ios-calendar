@@ -1,5 +1,5 @@
 {
-  "originHash" : "d1aef1e66c27e1ef49bea0d9a931fcfe06ee33e7cf5b551e3c766016e63848ef",
+  "originHash" : "7a4daaaaf0b102413eedf16db414eafe4dff61fe24f0ab36d2f0f3554483e816",
   "pins" : [
     {
       "identity" : "alamofire",
@@ -78,8 +78,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-design-system.git",
       "state" : {
-        "revision" : "0c7db9142ac9101b207817d80df771e6ac7b5ab3",
-        "version" : "0.2.1"
+        "revision" : "e2332b943b7b52cb46ef3cef0ba0fa5109ef9475",
+        "version" : "0.3.0"
       }
     },
     {
