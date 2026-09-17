@@ -35,6 +35,8 @@ struct CalendarApp: App {
     private var firstWeekday = DefaultPreferences.firstWeekday
     @AppStorage(UserDefaults.shared.key(.customTimeZoneIdentifier), store: .shared)
     private var customTimeZoneIdentifier: String?
+    @AppStorage(UserDefaults.shared.key(.theme), store: .shared)
+    private var theme = DefaultPreferences.theme
 
     @StateObject private var rootViewState = RootViewState()
 
@@ -56,6 +58,7 @@ struct CalendarApp: App {
                 .environment(\.timeZone, calendar.timeZone)
                 .sceneLifecycle(willEnterForeground: willEnterForeground)
                 .esdsTheme(.calendar)
+                .preferredColorScheme(theme.colorScheme)
         }
     }
 
