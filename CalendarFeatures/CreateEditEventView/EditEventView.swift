@@ -230,7 +230,7 @@ public struct EditEventView: View {
     private func observeCalendars() async {
         @InjectService var calendarSDK: CalendarCoreGraph
         for await calendars in calendarSDK.calendarManager.observeCalendars() {
-            availableCalendars = calendars.map { UICalendar(calendar: $0) }
+            availableCalendars = calendars.map { UICalendar(calendar: $0) }.filter { $0.accessLevel.canWrite }
 
             if draft.calendarId == nil {
                 draft.calendarId = availableCalendars.first?.id

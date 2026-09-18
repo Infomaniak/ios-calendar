@@ -26,15 +26,24 @@ public struct UICalendar: Identifiable, Equatable, Hashable, Sendable {
     public let color: Color
     public let accountId: Int
     public let isVisible: Bool
+    public let accessLevel: CalendarAccessLevel
     public let sourceColorArgb: Int32
 
-    public init(id: String, displayName: String, colorArgb: Int32, accountId: Int, isVisible: Bool) {
+    public init(
+        id: String,
+        displayName: String,
+        colorArgb: Int32,
+        accountId: Int,
+        isVisible: Bool,
+        accessLevel: CalendarAccessLevel
+    ) {
         self.id = id
         self.displayName = displayName
         color = Color(argb: colorArgb)
         sourceColorArgb = colorArgb
         self.accountId = accountId
         self.isVisible = isVisible
+        self.accessLevel = accessLevel
     }
 
     public static func == (lhs: UICalendar, rhs: UICalendar) -> Bool {
@@ -42,6 +51,7 @@ public struct UICalendar: Identifiable, Equatable, Hashable, Sendable {
             lhs.displayName == rhs.displayName &&
             lhs.accountId == rhs.accountId &&
             lhs.isVisible == rhs.isVisible &&
+            lhs.accessLevel == rhs.accessLevel &&
             lhs.sourceColorArgb == rhs.sourceColorArgb
     }
 
@@ -57,6 +67,7 @@ public extension UICalendar {
         color = Color(argb: calendar.colors.sourceColor)
         accountId = Int(calendar.accountIdValue)
         isVisible = calendar.isVisible
+        accessLevel = calendar.accessLevel
         sourceColorArgb = calendar.colors.sourceColor
     }
 }
@@ -67,6 +78,7 @@ public extension UICalendar {
         displayName: "John Appleseed - Personal",
         colorArgb: Color.red.cgColor?.argb ?? 0,
         accountId: 1,
-        isVisible: true
+        isVisible: true,
+        accessLevel: .owner
     )
 }
