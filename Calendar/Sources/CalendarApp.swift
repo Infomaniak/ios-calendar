@@ -31,14 +31,34 @@ struct CalendarApp: App {
     // periphery:ignore - Making sure the DI is registered at a very early stage of the app launch.
     private let dependencyInjectionHook = CalendarTargetAssembly()
 
+    @AppStorage(UserDefaults.shared.key(.firstWeekday), store: .shared)
+    private var firstWeekday = DefaultPreferences.firstWeekday
+    @AppStorage(UserDefaults.shared.key(.customTimeZoneIdentifier), store: .shared)
+    private var customTimeZoneIdentifier: String?
+    @AppStorage(UserDefaults.shared.key(.theme), store: .shared)
+    private var theme = DefaultPreferences.theme
+
     @StateObject private var rootViewState = RootViewState()
+
+    private var calendar: Calendar {
+        var calendar = Calendar.autoupdatingCurrent
+        calendar.firstWeekday = firstWeekday
+        if let customTimeZoneIdentifier,
+           let customTimeZone = TimeZone(identifier: customTimeZoneIdentifier) {
+            calendar.timeZone = customTimeZone
+        }
+        return calendar
+    }
 
     var body: some Scene {
         WindowGroup {
             RootView()
                 .environmentObject(rootViewState)
+                .environment(\.calendar, calendar)
+                .environment(\.timeZone, calendar.timeZone)
                 .sceneLifecycle(willEnterForeground: willEnterForeground)
                 .esdsTheme(.calendar)
+                .preferredColorScheme(theme.colorScheme)
         }
     }
 

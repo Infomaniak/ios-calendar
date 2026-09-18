@@ -71,6 +71,24 @@
  * Keep the parentheses in every translation. */
 "eventUntitledLabel" = "(Utan titel)";
 
+/* loco:6aa9363a0e25629a59012932 */
+"generalSettingsDefaultEventDurationLabel" = "Standardlängd för händelser";
+
+/* loco:6aa804867b7998a59003a9fc */
+"generalSettingsDisplayLabel" = "Visning";
+
+/* loco:6aa9363ad1458d183b0de9e2 */
+"generalSettingsShowWeekendsLabel" = "Visa helger";
+
+/* loco:6aa9363a0ccb57137202b232 */
+"generalSettingsStartOfWeekLabel" = "Veckans början";
+
+/* loco:6aaa8d68dc7e7cd5710750db */
+"generalSettingsTitle" = "Allmänt";
+
+/* loco:6aa9363a66e1c7d3970dd2e2 */
+"generalSettingsUseDeviceTimeZoneLabel" = "Använd enhetens tidszon";
+
 /* loco:6a3e2023d4ed90a7ed0b19e5 */
 "helpTitle" = "Hjälp";
 
@@ -157,6 +175,9 @@
 
 /* loco:6a203f703a4a6492b407ce23 */
 "threeDaysTitle" = "Tre dagar";
+
+/* loco:6aa9363b3f16c92f7e024b92 */
+"timeZoneLabel" = "Tidszon";
 
 /* loco:6a63118bfc3889d1fb077fc2 */
 "titleLabel" = "Titel";
