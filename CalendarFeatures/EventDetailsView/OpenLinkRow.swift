@@ -56,11 +56,11 @@ struct OpenLinkRow: View {
                 openURL(linkURL)
             } label: {
                 Text(buttonTitle)
-                    .foregroundStyle(theme.color.backgroundBrandDefault)
+                    .foregroundStyle(theme.color.backgroundBrand)
                     .font(.body.weight(.semibold))
                     .padding(.horizontal, 11)
                     .padding(.vertical, 6)
-                    .background(theme.color.backgroundBrandDefault.opacity(0.1), in: Capsule())
+                    .background(theme.color.backgroundBrand.opacity(0.1), in: Capsule())
             }
             .buttonStyle(.plain)
             .padding(.horizontal, IKPadding.medium)

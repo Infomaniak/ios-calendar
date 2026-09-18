@@ -111,7 +111,7 @@ private struct MonthButton: View {
                 .padding(.horizontal, IKPadding.small)
                 .padding(.vertical, IKPadding.micro)
                 .background(
-                    isCurrentMonth ? Color.accentColor : theme.color.backgroundDatavizGrayDim1Default.opacity(0.1),
+                    isCurrentMonth ? Color.accentColor : theme.color.backgroundDatavizGrayDim1.opacity(0.1),
                     in: Capsule()
                 )
                 .overlay {

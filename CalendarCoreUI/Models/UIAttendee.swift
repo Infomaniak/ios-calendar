@@ -60,13 +60,13 @@ public extension UIParticipationStatus {
     func color(theme: ESDSTheme) -> Color {
         switch self {
         case .accepted:
-            return theme.color.contentFeedbackSuccessDefault
+            return theme.color.contentFeedbackSuccess
         case .tentative:
             return theme.color.contentDisabled
         case .needsAction:
-            return theme.color.contentFeedbackWarningDefault
+            return theme.color.contentFeedbackWarning
         case .declined:
-            return theme.color.contentFeedbackErrorDefault
+            return theme.color.contentFeedbackError
         }
     }
 

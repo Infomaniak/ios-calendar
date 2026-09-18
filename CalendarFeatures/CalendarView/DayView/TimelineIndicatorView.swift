@@ -25,7 +25,7 @@ struct TimelineIndicatorView: View {
     let date: Date
 
     private var tint: Color {
-        theme.color.backgroundDatavizPinkDim1Default
+        theme.color.backgroundDatavizPinkDim1
     }
 
     var body: some View {

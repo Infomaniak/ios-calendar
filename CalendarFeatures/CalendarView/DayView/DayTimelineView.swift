@@ -70,7 +70,7 @@ struct DayTimelineView: View {
                     var path = Path()
                     path.move(to: CGPoint(x: leadingOffset, y: yPosition - Constants.indexHeight / 2))
                     path.addLine(to: CGPoint(x: size.width, y: yPosition - Constants.indexHeight / 2))
-                    context.stroke(path, with: .color(theme.color.borderDim2Default), lineWidth: Constants.indexHeight)
+                    context.stroke(path, with: .color(theme.color.borderDim2), lineWidth: Constants.indexHeight)
 
                     context.draw(
                         hourSymbol,
