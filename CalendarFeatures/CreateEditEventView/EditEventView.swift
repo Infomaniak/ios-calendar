@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarCore
 import CalendarCoreUI
 import CalendarResources
 import DesignSystem
@@ -105,7 +106,10 @@ public struct EditEventView: View {
 
                 ExpandableDatePicker(
                     date: $draft.startDate,
-                    timeZone: $draft.startTimeZone,
+                    timeZone: Binding(
+                        get: { draft.startTimeZone ?? .current },
+                        set: { draft.startTimeZone = $0 }
+                    ),
                     expandedPickerId: $expandedDatePickerId,
                     id: .start,
                     label: CalendarResourcesStrings.startLabel,
@@ -120,7 +124,10 @@ public struct EditEventView: View {
 
                 ExpandableDatePicker(
                     date: $draft.endDate,
-                    timeZone: $draft.endTimeZone,
+                    timeZone: Binding(
+                        get: { draft.endTimeZone ?? .current },
+                        set: { draft.endTimeZone = $0 }
+                    ),
                     expandedPickerId: $expandedDatePickerId,
                     id: .end,
                     label: CalendarResourcesStrings.endLabel,
@@ -133,7 +140,7 @@ public struct EditEventView: View {
                 Button {
                     isNavigatingToAttendeesList = true
                 } label: {
-                    EventAttendeesCell(attendees: draft.attendees)
+                    EventAttendeesCell(attendees: draft.attendees.map { UIAttendee(attendee: $0) })
                 }
                 .navigationDestination(isPresented: $isNavigatingToAttendeesList) {
                     Text(CalendarResourcesStrings.attendeesNotEditableMessage)
@@ -161,10 +168,10 @@ public struct EditEventView: View {
 
             if !availableCalendars.isEmpty {
                 Section {
-                    Picker(selection: $draft.calendar) {
+                    Picker(selection: $draft.calendarId) {
                         ForEach(availableCalendars) { calendar in
                             CalendarCell(calendar: calendar)
-                                .tag(calendar)
+                                .tag(Optional(calendar.id))
                         }
                     } label: {
                         Text(CalendarResourcesStrings.calendarsMenuSectionTitle)
@@ -183,8 +190,10 @@ public struct EditEventView: View {
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
                 Button {
-                    // TODO: Confirm
-                    completion()
+                    Task {
+                        try? await CreateEventUseCase().execute(draft: draft)
+                        completion()
+                    }
                 } label: {
                     Label(CalendarResourcesStrings.buttonConfirm, image: CalendarResourcesAsset.Images.check)
                         .labelStyle(.iconOnly)
@@ -202,15 +211,15 @@ public struct EditEventView: View {
         }
     }
 
-    private func shiftEndTimeZoneIfNecessary(oldValue: TimeZone, newValue: TimeZone) {
+    private func shiftEndTimeZoneIfNecessary(oldValue: TimeZone?, newValue: TimeZone?) {
         if oldValue == draft.endTimeZone {
             draft.endTimeZone = newValue
         }
     }
 
     private func shiftEndDateIfNecessary(oldValue: Date, newValue: Date) {
-        let startDate = newValue.addingTimeInterval(Double(draft.startTimeZone.secondsFromGMT(for: newValue)))
-        let endDate = draft.endDate.addingTimeInterval(Double(draft.endTimeZone.secondsFromGMT(for: draft.endDate)))
+        let startDate = newValue.addingTimeInterval(Double((draft.startTimeZone ?? .current).secondsFromGMT(for: newValue)))
+        let endDate = draft.endDate.addingTimeInterval(Double((draft.endTimeZone ?? .current).secondsFromGMT(for: draft.endDate)))
 
         if startDate >= endDate {
             let previousDuration = draft.endDate.timeIntervalSince(oldValue)
@@ -223,8 +232,8 @@ public struct EditEventView: View {
         for await calendars in calendarSDK.calendarManager.observeCalendars() {
             availableCalendars = calendars.map { UICalendar(calendar: $0) }
 
-            if draft.calendar == nil {
-                draft.calendar = availableCalendars.first
+            if draft.calendarId == nil {
+                draft.calendarId = availableCalendars.first?.id
             }
         }
     }
