@@ -22,6 +22,7 @@ import SwiftUI
 public extension UserDefaults.Keys {
     static let matomoAuthorized = UserDefaults.Keys(rawValue: "matomoAuthorized")
     static let sentryAuthorized = UserDefaults.Keys(rawValue: "sentryAuthorized")
+    static let defaultEventDuration = UserDefaults.Keys(rawValue: "defaultEventDuration")
 }
 
 public extension UserDefaults {
@@ -48,4 +49,14 @@ public extension UserDefaults {
             set(newValue, forKey: key(.sentryAuthorized))
         }
     }
+
+    var defaultEventDuration: DefaultEventDuration {
+            get {
+                let rawValue = integer(forKey: key(.defaultEventDuration))
+                return rawValue == 0 ? DefaultPreferences.defaultEventDuration : DefaultEventDuration(rawValue: rawValue)
+            }
+            set {
+                setValue(newValue.rawValue, forKey: key(.defaultEventDuration))
+            }
+        }
 }

@@ -21,4 +21,5 @@ import Foundation
 public enum DefaultPreferences {
     public static let matomoAuthorized = true
     public static let sentryAuthorized = true
+    public static let defaultEventDuration = DefaultEventDuration.thirtyMinutes
 }
