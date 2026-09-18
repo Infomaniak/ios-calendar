@@ -19,6 +19,7 @@
 import CalendarCoreUI
 import CalendarResources
 import DesignSystem
+import ESDSFoundation
 import InfomaniakDI
 import MultiplatformCalendar
 import SwiftUI
@@ -27,7 +28,7 @@ import UIKit
 public enum EditionMode {
     case new
     case editEvent(origin: CalendarCoreUI.UIEvent, calendar: UICalendar)
-    case editDraft(draft: UIDraftEvent)
+    case editDraft(draft: EventDraft)
 
     var navigationTitle: String {
         switch self {
@@ -45,9 +46,11 @@ public struct EditEventView: View {
         case end
     }
 
+    @Environment(\.esdsTheme) private var theme
+
     @State private var availableCalendars = [UICalendar]()
 
-    @State private var draft: UIDraftEvent
+    @State private var draft: EventDraft
     @State private var expandedDatePickerId: DatePickerId?
     @State private var isNavigatingToAttendeesList = false
 
@@ -55,6 +58,11 @@ public struct EditEventView: View {
 
     private let editionMode: EditionMode
     private let completion: () -> Void
+    private let validator = EventDraftValidator()
+
+    private var validationErrors: Set<EventDraftValidator.ValidationError> {
+        validator.validate(draft)
+    }
 
     private var datePickerComponents: DatePickerComponents {
         draft.allDay ? .date : [.date, .hourAndMinute]
@@ -63,9 +71,9 @@ public struct EditEventView: View {
     public init(editionMode: EditionMode, completion: @escaping () -> Void = {}) {
         switch editionMode {
         case .new:
-            _draft = State(wrappedValue: UIDraftEvent.empty())
+            _draft = State(wrappedValue: EventDraft.empty())
         case .editEvent(let origin, let calendar):
-            _draft = State(wrappedValue: UIDraftEvent.fromEvent(origin, calendar: calendar))
+            _draft = State(wrappedValue: EventDraft.fromEvent(origin, calendar: calendar))
         case .editDraft(let draft):
             _draft = State(wrappedValue: draft)
         }
@@ -79,6 +87,17 @@ public struct EditEventView: View {
             Section {
                 TextField(CalendarResourcesStrings.titleLabel, text: $draft.title)
                     .focused($isTitleFocused)
+            } footer: {
+                if validationErrors.contains(.titleTooLong) {
+                    HStack {
+                        Text(EventDraftValidator.ValidationError.titleTooLong.errorDescription)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        Text(EventDraftValidator.maximumTitleCharacterCount - draft.title.count, format: .number)
+                            .monospacedDigit()
+                    }
+                    .font(.caption)
+                    .foregroundStyle(theme.color.contentFeedbackErrorDefault)
+                }
             }
 
             Section {
@@ -171,6 +190,7 @@ public struct EditEventView: View {
                         .labelStyle(.iconOnly)
                 }
                 .buttonStyle(.borderedProminent)
+                .disabled(!validationErrors.isEmpty)
             }
         }
         .closeToolbarItem(completion)

@@ -19,10 +19,11 @@
 import CalendarCoreUI
 import Foundation
 
-public struct UIDraftEvent: Equatable {
+public struct EventDraft: Equatable {
     var calendar: UICalendar?
 
     var title: String
+    var description: String
 
     var allDay: Bool
     var startDate: Date
@@ -40,11 +41,12 @@ public struct UIDraftEvent: Equatable {
     }
 }
 
-public extension UIDraftEvent {
-    static func empty() -> UIDraftEvent {
-        return UIDraftEvent(
+public extension EventDraft {
+    static func empty() -> EventDraft {
+        return EventDraft(
             calendar: nil,
             title: "",
+            description: "",
             allDay: false,
             startDate: Date(),
             startTimeZone: TimeZone.current,
@@ -56,10 +58,11 @@ public extension UIDraftEvent {
         )
     }
 
-    static func fromEvent(_ event: CalendarCoreUI.UIEvent, calendar: UICalendar) -> UIDraftEvent {
-        return UIDraftEvent(
+    static func fromEvent(_ event: CalendarCoreUI.UIEvent, calendar: UICalendar) -> EventDraft {
+        return EventDraft(
             calendar: calendar,
             title: event.title,
+            description: event.description ?? "",
             allDay: event.isAllDay,
             startDate: event.timing.start,
             startTimeZone: event.timing.startTimeZone ?? TimeZone.current,
