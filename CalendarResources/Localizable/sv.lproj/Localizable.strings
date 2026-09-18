@@ -90,6 +90,19 @@
  * Keep the parentheses in every translation. */
 "eventUntitledLabel" = "(Utan titel)";
 
+/* loco:6aad34883d0cfd97150618f2 */
+"eventValidationCharacterLimitExceeded" = "Du har överskridit teckengränsen";
+
+/* loco:6aad3488f1b40afde80847e1 */
+"eventValidationInvalidDates" = "Ogiltiga datum";
+
+/* loco:6aad3488fe46e87b02051562 */
+"eventValidationMissingCalendar" = "Du måste välja en kalender";
+
+/* loco:6aad34886e832e594606d804
+ * %d is the maximum number of guests (currently 100). Preserve the integer placeholder. */
+"eventValidationTooManyAttendees" = "Du kan inte ha fler än %d gäster";
+
 /* loco:6a3e2023d4ed90a7ed0b19e5 */
 "helpTitle" = "Hjälp";
 
