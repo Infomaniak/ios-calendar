@@ -18,7 +18,6 @@
 
 import CalendarCore
 import CalendarCoreUI
-import InfiniteScrollViews
 import InfomaniakDI
 import MultiplatformCalendar
 import Observation
@@ -33,36 +32,33 @@ final class DaysViewModel {
     }
 }
 
-private struct PagedInfiniteDateView<Content: View>: View {
-    @Environment(\.calendar) private var calendar
-
+struct DayPager: View {
     @Binding var selectedDate: Date
-
-    @ViewBuilder let content: (Date) -> Content
+    @Binding var miniCalendarHeight: CGFloat
 
     var body: some View {
-        PagedInfiniteScrollView(
-            changeIndex: $selectedDate,
-            content: content,
-            increaseIndexAction: increaseIndexAction,
-            decreaseIndexAction: decreaseIndexAction,
-            shouldAnimateBetween: shouldAnimateBetween,
-            transitionStyle: .scroll,
-            navigationOrientation: .horizontal,
-            backgroundColor: .clear
-        )
-    }
-
-    private func increaseIndexAction(_ index: Date) -> Date? {
-        return calendar.date(byAdding: .day, value: 1, to: index)
-    }
-
-    private func decreaseIndexAction(_ index: Date) -> Date? {
-        return calendar.date(byAdding: .day, value: -1, to: index)
-    }
-
-    private func shouldAnimateBetween(_ newValue: Date, _ oldValue: Date) -> (Bool, UIPageViewController.NavigationDirection) {
-        return (newValue != oldValue, newValue > oldValue ? .forward : .reverse)
+        GeometryReader { proxy in
+            CalendarPeriodPager(
+                component: .day,
+                periodOffsets: -36525 ..< 36526,
+                date: $selectedDate
+            ) { date in
+                DayView(
+                    miniCalendarHeight: $miniCalendarHeight,
+                    date: date
+                )
+                // The horizontal scroll view consumes these insets; restore them for each timeline.
+                // DayContentView already reserves the mini-calendar's height.
+                .safeAreaPadding(EdgeInsets(
+                    top: max(0, proxy.safeAreaInsets.top - miniCalendarHeight),
+                    leading: proxy.safeAreaInsets.leading,
+                    bottom: proxy.safeAreaInsets.bottom,
+                    trailing: proxy.safeAreaInsets.trailing
+                ))
+            }
+            .modifier(IgnoreTopSafeAreaModifier())
+            .ignoresSafeArea(.all, edges: .bottom)
+        }
     }
 }
 
@@ -78,24 +74,17 @@ struct DaysView: View {
     var body: some View {
         @Bindable var mainViewState = mainViewState
 
-        PagedInfiniteDateView(selectedDate: $mainViewState.selectedDate) { date in
-            DayView(
-                miniCalendarHeight: $miniCalendarHeight,
-                date: date
-            )
-        }
-        .modifier(IgnoreTopSafeAreaModifier())
-        .ignoresSafeArea(.all, edges: .bottom)
-        .environment(viewModel)
-        .sensoryFeedback(trigger: mainViewState.selectedDate) { oldValue, newValue in
-            guard !calendar.isDate(oldValue, inSameDayAs: newValue) else {
-                return nil
+        DayPager(selectedDate: $mainViewState.selectedDate, miniCalendarHeight: $miniCalendarHeight)
+            .environment(viewModel)
+            .sensoryFeedback(trigger: mainViewState.selectedDate) { oldValue, newValue in
+                guard !calendar.isDate(oldValue, inSameDayAs: newValue) else {
+                    return nil
+                }
+                return .selection
             }
-            return .selection
-        }
-        .task(id: mainViewState.selectedDate) {
-            await observeCalendars(mainViewState.selectedDate)
-        }
+            .task(id: mainViewState.selectedDate) {
+                await observeCalendars(mainViewState.selectedDate)
+            }
     }
 
     private func observeCalendars(_ date: Date) async {

@@ -19,12 +19,6 @@
 import SwiftUI
 
 struct MiniCalendarPager: View {
-    @Environment(\.calendar) private var calendar
-
-    @State private var periods: CalendarPeriodCollection?
-    @State private var visiblePeriod: Int?
-    @State private var scrollPhase = ScrollPhase.idle
-
     let displayMode: MiniCalendarView.DisplayMode
 
     @Binding var selectedDate: Date
@@ -39,105 +33,32 @@ struct MiniCalendarPager: View {
         }
     }
 
-    var body: some View {
-        VStack(spacing: 0) {
-            if let periods {
-                ScrollView(.horizontal) {
-                    LazyHStack(spacing: 0) {
-                        ForEach(periods) { period in
-                            MiniCalendarPage(
-                                period: period,
-                                displayMode: displayMode,
-                                selectedDate: $selectedDate
-                            )
-                            .containerRelativeFrame(.horizontal)
-                        }
-                    }
-                    .scrollTargetLayout()
-                }
-                .scrollIndicators(.hidden)
-                .scrollTargetBehavior(.paging)
-                .scrollPosition(id: $visiblePeriod, anchor: .center)
-                .fixedSize(horizontal: false, vertical: true)
-                .onScrollPhaseChange { previousPhase, phase in
-                    scrollPhase = phase
-                    guard previousPhase.isScrolling, phase == .idle else { return }
-                    updateDisplayedPage()
-                }
-                .id(periods.origin)
-                .id(displayMode)
-                .id(calendar)
-            }
-        }
-        .onChange(of: calendar, initial: true) { _, _ in
-            resetPeriods()
-        }
-        .onChange(of: displayMode) { _, _ in
-            resetPeriods()
-        }
-        .onChange(of: visiblePeriod) { _, _ in
-            guard scrollPhase == .interacting || scrollPhase == .decelerating else { return }
-            updateDisplayedPage()
-        }
-        .onChange(of: displayedPage) { _, page in
-            if let index = periods?.index(for: page.referenceDate) {
-                guard visiblePeriod != index else { return }
-                withAnimation {
-                    visiblePeriod = index
-                }
-            } else {
-                resetPeriods()
-            }
-        }
-    }
-
-    private func resetPeriods() {
-        let periods = CalendarPeriodCollection(
-            calendar: calendar,
-            component: displayMode.referenceDateInterval,
-            origin: displayedPage.referenceDate,
-            indices: periodOffsets
-        )
-        var transaction = Transaction()
-        transaction.disablesAnimations = true
-        withTransaction(transaction) {
-            self.periods = periods
-            scrollPhase = .idle
-            visiblePeriod = 0
+    private var displayedDate: Binding<Date> {
+        Binding {
+            displayedPage.referenceDate
+        } set: { date in
             displayedPage = ReferenceDatePage(
-                referenceDate: periods.origin,
+                referenceDate: date,
                 referenceDateInterval: displayMode.referenceDateInterval
             )
         }
     }
 
-    private func updateDisplayedPage() {
-        guard let index = visiblePeriod,
-              let periods,
-              periods.indices.contains(index) else { return }
-
-        let page = ReferenceDatePage(
-            referenceDate: periods[index].date,
-            referenceDateInterval: displayMode.referenceDateInterval
-        )
-        guard displayedPage != page else { return }
-        displayedPage = page
-    }
-}
-
-private struct MiniCalendarPage: View {
-    let period: CalendarPeriodCollection.Period
-    let displayMode: MiniCalendarView.DisplayMode
-    @Binding var selectedDate: Date
-
     var body: some View {
-        let page = ReferenceDatePage(referenceDate: period.date, referenceDateInterval: displayMode.referenceDateInterval)
+        CalendarPeriodPager(
+            component: displayMode.referenceDateInterval,
+            periodOffsets: periodOffsets,
+            date: displayedDate
+        ) { date in
+            let page = ReferenceDatePage(referenceDate: date, referenceDateInterval: displayMode.referenceDateInterval)
 
-        switch displayMode {
-        case .month:
-            MonthHeaderView(page: page, selectedDate: $selectedDate)
-        case .week:
-            WeekHeaderView(page: page, selectedDate: $selectedDate)
+            switch displayMode {
+            case .month:
+                MonthHeaderView(page: page, selectedDate: $selectedDate)
+            case .week:
+                WeekHeaderView(page: page, selectedDate: $selectedDate)
+            }
         }
+        .fixedSize(horizontal: false, vertical: true)
     }
 }
