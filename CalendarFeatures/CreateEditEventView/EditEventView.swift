@@ -32,9 +32,9 @@ public enum EditionMode {
     var navigationTitle: String {
         switch self {
         case .new:
-            return "!Create Event"
+            return CalendarResourcesStrings.createEventTitle
         case .editEvent, .editDraft:
-            return "!Edit Event"
+            return CalendarResourcesStrings.editEventTitle
         }
     }
 }
@@ -77,19 +77,19 @@ public struct EditEventView: View {
     public var body: some View {
         Form {
             Section {
-                TextField("!Title", text: $draft.title)
+                TextField(CalendarResourcesStrings.titleLabel, text: $draft.title)
                     .focused($isTitleFocused)
             }
 
             Section {
-                Toggle("!Toute la journée", isOn: $draft.allDay)
+                Toggle(CalendarResourcesStrings.allDayLabel, isOn: $draft.allDay)
 
                 ExpandableDatePicker(
                     date: $draft.startDate,
                     timeZone: $draft.startTimeZone,
                     expandedPickerId: $expandedDatePickerId,
                     id: .start,
-                    label: "!Début",
+                    label: CalendarResourcesStrings.startLabel,
                     canSelectHour: !draft.allDay
                 )
                 .onChange(of: draft.startTimeZone) { oldValue, newValue in
@@ -104,7 +104,7 @@ public struct EditEventView: View {
                     timeZone: $draft.endTimeZone,
                     expandedPickerId: $expandedDatePickerId,
                     id: .end,
-                    label: "!Fin",
+                    label: CalendarResourcesStrings.endLabel,
                     canSelectHour: !draft.allDay,
                     range: draft.startDate ... Date.distantFuture
                 )
@@ -117,18 +117,22 @@ public struct EditEventView: View {
                     EventAttendeesCell(attendees: draft.attendees)
                 }
                 .navigationDestination(isPresented: $isNavigatingToAttendeesList) {
-                    Text("Not editable yet.")
+                    Text(CalendarResourcesStrings.attendeesNotEditableMessage)
                 }
             }
 
             Section {
                 Toggle(isOn: $draft.isOccupied) {
-                    Label("!Occupé(e)", image: CalendarResourcesAsset.Images.briefcase)
-                        .labelStyle(.formLabel)
+                    Label {
+                        Text(CalendarResourcesStrings.occupiedLabel)
+                    } icon: {
+                        CalendarResourcesAsset.Images.briefcase.swiftUIImage
+                    }
+                    .labelStyle(.formLabel)
                 }
                 Toggle(isOn: $draft.isPrivate) {
                     Label {
-                        Text("!Privé")
+                        Text(CalendarResourcesStrings.privateLabel)
                     } icon: {
                         BouncyLock(isUnlocked: !draft.isPrivate)
                     }
@@ -136,14 +140,16 @@ public struct EditEventView: View {
                 }
             }
 
-            Section {
-                Picker(selection: $draft.calendar) {
-                    ForEach(availableCalendars) { calendar in
-                        CalendarCell(calendar: calendar)
-                            .tag(calendar)
+            if !availableCalendars.isEmpty {
+                Section {
+                    Picker(selection: $draft.calendar) {
+                        ForEach(availableCalendars) { calendar in
+                            CalendarCell(calendar: calendar)
+                                .tag(calendar)
+                        }
+                    } label: {
+                        Text(CalendarResourcesStrings.calendarsMenuSectionTitle)
                     }
-                } label: {
-                    Text("!Calendriers")
                 }
             }
         }
@@ -161,7 +167,7 @@ public struct EditEventView: View {
                     // TODO: Confirm
                     completion()
                 } label: {
-                    Label("!Confirmer", image: CalendarResourcesAsset.Images.check)
+                    Label(CalendarResourcesStrings.buttonConfirm, image: CalendarResourcesAsset.Images.check)
                         .labelStyle(.iconOnly)
                 }
                 .buttonStyle(.borderedProminent)

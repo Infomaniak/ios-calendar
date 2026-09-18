@@ -55,7 +55,7 @@ public struct EventAttendeesCell: View {
         HStack(spacing: IKPadding.micro) {
             Label {
                 if attendees.isEmpty {
-                    Text("!Invités")
+                    Text(CalendarResourcesStrings.attendeesTitle)
                 } else {
                     VStack(alignment: .leading) {
                         Text(CalendarResourcesStrings.participantsLabel(attendees.count))
@@ -72,7 +72,7 @@ public struct EventAttendeesCell: View {
             .frame(maxWidth: .infinity, alignment: .leading)
 
             if attendees.isEmpty {
-                Text("!Aucun")
+                Text(CalendarResourcesStrings.noAttendeesLabel)
                     .foregroundStyle(theme.color.contentSecondary)
             } else {
                 attendeesAvatarStack

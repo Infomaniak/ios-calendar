@@ -10,8 +10,19 @@
 /* loco:6a3d35f26bb2f27bf40b0052 */
 "allDayLabel" = "All Day";
 
+/* loco:6aacf10357a2cbe67c064fc2
+ * Keep the message concise. */
+"attendeesNotEditableMessage" = "Not editable yet.";
+
+/* loco:6aaaaf0a7756fd68ac03a4a9 */
+"attendeesTitle" = "Guests";
+
 /* loco:6a748d3bf80dbe43e8081862 */
 "buttonAddAccount" = "Add an account";
+
+/* loco:6aacf103044c45865c018ea2
+ * Use a concise imperative action. */
+"buttonConfirm" = "Confirm";
 
 /* loco:6a7dc6dcf678fdc6400639d9 */
 "buttonDeleteAccount" = "Delete Account";
@@ -52,11 +63,19 @@
 /* loco:6a21376e873ebaff3100af91 */
 "contentDescriptionToday" = "Today";
 
+/* loco:6aacf103f37fcb4e270bf7f2
+ * Title case in languages where appropriate. */
+"createEventTitle" = "Create Event";
+
 /* loco:6a203e6bc6a8e2e3c9024e12 */
 "dayTitle" = "Day";
 
 /* loco:6a856424c3b19782760f9b12 */
 "descriptionTitle" = "Description";
+
+/* loco:6aacf103d307b996c00e20ce
+ * Title case in languages where appropriate. */
+"editEventTitle" = "Edit Event";
 
 /* loco:6a631392189120de490885c4 */
 "endLabel" = "End";
@@ -101,11 +120,18 @@
 /* loco:6a2040c0637876be5f0ec2f2 */
 "monthTitle" = "Month";
 
+/* loco:6aacf3b9af2c4cbae503a652
+ * Keep this label concise. */
+"noAttendeesLabel" = "None";
+
 /* loco:6a8ed23a8523fc2ec50554a2 */
 "notificationTypeEmail" = "Email";
 
 /* loco:6a8ed665614bffbffe09a5d2 */
 "notificationTypePush" = "Notification";
+
+/* loco:6aa8f944797adbda140fe1f6 */
+"occupiedLabel" = "Occupied";
 
 /* loco:6a4dec95c1907081d30570c2 */
 "onlineLabel" = "Online";
