@@ -16,11 +16,19 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Foundation
+import InfomaniakDI
 import MultiplatformCalendar
 
-extension DavCredentials: @unchecked @retroactive Sendable {}
+public struct CreateEventUseCase: Sendable {
+    public init() {}
 
-extension CalendarManager: @unchecked @retroactive Sendable {}
+    public func execute(draft: EventDraft) async throws {
+        let errors = EventDraftValidator().validate(draft)
+        guard errors.isEmpty else {
+            throw EventDraftValidator.ValidationErrors(errors: errors)
+        }
 
-extension Attendee: @unchecked @retroactive Sendable {}
+        @InjectService var calendarSDK: CalendarCoreGraph
+        try await calendarSDK.calendarManager.createEvent(data: draft.toEventEditData())
+    }
+}
