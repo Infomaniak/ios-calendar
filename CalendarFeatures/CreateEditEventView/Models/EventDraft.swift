@@ -50,7 +50,7 @@ public extension EventDraft {
             allDay: false,
             startDate: Date(),
             startTimeZone: TimeZone.current,
-            endDate: Date().addingTimeInterval(60 * 60), // TODO: Use UserDefaults
+            endDate: Date().addingTimeInterval(UserDefaults.shared.defaultEventDuration.timeInterval),
             endTimeZone: TimeZone.current,
             attendees: [],
             isOccupied: true,
