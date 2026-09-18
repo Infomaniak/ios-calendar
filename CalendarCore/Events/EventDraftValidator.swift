@@ -77,32 +77,6 @@ public struct EventDraftValidator: Sendable {
             errors.insert(.missingCalendar)
         }
 
-        if let dateError = validateDates(draft: draft) {
-            errors.insert(dateError)
-        }
-
         return errors
-    }
-
-    private func validateDates(draft: EventDraft) -> ValidationError? {
-        var calendar = Calendar(identifier: .gregorian)
-
-        calendar.timeZone = draft.startTimeZone ?? .current
-        let start = calendar.dateComponents([.year, .month, .day], from: draft.startDate)
-
-        calendar.timeZone = draft.endTimeZone ?? .current
-        let end = calendar.dateComponents([.year, .month, .day], from: draft.endDate)
-
-        calendar.timeZone = .gmt
-
-        if let startDay = calendar.date(from: start), let endDay = calendar.date(from: end) {
-            if endDay <= startDay {
-                return .invalidDates
-            }
-        } else {
-            return .invalidDates
-        }
-
-        return nil
     }
 }

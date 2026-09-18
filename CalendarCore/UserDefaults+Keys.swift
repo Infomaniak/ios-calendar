@@ -53,12 +53,12 @@ public extension UserDefaults {
     }
 
     var defaultEventDuration: DefaultEventDuration {
-            get {
-                let rawValue = integer(forKey: key(.defaultEventDuration))
-                return rawValue == 0 ? DefaultPreferences.defaultEventDuration : DefaultEventDuration(rawValue: rawValue)
-            }
-            set {
-                setValue(newValue.rawValue, forKey: key(.defaultEventDuration))
-            }
+        get {
+            let rawValue = integer(forKey: key(.defaultEventDuration))
+            return rawValue == 0 ? DefaultPreferences.defaultEventDuration : DefaultEventDuration(rawValue: rawValue)
         }
+        set {
+            setValue(newValue.rawValue, forKey: key(.defaultEventDuration))
+        }
+    }
 }
