@@ -32,7 +32,6 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/apple/swift-async-algorithms", .upToNextMajor(from: "1.1.0")),
         .package(url: "https://github.com/Infomaniak/Eventually.git", branch: "main"),
-        .package(url: "https://github.com/Infomaniak/InfiniteScrollViews", branch: "feat/custom-background-color"),
         .package(url: "https://github.com/Infomaniak/ios-core", .upToNextMajor(from: "19.0.0")),
         .package(url: "https://github.com/Infomaniak/ios-core-uikit", .upToNextMajor(from: "2.0.0")),
         .package(url: "https://github.com/Infomaniak/ios-core-ui", .upToNextMajor(from: "26.1.0")),

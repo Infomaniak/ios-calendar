@@ -18,7 +18,6 @@
 
 import Foundation
 
-/// A fixed range of calendar periods with cheap identities and dates calculated only when needed.
 struct CalendarPeriodCollection: RandomAccessCollection {
     struct Period: Identifiable {
         let id: Int
@@ -48,7 +47,6 @@ struct CalendarPeriodCollection: RandomAccessCollection {
     }
 
     init(calendar: Calendar, component: Calendar.Component, origin: Date, indices: Range<Int>) {
-        precondition([.day, .weekOfYear, .month].contains(component))
         guard let start = calendar.dateInterval(of: component, for: origin)?.start else {
             preconditionFailure("The origin must represent a valid calendar period")
         }
@@ -59,7 +57,6 @@ struct CalendarPeriodCollection: RandomAccessCollection {
     }
 
     subscript(position: Int) -> Period {
-        precondition(indices.contains(position))
         return Period(id: position, origin: origin, calendar: calendar, component: component)
     }
 

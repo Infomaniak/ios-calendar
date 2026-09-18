@@ -20,15 +20,6 @@
       }
     },
     {
-      "identity" : "infinitescrollviews",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Infomaniak/InfiniteScrollViews",
-      "state" : {
-        "branch" : "feat/custom-background-color",
-        "revision" : "848811ebdf0b635cff31c1a4c832b18184fba566"
-      }
-    },
-    {
       "identity" : "ios-core",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core",
