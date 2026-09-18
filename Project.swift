@@ -57,7 +57,15 @@ let eventDetailsView = Feature(
     ]
 )
 
-let createEditEventView = Feature(name: "CreateEditEventView", additionalDependencies: [])
+let createEditEventView = Feature(
+    name: "CreateEditEventView",
+    additionalDependencies: [
+        TargetDependency.target(name: "CalendarResources"),
+        TargetDependency.external(name: "DesignSystem"),
+        TargetDependency.external(name: "ESDSFoundation"),
+        TargetDependency.external(name: "InfomaniakDI")
+    ]
+)
 
 let calendarView = Feature(
     name: "CalendarView",
