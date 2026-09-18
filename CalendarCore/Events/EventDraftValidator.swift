@@ -30,13 +30,13 @@ public struct EventDraftValidator: Sendable {
         public var errorDescription: String {
             switch self {
             case .titleTooLong, .descriptionTooLong:
-                return "Vous avez dépassé la limite de caractères"
+                return CalendarResourcesStrings.eventValidationCharacterLimitExceeded
             case .tooManyAttendees:
-                return "Vous ne pouvez pas avoir plus de \(maximumAttendeeCount) invités"
+                return CalendarResourcesStrings.eventValidationTooManyAttendees(maximumAttendeeCount)
             case .missingCalendar:
-                return "Vous devez sélectionner un calendrier"
+                return CalendarResourcesStrings.eventValidationMissingCalendar
             case .invalidDates:
-                return "Dates invalides"
+                return CalendarResourcesStrings.eventValidationInvalidDates
             }
         }
     }
