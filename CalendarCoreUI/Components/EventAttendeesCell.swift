@@ -95,11 +95,13 @@ public struct EventAttendeesCell: View {
                 )
             }
 
-            if uniqueAttendees.count > 4 {
-                InitialsView(initials: "+\(uniqueAttendees.count - 4)",
-                             backgroundColor: theme.color.backgroundDatavizGrayDim2,
-                             foregroundColor: theme.color.contentOnDatavizGrayDim1,
-                             size: IKIconSize.large.rawValue)
+            if attendees.count > 4 {
+                InitialsView(
+                    initials: "+\(attendees.count - 4)",
+                    backgroundColor: theme.color.backgroundDatavizGrayDim2,
+                    foregroundColor: theme.color.contentOnDatavizGrayDim1,
+                    size: IKIconSize.large.rawValue
+                )
             }
         }
         .compositingGroup()

@@ -96,7 +96,7 @@ public struct EditEventView: View {
                             .monospacedDigit()
                     }
                     .font(.caption)
-                    .foregroundStyle(theme.color.contentFeedbackErrorDefault)
+                    .foregroundStyle(theme.color.contentFeedbackError)
                 }
             }
 
