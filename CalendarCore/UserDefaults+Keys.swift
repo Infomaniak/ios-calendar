@@ -26,6 +26,8 @@ public extension UserDefaults.Keys {
 }
 
 public extension UserDefaults {
+    nonisolated(unsafe) static let shared = UserDefaults(suiteName: "group.\(CalendarTargetAssembly.bundleId)")!
+
     var isMatomoAuthorized: Bool {
         get {
             if object(forKey: key(.matomoAuthorized)) == nil {
