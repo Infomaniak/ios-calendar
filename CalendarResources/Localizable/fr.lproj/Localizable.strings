@@ -10,8 +10,19 @@
 /* loco:6a3d35f26bb2f27bf40b0052 */
 "allDayLabel" = "Journée";
 
+/* loco:6aacf10357a2cbe67c064fc2
+ * Keep the message concise. */
+"attendeesNotEditableMessage" = "Pas encore modifiable.";
+
+/* loco:6aaaaf0a7756fd68ac03a4a9 */
+"attendeesTitle" = "Invités";
+
 /* loco:6a748d3bf80dbe43e8081862 */
 "buttonAddAccount" = "Ajouter un compte";
+
+/* loco:6aacf103044c45865c018ea2
+ * Use a concise imperative action. */
+"buttonConfirm" = "Confirmer";
 
 /* loco:6a7dc6dcf678fdc6400639d9 */
 "buttonDeleteAccount" = "Supprimer le compte";
@@ -52,11 +63,19 @@
 /* loco:6a21376e873ebaff3100af91 */
 "contentDescriptionToday" = "Aujourd’hui";
 
+/* loco:6aacf103f37fcb4e270bf7f2
+ * Title case in languages where appropriate. */
+"createEventTitle" = "Créer un évènement";
+
 /* loco:6a203e6bc6a8e2e3c9024e12 */
 "dayTitle" = "Jour";
 
 /* loco:6a856424c3b19782760f9b12 */
 "descriptionTitle" = "Description";
+
+/* loco:6aacf103d307b996c00e20ce
+ * Title case in languages where appropriate. */
+"editEventTitle" = "Modifier l’évènement";
 
 /* loco:6a631392189120de490885c4 */
 "endLabel" = "Fin";
@@ -71,6 +90,19 @@
  * Keep the parentheses in every translation. */
 "eventUntitledLabel" = "(Sans titre)";
 
+/* loco:6aad34883d0cfd97150618f2 */
+"eventValidationCharacterLimitExceeded" = "Vous avez dépassé la limite de caractères";
+
+/* loco:6aad3488f1b40afde80847e1 */
+"eventValidationInvalidDates" = "Dates invalides";
+
+/* loco:6aad3488fe46e87b02051562 */
+"eventValidationMissingCalendar" = "Vous devez sélectionner un calendrier";
+
+/* loco:6aad34886e832e594606d804
+ * %d is the maximum number of guests (currently 100). Preserve the integer placeholder. */
+"eventValidationTooManyAttendees" = "Vous ne pouvez pas avoir plus de %d invités";
+
 /* loco:6a3e2023d4ed90a7ed0b19e5 */
 "helpTitle" = "Aide";
 
@@ -83,11 +115,18 @@
 /* loco:6a2040c0637876be5f0ec2f2 */
 "monthTitle" = "Mois";
 
+/* loco:6aacf3b9af2c4cbae503a652
+ * Keep this label concise. */
+"noAttendeesLabel" = "Aucun";
+
 /* loco:6a8ed23a8523fc2ec50554a2 */
 "notificationTypeEmail" = "E-mail";
 
 /* loco:6a8ed665614bffbffe09a5d2 */
 "notificationTypePush" = "Notification";
+
+/* loco:6aa8f944797adbda140fe1f6 */
+"occupiedLabel" = "Occupé";
 
 /* loco:6a4dec95c1907081d30570c2 */
 "onlineLabel" = "En ligne";

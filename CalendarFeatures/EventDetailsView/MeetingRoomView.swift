@@ -16,9 +16,11 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarCoreUI
 import CalendarResources
 import DesignSystem
 import ESDSFoundation
+import InfomaniakCoreSwiftUI
 import SwiftUI
 
 public struct MeetingRoomView: View {
@@ -34,11 +36,7 @@ public struct MeetingRoomView: View {
     }()
 
     public var body: some View {
-        HStack {
-            CalendarResourcesAsset.Images.doorOpen.swiftUIImage
-                .iconSize(IKIconSize.large)
-                .foregroundStyle(theme.color.contentSecondary)
-
+        Label {
             VStack(alignment: .leading, spacing: 0) {
                 Text(roomTitle)
                     .font(.body.weight(.regular))
@@ -64,7 +62,10 @@ public struct MeetingRoomView: View {
                 }
             }
             .padding(.trailing, IKPadding.large)
+        } icon: {
+            CalendarResourcesAsset.Images.doorOpen.swiftUIImage
         }
+        .labelStyle(.formLabel)
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 }

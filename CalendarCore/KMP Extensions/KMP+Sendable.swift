@@ -22,3 +22,5 @@ import MultiplatformCalendar
 extension DavCredentials: @unchecked @retroactive Sendable {}
 
 extension CalendarManager: @unchecked @retroactive Sendable {}
+
+extension Attendee: @unchecked @retroactive Sendable {}

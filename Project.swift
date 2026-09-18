@@ -57,10 +57,21 @@ let eventDetailsView = Feature(
     ]
 )
 
+let createEditEventView = Feature(
+    name: "CreateEditEventView",
+    additionalDependencies: [
+        TargetDependency.target(name: "CalendarResources"),
+        TargetDependency.external(name: "DesignSystem"),
+        TargetDependency.external(name: "ESDSFoundation"),
+        TargetDependency.external(name: "InfomaniakDI")
+    ]
+)
+
 let calendarView = Feature(
     name: "CalendarView",
     additionalDependencies: [
         eventDetailsView,
+        createEditEventView,
         TargetDependency.target(name: "\(Constants.projectName)Resources"),
         TargetDependency.external(name: "DesignSystem"),
         TargetDependency.external(name: "ESDSCalendar"),
@@ -69,8 +80,6 @@ let calendarView = Feature(
         TargetDependency.external(name: "Eventually")
     ]
 )
-
-let createEditEventView = Feature(name: "CreateEditEventView", additionalDependencies: [])
 
 let settingsView = Feature(
     name: "SettingsView",

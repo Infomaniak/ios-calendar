@@ -16,16 +16,34 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarCoreUI
 import SwiftUI
 
-public struct CreateEditEventView: View {
-    public init() {}
+struct CalendarCell: View {
+    let name: String
+    let colorIndicator: UIImage
 
-    public var body: some View {
-        EmptyView()
+    init(calendar: UICalendar) {
+        name = calendar.displayName
+
+        let size = CGSize(width: 12, height: 12)
+        colorIndicator = UIGraphicsImageRenderer(size: size)
+            .image { context in
+                context.cgContext.setFillColor(UIColor(calendar.color).cgColor)
+                context.cgContext.fillEllipse(in: CGRect(origin: .zero, size: size))
+            }
+            .withRenderingMode(.alwaysOriginal)
+    }
+
+    var body: some View {
+        Label {
+            Text(name)
+        } icon: {
+            Image(uiImage: colorIndicator)
+        }
     }
 }
 
 #Preview {
-    CreateEditEventView()
+    CalendarCell(calendar: .preview)
 }

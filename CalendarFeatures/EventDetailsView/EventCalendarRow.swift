@@ -19,15 +19,11 @@
 import CalendarCoreUI
 import CalendarResources
 import DesignSystem
-import ESDSFoundation
-import InfomaniakCoreSwiftUI
 import InfomaniakDI
 @preconcurrency import MultiplatformCalendar
 import SwiftUI
 
 struct EventCalendarRow: View {
-    @Environment(\.esdsTheme) private var theme
-
     @State private var selectedCalendar: UICalendar?
 
     let event: CalendarCoreUI.UIEvent?
@@ -46,15 +42,11 @@ struct EventCalendarRow: View {
                             .lineLimit(1)
                     }
                 } label: {
-                    HStack {
-                        CalendarResourcesAsset.Images.productCalendar.swiftUIImage
-                            .iconSize(IKIconSize.large)
-                            .foregroundStyle(theme.color.contentSecondary)
-                            .accessibilityHidden(true)
-                        Text(CalendarResourcesStrings.sectionCalendarHeader)
-                            .font(.body)
-                            .foregroundStyle(theme.color.contentPrimary)
-                    }
+                    Label(
+                        CalendarResourcesStrings.sectionCalendarHeader,
+                        image: CalendarResourcesAsset.Images.productCalendar
+                    )
+                    .labelStyle(.formLabel)
                 }
             }
         }

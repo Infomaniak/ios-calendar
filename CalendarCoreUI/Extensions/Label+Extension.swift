@@ -16,10 +16,15 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Foundation
+import CalendarResources
+import SwiftUI
 
-public enum DefaultPreferences {
-    public static let matomoAuthorized = true
-    public static let sentryAuthorized = true
-    public static let defaultEventDuration = DefaultEventDuration.thirtyMinutes
+public extension Label where Title == Text, Icon == Image {
+    init(_ title: String, image: CalendarResourcesImages) {
+        self.init {
+            Text(title)
+        } icon: {
+            image.swiftUIImage
+        }
+    }
 }

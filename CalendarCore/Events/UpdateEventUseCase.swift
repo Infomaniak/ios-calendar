@@ -16,10 +16,22 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Foundation
+import InfomaniakDI
+import MultiplatformCalendar
 
-public enum DefaultPreferences {
-    public static let matomoAuthorized = true
-    public static let sentryAuthorized = true
-    public static let defaultEventDuration = DefaultEventDuration.thirtyMinutes
+public struct UpdateEventUseCase: Sendable {
+    public init() {}
+
+    public func execute(eventId: String, draft: EventDraft, originalData: EventEditData) async throws {
+        let errors = EventDraftValidator().validate(draft)
+        guard errors.isEmpty else {
+            throw EventDraftValidator.ValidationErrors(errors: errors)
+        }
+
+        @InjectService var calendarSDK: CalendarCoreGraph
+        try await calendarSDK.calendarManager.updateEvent(
+            eventId: eventId,
+            data: draft.toEventEditData(preserving: originalData)
+        )
+    }
 }
