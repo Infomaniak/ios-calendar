@@ -108,7 +108,7 @@ struct ExpandableDatePicker<ID: Hashable>: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .labelStyle(.formLabel)
 
-                        Text(timeZone.formattedIdentifier)
+                        Text(timeZone, format: .timeZone(.displayName))
                             .foregroundStyle(theme.color.contentTertiary)
 
                         CalendarResourcesAsset.Images.chevronRight.swiftUIImage
