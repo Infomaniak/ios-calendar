@@ -25,8 +25,6 @@ import SwiftUI
 public struct EventAttendeesCell: View {
     @Environment(\.esdsTheme) private var theme
 
-    @State private var showParticipants = false
-
     let attendees: [UIAttendee]
 
     private var attendeesListForStack: [UIAttendee] {

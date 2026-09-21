@@ -65,10 +65,6 @@ public struct EditEventView: View {
         validator.validate(draft)
     }
 
-    private var datePickerComponents: DatePickerComponents {
-        draft.allDay ? .date : [.date, .hourAndMinute]
-    }
-
     public init(editionMode: EditionMode, completion: @escaping () -> Void = {}) {
         switch editionMode {
         case .new:

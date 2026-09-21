@@ -120,34 +120,3 @@ public extension EventDraft {
         )
     }
 }
-
-private extension EventDraft {
-    struct AttendeeSnapshot: Equatable {
-        let email: String
-        let displayName: String?
-        let status: ParticipationStatus
-        let role: AttendeeRole
-        let isOrganizer: Bool
-        let responseNeeded: Bool
-
-        init(_ attendee: Attendee) {
-            email = attendee.email
-            displayName = attendee.displayName
-            status = attendee.status
-            role = attendee.role
-            isOrganizer = attendee.isOrganizer
-            responseNeeded = attendee.responseNeeded
-        }
-
-        var sdkValue: Attendee {
-            Attendee(
-                email: email,
-                displayName: displayName,
-                status: status,
-                role: role,
-                isOrganizer: isOrganizer,
-                responseNeeded: responseNeeded
-            )
-        }
-    }
-}
