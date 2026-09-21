@@ -176,6 +176,7 @@ public struct EventFormView: View {
         .task {
             await observeCalendars()
         }
+        .scrollDismissesKeyboard(.interactively)
         .navigationTitle(Text(editionMode.navigationTitle))
         .toolbarTitleDisplayMode(.inline)
         .toolbar {
