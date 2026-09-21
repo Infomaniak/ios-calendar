@@ -169,6 +169,14 @@
 /* loco:6a6310a79aab70776906b25c */
 "sectionParticipantsHeader" = "Συμμετέχοντες";
 
+/* loco:6ab0d1a9e080525b6c0bf794
+ * Use a concise imperative action. */
+"selectDateLabel" = "Επιλογή ημερομηνίας";
+
+/* loco:6ab0d1a98c204da04e089f02
+ * Use a concise imperative action. */
+"selectTimeLabel" = "Επιλογή ώρας";
+
 /* loco:6a3e20aad4ed90a7ed0b19e7 */
 "settingsTitle" = "Ρυθμίσεις";
 

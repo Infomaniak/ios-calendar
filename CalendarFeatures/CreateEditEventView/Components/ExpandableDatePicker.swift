@@ -55,7 +55,7 @@ struct ExpandableDatePicker<ID: Hashable>: View {
                 Button { toggleExpansion(.date) } label: {
                     Text(date, format: .dateTime.year().month().day())
                 }
-                .accessibilityLabel(Text("!Select date"))
+                .accessibilityLabel(Text(CalendarResourcesStrings.selectDateLabel))
                 .tint(expandedComponent == .date ? .accentColor : .secondary)
 
                 if canSelectHour {
@@ -65,7 +65,7 @@ struct ExpandableDatePicker<ID: Hashable>: View {
                             .contentTransition(.numericText())
                             .animation(.default, value: date)
                     }
-                    .accessibilityLabel(Text("!Select hour"))
+                    .accessibilityLabel(Text(CalendarResourcesStrings.selectTimeLabel))
                     .tint(expandedComponent == .hour ? .accentColor : .secondary)
                 }
             }
@@ -85,13 +85,13 @@ struct ExpandableDatePicker<ID: Hashable>: View {
         }
 
         if expandedPickerId == id, expandedComponent == .date {
-            DatePicker("!Select date", selection: $date, in: range, displayedComponents: .date)
+            DatePicker(CalendarResourcesStrings.selectDateLabel, selection: $date, in: range, displayedComponents: .date)
                 .datePickerStyle(.graphical)
                 .labelsHidden()
         }
 
         if expandedPickerId == id, expandedComponent == .hour {
-            DatePicker("!Select hour", selection: $date, in: range, displayedComponents: .hourAndMinute)
+            DatePicker(CalendarResourcesStrings.selectTimeLabel, selection: $date, in: range, displayedComponents: .hourAndMinute)
                 .datePickerStyle(.wheel)
                 .labelsHidden()
 
@@ -99,7 +99,7 @@ struct ExpandableDatePicker<ID: Hashable>: View {
                 isNavigatingToTimeZoneList = true
             } label: {
                 HStack(spacing: IKPadding.micro) {
-                    Label("!Fuseau horaire", image: CalendarResourcesAsset.Images.bell)
+                    Label(CalendarResourcesStrings.timeZoneLabel, image: CalendarResourcesAsset.Images.bell)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .labelStyle(.formLabel)
 
