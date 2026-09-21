@@ -214,13 +214,10 @@ public struct EditEventView: View {
     }
 
     private func shiftEndDateIfNecessary(oldValue: Date, newValue: Date) {
-        let startDate = newValue.addingTimeInterval(Double((draft.startTimeZone ?? .current).secondsFromGMT(for: newValue)))
-        let endDate = draft.endDate.addingTimeInterval(Double((draft.endTimeZone ?? .current).secondsFromGMT(for: draft.endDate)))
+        guard newValue >= draft.endDate else { return }
 
-        if startDate >= endDate {
-            let previousDuration = draft.endDate.timeIntervalSince(oldValue)
-            draft.endDate = newValue.addingTimeInterval(previousDuration)
-        }
+        let previousDuration = draft.endDate.timeIntervalSince(oldValue)
+        draft.endDate = newValue.addingTimeInterval(previousDuration)
     }
 
     private func observeCalendars() async {

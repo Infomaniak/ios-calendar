@@ -77,6 +77,10 @@ public struct EventDraftValidator: Sendable {
             errors.insert(.missingCalendar)
         }
 
+        if draft.endDate < draft.startDate {
+            errors.insert(.invalidDates)
+        }
+
         return errors
     }
 }
