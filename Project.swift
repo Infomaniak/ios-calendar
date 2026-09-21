@@ -248,7 +248,11 @@ let project = Project(
             buildableFolders: [
                 .folder("\(Constants.projectName)Tests")
             ],
-            dependencies: [.target(name: Constants.projectName)]
+            dependencies: [
+                .target(name: Constants.projectName),
+                .target(name: "\(Constants.projectName)Core"),
+                .external(name: "MultiplatformCalendar")
+            ]
         ),
         .target(
             name: "\(Constants.projectName)UITests",
