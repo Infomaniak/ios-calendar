@@ -71,6 +71,24 @@
  * Keep the parentheses in every translation. */
 "eventUntitledLabel" = "(Bez tytułu)";
 
+/* loco:6aa9363a0e25629a59012932 */
+"generalSettingsDefaultEventDurationLabel" = "Domyślny czas trwania wydarzenia";
+
+/* loco:6aa804867b7998a59003a9fc */
+"generalSettingsDisplayLabel" = "Wyświetlacz";
+
+/* loco:6aa9363ad1458d183b0de9e2 */
+"generalSettingsShowWeekendsLabel" = "Pokaż weekendy";
+
+/* loco:6aa9363a0ccb57137202b232 */
+"generalSettingsStartOfWeekLabel" = "Początek tygodnia";
+
+/* loco:6aaa8d68dc7e7cd5710750db */
+"generalSettingsTitle" = "Ogólne";
+
+/* loco:6aa9363a66e1c7d3970dd2e2 */
+"generalSettingsUseDeviceTimeZoneLabel" = "Użyj strefy czasowej urządzenia";
+
 /* loco:6a3e2023d4ed90a7ed0b19e5 */
 "helpTitle" = "Pomoc";
 
@@ -157,6 +175,9 @@
 
 /* loco:6a203f703a4a6492b407ce23 */
 "threeDaysTitle" = "Trzy dni";
+
+/* loco:6aa9363b3f16c92f7e024b92 */
+"timeZoneLabel" = "Strefa czasowa";
 
 /* loco:6a63118bfc3889d1fb077fc2 */
 "titleLabel" = "Tytuł";

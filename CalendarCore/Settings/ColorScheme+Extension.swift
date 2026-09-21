@@ -16,27 +16,34 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import CalendarResources
+import Foundation
+import InfomaniakCoreUIResources
 import SwiftUI
 
-public struct SettingsView: View {
-    public init() {}
+public enum Theme: String, CaseIterable, Sendable {
+    case system
+    case light
+    case dark
 
-    public var body: some View {
-        List {
-            Section {
-                NavigationLink {
-                    GeneralSettingsView()
-                } label: {
-                    Text(CalendarResourcesStrings.generalSettingsTitle)
-                }
-            }
+    public var title: String {
+        switch self {
+        case .light:
+            return CoreUILocalizable.themeLight
+        case .dark:
+            return CoreUILocalizable.themeDark
+        case .system:
+            return CoreUILocalizable.themeSystem
         }
-        .navigationTitle(CalendarResourcesStrings.settingsTitle)
-        .navigationBarTitleDisplayMode(.inline)
     }
-}
 
-#Preview {
-    SettingsView()
+    public var colorScheme: ColorScheme? {
+        switch self {
+        case .light:
+            return .light
+        case .dark:
+            return .dark
+        case .system:
+            return nil
+        }
+    }
 }
