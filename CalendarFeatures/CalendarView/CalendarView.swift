@@ -18,7 +18,7 @@
 
 import CalendarCore
 import CalendarCoreUI
-import CalendarCreateEditEventView
+import CalendarEventFormView
 import CalendarResources
 import SwiftUI
 
@@ -86,7 +86,7 @@ public struct CalendarView: View {
         ))
         .sheet(isPresented: $mainViewState.isShowingEventCreation) {
             NavigationStack {
-                EditEventView(editionMode: .new) {
+                EventFormView(editionMode: .new) {
                     mainViewState.isShowingEventCreation = false
                 }
             }

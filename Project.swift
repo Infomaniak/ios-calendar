@@ -57,8 +57,8 @@ let eventDetailsView = Feature(
     ]
 )
 
-let createEditEventView = Feature(
-    name: "CreateEditEventView",
+let eventFormView = Feature(
+    name: "EventFormView",
     additionalDependencies: [
         TargetDependency.target(name: "CalendarResources"),
         TargetDependency.external(name: "DesignSystem"),
@@ -71,7 +71,7 @@ let calendarView = Feature(
     name: "CalendarView",
     additionalDependencies: [
         eventDetailsView,
-        createEditEventView,
+        eventFormView,
         TargetDependency.target(name: "\(Constants.projectName)Resources"),
         TargetDependency.external(name: "DesignSystem"),
         TargetDependency.external(name: "ESDSCalendar"),
@@ -111,7 +111,7 @@ let mainView = Feature(
     name: "MainView",
     additionalDependencies: [
         calendarView,
-        createEditEventView,
+        eventFormView,
         eventDetailsView,
         calendarListView,
         settingsView,
@@ -134,7 +134,7 @@ let mainiOSAppFeatures = [
     onboardingView,
     preloadingView,
     calendarView,
-    createEditEventView,
+    eventFormView,
     eventDetailsView,
     calendarListView,
     settingsView,

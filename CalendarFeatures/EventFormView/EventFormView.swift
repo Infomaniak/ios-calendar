@@ -41,7 +41,7 @@ public enum EditionMode {
     }
 }
 
-public struct EditEventView: View {
+public struct EventFormView: View {
     private enum DatePickerId {
         case start
         case end
@@ -231,7 +231,7 @@ public struct EditEventView: View {
     VStack {}
         .sheet(isPresented: .constant(true)) {
             NavigationStack {
-                EditEventView(editionMode: .new) {}
+                EventFormView(editionMode: .new) {}
             }
             .interactiveDismissDisabled()
         }
