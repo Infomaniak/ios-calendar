@@ -91,9 +91,14 @@ struct ExpandableDatePicker<ID: Hashable>: View {
             }
 
             if expandedPickerId == id, expandedComponent == .hour {
-                DatePicker(CalendarResourcesStrings.selectTimeLabel, selection: $date, in: range, displayedComponents: .hourAndMinute)
-                    .datePickerStyle(.wheel)
-                    .labelsHidden()
+                DatePicker(
+                    CalendarResourcesStrings.selectTimeLabel,
+                    selection: $date,
+                    in: range,
+                    displayedComponents: .hourAndMinute
+                )
+                .datePickerStyle(.wheel)
+                .labelsHidden()
 
                 Button {
                     isNavigatingToTimeZoneList = true

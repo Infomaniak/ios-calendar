@@ -164,13 +164,8 @@ public struct EditEventView: View {
 
             if !availableCalendars.isEmpty {
                 Section {
-                    Picker(selection: $draft.calendarId) {
-                        ForEach(availableCalendars) { calendar in
-                            CalendarCell(calendar: calendar)
-                                .tag(Optional(calendar.id))
-                        }
-                    } label: {
-                        Text(CalendarResourcesStrings.calendarsMenuSectionTitle)
+                    LabeledContent(CalendarResourcesStrings.calendarsMenuSectionTitle) {
+                        CalendarPicker(calendarId: $draft.calendarId, calendars: availableCalendars)
                     }
                 }
             }

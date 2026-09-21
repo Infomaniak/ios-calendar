@@ -19,11 +19,11 @@
 import CalendarCoreUI
 import SwiftUI
 
-struct CalendarCell: View {
+public struct CalendarLabel: View {
     let name: String
     let colorIndicator: UIImage
 
-    init(calendar: UICalendar) {
+    public init(calendar: UICalendar) {
         name = calendar.displayName
 
         let size = CGSize(width: 12, height: 12)
@@ -35,15 +35,16 @@ struct CalendarCell: View {
             .withRenderingMode(.alwaysOriginal)
     }
 
-    var body: some View {
-        Label {
-            Text(name)
-        } icon: {
+    public var body: some View {
+        HStack {
             Image(uiImage: colorIndicator)
+                .accessibilityHidden(true)
+
+            Text(name)
         }
     }
 }
 
 #Preview {
-    CalendarCell(calendar: .preview)
+    CalendarLabel(calendar: .preview)
 }
