@@ -50,71 +50,73 @@ struct ExpandableDatePicker<ID: Hashable>: View {
     }
 
     var body: some View {
-        LabeledContent(label) {
-            HStack {
-                Button { toggleExpansion(.date) } label: {
-                    Text(date, format: .dateTime.year().month().day())
-                }
-                .accessibilityLabel(Text(CalendarResourcesStrings.selectDateLabel))
-                .tint(expandedComponent == .date ? .accentColor : .secondary)
-
-                if canSelectHour {
-                    Button { toggleExpansion(.hour) } label: {
-                        Text(date, format: timeFormatStyle)
-                            .monospacedDigit()
-                            .contentTransition(.numericText())
-                            .animation(.default, value: date)
+        Group {
+            LabeledContent(label) {
+                HStack {
+                    Button { toggleExpansion(.date) } label: {
+                        Text(date, format: .dateTime.year().month().day())
                     }
-                    .accessibilityLabel(Text(CalendarResourcesStrings.selectTimeLabel))
-                    .tint(expandedComponent == .hour ? .accentColor : .secondary)
+                    .accessibilityLabel(Text(CalendarResourcesStrings.selectDateLabel))
+                    .tint(expandedComponent == .date ? .accentColor : .secondary)
+
+                    if canSelectHour {
+                        Button { toggleExpansion(.hour) } label: {
+                            Text(date, format: timeFormatStyle)
+                                .monospacedDigit()
+                                .contentTransition(.numericText())
+                                .animation(.default, value: date)
+                        }
+                        .accessibilityLabel(Text(CalendarResourcesStrings.selectTimeLabel))
+                        .tint(expandedComponent == .hour ? .accentColor : .secondary)
+                    }
+                }
+                .buttonStyle(.bordered)
+                .foregroundStyle(.primary)
+            }
+            .onChange(of: canSelectHour) { _, newValue in
+                if !newValue, expandedComponent == .hour {
+                    collapse()
                 }
             }
-            .buttonStyle(.bordered)
-            .foregroundStyle(.primary)
+            .onChange(of: expandedPickerId) { _, newValue in
+                if newValue != id {
+                    expandedComponent = nil
+                }
+            }
+
+            if expandedPickerId == id, expandedComponent == .date {
+                DatePicker(CalendarResourcesStrings.selectDateLabel, selection: $date, in: range, displayedComponents: .date)
+                    .datePickerStyle(.graphical)
+                    .labelsHidden()
+            }
+
+            if expandedPickerId == id, expandedComponent == .hour {
+                DatePicker(CalendarResourcesStrings.selectTimeLabel, selection: $date, in: range, displayedComponents: .hourAndMinute)
+                    .datePickerStyle(.wheel)
+                    .labelsHidden()
+
+                Button {
+                    isNavigatingToTimeZoneList = true
+                } label: {
+                    HStack(spacing: IKPadding.micro) {
+                        Label(CalendarResourcesStrings.timeZoneLabel, image: CalendarResourcesAsset.Images.globe)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .labelStyle(.formLabel)
+
+                        Text(timeZone.formattedIdentifier)
+                            .foregroundStyle(theme.color.contentTertiary)
+
+                        CalendarResourcesAsset.Images.chevronRight.swiftUIImage
+                            .iconSize(IKIconSize.large)
+                            .foregroundStyle(theme.color.contentTertiary)
+                    }
+                }
+                .navigationDestination(isPresented: $isNavigatingToTimeZoneList) {
+                    TimeZoneListView(timeZone: $timeZone, referenceDate: date)
+                }
+            }
         }
         .environment(\.timeZone, timeZone)
-        .onChange(of: canSelectHour) { _, newValue in
-            if !newValue, expandedComponent == .hour {
-                collapse()
-            }
-        }
-        .onChange(of: expandedPickerId) { _, newValue in
-            if newValue != id {
-                expandedComponent = nil
-            }
-        }
-
-        if expandedPickerId == id, expandedComponent == .date {
-            DatePicker(CalendarResourcesStrings.selectDateLabel, selection: $date, in: range, displayedComponents: .date)
-                .datePickerStyle(.graphical)
-                .labelsHidden()
-        }
-
-        if expandedPickerId == id, expandedComponent == .hour {
-            DatePicker(CalendarResourcesStrings.selectTimeLabel, selection: $date, in: range, displayedComponents: .hourAndMinute)
-                .datePickerStyle(.wheel)
-                .labelsHidden()
-
-            Button {
-                isNavigatingToTimeZoneList = true
-            } label: {
-                HStack(spacing: IKPadding.micro) {
-                    Label(CalendarResourcesStrings.timeZoneLabel, image: CalendarResourcesAsset.Images.globe)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .labelStyle(.formLabel)
-
-                    Text(timeZone.formattedIdentifier)
-                        .foregroundStyle(theme.color.contentTertiary)
-
-                    CalendarResourcesAsset.Images.chevronRight.swiftUIImage
-                        .iconSize(IKIconSize.large)
-                        .foregroundStyle(theme.color.contentTertiary)
-                }
-            }
-            .navigationDestination(isPresented: $isNavigatingToTimeZoneList) {
-                TimeZoneListView(timeZone: $timeZone, referenceDate: date)
-            }
-        }
     }
 
     private func toggleExpansion(_ newComponent: ExpandedComponent) {
