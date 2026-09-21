@@ -82,7 +82,7 @@ public struct EventFormView: View {
     public var body: some View {
         Form {
             Section {
-                TextField(CalendarResourcesStrings.titleLabel, text: $draft.title)
+                TextField(CalendarResourcesStrings.eventTitle, text: $draft.title)
                     .focused($isTitleFocused)
             } footer: {
                 if validationErrors.contains(.titleTooLong) {
