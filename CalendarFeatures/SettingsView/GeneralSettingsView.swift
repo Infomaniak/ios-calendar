@@ -19,12 +19,10 @@
 import CalendarCore
 import CalendarCoreUI
 import CalendarResources
-import ESDSFoundation
 import InfomaniakCoreUIResources
 import SwiftUI
 
 public struct GeneralSettingsView: View {
-    @Environment(\.esdsTheme) private var theme
     @Environment(\.calendar) private var calendar
 
     @AppStorage(UserDefaults.shared.key(.theme), store: .shared)
