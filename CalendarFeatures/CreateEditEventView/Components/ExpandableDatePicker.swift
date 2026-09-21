@@ -99,7 +99,7 @@ struct ExpandableDatePicker<ID: Hashable>: View {
                 isNavigatingToTimeZoneList = true
             } label: {
                 HStack(spacing: IKPadding.micro) {
-                    Label(CalendarResourcesStrings.timeZoneLabel, image: CalendarResourcesAsset.Images.bell)
+                    Label(CalendarResourcesStrings.timeZoneLabel, image: CalendarResourcesAsset.Images.globe)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .labelStyle(.formLabel)
 
