@@ -17,6 +17,9 @@
 /* loco:6aaaaf0a7756fd68ac03a4a9 */
 "attendeesTitle" = "Vieraat";
 
+/* loco:6aa8faa176a90afcee024da6 */
+"availableLabel" = "Vapaa";
+
 /* loco:6a748d3bf80dbe43e8081862 */
 "buttonAddAccount" = "Lisää tili";
 
@@ -44,6 +47,9 @@
 
 /* loco:6a63153465d939443107b2d2 */
 "closeLabel" = "Sulje";
+
+/* loco:6aa8ee5f515d8cf90d03a7d3 */
+"confidentialLabel" = "Luottamuksellinen";
 
 /* loco:6a742cc217cebb36870c27e2 */
 "configurationMenuSectionTitle" = "Asetukset";
@@ -84,11 +90,24 @@
 "eventColorLabel" = "Tapahtuman väri";
 
 /* loco:6a6315016659664bd10ce392 */
-"eventTitle" = "Tapahtuma";
+"eventTitle" = "Tapahtuman nimi";
 
 /* loco:6aa129c47fd12759da096043
  * Keep the parentheses in every translation. */
 "eventUntitledLabel" = "(Nimetön)";
+
+/* loco:6aad34883d0cfd97150618f2 */
+"eventValidationCharacterLimitExceeded" = "Olet ylittänyt merkkirajan";
+
+/* loco:6aad3488f1b40afde80847e1 */
+"eventValidationInvalidDates" = "Virheelliset päivämäärät";
+
+/* loco:6aad3488fe46e87b02051562 */
+"eventValidationMissingCalendar" = "Sinun on valittava kalenteri";
+
+/* loco:6aad34886e832e594606d804
+ * %d is the maximum number of guests (currently 100). Preserve the integer placeholder. */
+"eventValidationTooManyAttendees" = "Vieraita voi olla enintään %d";
 
 /* loco:6aa9363a0e25629a59012932 */
 "generalSettingsDefaultEventDurationLabel" = "Tapahtuman oletuskesto";

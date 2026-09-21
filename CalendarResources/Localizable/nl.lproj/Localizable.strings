@@ -17,6 +17,9 @@
 /* loco:6aaaaf0a7756fd68ac03a4a9 */
 "attendeesTitle" = "Gasten";
 
+/* loco:6aa8faa176a90afcee024da6 */
+"availableLabel" = "Beschikbaar";
+
 /* loco:6a748d3bf80dbe43e8081862 */
 "buttonAddAccount" = "Een account toevoegen";
 
@@ -44,6 +47,9 @@
 
 /* loco:6a63153465d939443107b2d2 */
 "closeLabel" = "Sluiten";
+
+/* loco:6aa8ee5f515d8cf90d03a7d3 */
+"confidentialLabel" = "Vertrouwelijk";
 
 /* loco:6a742cc217cebb36870c27e2 */
 "configurationMenuSectionTitle" = "Configuratie";
@@ -84,11 +90,24 @@
 "eventColorLabel" = "Kleur van het evenement";
 
 /* loco:6a6315016659664bd10ce392 */
-"eventTitle" = "Evenement";
+"eventTitle" = "Titel van het evenement";
 
 /* loco:6aa129c47fd12759da096043
  * Keep the parentheses in every translation. */
 "eventUntitledLabel" = "(Zonder titel)";
+
+/* loco:6aad34883d0cfd97150618f2 */
+"eventValidationCharacterLimitExceeded" = "Je hebt de tekenlimiet overschreden";
+
+/* loco:6aad3488f1b40afde80847e1 */
+"eventValidationInvalidDates" = "Ongeldige datums";
+
+/* loco:6aad3488fe46e87b02051562 */
+"eventValidationMissingCalendar" = "Je moet een agenda selecteren";
+
+/* loco:6aad34886e832e594606d804
+ * %d is the maximum number of guests (currently 100). Preserve the integer placeholder. */
+"eventValidationTooManyAttendees" = "Je kunt niet meer dan %d gasten uitnodigen";
 
 /* loco:6aa9363a0e25629a59012932 */
 "generalSettingsDefaultEventDurationLabel" = "Standaardduur van gebeurtenissen";
@@ -143,7 +162,7 @@
 "openTitle" = "Openen";
 
 /* loco:6a858ffd1be4d033d804961f */
-"participateKMeetTitle" = "Deelneemen aan de kMeet";
+"participateKMeetTitle" = "Deelnemen aan de kMeet";
 
 /* loco:6a4ba692c3d7c4ef7f0aede2 */
 "planningNothingPlanned" = "Niets gepland";
@@ -190,7 +209,7 @@
 "signOutAccountAlertDescription" = "Dit account en de bijbehorende agenda’s worden losgekoppeld van de app ‘Agenda’. Ze blijven beschikbaar in uw online Infomaniak-account.";
 
 /* loco:6a7dc7f20ed3d525e4036f1c */
-"signOutAccountAlertTitle" = "Meld je af bij het account “%@“";
+"signOutAccountAlertTitle" = "Meld je af bij het account “%@”";
 
 /* loco:6a7dc993b750d148d30593b2 */
 "signOutAccountSuccessfulAlertTitle" = "U bent nu succesvol uitgelogd";

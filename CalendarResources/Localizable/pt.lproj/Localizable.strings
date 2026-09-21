@@ -17,6 +17,9 @@
 /* loco:6aaaaf0a7756fd68ac03a4a9 */
 "attendeesTitle" = "Convidados";
 
+/* loco:6aa8faa176a90afcee024da6 */
+"availableLabel" = "Disponível";
+
 /* loco:6a748d3bf80dbe43e8081862 */
 "buttonAddAccount" = "Adicionar uma conta";
 
@@ -44,6 +47,9 @@
 
 /* loco:6a63153465d939443107b2d2 */
 "closeLabel" = "Fechar";
+
+/* loco:6aa8ee5f515d8cf90d03a7d3 */
+"confidentialLabel" = "Confidencial";
 
 /* loco:6a742cc217cebb36870c27e2 */
 "configurationMenuSectionTitle" = "Configuração";
@@ -84,11 +90,24 @@
 "eventColorLabel" = "Cor do evento";
 
 /* loco:6a6315016659664bd10ce392 */
-"eventTitle" = "Evento";
+"eventTitle" = "Título do evento";
 
 /* loco:6aa129c47fd12759da096043
  * Keep the parentheses in every translation. */
 "eventUntitledLabel" = "(Sem título)";
+
+/* loco:6aad34883d0cfd97150618f2 */
+"eventValidationCharacterLimitExceeded" = "Excedeu o limite de caracteres";
+
+/* loco:6aad3488f1b40afde80847e1 */
+"eventValidationInvalidDates" = "Datas inválidas";
+
+/* loco:6aad3488fe46e87b02051562 */
+"eventValidationMissingCalendar" = "Deve selecionar um calendário";
+
+/* loco:6aad34886e832e594606d804
+ * %d is the maximum number of guests (currently 100). Preserve the integer placeholder. */
+"eventValidationTooManyAttendees" = "Não pode ter mais de %d convidados";
 
 /* loco:6aa9363a0e25629a59012932 */
 "generalSettingsDefaultEventDurationLabel" = "Duração predefinida do evento";
