@@ -38,16 +38,16 @@ public struct TimeZoneListView: View {
         return Self.timeZones
             .filter {
                 $0.identifier.localizedCaseInsensitiveContains(search)
-                    || $0.formattedIdentifier.localizedCaseInsensitiveContains(search)
+                    || $0.formatted(.timeZone(.displayName)).localizedCaseInsensitiveContains(search)
                     || $0.localizedName(for: .generic, locale: .current)?.localizedCaseInsensitiveContains(search) == true
-                    || $0.utcOffset(at: referenceDate).localizedCaseInsensitiveContains(search)
+                    || $0.formatted(.timeZone(.utcOffset(at: referenceDate))).localizedCaseInsensitiveContains(search)
             }
-            .sorted { $0.formattedIdentifier < $1.formattedIdentifier }
+            .sorted { $0.formatted(.timeZone(.displayName)) < $1.formatted(.timeZone(.displayName)) }
     }
 
     private static let timeZones = TimeZone.knownTimeZoneIdentifiers
         .compactMap(TimeZone.init(identifier:))
-        .sorted { $0.formattedIdentifier < $1.formattedIdentifier }
+        .sorted { $0.formatted(.timeZone(.displayName)) < $1.formatted(.timeZone(.displayName)) }
 
     public init(timeZone: Binding<TimeZone>, referenceDate: Date) {
         _timeZone = timeZone
@@ -62,7 +62,7 @@ public struct TimeZoneListView: View {
             } label: {
                 HStack {
                     VStack(alignment: .leading) {
-                        Text(timeZone.formattedIdentifier)
+                        Text(timeZone, format: .timeZone(.displayName))
                         if let localizedName = timeZone.localizedName(for: .generic, locale: .current) {
                             Text(localizedName)
                                 .font(.caption)
@@ -70,7 +70,7 @@ public struct TimeZoneListView: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
 
-                    Text(timeZone.utcOffset(at: referenceDate))
+                    Text(timeZone, format: .timeZone(.utcOffset(at: referenceDate)))
                         .foregroundStyle(.secondary)
                         .font(.caption)
                 }

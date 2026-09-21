@@ -18,13 +18,33 @@
 
 import Foundation
 
-public extension TimeZone {
-    var formattedIdentifier: String {
-        let components = identifier.split(separator: "/")
+public struct TimeZoneFormatStyle: FormatStyle, Sendable {
+    public enum Style: Codable, Hashable, Sendable {
+        case displayName
+        case utcOffset(at: Date)
+    }
+
+    private let style: Style
+
+    public init(_ style: Style) {
+        self.style = style
+    }
+
+    public func format(_ timeZone: TimeZone) -> String {
+        switch style {
+        case .displayName:
+            return formatDisplayName(timeZone)
+        case .utcOffset(let date):
+            return formatUTCOffset(timeZone, at: date)
+        }
+    }
+
+    private func formatDisplayName(_ timeZone: TimeZone) -> String {
+        let components = timeZone.identifier.split(separator: "/")
         guard let region = components.first,
               let location = components.last,
               region != location else {
-            return identifier.replacingOccurrences(of: "_", with: " ")
+            return timeZone.identifier.replacingOccurrences(of: "_", with: " ")
         }
 
         let formattedLocation = location.replacingOccurrences(of: "_", with: " ")
@@ -32,8 +52,8 @@ public extension TimeZone {
         return "\(formattedLocation), \(formattedRegion)"
     }
 
-    func utcOffset(at date: Date) -> String {
-        let offsetInMinutes = secondsFromGMT(for: date) / 60
+    private func formatUTCOffset(_ timeZone: TimeZone, at date: Date) -> String {
+        let offsetInMinutes = timeZone.secondsFromGMT(for: date) / 60
 
         let sign = offsetInMinutes >= 0 ? "+" : "-"
         let absoluteOffset = abs(offsetInMinutes)
@@ -45,5 +65,17 @@ public extension TimeZone {
         }
 
         return String(format: "UTC%@%d:%02d", sign, hours, minutes)
+    }
+}
+
+public extension FormatStyle where Self == TimeZoneFormatStyle {
+    static func timeZone(_ style: TimeZoneFormatStyle.Style) -> TimeZoneFormatStyle {
+        TimeZoneFormatStyle(style)
+    }
+}
+
+public extension TimeZone {
+    func formatted<Style: FormatStyle>(_ style: Style) -> Style.FormatOutput where Style.FormatInput == TimeZone {
+        style.format(self)
     }
 }

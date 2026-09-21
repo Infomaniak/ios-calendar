@@ -117,7 +117,7 @@ public struct GeneralSettingsView: View {
                     TimeZoneListView(timeZone: customTimeZoneBinding, referenceDate: .now)
                 } label: {
                     LabeledContent {
-                        Text(customTimeZone.formattedIdentifier)
+                        Text(customTimeZone, format: .timeZone(.displayName))
                     } label: {
                         Text(CalendarResourcesStrings.timeZoneLabel)
                     }
