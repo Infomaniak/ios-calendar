@@ -51,6 +51,7 @@ public struct EventFormView: View {
 
     @State private var availableCalendars = [UICalendar]()
 
+    @State private var originalDaft: EventDraft
     @State private var draft: EventDraft
     @State private var expandedDatePickerId: DatePickerId?
     @State private var isNavigatingToAttendeesList = false
@@ -66,13 +67,24 @@ public struct EventFormView: View {
         validator.validate(draft)
     }
 
+    private var isEdited: Bool {
+        let isEdited = originalDaft != draft
+        print(isEdited)
+        return isEdited
+    }
+
     public init(editionMode: EditionMode, completion: @escaping () -> Void = {}) {
         switch editionMode {
         case .new:
-            _draft = State(wrappedValue: EventDraft.empty())
+            let draft = EventDraft.empty()
+            _originalDaft = State(wrappedValue: draft)
+            _draft = State(wrappedValue: draft)
         case .editEvent(let origin, let calendar):
-            _draft = State(wrappedValue: EventDraft.fromEvent(origin, calendar: calendar))
+            let draft = EventDraft.fromEvent(origin, calendar: calendar)
+            _originalDaft = State(wrappedValue: draft)
+            _draft = State(wrappedValue: draft)
         case .editDraft(let draft):
+            _originalDaft = State(wrappedValue: draft)
             _draft = State(wrappedValue: draft)
         }
 
@@ -196,6 +208,7 @@ public struct EventFormView: View {
             }
         }
         .closeToolbarItem(completion)
+        .interactiveDismissDisabled(isEdited)
     }
 
     private func focusTitleIfNecessary() {
@@ -228,7 +241,9 @@ public struct EventFormView: View {
             availableCalendars = calendars.map { UICalendar(calendar: $0) }.filter { $0.accessLevel.canWrite }
 
             if draft.calendarId == nil {
-                draft.calendarId = availableCalendars.first?.id
+                let calendarId = availableCalendars.first?.id
+                originalDaft.calendarId = calendarId
+                draft.calendarId = calendarId
             }
         }
     }
