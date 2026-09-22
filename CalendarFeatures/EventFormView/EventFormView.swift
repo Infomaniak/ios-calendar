@@ -21,10 +21,7 @@ import CalendarCoreUI
 import CalendarResources
 import DesignSystem
 import ESDSFoundation
-import InfomaniakDI
-import MultiplatformCalendar
 import SwiftUI
-import UIKit
 
 public enum EditionMode {
     case new
@@ -49,10 +46,7 @@ public struct EventFormView: View {
 
     @Environment(\.esdsTheme) private var theme
 
-    @State private var availableCalendars = [UICalendar]()
-
-    @State private var originalDaft: EventDraft
-    @State private var draft: EventDraft
+    @State private var viewModel: EventFormViewModel
     @State private var expandedDatePickerId: DatePickerId?
     @State private var isNavigatingToAttendeesList = false
 
@@ -61,33 +55,9 @@ public struct EventFormView: View {
 
     private let editionMode: EditionMode
     private let completion: () -> Void
-    private let validator = EventDraftValidator()
-
-    private var validationErrors: Set<EventDraftValidator.ValidationError> {
-        validator.validate(draft)
-    }
-
-    private var isEdited: Bool {
-        let isEdited = originalDaft != draft
-        print(isEdited)
-        return isEdited
-    }
 
     public init(editionMode: EditionMode, completion: @escaping () -> Void = {}) {
-        switch editionMode {
-        case .new:
-            let draft = EventDraft.empty()
-            _originalDaft = State(wrappedValue: draft)
-            _draft = State(wrappedValue: draft)
-        case .editEvent(let origin, let calendar):
-            let draft = EventDraft.fromEvent(origin, calendar: calendar)
-            _originalDaft = State(wrappedValue: draft)
-            _draft = State(wrappedValue: draft)
-        case .editDraft(let draft):
-            _originalDaft = State(wrappedValue: draft)
-            _draft = State(wrappedValue: draft)
-        }
-
+        _viewModel = State(wrappedValue: EventFormViewModel(editionMode: editionMode))
         self.editionMode = editionMode
         self.completion = completion
     }
@@ -95,14 +65,14 @@ public struct EventFormView: View {
     public var body: some View {
         Form {
             Section {
-                TextField(CalendarResourcesStrings.eventTitle, text: $draft.title)
+                TextField(CalendarResourcesStrings.eventTitle, text: $viewModel.draft.title)
                     .focused($isTitleFocused)
             } footer: {
-                if validationErrors.contains(.titleTooLong) {
+                if viewModel.validationErrors.contains(.titleTooLong) {
                     HStack {
                         Text(EventDraftValidator.ValidationError.titleTooLong.errorDescription)
                             .frame(maxWidth: .infinity, alignment: .leading)
-                        Text(EventDraftValidator.maximumTitleCharacterCount - draft.title.count, format: .number)
+                        Text(EventDraftValidator.maximumTitleCharacterCount - viewModel.draft.title.count, format: .number)
                             .monospacedDigit()
                     }
                     .font(.caption)
@@ -111,37 +81,37 @@ public struct EventFormView: View {
             }
 
             Section {
-                Toggle(CalendarResourcesStrings.allDayLabel, isOn: $draft.allDay)
+                Toggle(CalendarResourcesStrings.allDayLabel, isOn: $viewModel.draft.allDay)
 
                 ExpandableDatePicker(
-                    date: $draft.startDate,
+                    date: $viewModel.draft.startDate,
                     timeZone: Binding(
-                        get: { draft.startTimeZone ?? .current },
-                        set: { draft.startTimeZone = $0 }
+                        get: { viewModel.draft.startTimeZone ?? .current },
+                        set: { viewModel.draft.startTimeZone = $0 }
                     ),
                     expandedPickerId: $expandedDatePickerId,
                     id: .start,
                     label: CalendarResourcesStrings.startLabel,
-                    canSelectHour: !draft.allDay
+                    canSelectHour: !viewModel.draft.allDay
                 )
-                .onChange(of: draft.startTimeZone) { oldValue, newValue in
-                    shiftEndTimeZoneIfNecessary(oldValue: oldValue, newValue: newValue)
+                .onChange(of: viewModel.draft.startTimeZone) { oldValue, newValue in
+                    viewModel.shiftEndTimeZoneIfNecessary(oldValue: oldValue, newValue: newValue)
                 }
-                .onChange(of: draft.startDate) { oldValue, newValue in
-                    shiftEndDateIfNecessary(oldValue: oldValue, newValue: newValue)
+                .onChange(of: viewModel.draft.startDate) { oldValue, newValue in
+                    viewModel.shiftEndDateIfNecessary(oldValue: oldValue, newValue: newValue)
                 }
 
                 ExpandableDatePicker(
-                    date: $draft.endDate,
+                    date: $viewModel.draft.endDate,
                     timeZone: Binding(
-                        get: { draft.endTimeZone ?? .current },
-                        set: { draft.endTimeZone = $0 }
+                        get: { viewModel.draft.endTimeZone ?? .current },
+                        set: { viewModel.draft.endTimeZone = $0 }
                     ),
                     expandedPickerId: $expandedDatePickerId,
                     id: .end,
                     label: CalendarResourcesStrings.endLabel,
-                    canSelectHour: !draft.allDay,
-                    range: draft.startDate ... Date.distantFuture
+                    canSelectHour: !viewModel.draft.allDay,
+                    range: viewModel.draft.startDate ... Date.distantFuture
                 )
             }
 
@@ -149,7 +119,7 @@ public struct EventFormView: View {
                 Button {
                     isNavigatingToAttendeesList = true
                 } label: {
-                    EventAttendeesCell(attendees: draft.attendees.map { UIAttendee(attendee: $0) })
+                    EventAttendeesCell(attendees: viewModel.draft.attendees.map { UIAttendee(attendee: $0) })
                 }
                 .navigationDestination(isPresented: $isNavigatingToAttendeesList) {
                     Text(CalendarResourcesStrings.attendeesNotEditableMessage)
@@ -157,7 +127,7 @@ public struct EventFormView: View {
             }
 
             Section {
-                Toggle(isOn: $draft.isOccupied) {
+                Toggle(isOn: $viewModel.draft.isOccupied) {
                     Label {
                         Text(CalendarResourcesStrings.occupiedLabel)
                     } icon: {
@@ -165,20 +135,20 @@ public struct EventFormView: View {
                     }
                     .labelStyle(.formLabel)
                 }
-                Toggle(isOn: $draft.isPrivate) {
+                Toggle(isOn: $viewModel.draft.isPrivate) {
                     Label {
                         Text(CalendarResourcesStrings.privateLabel)
                     } icon: {
-                        BouncyLock(isUnlocked: !draft.isPrivate)
+                        BouncyLock(isUnlocked: !viewModel.draft.isPrivate)
                     }
                     .labelStyle(.formLabel)
                 }
             }
 
-            if !availableCalendars.isEmpty {
+            if !viewModel.availableCalendars.isEmpty {
                 Section {
                     LabeledContent(CalendarResourcesStrings.calendarsMenuSectionTitle) {
-                        CalendarPicker(calendarId: $draft.calendarId, calendars: availableCalendars)
+                        CalendarPicker(calendarId: $viewModel.draft.calendarId, calendars: viewModel.availableCalendars)
                     }
                 }
             }
@@ -187,7 +157,7 @@ public struct EventFormView: View {
             focusTitleIfNecessary()
         }
         .task {
-            await observeCalendars()
+            await viewModel.observeCalendars()
         }
         .scrollDismissesKeyboard(.interactively)
         .navigationTitle(Text(editionMode.navigationTitle))
@@ -196,7 +166,7 @@ public struct EventFormView: View {
             ToolbarItem(placement: .confirmationAction) {
                 Button {
                     Task {
-                        try? await CreateEventUseCase().execute(draft: draft)
+                        try? await viewModel.createEvent()
                         completion()
                     }
                 } label: {
@@ -204,11 +174,11 @@ public struct EventFormView: View {
                         .labelStyle(.iconOnly)
                 }
                 .buttonStyle(.borderedProminent)
-                .disabled(!validationErrors.isEmpty)
+                .disabled(!viewModel.validationErrors.isEmpty)
             }
         }
         .closeToolbarItem(completion)
-        .interactiveDismissDisabled(isEdited)
+        .interactiveDismissDisabled(viewModel.isEdited)
     }
 
     private func focusTitleIfNecessary() {
@@ -219,32 +189,6 @@ public struct EventFormView: View {
         hasFocusedKeyboardOnce = true
         withAnimation {
             isTitleFocused = true
-        }
-    }
-
-    private func shiftEndTimeZoneIfNecessary(oldValue: TimeZone?, newValue: TimeZone?) {
-        if oldValue == draft.endTimeZone {
-            draft.endTimeZone = newValue
-        }
-    }
-
-    private func shiftEndDateIfNecessary(oldValue: Date, newValue: Date) {
-        guard newValue >= draft.endDate else { return }
-
-        let previousDuration = draft.endDate.timeIntervalSince(oldValue)
-        draft.endDate = newValue.addingTimeInterval(previousDuration)
-    }
-
-    private func observeCalendars() async {
-        @InjectService var calendarSDK: CalendarCoreGraph
-        for await calendars in calendarSDK.calendarManager.observeCalendars() {
-            availableCalendars = calendars.map { UICalendar(calendar: $0) }.filter { $0.accessLevel.canWrite }
-
-            if draft.calendarId == nil {
-                let calendarId = availableCalendars.first?.id
-                originalDaft.calendarId = calendarId
-                draft.calendarId = calendarId
-            }
         }
     }
 }
