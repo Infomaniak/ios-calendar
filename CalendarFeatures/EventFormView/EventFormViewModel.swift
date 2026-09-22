@@ -22,9 +22,15 @@ import Foundation
 import InfomaniakDI
 import MultiplatformCalendar
 import Observation
+import OSLog
 
 @MainActor @Observable
 final class EventFormViewModel {
+    enum DatePickerId {
+        case start
+        case end
+    }
+
     private(set) var availableCalendars = [UICalendar]()
 
     var draft: EventDraft
@@ -59,17 +65,42 @@ final class EventFormViewModel {
         try await CreateEventUseCase().execute(draft: draft)
     }
 
-    func shiftEndTimeZoneIfNecessary(oldValue: TimeZone?, newValue: TimeZone?) {
-        if oldValue == draft.endTimeZone {
-            draft.endTimeZone = newValue
+    func updateTimeZone(_ timeZone: TimeZone, for pickerId: DatePickerId, calendar: Foundation.Calendar) {
+        let date = pickerId == .start ? draft.startDate : draft.endDate
+        let oldTimeZone = pickerId == .start ? draft.startTimeZone : draft.endTimeZone
+
+        guard oldTimeZone != timeZone else { return }
+
+        var calendar = calendar
+        calendar.timeZone = oldTimeZone ?? .current
+        let components = calendar.dateComponents([.era, .year, .month, .day, .hour, .minute, .second], from: date)
+        calendar.timeZone = timeZone
+        guard let updatedDate = calendar.date(from: components) else {
+            Logger.view.error("Failed to preserve the local date when changing timezone")
+            return
+        }
+
+        switch pickerId {
+        case .start:
+            if draft.startTimeZone == draft.endTimeZone {
+                draft.startDate = updatedDate
+                updateTimeZone(timeZone, for: .end, calendar: calendar)
+            } else {
+                updateStartDate(updatedDate)
+            }
+            draft.startTimeZone = timeZone
+        case .end:
+            draft.endDate = max(updatedDate, draft.startDate)
+            draft.endTimeZone = timeZone
         }
     }
 
-    func shiftEndDateIfNecessary(oldValue: Date, newValue: Date) {
-        guard newValue >= draft.endDate else { return }
-
-        let previousDuration = draft.endDate.timeIntervalSince(oldValue)
-        draft.endDate = newValue.addingTimeInterval(previousDuration)
+    func updateStartDate(_ date: Date) {
+        if date > draft.endDate {
+            let duration = draft.endDate.timeIntervalSince(draft.startDate)
+            draft.endDate = date.addingTimeInterval(duration)
+        }
+        draft.startDate = date
     }
 
     func observeCalendars() async {

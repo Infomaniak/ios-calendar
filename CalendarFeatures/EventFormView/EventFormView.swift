@@ -39,16 +39,12 @@ public enum EditionMode {
 }
 
 public struct EventFormView: View {
-    private enum DatePickerId {
-        case start
-        case end
-    }
-
+    @Environment(\.calendar) private var calendar
     @Environment(\.esdsTheme) private var theme
 
     @State private var viewModel: EventFormViewModel
-    @State private var expandedDatePickerId: DatePickerId?
-    @State private var timeZonePickerId: DatePickerId?
+    @State private var expandedDatePickerId: EventFormViewModel.DatePickerId?
+    @State private var timeZonePickerId: EventFormViewModel.DatePickerId?
     @State private var isNavigatingToAttendeesList = false
 
     @State private var hasFocusedKeyboardOnce = false
@@ -85,7 +81,10 @@ public struct EventFormView: View {
                 Toggle(CalendarResourcesStrings.allDayLabel, isOn: $viewModel.draft.allDay)
 
                 ExpandableDatePicker(
-                    date: $viewModel.draft.startDate,
+                    date: Binding(
+                        get: { viewModel.draft.startDate },
+                        set: { viewModel.updateStartDate($0) }
+                    ),
                     expandedPickerId: $expandedDatePickerId,
                     timeZonePickerId: $timeZonePickerId,
                     timeZone: viewModel.draft.startTimeZone ?? .current,
@@ -93,12 +92,6 @@ public struct EventFormView: View {
                     label: CalendarResourcesStrings.startLabel,
                     canSelectHour: !viewModel.draft.allDay
                 )
-                .onChange(of: viewModel.draft.startTimeZone) { oldValue, newValue in
-                    viewModel.shiftEndTimeZoneIfNecessary(oldValue: oldValue, newValue: newValue)
-                }
-                .onChange(of: viewModel.draft.startDate) { oldValue, newValue in
-                    viewModel.shiftEndDateIfNecessary(oldValue: oldValue, newValue: newValue)
-                }
 
                 ExpandableDatePicker(
                     date: $viewModel.draft.endDate,
@@ -156,7 +149,7 @@ public struct EventFormView: View {
                 TimeZoneListView(
                     timeZone: Binding(
                         get: { viewModel.draft.startTimeZone ?? .current },
-                        set: { viewModel.draft.startTimeZone = $0 }
+                        set: { viewModel.updateTimeZone($0, for: .start, calendar: calendar) }
                     ),
                     referenceDate: viewModel.draft.startDate
                 )
@@ -164,7 +157,7 @@ public struct EventFormView: View {
                 TimeZoneListView(
                     timeZone: Binding(
                         get: { viewModel.draft.endTimeZone ?? .current },
-                        set: { viewModel.draft.endTimeZone = $0 }
+                        set: { viewModel.updateTimeZone($0, for: .end, calendar: calendar) }
                     ),
                     referenceDate: viewModel.draft.endDate
                 )

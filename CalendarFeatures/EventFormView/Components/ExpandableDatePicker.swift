@@ -42,11 +42,16 @@ struct ExpandableDatePicker<ID: Hashable>: View {
     let canSelectHour: Bool
     var range: ClosedRange<Date> = Date.distantPast ... Date.distantFuture
 
+    private var dateFormatStyle: Date.FormatStyle {
+        Date.FormatStyle(timeZone: timeZone).year().month().day()
+    }
+
     private var timeFormatStyle: Date.FormatStyle {
+        let style = Date.FormatStyle(timeZone: timeZone).hour().minute()
         if timeZone.secondsFromGMT(for: date) != calendar.timeZone.secondsFromGMT(for: date) {
-            return .dateTime.hour().minute().timeZone()
+            return style.timeZone()
         }
-        return .dateTime.hour().minute()
+        return style
     }
 
     var body: some View {
@@ -54,7 +59,7 @@ struct ExpandableDatePicker<ID: Hashable>: View {
             LabeledContent(label) {
                 HStack {
                     Button { toggleExpansion(.date) } label: {
-                        Text(date, format: .dateTime.year().month().day())
+                        Text(date, format: dateFormatStyle)
                     }
                     .accessibilityLabel(Text(CalendarResourcesStrings.selectDateLabel))
                     .tint(expandedComponent == .date ? .accentColor : .secondary)
