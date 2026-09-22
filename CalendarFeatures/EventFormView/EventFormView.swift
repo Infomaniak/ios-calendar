@@ -55,6 +55,7 @@ public struct EventFormView: View {
     @State private var expandedDatePickerId: DatePickerId?
     @State private var isNavigatingToAttendeesList = false
 
+    @State private var hasFocusedKeyboardOnce = false
     @FocusState private var isTitleFocused: Bool
 
     private let editionMode: EditionMode
@@ -198,7 +199,12 @@ public struct EventFormView: View {
     }
 
     private func focusTitleIfNecessary() {
-        if case .new = editionMode {
+        guard case .new = editionMode, !hasFocusedKeyboardOnce else {
+            return
+        }
+
+        hasFocusedKeyboardOnce = true
+        withAnimation {
             isTitleFocused = true
         }
     }
