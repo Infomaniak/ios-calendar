@@ -65,7 +65,7 @@ final class EventFormViewModel {
         try await CreateEventUseCase().execute(draft: draft)
     }
 
-    func updateTimeZone(_ timeZone: TimeZone, for pickerId: DatePickerId, calendar: Foundation.Calendar) {
+    func updateTimeZone(_ timeZone: Foundation.TimeZone, for pickerId: DatePickerId, calendar: Foundation.Calendar) {
         let date = pickerId == .start ? draft.startDate : draft.endDate
         let oldTimeZone = pickerId == .start ? draft.startTimeZone : draft.endTimeZone
 

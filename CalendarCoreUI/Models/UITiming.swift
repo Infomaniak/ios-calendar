@@ -33,8 +33,8 @@ public struct UITiming: Sendable, Hashable, Equatable {
     }
 
     public init(eventTiming: MultiplatformCalendar.EventTiming) {
-        start = eventTiming.startInstantLocal().date
-        end = eventTiming.endInstantLocal().date
+        start = eventTiming.startInstantLocal().toNSDate()
+        end = eventTiming.endInstantLocal().toNSDate()
         startTimeZone = eventTiming.startTimeZone.flatMap { TimeZone(identifier: $0.id) }
         endTimeZone = eventTiming.endTimeZone.flatMap { TimeZone(identifier: $0.id) }
     }

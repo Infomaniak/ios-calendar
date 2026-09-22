@@ -17,18 +17,5 @@
  */
 
 import Foundation
-import MultiplatformCalendar
 
-public extension YearMonth {
-    func toKotlinYearMonth() -> MultiplatformCalendar.YearMonth {
-        .init(year: Int32(year), month: Int32(month))
-    }
-}
-
-public extension CalendarManager {
-    func observeMonthlyDotColors(startMonth: YearMonth,
-                                 endMonth: YearMonth)
-        -> SkieSwiftFlow<[LocalDate: [DotColor]]> {
-        observeMonthlyDotColors(startMonth: startMonth.toKotlinYearMonth(), endMonth: endMonth.toKotlinYearMonth())
-    }
-}
+public typealias TimeZone = Foundation.TimeZone

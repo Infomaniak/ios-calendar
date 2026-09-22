@@ -27,12 +27,6 @@ public extension Date {
     }
 }
 
-extension KotlinInstant {
-    var date: Date {
-        Date(timeIntervalSince1970: TimeInterval(toEpochMilliseconds()) / 1000.0)
-    }
-}
-
 public extension UIEvent {
     struct Colors: Sendable, Equatable, Hashable {
         public let calendarSourceColor: Color
@@ -164,8 +158,8 @@ public extension UIEvent {
             location = nil
         }
 
-        startDate = eventDaySlice.displayStartInstant().date
-        endDate = eventDaySlice.displayEndInstant().date
+        startDate = eventDaySlice.displayStartInstant().toNSDate()
+        endDate = eventDaySlice.displayEndInstant().toNSDate()
         isAllDay = eventDaySlice.isAllDay
         timing = UITiming(eventTiming: event.timing)
 

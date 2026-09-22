@@ -141,7 +141,7 @@ struct MiniCalendarView: View {
         }
 
         @InjectService var calendarSDK: CalendarCoreGraph
-        for await colorsByDay in calendarSDK.calendarManager.observeMonthlyCalendarColors(
+        for await colorsByDay in calendarSDK.calendarManager.observeMonthlyDotColors(
             startMonth: previousYearMonth,
             endMonth: nextYearMonth
         ) {
@@ -149,11 +149,11 @@ struct MiniCalendarView: View {
                 uniqueKeysWithValues: colorsByDay.compactMap { dayDate, visibleColors in
                     guard let date = calendar.date(from: .init(
                         year: Int(dayDate.year),
-                        month: Int(dayDate.month.ordinal + 1),
+                        month: Int(dayDate.month.number),
                         day: Int(dayDate.day)
                     )) else { return nil }
 
-                    let colors = visibleColors.map { Color(argb: $0.colors.sourceColor) }
+                    let colors = visibleColors.map { Color(argb: $0.sourceColor) }
                     let startOfDayDate = calendar.startOfDay(for: date)
                     return (startOfDayDate, colors)
                 }
