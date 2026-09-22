@@ -16,11 +16,15 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Foundation
-import MultiplatformCalendar
+import CalendarResources
+import SwiftUI
 
-extension DavCredentials: @unchecked @retroactive Sendable {}
-
-extension CalendarManager: @unchecked @retroactive Sendable {}
-
-extension Attendee: @unchecked @retroactive Sendable {}
+public extension Label where Title == Text, Icon == Image {
+    init(_ title: String, image: CalendarResourcesImages) {
+        self.init {
+            Text(title)
+        } icon: {
+            image.swiftUIImage
+        }
+    }
+}

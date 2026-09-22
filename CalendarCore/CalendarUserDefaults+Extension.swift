@@ -27,6 +27,9 @@ public protocol SettingsOptionEnum {
 }
 
 public extension UserDefaults.Keys {
+    static let matomoAuthorized = UserDefaults.Keys(rawValue: "matomoAuthorized")
+    static let sentryAuthorized = UserDefaults.Keys(rawValue: "sentryAuthorized")
+
     static let theme = UserDefaults.Keys(rawValue: "theme")
     static let firstWeekday = UserDefaults.Keys(rawValue: "firstWeekday")
     static let displayWeekends = UserDefaults.Keys(rawValue: "displayWeekends")
@@ -36,6 +39,30 @@ public extension UserDefaults.Keys {
 
 public extension UserDefaults {
     nonisolated(unsafe) static let shared = UserDefaults(suiteName: "group.\(CalendarTargetAssembly.bundleId)")!
+
+    var isMatomoAuthorized: Bool {
+        get {
+            if object(forKey: key(.matomoAuthorized)) == nil {
+                set(DefaultPreferences.matomoAuthorized, forKey: key(.matomoAuthorized))
+            }
+            return bool(forKey: key(.matomoAuthorized))
+        }
+        set {
+            set(newValue, forKey: key(.matomoAuthorized))
+        }
+    }
+
+    var isSentryAuthorized: Bool {
+        get {
+            if object(forKey: key(.sentryAuthorized)) == nil {
+                set(DefaultPreferences.sentryAuthorized, forKey: key(.sentryAuthorized))
+            }
+            return bool(forKey: key(.sentryAuthorized))
+        }
+        set {
+            set(newValue, forKey: key(.sentryAuthorized))
+        }
+    }
 
     var theme: Theme {
         get {

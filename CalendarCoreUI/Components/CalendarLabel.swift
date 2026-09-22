@@ -16,31 +16,34 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import CalendarCoreUI
-import CalendarResources
-import DesignSystem
-import ESDSFoundation
-import InfomaniakCoreSwiftUI
 import SwiftUI
 
-struct AlertsSectionView: View {
-    @Environment(\.esdsTheme) private var theme
+public struct CalendarLabel: View {
+    let name: String
+    let colorIndicator: UIImage
 
-    @Binding var alarms: [UIEventAlarm]
+    public init(calendar: UICalendar) {
+        name = calendar.displayName
 
-    var body: some View {
-        ForEach(alarms.indices, id: \.self) { index in
-            LabeledContent {
-                Text(alarms[index].offset.rawValue)
-                    .foregroundStyle(theme.color.contentSecondary)
-            } label: {
-                Label(alarms[index].action.label, image: alarms[index].action.icon)
-                    .labelStyle(.formLabel)
+        let size = CGSize(width: 12, height: 12)
+        colorIndicator = UIGraphicsImageRenderer(size: size)
+            .image { context in
+                context.cgContext.setFillColor(UIColor(calendar.color).cgColor)
+                context.cgContext.fillEllipse(in: CGRect(origin: .zero, size: size))
             }
+            .withRenderingMode(.alwaysOriginal)
+    }
+
+    public var body: some View {
+        HStack {
+            Image(uiImage: colorIndicator)
+                .accessibilityHidden(true)
+
+            Text(name)
         }
     }
 }
 
 #Preview {
-    AlertsSectionView(alarms: .constant([.preview]))
+    CalendarLabel(calendar: .preview)
 }

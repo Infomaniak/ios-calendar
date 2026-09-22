@@ -19,7 +19,6 @@
 import CalendarResources
 import Foundation
 @preconcurrency import MultiplatformCalendar
-import SwiftUI
 
 public struct UIEventAlarm: Sendable, Hashable {
     public let action: UIAlarmAction
@@ -102,14 +101,14 @@ public enum UIAlarmAction: Identifiable, Sendable, Hashable {
         }
     }
 
-    public var icon: Image {
+    public var icon: CalendarResourcesImages {
         switch self {
         case .display:
-            return CalendarResourcesAsset.Images.bubbleTopRightCircle.swiftUIImage
+            return CalendarResourcesAsset.Images.bubbleTopRightCircle
         case .audio:
-            return CalendarResourcesAsset.Images.bell.swiftUIImage
+            return CalendarResourcesAsset.Images.bell
         default:
-            return CalendarResourcesAsset.Images.bell.swiftUIImage
+            return CalendarResourcesAsset.Images.bell
         }
     }
 }

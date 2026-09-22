@@ -16,10 +16,19 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Testing
+import InfomaniakDI
+import MultiplatformCalendar
 
-struct CalendarTests {
-    @Test func example() {
-        // Write your test here and use APIs like `#expect(...)` to check expected conditions.
+public struct CreateEventUseCase: Sendable {
+    public init() {}
+
+    public func execute(draft: EventDraft) async throws {
+        let errors = EventDraftValidator().validate(draft)
+        guard errors.isEmpty else {
+            throw EventDraftValidator.ValidationErrors(errors: errors)
+        }
+
+        @InjectService var calendarSDK: CalendarCoreGraph
+        try await calendarSDK.calendarManager.createEvent(data: draft.toEventEditData())
     }
 }

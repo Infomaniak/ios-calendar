@@ -16,14 +16,15 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarCoreUI
 import CalendarResources
 import DesignSystem
 import ESDSFoundation
+import InfomaniakCoreSwiftUI
 import SwiftUI
 
 struct OpenLinkRow: View {
     @Environment(\.esdsTheme) private var theme
-    @Environment(\.openURL) private var openURL
 
     let title: String
     let buttonTitle: String
@@ -32,38 +33,33 @@ struct OpenLinkRow: View {
     let showLink: Bool
 
     var body: some View {
-        HStack(spacing: 0) {
-            icon
-                .iconSize(IKIconSize.large)
-                .foregroundStyle(theme.color.contentSecondary)
-                .padding(.trailing, IKPadding.medium)
-                .accessibilityHidden(true)
+        HStack(spacing: theme.spacing.xl) {
+            Label {
+                VStack(alignment: .leading) {
+                    Text(title)
 
-            VStack(alignment: .leading) {
-                Text(title)
-                    .foregroundStyle(theme.color.contentPrimary)
-
-                if showLink {
-                    Text("\(linkURL.absoluteString)")
-                        .lineLimit(1)
-                        .font(.footnote)
-                        .foregroundStyle(theme.color.contentSecondary)
+                    if showLink {
+                        Text("\(linkURL.absoluteString)")
+                            .lineLimit(1)
+                            .font(.footnote)
+                            .foregroundStyle(theme.color.contentSecondary)
+                    }
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            } icon: {
+                icon
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
+            .labelStyle(.formLabel)
 
-            Button {
-                openURL(linkURL)
-            } label: {
+            Link(destination: linkURL) {
                 Text(buttonTitle)
                     .foregroundStyle(theme.color.backgroundBrand)
-                    .font(.body.weight(.semibold))
-                    .padding(.horizontal, 11)
-                    .padding(.vertical, 6)
-                    .background(theme.color.backgroundBrand.opacity(0.1), in: Capsule())
+                    .font(.body.weight(.emphasized))
+                    .padding(.horizontal, theme.spacing.lg)
+                    .padding(.vertical, theme.spacing.sm)
+                    .background(theme.color.backgroundBrand.opacity(0.1), in: .capsule)
             }
             .buttonStyle(.plain)
-            .padding(.horizontal, IKPadding.medium)
 
             ShareLink(item: linkURL) {
                 CalendarResourcesAsset.Images.squareArrowOutUpRight.swiftUIImage

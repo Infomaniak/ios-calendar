@@ -28,6 +28,7 @@ public struct EventDetailsView: View {
     @State private var alarms: [UIEventAlarm]
     @State private var selectedStatus: UIParticipationStatus?
     @State private var showNavigationTitle = false
+    @State private var isNavigatingToAttendeesList = false
 
     private let event: CalendarCoreUI.UIEvent
 
@@ -73,8 +74,17 @@ public struct EventDetailsView: View {
                 .listRowBackground(Color.clear)
                 .listRowSeparator(.hidden)
 
-                Section {
-                    ParticipantsRow(uniqueAttendees: uniqueAttendees)
+                if !uniqueAttendees.isEmpty {
+                    Section {
+                        Button {
+                            isNavigatingToAttendeesList = true
+                        } label: {
+                            EventAttendeesCell(attendees: uniqueAttendees)
+                        }
+                        .navigationDestination(isPresented: $isNavigatingToAttendeesList) {
+                            AttendeesListView(attendees: uniqueAttendees)
+                        }
+                    }
                 }
 
                 if hasLocationSection {

@@ -16,16 +16,22 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import SwiftUI
+import InfomaniakDI
+import MultiplatformCalendar
 
-public struct CreateEditEventView: View {
+public struct UpdateEventUseCase: Sendable {
     public init() {}
 
-    public var body: some View {
-        EmptyView()
-    }
-}
+    public func execute(eventId: String, draft: EventDraft, originalData: EventEditData) async throws {
+        let errors = EventDraftValidator().validate(draft)
+        guard errors.isEmpty else {
+            throw EventDraftValidator.ValidationErrors(errors: errors)
+        }
 
-#Preview {
-    CreateEditEventView()
+        @InjectService var calendarSDK: CalendarCoreGraph
+        try await calendarSDK.calendarManager.updateEvent(
+            eventId: eventId,
+            data: draft.toEventEditData(preserving: originalData)
+        )
+    }
 }

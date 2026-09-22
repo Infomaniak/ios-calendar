@@ -57,10 +57,21 @@ let eventDetailsView = Feature(
     ]
 )
 
+let eventFormView = Feature(
+    name: "EventFormView",
+    additionalDependencies: [
+        TargetDependency.target(name: "CalendarResources"),
+        TargetDependency.external(name: "DesignSystem"),
+        TargetDependency.external(name: "ESDSFoundation"),
+        TargetDependency.external(name: "InfomaniakDI")
+    ]
+)
+
 let calendarView = Feature(
     name: "CalendarView",
     additionalDependencies: [
         eventDetailsView,
+        eventFormView,
         TargetDependency.target(name: "\(Constants.projectName)Resources"),
         TargetDependency.external(name: "DesignSystem"),
         TargetDependency.external(name: "ESDSCalendar"),
@@ -69,8 +80,6 @@ let calendarView = Feature(
         TargetDependency.external(name: "Eventually")
     ]
 )
-
-let createEditEventView = Feature(name: "CreateEditEventView", additionalDependencies: [])
 
 let settingsView = Feature(
     name: "SettingsView",
@@ -102,7 +111,7 @@ let mainView = Feature(
     name: "MainView",
     additionalDependencies: [
         calendarView,
-        createEditEventView,
+        eventFormView,
         eventDetailsView,
         calendarListView,
         settingsView,
@@ -125,7 +134,7 @@ let mainiOSAppFeatures = [
     onboardingView,
     preloadingView,
     calendarView,
-    createEditEventView,
+    eventFormView,
     eventDetailsView,
     calendarListView,
     settingsView,
@@ -239,7 +248,12 @@ let project = Project(
             buildableFolders: [
                 .folder("\(Constants.projectName)Tests")
             ],
-            dependencies: [.target(name: Constants.projectName)]
+            dependencies: [
+                .target(name: Constants.projectName),
+                .target(name: "\(Constants.projectName)Core"),
+                eventFormView.asDependency,
+                .external(name: "MultiplatformCalendar")
+            ]
         ),
         .target(
             name: "\(Constants.projectName)UITests",

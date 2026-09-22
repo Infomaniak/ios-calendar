@@ -16,26 +16,16 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import DesignSystem
-import ESDSFoundation
+import CalendarCoreUI
+import CalendarResources
 import SwiftUI
 
 struct StatusRow: View {
-    @Environment(\.esdsTheme) private var theme
-
     let text: String
-    let icon: Image
+    let icon: CalendarResourcesImages
 
     var body: some View {
-        HStack {
-            icon
-                .iconSize(IKIconSize.large)
-                .foregroundStyle(theme.color.contentSecondary)
-                .accessibilityHidden(true)
-
-            Text(text)
-                .font(.body)
-                .foregroundStyle(theme.color.contentPrimary)
-        }
+        Label(text, image: icon)
+            .labelStyle(.formLabel)
     }
 }
