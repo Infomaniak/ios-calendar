@@ -18,14 +18,12 @@
 
 import SwiftUI
 
-public struct WeekView: View {
-    public init() {}
-
-    public var body: some View {
-        Text("WeekView")
+struct MultipleDaysView: View {
+    var body: some View {
+        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
     }
 }
 
 #Preview {
-    WeekView()
+    MultipleDaysView()
 }
