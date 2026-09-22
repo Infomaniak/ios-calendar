@@ -25,7 +25,6 @@ import SwiftUI
 
 struct OpenLinkRow: View {
     @Environment(\.esdsTheme) private var theme
-    @Environment(\.openURL) private var openURL
 
     let title: String
     let buttonTitle: String
@@ -34,7 +33,7 @@ struct OpenLinkRow: View {
     let showLink: Bool
 
     var body: some View {
-        HStack(spacing: 0) {
+        HStack(spacing: theme.spacing.xl) {
             Label {
                 VStack(alignment: .leading) {
                     Text(title)
@@ -52,18 +51,15 @@ struct OpenLinkRow: View {
             }
             .labelStyle(.formLabel)
 
-            Button {
-                openURL(linkURL)
-            } label: {
+            Link(destination: linkURL) {
                 Text(buttonTitle)
                     .foregroundStyle(theme.color.backgroundBrand)
-                    .font(.body.weight(.semibold))
-                    .padding(.horizontal, 11)
-                    .padding(.vertical, 6)
-                    .background(theme.color.backgroundBrand.opacity(0.1), in: Capsule())
+                    .font(.body.weight(.emphasized))
+                    .padding(.horizontal, theme.spacing.lg)
+                    .padding(.vertical, theme.spacing.sm)
+                    .background(theme.color.backgroundBrand.opacity(0.1), in: .capsule)
             }
             .buttonStyle(.plain)
-            .padding(.horizontal, IKPadding.medium)
 
             ShareLink(item: linkURL) {
                 CalendarResourcesAsset.Images.squareArrowOutUpRight.swiftUIImage
