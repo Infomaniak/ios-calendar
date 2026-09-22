@@ -48,6 +48,7 @@ public struct EventFormView: View {
 
     @State private var viewModel: EventFormViewModel
     @State private var expandedDatePickerId: DatePickerId?
+    @State private var timeZonePickerId: DatePickerId?
     @State private var isNavigatingToAttendeesList = false
 
     @State private var hasFocusedKeyboardOnce = false
@@ -85,11 +86,9 @@ public struct EventFormView: View {
 
                 ExpandableDatePicker(
                     date: $viewModel.draft.startDate,
-                    timeZone: Binding(
-                        get: { viewModel.draft.startTimeZone ?? .current },
-                        set: { viewModel.draft.startTimeZone = $0 }
-                    ),
                     expandedPickerId: $expandedDatePickerId,
+                    timeZonePickerId: $timeZonePickerId,
+                    timeZone: viewModel.draft.startTimeZone ?? .current,
                     id: .start,
                     label: CalendarResourcesStrings.startLabel,
                     canSelectHour: !viewModel.draft.allDay
@@ -103,11 +102,9 @@ public struct EventFormView: View {
 
                 ExpandableDatePicker(
                     date: $viewModel.draft.endDate,
-                    timeZone: Binding(
-                        get: { viewModel.draft.endTimeZone ?? .current },
-                        set: { viewModel.draft.endTimeZone = $0 }
-                    ),
                     expandedPickerId: $expandedDatePickerId,
+                    timeZonePickerId: $timeZonePickerId,
+                    timeZone: viewModel.draft.endTimeZone ?? .current,
                     id: .end,
                     label: CalendarResourcesStrings.endLabel,
                     canSelectHour: !viewModel.draft.allDay,
@@ -151,6 +148,26 @@ public struct EventFormView: View {
                         CalendarPicker(calendarId: $viewModel.draft.calendarId, calendars: viewModel.availableCalendars)
                     }
                 }
+            }
+        }
+        .navigationDestination(item: $timeZonePickerId) { pickerId in
+            switch pickerId {
+            case .start:
+                TimeZoneListView(
+                    timeZone: Binding(
+                        get: { viewModel.draft.startTimeZone ?? .current },
+                        set: { viewModel.draft.startTimeZone = $0 }
+                    ),
+                    referenceDate: viewModel.draft.startDate
+                )
+            case .end:
+                TimeZoneListView(
+                    timeZone: Binding(
+                        get: { viewModel.draft.endTimeZone ?? .current },
+                        set: { viewModel.draft.endTimeZone = $0 }
+                    ),
+                    referenceDate: viewModel.draft.endDate
+                )
             }
         }
         .onAppear {

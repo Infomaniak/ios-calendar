@@ -31,12 +31,12 @@ struct ExpandableDatePicker<ID: Hashable>: View {
     @Environment(\.esdsTheme) private var theme
 
     @State private var expandedComponent: ExpandedComponent?
-    @State private var isNavigatingToTimeZoneList = false
 
     @Binding var date: Date
-    @Binding var timeZone: TimeZone
     @Binding var expandedPickerId: ID?
+    @Binding var timeZonePickerId: ID?
 
+    let timeZone: TimeZone
     let id: ID
     let label: String
     let canSelectHour: Bool
@@ -101,7 +101,7 @@ struct ExpandableDatePicker<ID: Hashable>: View {
                 .labelsHidden()
 
                 Button {
-                    isNavigatingToTimeZoneList = true
+                    timeZonePickerId = id
                 } label: {
                     HStack(spacing: IKPadding.micro) {
                         Label(CalendarResourcesStrings.timeZoneLabel, image: CalendarResourcesAsset.Images.globe)
@@ -115,9 +115,6 @@ struct ExpandableDatePicker<ID: Hashable>: View {
                             .iconSize(IKIconSize.large)
                             .foregroundStyle(theme.color.contentTertiary)
                     }
-                }
-                .navigationDestination(isPresented: $isNavigatingToTimeZoneList) {
-                    TimeZoneListView(timeZone: $timeZone, referenceDate: date)
                 }
             }
         }
@@ -145,19 +142,22 @@ struct ExpandableDatePicker<ID: Hashable>: View {
     @Previewable @State var date = Date.now
     @Previewable @State var timeZone = TimeZone.current
     @Previewable @State var expandedPickerId: String?
+    @Previewable @State var timeZonePickerId: String?
 
     ExpandableDatePicker(
         date: $date,
-        timeZone: $timeZone,
         expandedPickerId: $expandedPickerId,
+        timeZonePickerId: $timeZonePickerId,
+        timeZone: timeZone,
         id: "dateAndTime",
         label: "Date and time",
         canSelectHour: true
     )
     ExpandableDatePicker(
         date: $date,
-        timeZone: $timeZone,
         expandedPickerId: $expandedPickerId,
+        timeZonePickerId: $timeZonePickerId,
+        timeZone: timeZone,
         id: "date",
         label: "Date",
         canSelectHour: false
