@@ -83,6 +83,7 @@ public extension EventDraft {
             timing: sdkTiming(recurrenceRule: originalData?.timing.recurrenceRule),
             location: originalData?.location,
             description: description,
+            timeBlocking: nil,
             calendarId: calendarId,
             eventColor: originalData?.eventColor,
             alarms: originalData?.alarms ?? []
@@ -90,8 +91,8 @@ public extension EventDraft {
     }
 
     private func sdkTiming(recurrenceRule: RecurrenceRule?) throws -> EventTiming {
-        let startZone = Kotlinx_datetimeTimeZone.companion.of(zoneId: (startTimeZone ?? .current).identifier)
-        let endZone = Kotlinx_datetimeTimeZone.companion.of(zoneId: (endTimeZone ?? .current).identifier)
+        let startZone = (startTimeZone ?? .current).toKotlinTimeZone()
+        let endZone = (endTimeZone ?? .current).toKotlinTimeZone()
         return try EventTiming(
             start: localDateTime(startDate, in: startZone),
             end: localDateTime(endDate, in: endZone),
@@ -102,14 +103,15 @@ public extension EventDraft {
         )
     }
 
-    private func localDateTime(_ date: Date, in timeZone: Kotlinx_datetimeTimeZone) throws -> Kotlinx_datetimeLocalDateTime {
+    private func localDateTime(_ date: Date, in timeZone: MultiplatformCalendar.TimeZone) throws -> LocalDateTime {
         guard let milliseconds = Int64(exactly: (date.timeIntervalSince1970 * 1000).rounded(.towardZero)) else {
             throw EventDraftValidator.ValidationError.invalidDates
         }
+
         let instant = KotlinInstant.companion.fromEpochMilliseconds(epochMilliseconds: milliseconds)
         let local = timeZone.toLocalDateTime(instant)
         guard allDay else { return local }
-        return Kotlinx_datetimeLocalDateTime(
+        return LocalDateTime(
             year: local.year,
             month: local.month,
             day: local.day,

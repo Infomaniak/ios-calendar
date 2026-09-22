@@ -6,8 +6,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Alamofire/Alamofire",
       "state" : {
-        "revision" : "7595cbcf59809f9977c5f6378500de2ad73b7ddb",
-        "version" : "5.12.0"
+        "revision" : "bda9ed57d72988a3a2ada33d824583541f86eac6",
+        "version" : "5.12.2"
       }
     },
     {
@@ -16,7 +16,7 @@
       "location" : "https://github.com/Infomaniak/Eventually.git",
       "state" : {
         "branch" : "main",
-        "revision" : "ef4db951b02dae98e3ee64c2ad5472efbf6f2c05"
+        "revision" : "add81b198c35efc49db8599acdee446414a9cca5"
       }
     },
     {
@@ -25,7 +25,7 @@
       "location" : "https://github.com/Infomaniak/InfiniteScrollViews",
       "state" : {
         "branch" : "feat/custom-background-color",
-        "revision" : "b75767800feec61bd936aafb2716bcf8ed148d86"
+        "revision" : "848811ebdf0b635cff31c1a4c832b18184fba566"
       }
     },
     {
@@ -141,8 +141,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/multiplatform-calendar",
       "state" : {
-        "revision" : "7862a0fa3b0d7164e649f2cb17396df623be3b6a",
-        "version" : "0.6.0"
+        "revision" : "f3f8511db50f6c26a543aebc22c3e11d75ad5780",
+        "version" : "0.10.0"
       }
     },
     {
@@ -195,8 +195,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getsentry/sentry-cocoa",
       "state" : {
-        "revision" : "cd213f98af160e6497eeff0707bc3f6a205b159c",
-        "version" : "9.26.0"
+        "revision" : "d9df1c4e8d8466c7f8b3c56150378927dadf1b8e",
+        "version" : "9.29.0"
       }
     },
     {
@@ -240,8 +240,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/siteline/SwiftUI-Introspect",
       "state" : {
-        "revision" : "469f9e8becd1b229b9c2056a4bd80dcce3b65a69",
-        "version" : "27.0.0-beta.2"
+        "revision" : "a37eca1db7bebc9437ee89508e7b4433ff34adb4",
+        "version" : "27.0.0"
       }
     }
   ],

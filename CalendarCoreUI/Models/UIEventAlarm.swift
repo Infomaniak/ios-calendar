@@ -178,7 +178,7 @@ extension UIAlarmTrigger {
                 relatedTo: UITriggerRelation(sdk: relative.relatedTo)
             )
         case let absolute as AlarmTriggerAbsolute:
-            self = .absolute(instant: absolute.instant.date)
+            self = .absolute(instant: absolute.instant.toNSDate())
         default:
             return nil
         }
