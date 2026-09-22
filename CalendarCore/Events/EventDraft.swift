@@ -83,7 +83,7 @@ public extension EventDraft {
             timing: sdkTiming(recurrenceRule: originalData?.timing.recurrenceRule),
             location: originalData?.location,
             description: description,
-            timeBlocking: nil,
+            timeBlocking: isOccupied ? .blocks : .doesNotBlock,
             calendarId: calendarId,
             eventColor: originalData?.eventColor,
             alarms: originalData?.alarms ?? []
