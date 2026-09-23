@@ -180,8 +180,9 @@ struct DayContentView: View {
                 .onAppear {
                     scrollToCorrectPosition(proxy)
                 }
-                .onChange(of: mainViewState.selectedDate) { _, selectedDate in
-                    guard calendar.isDate(date, inSameDayAs: selectedDate) else { return }
+                .onChange(of: mainViewState.selectedDate) { oldSelectedDate, selectedDate in
+                    guard calendar.isDate(date, inSameDayAs: selectedDate),
+                          !calendar.isDate(date, inSameDayAs: oldSelectedDate) else { return }
                     // Lazy paging can prepare this day before the active timeline finishes scrolling.
                     scrollToCorrectPosition(proxy)
                 }
