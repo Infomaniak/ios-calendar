@@ -73,7 +73,7 @@ public struct CalendarView: View {
             case .day:
                 DaysView(miniCalendarHeight: $miniCalendarHeight)
             case .week:
-                MultipleDaysView()
+                WeekView()
             case .threeDays:
                 MultipleDaysView()
             case .month:
