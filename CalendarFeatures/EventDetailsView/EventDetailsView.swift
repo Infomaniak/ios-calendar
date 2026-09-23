@@ -140,12 +140,10 @@ public struct EventDetailsView: View {
             .scrollBounceBehavior(.basedOnSize)
             .closeToolbarItem(dismiss: dismiss)
             .toolbar {
-                ToolbarItem(placement: .principal) {
-                    if #available(iOS 27.0, *) {
+                if #available(iOS 27.0, *) {
+                    ToolbarItem(placement: .principal) {
                         Text(event.displayTitle)
                             .opacity(showNavigationTitle ? 1 : 0)
-                    } else {
-                        Text(CalendarResourcesStrings.eventTitle)
                     }
                 }
 
