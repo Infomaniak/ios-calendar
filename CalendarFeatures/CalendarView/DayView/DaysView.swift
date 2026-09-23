@@ -47,14 +47,10 @@ struct DayPager: View {
                     miniCalendarHeight: $miniCalendarHeight,
                     date: date
                 )
-                // The horizontal scroll view consumes these insets; restore them for each timeline.
-                // DayContentView already reserves the mini-calendar's height.
-                .safeAreaPadding(EdgeInsets(
-                    top: max(0, proxy.safeAreaInsets.top - miniCalendarHeight),
-                    leading: proxy.safeAreaInsets.leading,
-                    bottom: proxy.safeAreaInsets.bottom,
-                    trailing: proxy.safeAreaInsets.trailing
-                ))
+                // Restore vertical insets consumed by the pager. The horizontal inset
+                // already positions the page after the iPad sidebar.
+                .safeAreaPadding(.top, max(0, proxy.safeAreaInsets.top - miniCalendarHeight))
+                .safeAreaPadding(.bottom, proxy.safeAreaInsets.bottom)
             }
             .modifier(IgnoreTopSafeAreaModifier())
             .ignoresSafeArea(.all, edges: .bottom)
