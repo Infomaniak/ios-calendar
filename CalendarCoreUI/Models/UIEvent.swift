@@ -77,29 +77,41 @@ public extension UIEvent {
 
 public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
     public let id: String
+    public let masterId: String
+    public let calendarId: String
+
     public let title: String
     public let description: String?
     public let status: EventStatus?
     public let location: String?
     public let kMeetLink: URL? = nil // TODO: Get it from Event
+    public let colors: UIEvent.Colors
+    public let classification: UIClassification?
+    public let canEdit: Bool
 
     public let startDate: Date
     public let endDate: Date
     public let isAllDay: Bool
     public let timing: UITiming
 
-    public let calendarId: String
     public let alarms: [UIEventAlarm]
 
     public let user: UIAttendee?
     public let attendees: [UIAttendee]
 
-    public let colors: UIEvent.Colors
+    public var displayTitle: AttributedString {
+        guard title.isEmpty else {
+            return AttributedString(title)
+        }
 
-    public let classification: UIClassification?
+        var untitledLabel = AttributedString(CalendarResourcesStrings.eventUntitledLabel)
+        untitledLabel.inlinePresentationIntent = .emphasized
+        return untitledLabel
+    }
 
     public init(
         id: String,
+        masterId: String? = nil,
         title: String,
         description: String? = nil,
         startDate: Date,
@@ -113,9 +125,11 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
         attendees: [UIAttendee],
         colors: UIEvent.Colors,
         classification: UIClassification? = .public,
-        timing: UITiming
+        timing: UITiming,
+        canEdit: Bool
     ) {
         self.id = id
+        self.masterId = masterId ?? id
         self.title = title.trimmingCharacters(in: .whitespacesAndNewlines)
         self.description = description
         self.startDate = startDate
@@ -130,16 +144,7 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
         self.colors = colors
         self.classification = classification
         self.timing = timing
-    }
-
-    public var displayTitle: AttributedString {
-        guard title.isEmpty else {
-            return AttributedString(title)
-        }
-
-        var untitledLabel = AttributedString(CalendarResourcesStrings.eventUntitledLabel)
-        untitledLabel.inlinePresentationIntent = .emphasized
-        return untitledLabel
+        self.canEdit = canEdit
     }
 }
 
@@ -148,6 +153,9 @@ public extension UIEvent {
         let event = eventDaySlice.event
 
         id = "\(eventDaySlice.position.index)-\(event.occurrenceIdValue)"
+        masterId = event.masterEventIdValue
+        calendarId = event.calendarIdValue
+
         title = event.title.trimmingCharacters(in: .whitespacesAndNewlines)
         description = event.description_
         status = event.status
@@ -162,8 +170,6 @@ public extension UIEvent {
         endDate = eventDaySlice.displayEndInstant().toNSDate()
         isAllDay = eventDaySlice.isAllDay
         timing = UITiming(eventTiming: event.timing)
-
-        calendarId = event.calendarIdValue
 
         alarms = event.alarms.map {
             UIEventAlarm(sdk: $0)
@@ -182,6 +188,8 @@ public extension UIEvent {
         colors = .init(eventColors: event.colors)
 
         classification = .init(classification: event.classification)
+
+        canEdit = event.canEdit
     }
 }
 
@@ -199,7 +207,8 @@ public extension UIEvent {
         alarms: UIEventAlarm.previews,
         attendees: UIAttendee.previews,
         colors: .preview,
-        timing: .preview
+        timing: .preview,
+        canEdit: true
     )
 
     static let preview = UIEvent(
@@ -212,7 +221,8 @@ public extension UIEvent {
         calendarId: "0",
         attendees: UIAttendee.previews,
         colors: .preview,
-        timing: .preview
+        timing: .preview,
+        canEdit: true
     )
 
     static let shortPreview = UIEvent(
@@ -225,7 +235,8 @@ public extension UIEvent {
         user: UIAttendee(displayName: "Tim Cook", email: "tim@apple.com", status: .accepted),
         attendees: UIAttendee.previews,
         colors: .preview,
-        timing: .preview
+        timing: .preview,
+        canEdit: true
     )
     static let mediumPreview = UIEvent(
         id: "2",
@@ -237,7 +248,8 @@ public extension UIEvent {
         user: UIAttendee(displayName: "Tim Cook", email: "tim@apple.com", status: .needsAction),
         attendees: [],
         colors: .preview,
-        timing: .preview
+        timing: .preview,
+        canEdit: true
     )
     static let longPreview = UIEvent(
         id: "3",
@@ -249,7 +261,8 @@ public extension UIEvent {
         user: UIAttendee(displayName: "Tim Cook", email: "tim@apple.com", status: .declined),
         attendees: UIAttendee.previews,
         colors: .preview,
-        timing: .preview
+        timing: .preview,
+        canEdit: true
     )
 
     static let random100Events: [UIEvent] = (0 ..< 100).map { index in
@@ -265,7 +278,8 @@ public extension UIEvent {
             calendarId: "0",
             attendees: UIAttendee.previews,
             colors: .preview,
-            timing: .preview
+            timing: .preview,
+            canEdit: true
         )
     }
 }

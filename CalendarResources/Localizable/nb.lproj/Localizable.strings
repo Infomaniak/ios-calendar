@@ -30,6 +30,10 @@
 /* loco:6a7dc6dcf678fdc6400639d9 */
 "buttonDeleteAccount" = "Slett konto";
 
+/* loco:6ab387c24e3a9ba3e7049042
+ * Destructive toolbar action and confirmation button in event details. Deletes the displayed calendar event. */
+"buttonDeleteEvent" = "Slett denne hendelsen";
+
 /* loco:6a4de9659924fbe9f10f1002 */
 "buttonJoin" = "Bli med";
 
@@ -75,6 +79,10 @@
 
 /* loco:6a203e6bc6a8e2e3c9024e12 */
 "dayTitle" = "Dag";
+
+/* loco:6ab387c299a39db974067272
+ * Confirmation dialog title shown before deleting the displayed calendar event. */
+"deleteEventAlertTitle" = "Er du sikker på at du vil slette denne hendelsen?";
 
 /* loco:6a856424c3b19782760f9b12 */
 "descriptionTitle" = "Beskrivelse";

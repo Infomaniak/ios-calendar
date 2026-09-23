@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarCore
 import CalendarCoreUI
 import CalendarResources
 import DesignSystem
@@ -29,6 +30,9 @@ public struct EventDetailsView: View {
     @State private var selectedStatus: UIParticipationStatus?
     @State private var showNavigationTitle = false
     @State private var isNavigatingToAttendeesList = false
+
+    @State private var isDeletingEvent = false
+    @State private var isShowingDeleteConfirmationDialog = false
 
     private let event: CalendarCoreUI.UIEvent
 
@@ -136,12 +140,42 @@ public struct EventDetailsView: View {
             .scrollBounceBehavior(.basedOnSize)
             .closeToolbarItem(dismiss: dismiss)
             .toolbar {
-                ToolbarItem(placement: .principal) {
-                    if #available(iOS 27.0, *) {
+                if #available(iOS 27.0, *) {
+                    ToolbarItem(placement: .principal) {
                         Text(event.displayTitle)
                             .opacity(showNavigationTitle ? 1 : 0)
-                    } else {
-                        Text(CalendarResourcesStrings.eventTitle)
+                    }
+                }
+
+                if event.canEdit {
+                    ToolbarItem(placement: .primaryAction) {
+                        Button { /* Does nothing yet */ } label: {
+                            Label(CalendarResourcesStrings.editEventTitle, image: CalendarResourcesAsset.Images.pen)
+                        }
+                        .disabled(true)
+                    }
+
+                    ToolbarItem(placement: .destructiveAction) {
+                        Button(role: .destructive) {
+                            isShowingDeleteConfirmationDialog = true
+                        } label: {
+                            if isDeletingEvent {
+                                ProgressView()
+                                    .progressViewStyle(.circular)
+                            } else {
+                                Label(CalendarResourcesStrings.buttonDeleteEvent, image: CalendarResourcesAsset.Images.trash)
+                            }
+                        }
+                        .allowsHitTesting(!isDeletingEvent)
+                        .confirmationDialog(
+                            CalendarResourcesStrings.deleteEventAlertTitle,
+                            isPresented: $isShowingDeleteConfirmationDialog,
+                            titleVisibility: .visible
+                        ) {
+                            Button(role: .destructive, action: deleteEvent) {
+                                Text(CalendarResourcesStrings.buttonDeleteEvent)
+                            }
+                        }
                     }
                 }
             }
@@ -164,6 +198,20 @@ public struct EventDetailsView: View {
                     .frame(maxWidth: .infinity, alignment: .center)
                 }
             }
+        }
+    }
+
+    private func deleteEvent() {
+        isDeletingEvent = true
+
+        Task {
+            do {
+                try await DeleteEventUseCase().execute(eventId: event.masterId)
+                dismiss()
+            } catch {
+                // TODO: Handle error
+            }
+            isDeletingEvent = false
         }
     }
 }
