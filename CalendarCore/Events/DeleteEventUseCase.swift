@@ -16,14 +16,29 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarResources
+import Foundation
 import InfomaniakDI
 import MultiplatformCalendar
+
+public enum DeleteEventError: LocalizedError {
+    case occurrenceNotFound
+
+    public var errorDescription: String? {
+        CalendarResourcesStrings.deleteEventErrorTitle
+    }
+}
 
 public struct DeleteEventUseCase: Sendable {
     public init() {}
 
-    public func execute(eventId: String) async throws {
+    public func execute(occurrenceId: String, scope: RecurrenceScope) async throws {
         @InjectService var calendarSDK: CalendarCoreGraph
-        try await calendarSDK.calendarManager.deleteEvent(eventId: eventId)
+        let id = OccurrenceId.companion.parse(value: occurrenceId)
+        guard let occurrence = try await calendarSDK.calendarManager.getOccurrence(occurrenceId: id) else {
+            throw DeleteEventError.occurrenceNotFound
+        }
+        let target = occurrence.targetedAs(scope: scope)
+        try await calendarSDK.calendarManager.deleteEvent(target: target)
     }
 }

@@ -34,6 +34,10 @@
  * Destructive toolbar action and confirmation button in event details. Deletes the displayed calendar event. */
 "buttonDeleteEvent" = "Διαγραφή αυτής της εκδήλωσης";
 
+"buttonDeleteAllEvents" = "Όλες οι εκδηλώσεις";
+
+"buttonDeleteThisAndFollowingEvents" = "Αυτή και οι επόμενες εκδηλώσεις";
+
 /* loco:6a4de9659924fbe9f10f1002 */
 "buttonJoin" = "Εγγραφή";
 
@@ -83,6 +87,10 @@
 /* loco:6ab387c299a39db974067272
  * Confirmation dialog title shown before deleting the displayed calendar event. */
 "deleteEventAlertTitle" = "Είστε βέβαιοι ότι θέλετε να διαγράψετε αυτή την εκδήλωση;";
+
+"deleteEventErrorTitle" = "Δεν ήταν δυνατή η διαγραφή της εκδήλωσης";
+
+"deleteRecurringEventAlertTitle" = "Ποιες εκδηλώσεις θέλετε να διαγράψετε;";
 
 /* loco:6a856424c3b19782760f9b12 */
 "descriptionTitle" = "Περιγραφή";

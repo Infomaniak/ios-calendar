@@ -21,6 +21,8 @@ import CalendarCoreUI
 import CalendarResources
 import DesignSystem
 import ESDSFoundation
+import MultiplatformCalendar
+import OSLog
 import SwiftUI
 
 public struct EventDetailsView: View {
@@ -33,6 +35,8 @@ public struct EventDetailsView: View {
 
     @State private var isDeletingEvent = false
     @State private var isShowingDeleteConfirmationDialog = false
+    @State private var isShowingDeleteError = false
+    @State private var deleteErrorMessage = ""
 
     private let event: CalendarCoreUI.UIEvent
 
@@ -166,18 +170,41 @@ public struct EventDetailsView: View {
                                 Label(CalendarResourcesStrings.buttonDeleteEvent, image: CalendarResourcesAsset.Images.trash)
                             }
                         }
-                        .allowsHitTesting(!isDeletingEvent)
+                        .disabled(isDeletingEvent || !event.canEdit)
                         .confirmationDialog(
-                            CalendarResourcesStrings.deleteEventAlertTitle,
+                            !event.isOccurrence
+                                ? CalendarResourcesStrings.deleteEventAlertTitle
+                                : CalendarResourcesStrings.deleteRecurringEventAlertTitle,
                             isPresented: $isShowingDeleteConfirmationDialog,
                             titleVisibility: .visible
                         ) {
-                            Button(role: .destructive, action: deleteEvent) {
+                            Button(role: .destructive) {
+                                deleteEvent(scope: .thisOccurrence)
+                            } label: {
                                 Text(CalendarResourcesStrings.buttonDeleteEvent)
+                            }
+
+                            if event.isOccurrence {
+                                Button(role: .destructive) {
+                                    deleteEvent(scope: .thisAndFollowing)
+                                } label: {
+                                    Text(CalendarResourcesStrings.buttonDeleteThisAndFollowingEvents)
+                                }
+
+                                Button(role: .destructive) {
+                                    deleteEvent(scope: .allOccurrences)
+                                } label: {
+                                    Text(CalendarResourcesStrings.buttonDeleteAllEvents)
+                                }
                             }
                         }
                     }
                 }
+            }
+            .alert(CalendarResourcesStrings.deleteEventErrorTitle, isPresented: $isShowingDeleteError) {
+                Button(CalendarResourcesStrings.buttonConfirm) {}
+            } message: {
+                Text(deleteErrorMessage)
             }
             .navigationBarTitleDisplayMode(.inline)
             .listSectionSpacing(IKPadding.large)
@@ -201,15 +228,17 @@ public struct EventDetailsView: View {
         }
     }
 
-    private func deleteEvent() {
+    private func deleteEvent(scope: RecurrenceScope) {
         isDeletingEvent = true
 
         Task {
             do {
-                try await DeleteEventUseCase().execute(eventId: event.masterId)
+                try await DeleteEventUseCase().execute(occurrenceId: event.occurrenceId, scope: scope)
                 dismiss()
             } catch {
-                // TODO: Handle error
+                Logger.view.error("Failed to delete event: \(error.localizedDescription)")
+                deleteErrorMessage = error.localizedDescription
+                isShowingDeleteError = true
             }
             isDeletingEvent = false
         }
