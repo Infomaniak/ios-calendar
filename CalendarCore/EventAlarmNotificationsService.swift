@@ -49,6 +49,7 @@ public final class EventAlarmNotificationsService: Sendable {
     }
 
     private let windowSize: TimeInterval
+
     private let calendar: Foundation.Calendar
     private let eventsProvider: EventAlarmEventsProviding
     private let notificationCenter: EventAlarmNotificationCenter
@@ -158,7 +159,7 @@ public final class EventAlarmNotificationsService: Sendable {
         if let absoluteTrigger = alarmContext.alarm.trigger as? AlarmTriggerAbsolute {
             let components = calendar.dateComponents(
                 [.year, .month, .day, .hour, .minute, .second],
-                from: absoluteTrigger.instant.date
+                from: absoluteTrigger.instant.toNSDate()
             )
 
             return UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
@@ -168,9 +169,9 @@ public final class EventAlarmNotificationsService: Sendable {
             let referenceDate: Date?
             switch relativeTrigger.relatedTo {
             case .start:
-                referenceDate = alarmContext.event.timing.start.date(timezone: alarmContext.event.timing.startTimeZone)
+                referenceDate = alarmContext.event.timing.startInstantLocal().toNSDate()
             case .end:
-                referenceDate = alarmContext.event.timing.end.date(timezone: alarmContext.event.timing.endTimeZone)
+                referenceDate = alarmContext.event.timing.endInstantLocal().toNSDate()
             }
 
             guard let referenceDate else { return nil }
