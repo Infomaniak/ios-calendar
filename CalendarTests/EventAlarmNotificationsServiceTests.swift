@@ -44,6 +44,22 @@ struct EventAlarmNotificationsServiceTests {
         #expect(snapshot.removedIdentifiers == ["event-alarm:stale"])
     }
 
+    @Test func removesPendingEventAlarmsWhenNoUpcomingAlarmsRemain() async {
+        let notificationCenter = EventAlarmTestNotificationCenter(pendingRequests: [
+            EventAlarmTestFixtures.notificationRequest(identifier: "event-alarm:existing"),
+            EventAlarmTestFixtures.notificationRequest(identifier: "another-feature")
+        ])
+        let eventsProvider = EventAlarmTestEventsProvider(upcomingAlarms: [])
+        let service = makeService(eventsProvider: eventsProvider, notificationCenter: notificationCenter)
+
+        await service.scheduleNotificationsForEventAlarms()
+
+        let snapshot = await notificationCenter.snapshot()
+        #expect(snapshot.addedRequests.isEmpty)
+        #expect(snapshot.removedIdentifiers == ["event-alarm:existing"])
+        #expect(snapshot.pendingRequestsCallCount == 1)
+    }
+
     @Test func leavesPendingNotificationsUnchangedWhenFetchingAlarmsFails() async {
         let notificationCenter = EventAlarmTestNotificationCenter(pendingRequests: [
             EventAlarmTestFixtures.notificationRequest(identifier: "event-alarm:existing")
