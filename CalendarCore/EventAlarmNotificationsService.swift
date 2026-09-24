@@ -60,6 +60,30 @@ public protocol EventAlarmNotificationCenter: Sendable {
 
 extension UNUserNotificationCenter: EventAlarmNotificationCenter {}
 
+private actor RefreshActor {
+    private var runningTask: Task<Void, Never>?
+
+    func run(_ refresh: @escaping @Sendable () async -> Void) async {
+        let previousTask = runningTask
+        previousTask?.cancel()
+
+        let task = Task {
+            await previousTask?.value
+
+            guard !Task.isCancelled else { return }
+            await refresh()
+            runningTask = nil
+        }
+
+        runningTask = task
+        await withTaskCancellationHandler {
+            await task.value
+        } onCancel: {
+            task.cancel()
+        }
+    }
+}
+
 public final class EventAlarmNotificationsService: Sendable {
     private static let notificationIDPrefix = "event-alarm:"
     private static let maximumNotificationsToSchedule = 50
@@ -71,6 +95,7 @@ public final class EventAlarmNotificationsService: Sendable {
     private let calendar: Foundation.Calendar
     private let eventsProvider: EventAlarmEventsProviding
     private let notificationCenter: EventAlarmNotificationCenter
+    private let refreshActor = RefreshActor()
 
     public init(
         windowSize: TimeInterval = EventAlarmNotificationsService.defaultWindowSize,
@@ -85,39 +110,61 @@ public final class EventAlarmNotificationsService: Sendable {
     }
 
     public func scheduleNotificationsForEventAlarms() async {
+        await refreshActor.run { [self] in
+            await scheduleAlarms()
+        }
+    }
+
+    private func scheduleAlarms() async {
         let rangeOfEvents = Date.now ..< Date.now.addingTimeInterval(windowSize)
-        let upcomingAlarms: [UpcomingAlarm]
-        do {
-            upcomingAlarms = try await eventsProvider.eventAlarmsToDisplay(
-                range: rangeOfEvents, limit: Self.maximumNotificationsToSchedule
-            )
-        } catch {
-            Logger.general.error("Failed to fetch upcoming alarms for notifications: \(error)")
-            SentrySDK.capture(error: error)
+        guard let upcomingAlarms = await upcomingAlarms(range: rangeOfEvents, limit: Self.maximumNotificationsToSchedule) else {
             return
         }
 
+        guard !Task.isCancelled else { return }
         let pendingNotifications = await notificationCenter.pendingNotificationRequests()
 
+        guard !Task.isCancelled else { return }
         let diff = diffAlarmsAndPendingNotifications(alarms: upcomingAlarms, pendingNotifications: pendingNotifications)
+
+        guard !Task.isCancelled else { return }
         await unscheduleStaleNotifications(diff.toUnschedule)
+        guard !Task.isCancelled else { return }
         await scheduleNotificationsForAlarms(diff.toSchedule)
+    }
+
+    private func upcomingAlarms(range: Range<Date>, limit: Int) async -> [UpcomingAlarm]? {
+        do {
+            return try await eventsProvider.eventAlarmsToDisplay(range: range, limit: limit)
+        } catch {
+            guard !Task.isCancelled else { return nil }
+            Logger.general.error("Failed to fetch upcoming alarms for notifications: \(error)")
+            SentrySDK.capture(error: error)
+            return nil
+        }
     }
 
     private func diffAlarmsAndPendingNotifications(
         alarms: [UpcomingAlarm], pendingNotifications: [UNNotificationRequest]
-    ) -> (toSchedule: [UpcomingAlarm], toUnschedule: [UNNotificationRequest]) {
-        let expectedNotificationIDs = Set(alarms.map { notificationID(for: $0) })
-        let pendingNotificationIDs = Set(pendingNotifications.map(\.identifier))
+    ) -> (toSchedule: [UNNotificationRequest], toUnschedule: [UNNotificationRequest]) {
+        let expectedRequests = alarms.map(generateNotificationRequestForAlarm)
 
-        let toSchedule = alarms.filter {
-            !pendingNotificationIDs.contains(notificationID(for: $0))
+        let expectedNotificationIDs = Set(expectedRequests.map(\.identifier))
+        let pendingByID = Dictionary(pendingNotifications.map { ($0.identifier, $0) }) { _, latest in latest }
+
+        let toSchedule = expectedRequests.filter { request in
+            guard let pending = pendingByID[request.identifier] else { return true }
+            return needsUpdate(pending, with: request)
         }
         let toUnschedule = pendingNotifications.filter {
             $0.identifier.hasPrefix(Self.notificationIDPrefix) && !expectedNotificationIDs.contains($0.identifier)
         }
 
         return (toSchedule, toUnschedule)
+    }
+
+    private func needsUpdate(_ pending: UNNotificationRequest, with request: UNNotificationRequest) -> Bool {
+        return pending.content.title != request.content.title || pending.content.body != request.content.body
     }
 
     private func unscheduleStaleNotifications(_ notifications: [UNNotificationRequest]) async {
@@ -127,16 +174,15 @@ public final class EventAlarmNotificationsService: Sendable {
         await notificationCenter.removePendingNotificationRequests(withIdentifiers: identifiers)
     }
 
-    private func scheduleNotificationsForAlarms(_ upcomingAlarms: [UpcomingAlarm]) async {
-        guard !upcomingAlarms.isEmpty else { return }
-
-        for upcomingAlarm in upcomingAlarms {
-            let request = generateNotificationRequestForAlarm(upcomingAlarm)
+    private func scheduleNotificationsForAlarms(_ requests: [UNNotificationRequest]) async {
+        for request in requests {
+            guard !Task.isCancelled else { return }
 
             do {
                 try await notificationCenter.add(request)
             } catch {
-                Logger.general.error("Failed to schedule notification for \(upcomingAlarm.event.masterEventIdValue): \(error)")
+                guard !Task.isCancelled else { return }
+                Logger.general.error("Failed to schedule notification for \(request.identifier): \(error)")
                 SentrySDK.capture(error: error)
             }
         }
@@ -151,7 +197,8 @@ public final class EventAlarmNotificationsService: Sendable {
 
         let content = UNMutableNotificationContent()
         content.title = upcomingAlarm.event.title
-        content.body = upcomingAlarm.alarm.description_ ?? upcomingAlarm.event.location
+        content.body = upcomingAlarm.alarm.description_
+            ?? upcomingAlarm.event.location
             ?? CalendarResourcesStrings.notificationDefaultDescription
         content.sound = .default
         content.categoryIdentifier = NotificationsHelper.CategoryIdentifier.eventAlarm
