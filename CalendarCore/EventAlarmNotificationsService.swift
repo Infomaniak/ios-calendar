@@ -62,8 +62,12 @@ extension UNUserNotificationCenter: EventAlarmNotificationCenter {}
 
 private actor RefreshActor {
     private var runningTask: Task<Void, Never>?
+    private var generation = 0
 
     func run(_ refresh: @escaping @Sendable () async -> Void) async {
+        generation += 1
+        let currentGeneration = generation
+
         let previousTask = runningTask
         previousTask?.cancel()
 
@@ -72,7 +76,6 @@ private actor RefreshActor {
 
             guard !Task.isCancelled else { return }
             await refresh()
-            runningTask = nil
         }
 
         runningTask = task
@@ -80,6 +83,10 @@ private actor RefreshActor {
             await task.value
         } onCancel: {
             task.cancel()
+        }
+
+        if generation == currentGeneration {
+            runningTask = nil
         }
     }
 }
