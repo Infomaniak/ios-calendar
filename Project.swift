@@ -75,7 +75,6 @@ let calendarView = Feature(
         TargetDependency.target(name: "\(Constants.projectName)Resources"),
         TargetDependency.external(name: "DesignSystem"),
         TargetDependency.external(name: "ESDSCalendar"),
-        TargetDependency.external(name: "InfiniteScrollViews"),
         TargetDependency.external(name: "InfomaniakDI"),
         TargetDependency.external(name: "Eventually")
     ]
@@ -251,6 +250,8 @@ let project = Project(
             dependencies: [
                 .target(name: Constants.projectName),
                 .target(name: "\(Constants.projectName)Core"),
+                .target(name: "\(Constants.projectName)CalendarView"),
+                .target(name: "\(Constants.projectName)CoreUI"),
                 eventFormView.asDependency,
                 .external(name: "MultiplatformCalendar")
             ]

@@ -24,7 +24,7 @@ struct WeekHeaderView: View {
     @Environment(\.calendar) private var calendar
     @Environment(MiniCalendarViewModel.self) private var viewModel
 
-    let page: ReferenceDatePage
+    let referenceDate: Date
     @Binding var selectedDate: Date
 
     var body: some View {
@@ -32,7 +32,7 @@ struct WeekHeaderView: View {
             GridRow {
                 ForEach(0 ..< 7, id: \.self) { column in
                     ZStack {
-                        if let dayDate = calendar.date(byAdding: .day, value: column, to: page.referenceDate) {
+                        if let dayDate = calendar.date(byAdding: .day, value: column, to: referenceDate) {
                             Button {
                                 selectedDate = calendar.startOfDay(for: dayDate)
                             } label: {
@@ -55,10 +55,7 @@ struct WeekHeaderView: View {
 #Preview {
     @Previewable @State var selectedDate = Date()
     WeekHeaderView(
-        page: ReferenceDatePage(
-            referenceDate: Calendar.current.weekStart(for: Date()),
-            referenceDateInterval: MiniCalendarView.DisplayMode.week.referenceDateInterval
-        ),
+        referenceDate: Calendar.current.weekStart(for: .now),
         selectedDate: $selectedDate
     )
     .environment(MiniCalendarViewModel())
