@@ -44,6 +44,8 @@ public struct MainView: View {
 
     private func willEnterForeground() {
         Task {
+            await NotificationsHelper.askForPermissions()
+
             @InjectService var eventAlarmNotification: EventAlarmNotificationsService
             await eventAlarmNotification.scheduleNotificationsForEventAlarms()
         }
