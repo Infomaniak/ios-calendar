@@ -24,11 +24,6 @@ import MultiplatformCalendar
 import Observation
 import SwiftUI
 
-struct ReferenceDatePage: Hashable, Equatable {
-    let referenceDate: Date
-    let referenceDateInterval: Foundation.Calendar.Component
-}
-
 @Observable
 final class MiniCalendarViewModel {
     var datesWithEventDots = [Date: [Color]]()
@@ -61,7 +56,7 @@ struct MiniCalendarView: View {
 
     @Binding var displayMode: DisplayMode
     @Binding var selectedDate: Date
-    @Binding var displayedPage: ReferenceDatePage
+    @Binding var displayedDate: Date
 
     @State private var viewModel = MiniCalendarViewModel()
 
@@ -71,23 +66,20 @@ struct MiniCalendarView: View {
             MiniCalendarPager(
                 displayMode: displayMode,
                 selectedDate: $selectedDate,
-                displayedPage: $displayedPage
+                displayedDate: $displayedDate
             )
 
             if displayMode == .month {
-                MonthPickerView(selectedDate: $selectedDate, displayedPage: $displayedPage)
+                MonthPickerView(selectedDate: $selectedDate, displayedDate: $displayedDate)
             }
         }
         .environment(viewModel)
-        .task(id: displayedPage.referenceDate) {
-            await updateCalendarDotsFor(date: displayedPage.referenceDate, calendar: calendar)
+        .task(id: displayedDate) {
+            await updateCalendarDotsFor(date: displayedDate, calendar: calendar)
         }
         .onChange(of: selectedDate) { _, newValue in
             withAnimation {
-                displayedPage = ReferenceDatePage(
-                    referenceDate: displayMode.referenceDate(for: newValue, calendar: calendar),
-                    referenceDateInterval: displayMode.referenceDateInterval
-                )
+                displayedDate = displayMode.referenceDate(for: newValue, calendar: calendar)
             }
         }
     }
@@ -130,9 +122,6 @@ struct MiniCalendarView: View {
 #Preview {
     @Previewable @State var displayMode: MiniCalendarView.DisplayMode = .week
     @Previewable @State var selectedDate = Date()
-    @Previewable @State var displayedPage = ReferenceDatePage(
-        referenceDate: Date(),
-        referenceDateInterval: MiniCalendarView.DisplayMode.week.referenceDateInterval
-    )
-    MiniCalendarView(displayMode: $displayMode, selectedDate: $selectedDate, displayedPage: $displayedPage)
+    @Previewable @State var displayedDate = Calendar.current.weekStart(for: .now)
+    MiniCalendarView(displayMode: $displayMode, selectedDate: $selectedDate, displayedDate: $displayedDate)
 }

@@ -70,12 +70,9 @@ final class MonthPickerScrollingTests: XCTestCase {
             }
         }
         XCTAssertEqual(state.selectedDate, date)
-        XCTAssertEqual(state.displayedPage.referenceDate, date)
+        XCTAssertEqual(state.displayedDate, date)
 
-        state.displayedPage = try ReferenceDatePage(
-            referenceDate: XCTUnwrap(calendar.date(byAdding: .month, value: 600, to: date)),
-            referenceDateInterval: .month
-        )
+        state.displayedDate = try XCTUnwrap(calendar.date(byAdding: .month, value: 600, to: date))
         try await Task.sleep(for: .seconds(1))
         if layoutDirection == .leftToRight {
             XCTAssertGreaterThan(scrollView.contentOffset.x, initialOffset + 10000)
@@ -83,10 +80,7 @@ final class MonthPickerScrollingTests: XCTestCase {
             XCTAssertLessThan(scrollView.contentOffset.x, initialOffset - 10000)
         }
 
-        state.displayedPage = try ReferenceDatePage(
-            referenceDate: XCTUnwrap(calendar.date(byAdding: .month, value: 1800, to: date)),
-            referenceDateInterval: .month
-        )
+        state.displayedDate = try XCTUnwrap(calendar.date(byAdding: .month, value: 1800, to: date))
         try await Task.sleep(for: .seconds(1))
         let resetScrollView = try XCTUnwrap(findScrollView(in: controller.view))
         XCTAssertFalse(resetScrollView === scrollView)
@@ -98,11 +92,11 @@ final class MonthPickerScrollingTests: XCTestCase {
     @Observable
     fileprivate final class MonthPickerTestState {
         var selectedDate: Date
-        var displayedPage: ReferenceDatePage
+        var displayedDate: Date
 
         init(date: Date) {
             selectedDate = date
-            displayedPage = ReferenceDatePage(referenceDate: date, referenceDateInterval: .month)
+            displayedDate = date
         }
     }
 
@@ -110,7 +104,7 @@ final class MonthPickerScrollingTests: XCTestCase {
         @Bindable var state: MonthPickerTestState
 
         var body: some View {
-            MonthPickerView(selectedDate: $state.selectedDate, displayedPage: $state.displayedPage)
+            MonthPickerView(selectedDate: $state.selectedDate, displayedDate: $state.displayedDate)
         }
     }
 
