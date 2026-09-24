@@ -86,8 +86,14 @@ public final class EventAlarmNotificationsService: Sendable {
 
     public func scheduleNotificationsForEventAlarms() async {
         let rangeOfEvents = Date.now ..< Date.now.addingTimeInterval(windowSize)
-        let upcomingAlarms = await upcomingAlarms(in: rangeOfEvents, limit: Self.maximumNotificationsToSchedule)
-        guard !upcomingAlarms.isEmpty else {
+        let upcomingAlarms: [UpcomingAlarm]
+        do {
+            upcomingAlarms = try await eventsProvider.eventAlarmsToDisplay(
+                range: rangeOfEvents, limit: Self.maximumNotificationsToSchedule
+            )
+        } catch {
+            Logger.general.error("Failed to fetch upcoming alarms for notifications: \(error)")
+            SentrySDK.capture(error: error)
             return
         }
 
@@ -96,16 +102,6 @@ public final class EventAlarmNotificationsService: Sendable {
         let diff = diffAlarmsAndPendingNotifications(alarms: upcomingAlarms, pendingNotifications: pendingNotifications)
         await unscheduleStaleNotifications(diff.toUnschedule)
         await scheduleNotificationsForAlarms(diff.toSchedule)
-    }
-
-    private func upcomingAlarms(in range: Range<Date>, limit: Int) async -> [UpcomingAlarm] {
-        do {
-            return try await eventsProvider.eventAlarmsToDisplay(range: range, limit: limit)
-        } catch {
-            Logger.general.error("Failed to fetch upcoming alarms for notifications: \(error)")
-            SentrySDK.capture(error: error)
-            return []
-        }
     }
 
     private func diffAlarmsAndPendingNotifications(
