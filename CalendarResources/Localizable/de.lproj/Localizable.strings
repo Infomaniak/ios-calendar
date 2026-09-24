@@ -105,6 +105,8 @@
 /* loco:6a63163836b2bc1b160c0a12 */
 "eventColorLabel" = "Veranstaltungsfarbe";
 
+"eventOccurrenceNotFound" = "Dieser Anlass ist nicht mehr verfügbar.";
+
 /* loco:6a6315016659664bd10ce392 */
 "eventTitle" = "Titel des Anlasses";
 

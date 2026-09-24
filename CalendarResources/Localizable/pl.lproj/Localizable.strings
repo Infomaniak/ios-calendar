@@ -105,6 +105,8 @@
 /* loco:6a63163836b2bc1b160c0a12 */
 "eventColorLabel" = "Kolor wydarzenia";
 
+"eventOccurrenceNotFound" = "To wydarzenie nie jest już dostępne.";
+
 /* loco:6a6315016659664bd10ce392 */
 "eventTitle" = "Tytuł wydarzenia";
 

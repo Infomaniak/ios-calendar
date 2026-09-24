@@ -109,6 +109,9 @@
 /* loco:6a63163836b2bc1b160c0a12 */
 "eventColorLabel" = "Event colour";
 
+/* Shown when an event occurrence no longer exists during an edit or deletion. */
+"eventOccurrenceNotFound" = "This event is no longer available.";
+
 /* loco:6a6315016659664bd10ce392 */
 "eventTitle" = "Event title";
 
