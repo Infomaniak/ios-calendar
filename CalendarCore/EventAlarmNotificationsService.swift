@@ -203,10 +203,7 @@ public final class EventAlarmNotificationsService: Sendable {
         let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
 
         let content = UNMutableNotificationContent()
-        content.title = upcomingAlarm.event.title
-        content.body = upcomingAlarm.alarm.description_
-            ?? upcomingAlarm.event.location
-            ?? CalendarResourcesStrings.notificationDefaultDescription
+        content.body = upcomingAlarm.event.title
         content.sound = .default
         content.categoryIdentifier = NotificationsHelper.CategoryIdentifier.eventAlarm
         content.userInfo = [
