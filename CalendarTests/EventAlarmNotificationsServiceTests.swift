@@ -24,27 +24,27 @@ import UserNotifications
 
 struct EventAlarmNotificationsServiceTests {
     @Test func reconcilesOnlyEventAlarmNotifications() async {
-        let existingEvent = EventAlarmTestFixtures.event(id: "existing-event")
-        let missingEvent = EventAlarmTestFixtures.event(id: "missing-event")
-        let existingIdentifier = EventAlarmTestFixtures.notificationIdentifier(for: existingEvent)
+        let existingAlarm = EventAlarmTestFixtures.upcomingAlarm(id: "existing-alarm")
+        let missingAlarm = EventAlarmTestFixtures.upcomingAlarm(id: "missing-alarm")
+        let existingIdentifier = EventAlarmTestFixtures.notificationIdentifier(for: existingAlarm)
         let notificationCenter = EventAlarmTestNotificationCenter(pendingRequests: [
             EventAlarmTestFixtures.notificationRequest(identifier: existingIdentifier),
             EventAlarmTestFixtures.notificationRequest(identifier: "event-alarm:stale"),
             EventAlarmTestFixtures.notificationRequest(identifier: "another-feature")
         ])
-        let eventsProvider = EventAlarmTestEventsProvider(events: [existingEvent, missingEvent])
+        let eventsProvider = EventAlarmTestEventsProvider(upcomingAlarms: [existingAlarm, missingAlarm])
         let service = makeService(eventsProvider: eventsProvider, notificationCenter: notificationCenter)
 
         await service.scheduleNotificationsForEventAlarms()
 
         let snapshot = await notificationCenter.snapshot()
         #expect(snapshot.addedRequests.map(\.identifier) == [
-            EventAlarmTestFixtures.notificationIdentifier(for: missingEvent)
+            EventAlarmTestFixtures.notificationIdentifier(for: missingAlarm)
         ])
         #expect(snapshot.removedIdentifiers == ["event-alarm:stale"])
     }
 
-    @Test func leavesPendingNotificationsUnchangedWhenFetchingEventsFails() async {
+    @Test func leavesPendingNotificationsUnchangedWhenFetchingAlarmsFails() async {
         let notificationCenter = EventAlarmTestNotificationCenter(pendingRequests: [
             EventAlarmTestFixtures.notificationRequest(identifier: "event-alarm:existing")
         ])
@@ -59,9 +59,9 @@ struct EventAlarmNotificationsServiceTests {
         #expect(snapshot.pendingRequestsCallCount == 0)
     }
 
-    @Test func requestsEventsForConfiguredWindow() async throws {
+    @Test func requestsAlarmsForConfiguredWindowAndLimit() async throws {
         let windowSize: TimeInterval = 7200
-        let eventsProvider = EventAlarmTestEventsProvider(events: [])
+        let eventsProvider = EventAlarmTestEventsProvider(upcomingAlarms: [])
         let notificationCenter = EventAlarmTestNotificationCenter()
         let service = EventAlarmNotificationsService(
             windowSize: windowSize,
@@ -74,55 +74,56 @@ struct EventAlarmNotificationsServiceTests {
         await service.scheduleNotificationsForEventAlarms()
         let afterScheduling = Date.now
 
-        let requestedRanges = await eventsProvider.requestedRanges
-        let requestedRange = try #require(requestedRanges.first)
-        #expect(requestedRanges.count == 1)
-        #expect(requestedRange.lowerBound >= beforeScheduling)
-        #expect(requestedRange.lowerBound <= afterScheduling)
-        #expect(requestedRange.upperBound >= beforeScheduling.addingTimeInterval(windowSize))
-        #expect(requestedRange.upperBound <= afterScheduling.addingTimeInterval(windowSize))
+        let requests = await eventsProvider.requests
+        let request = try #require(requests.first)
+        #expect(requests.count == 1)
+        #expect(request.range.lowerBound >= beforeScheduling)
+        #expect(request.range.lowerBound <= afterScheduling)
+        #expect(request.range.upperBound >= beforeScheduling.addingTimeInterval(windowSize))
+        #expect(request.range.upperBound <= afterScheduling.addingTimeInterval(windowSize))
+        #expect(request.limit == 50)
     }
 
-    @Test func schedulesRelativeAlarmAtOffsetWithExpectedContent() async throws {
-        let event = EventAlarmTestFixtures.event(
-            id: "event-id",
+    @Test func schedulesAlarmAtFiringDateWithExpectedContent() async throws {
+        let firesAt = Date(timeIntervalSince1970: 1_800_000_000)
+        let upcomingAlarm = EventAlarmTestFixtures.upcomingAlarm(
+            id: "alarm-id",
+            eventId: "event-id",
+            firesAt: firesAt,
             title: "Team meeting",
             location: "Meeting room",
-            alarmDescription: "Join the meeting",
-            offset: -300,
-            relatedTo: .start
+            alarmDescription: "Join the meeting"
         )
         let notificationCenter = EventAlarmTestNotificationCenter()
-        let eventsProvider = EventAlarmTestEventsProvider(events: [event])
+        let eventsProvider = EventAlarmTestEventsProvider(upcomingAlarms: [upcomingAlarm])
         let service = makeService(eventsProvider: eventsProvider, notificationCenter: notificationCenter)
 
         await service.scheduleNotificationsForEventAlarms()
 
         let request = try #require(await notificationCenter.snapshot().addedRequests.first)
         let trigger = try #require(request.trigger as? UNCalendarNotificationTrigger)
-        let referenceDate = try #require(event.timing.start.swiftDate)
-        let expectedDate = referenceDate.addingTimeInterval(-300)
 
+        #expect(request.identifier == "event-alarm:alarm-id")
         #expect(trigger.dateComponents == Calendar.current.dateComponents(
             [.year, .month, .day, .hour, .minute, .second],
-            from: expectedDate
+            from: firesAt
         ))
         #expect(request.content.title == "Team meeting")
         #expect(request.content.body == "Join the meeting")
         #expect(request.content.categoryIdentifier == NotificationsHelper.CategoryIdentifier.eventAlarm)
-        #expect(request.content.userInfo[NotificationsHelper.UserInfoKeys.eventId] as? String == event.masterEventIdValue)
+        #expect(request.content.userInfo[NotificationsHelper.UserInfoKeys.eventId] as? String == "event-id")
     }
 
-    @Test func limitsScheduledNotificationsToSystemCapacity() async {
-        let events = (0 ... 64).map { EventAlarmTestFixtures.event(id: "event-\($0)") }
+    @Test func fallsBackToEventLocationWhenAlarmHasNoDescription() async throws {
+        let upcomingAlarm = EventAlarmTestFixtures.upcomingAlarm(id: "alarm-id", location: "Meeting room")
         let notificationCenter = EventAlarmTestNotificationCenter()
-        let eventsProvider = EventAlarmTestEventsProvider(events: events)
+        let eventsProvider = EventAlarmTestEventsProvider(upcomingAlarms: [upcomingAlarm])
         let service = makeService(eventsProvider: eventsProvider, notificationCenter: notificationCenter)
 
         await service.scheduleNotificationsForEventAlarms()
 
-        let snapshot = await notificationCenter.snapshot()
-        #expect(snapshot.addedRequests.count == 64)
+        let request = try #require(await notificationCenter.snapshot().addedRequests.first)
+        #expect(request.content.body == "Meeting room")
     }
 
     private func makeService(
@@ -176,21 +177,26 @@ private actor EventAlarmTestNotificationCenter: EventAlarmNotificationCenter {
 }
 
 private actor EventAlarmTestEventsProvider: EventAlarmEventsProviding {
-    private let events: [MultiplatformCalendar.Event]
-    private let error: (any Error)?
-    private(set) var requestedRanges = [Range<Date>]()
+    struct Request {
+        let range: Range<Date>
+        let limit: Int
+    }
 
-    init(events: [MultiplatformCalendar.Event] = [], error: (any Error)? = nil) {
-        self.events = events
+    private let upcomingAlarms: [UpcomingAlarm]
+    private let error: (any Error)?
+    private(set) var requests = [Request]()
+
+    init(upcomingAlarms: [UpcomingAlarm] = [], error: (any Error)? = nil) {
+        self.upcomingAlarms = upcomingAlarms
         self.error = error
     }
 
-    func eventAlarmsToDisplay(range: Range<Date>) throws -> [MultiplatformCalendar.Event] {
-        requestedRanges.append(range)
+    func eventAlarmsToDisplay(range: Range<Date>, limit: Int) throws -> [UpcomingAlarm] {
+        requests.append(Request(range: range, limit: limit))
         if let error {
             throw error
         }
-        return events
+        return upcomingAlarms
     }
 }
 
@@ -199,23 +205,23 @@ private enum EventAlarmTestError: Error {
 }
 
 private enum EventAlarmTestFixtures {
-    static func event(
+    static func upcomingAlarm(
         id: String,
+        eventId: String? = nil,
+        firesAt: Date = Date(timeIntervalSince1970: 1_800_000_000),
         title: String? = nil,
         location: String? = nil,
-        alarmDescription: String? = nil,
-        offset: Int64 = -300,
-        relatedTo: TriggerRelation = .start
-    ) -> MultiplatformCalendar.Event {
+        alarmDescription: String? = nil
+    ) -> UpcomingAlarm {
         let alarm = EventAlarm(
             action: AlarmActionDisplay(),
-            trigger: AlarmTriggerRelative(offset: offset, relatedTo: relatedTo),
+            trigger: AlarmTriggerRelative(offset: -300, relatedTo: .start),
             description: alarmDescription,
             summary: nil,
             attendees: [],
             attachments: []
         )
-        let startDate = Kotlinx_datetimeLocalDateTime(
+        let startDate = LocalDateTime(
             year: 2027,
             month: 1,
             day: 15,
@@ -224,7 +230,7 @@ private enum EventAlarmTestFixtures {
             second: 0,
             nanosecond: 0
         )
-        let endDate = Kotlinx_datetimeLocalDateTime(
+        let endDate = LocalDateTime(
             year: 2027,
             month: 1,
             day: 15,
@@ -249,15 +255,17 @@ private enum EventAlarmTestFixtures {
             containerVariantColor: 0,
             onContainerVariantColor: themedColor
         )
-        return MultiplatformCalendar.Event(
-            masterEventId: id,
-            occurrenceId: id,
+        let eventId = eventId ?? id
+        let event = MultiplatformCalendar.Event(
+            masterEventId: eventId,
+            occurrenceId: OccurrenceId.Master(masterId: eventId),
             calendarId: "calendar-id",
             accountId: 0,
-            title: title ?? id,
+            title: title ?? eventId,
             description: nil,
             location: location,
             status: .confirmed,
+            timeBlocking: nil,
             classification: nil,
             categories: [],
             timing: timing,
@@ -268,6 +276,10 @@ private enum EventAlarmTestFixtures {
             canEdit: true,
             alarms: [alarm]
         )
+        let firesAtInstant = KotlinInstant.companion.fromEpochMilliseconds(
+            epochMilliseconds: Int64(firesAt.timeIntervalSince1970 * 1000)
+        )
+        return UpcomingAlarm(id: id, firesAt: firesAtInstant, alarm: alarm, event: event)
     }
 
     static func notificationRequest(identifier: String) -> UNNotificationRequest {
@@ -278,7 +290,7 @@ private enum EventAlarmTestFixtures {
         )
     }
 
-    static func notificationIdentifier(for event: MultiplatformCalendar.Event) -> String {
-        "event-alarm:\(event.masterEventIdValue):\(event.alarms[0].hash())"
+    static func notificationIdentifier(for upcomingAlarm: UpcomingAlarm) -> String {
+        "event-alarm:\(upcomingAlarm.idValue)"
     }
 }

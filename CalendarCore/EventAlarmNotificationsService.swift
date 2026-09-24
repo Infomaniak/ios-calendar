@@ -24,9 +24,32 @@ import OSLog
 import Sentry
 import UserNotifications
 
-// TODO: Function name should follow KMP function name
 public protocol EventAlarmEventsProviding: Sendable {
-    func eventAlarmsToDisplay(range: Range<Date>) async throws -> [MultiplatformCalendar.Event]
+    func eventAlarmsToDisplay(range: Range<Date>, limit: Int) async throws -> [UpcomingAlarm]
+}
+
+public struct EventAlarmEventsProvider: EventAlarmEventsProviding {
+    public init() {}
+
+    public func eventAlarmsToDisplay(range: Range<Date>, limit: Int) async throws -> [UpcomingAlarm] {
+        let from = range.lowerBound.kotlinInstant
+        let horizon = range.upperBound.kotlinInstant.minus(other: from)
+
+        @InjectService var calendarSDK: CalendarCoreGraph
+        for await upcomingAlarms in calendarSDK.calendarManager.observeUpcomingAlarms(
+            limit: Int32(limit), horizon: horizon, from: from
+        ) {
+            return upcomingAlarms
+        }
+
+        return []
+    }
+}
+
+private extension Date {
+    var kotlinInstant: KotlinInstant {
+        KotlinInstant.companion.fromEpochMilliseconds(epochMilliseconds: Int64(timeIntervalSince1970 * 1000))
+    }
 }
 
 public protocol EventAlarmNotificationCenter: Sendable {
@@ -43,11 +66,6 @@ public final class EventAlarmNotificationsService: Sendable {
 
     public static let defaultWindowSize: TimeInterval = 60 * 60 * 24 * 3 // 3 days
 
-    struct AlarmContext {
-        let event: MultiplatformCalendar.Event
-        let alarm: EventAlarm
-    }
-
     private let windowSize: TimeInterval
 
     private let calendar: Foundation.Calendar
@@ -57,7 +75,7 @@ public final class EventAlarmNotificationsService: Sendable {
     public init(
         windowSize: TimeInterval = EventAlarmNotificationsService.defaultWindowSize,
         calendar: Foundation.Calendar = .current,
-        eventsProvider: EventAlarmEventsProviding,
+        eventsProvider: EventAlarmEventsProviding = EventAlarmEventsProvider(),
         notificationCenter: EventAlarmNotificationCenter = UNUserNotificationCenter.current()
     ) {
         self.windowSize = windowSize
@@ -68,40 +86,31 @@ public final class EventAlarmNotificationsService: Sendable {
 
     public func scheduleNotificationsForEventAlarms() async {
         let rangeOfEvents = Date.now ..< Date.now.addingTimeInterval(windowSize)
-        guard let alarmContexts = await alarmContexts(rangeOfEvents) else {
+        let upcomingAlarms = await upcomingAlarms(in: rangeOfEvents, limit: Self.maximumNotificationsToSchedule)
+        guard !upcomingAlarms.isEmpty else {
             return
         }
 
         let pendingNotifications = await notificationCenter.pendingNotificationRequests()
 
-        let diff = diffAlarmsAndPendingNotifications(alarms: alarmContexts, pendingNotifications: pendingNotifications)
+        let diff = diffAlarmsAndPendingNotifications(alarms: upcomingAlarms, pendingNotifications: pendingNotifications)
         await unscheduleStaleNotifications(diff.toUnschedule)
-        await scheduleNotificationsForEvents(diff.toSchedule)
+        await scheduleNotificationsForAlarms(diff.toSchedule)
     }
 
-    private func alarmContexts(_ range: Range<Date>) async -> [AlarmContext]? {
-        let events: [MultiplatformCalendar.Event]
+    private func upcomingAlarms(in range: Range<Date>, limit: Int) async -> [UpcomingAlarm] {
         do {
-            events = try await eventsProvider.eventAlarmsToDisplay(range: range)
+            return try await eventsProvider.eventAlarmsToDisplay(range: range, limit: limit)
         } catch {
-            Logger.general.error("Failed to fetch events for alarm notifications: \(error)")
+            Logger.general.error("Failed to fetch upcoming alarms for notifications: \(error)")
             SentrySDK.capture(error: error)
-            return nil
+            return []
         }
-
-        var eventAlarms = [AlarmContext]()
-        for event in events {
-            for alarm in event.alarms {
-                eventAlarms.append(AlarmContext(event: event, alarm: alarm))
-            }
-        }
-
-        return Array(eventAlarms.prefix(EventAlarmNotificationsService.maximumNotificationsToSchedule))
     }
 
     private func diffAlarmsAndPendingNotifications(
-        alarms: [AlarmContext], pendingNotifications: [UNNotificationRequest]
-    ) -> (toSchedule: [AlarmContext], toUnschedule: [UNNotificationRequest]) {
+        alarms: [UpcomingAlarm], pendingNotifications: [UNNotificationRequest]
+    ) -> (toSchedule: [UpcomingAlarm], toUnschedule: [UNNotificationRequest]) {
         let expectedNotificationIDs = Set(alarms.map { notificationID(for: $0) })
         let pendingNotificationIDs = Set(pendingNotifications.map(\.identifier))
 
@@ -122,78 +131,42 @@ public final class EventAlarmNotificationsService: Sendable {
         await notificationCenter.removePendingNotificationRequests(withIdentifiers: identifiers)
     }
 
-    private func scheduleNotificationsForEvents(_ eventAlarms: [AlarmContext]) async {
-        guard !eventAlarms.isEmpty else { return }
+    private func scheduleNotificationsForAlarms(_ upcomingAlarms: [UpcomingAlarm]) async {
+        guard !upcomingAlarms.isEmpty else { return }
 
-        for eventAlarm in eventAlarms {
-            guard let request = generateNotificationRequestForAlarm(eventAlarm) else { continue }
+        for upcomingAlarm in upcomingAlarms {
+            let request = generateNotificationRequestForAlarm(upcomingAlarm)
 
             do {
                 try await notificationCenter.add(request)
             } catch {
-                Logger.general.error("Failed to schedule notification for event \(eventAlarm.event.masterEventIdValue): \(error)")
+                Logger.general.error("Failed to schedule notification for \(upcomingAlarm.event.masterEventIdValue): \(error)")
                 SentrySDK.capture(error: error)
             }
         }
     }
 
-    private func generateNotificationRequestForAlarm(_ alarmContext: AlarmContext) -> UNNotificationRequest? {
-        guard let trigger = calendarTriggerOfAlarm(alarmContext) else {
-            return nil
-        }
+    private func generateNotificationRequestForAlarm(_ upcomingAlarm: UpcomingAlarm) -> UNNotificationRequest {
+        let components = calendar.dateComponents(
+            [.year, .month, .day, .hour, .minute, .second],
+            from: upcomingAlarm.firesAt.toNSDate()
+        )
+        let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
 
         let content = UNMutableNotificationContent()
-        content.title = alarmContext.event.title
-        content.body = alarmContext.alarm.description_ ?? alarmContext.event.location
+        content.title = upcomingAlarm.event.title
+        content.body = upcomingAlarm.alarm.description_ ?? upcomingAlarm.event.location
             ?? CalendarResourcesStrings.notificationDefaultDescription
         content.sound = .default
         content.categoryIdentifier = NotificationsHelper.CategoryIdentifier.eventAlarm
         content.userInfo = [
-            NotificationsHelper.UserInfoKeys.eventId: alarmContext.event.masterEventIdValue
+            NotificationsHelper.UserInfoKeys.eventId: upcomingAlarm.event.masterEventIdValue
         ]
-        return UNNotificationRequest(identifier: notificationID(for: alarmContext), content: content, trigger: trigger)
+
+        return UNNotificationRequest(identifier: notificationID(for: upcomingAlarm), content: content, trigger: trigger)
     }
 
-    // TODO: alarm date can probably be computed by KMP?
-    private func calendarTriggerOfAlarm(_ alarmContext: AlarmContext) -> UNCalendarNotificationTrigger? {
-        if let absoluteTrigger = alarmContext.alarm.trigger as? AlarmTriggerAbsolute {
-            let components = calendar.dateComponents(
-                [.year, .month, .day, .hour, .minute, .second],
-                from: absoluteTrigger.instant.toNSDate()
-            )
-
-            return UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
-        }
-
-        if let relativeTrigger = alarmContext.alarm.trigger as? AlarmTriggerRelative {
-            let referenceDate: Date?
-            switch relativeTrigger.relatedTo {
-            case .start:
-                referenceDate = alarmContext.event.timing.startInstantLocal().toNSDate()
-            case .end:
-                referenceDate = alarmContext.event.timing.endInstantLocal().toNSDate()
-            }
-
-            guard let referenceDate else { return nil }
-            let triggerDate = referenceDate.addingTimeInterval(TimeInterval(relativeTrigger.offset))
-            let components = calendar.dateComponents(
-                [.year, .month, .day, .hour, .minute, .second],
-                from: triggerDate
-            )
-
-            return UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
-        }
-
-        return nil
-    }
-
-    // TODO:
-    //  - KMP should return the uid property of an alarm
-    //  - check if the uid of the alarm change when a property of the alarm change (e.g. type, trigger, etc.)
-    private func notificationID(for alarmContext: AlarmContext) -> String {
-        let eventID = alarmContext.event.masterEventIdValue
-        let alarmID = "\(alarmContext.alarm.hash())"
-
-        return "\(Self.notificationIDPrefix)\(eventID):\(alarmID)"
+    private func notificationID(for upcomingAlarm: UpcomingAlarm) -> String {
+        return "\(Self.notificationIDPrefix)\(upcomingAlarm.idValue)"
     }
 }
