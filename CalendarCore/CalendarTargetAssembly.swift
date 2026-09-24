@@ -103,6 +103,9 @@ open class CalendarTargetAssembly: TargetAssembly {
             },
             Factory(type: OrientationManageable.self) { _, _ in
                 OrientationManager()
+            },
+            Factory(type: EventAlarmNotificationsService.self) { _, _ in
+                EventAlarmNotificationsService()
             }
         ]
     }
