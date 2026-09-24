@@ -61,7 +61,7 @@ struct CalendarApp: App {
                 .preferredColorScheme(theme.colorScheme)
         }
         .backgroundTask(.appRefresh(EventAlarmBackgroundTaskHelper.identifier)) {
-            EventAlarmBackgroundTaskHelper().schedule()
+            await EventAlarmBackgroundTaskHelper().scheduleIfNecessary()
 
             @InjectService var eventAlarmNotification: EventAlarmNotificationsService
             await eventAlarmNotification.scheduleNotificationsForEventAlarms()
