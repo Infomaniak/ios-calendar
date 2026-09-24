@@ -23,12 +23,17 @@ import Testing
 import UserNotifications
 
 struct EventAlarmNotificationsServiceTests {
-    @Test func reconcilesOnlyEventAlarmNotifications() async {
+    @Test func reconcilesOnlyEventAlarmNotifications() async throws {
         let existingAlarm = EventAlarmTestFixtures.upcomingAlarm(id: "existing-alarm")
         let missingAlarm = EventAlarmTestFixtures.upcomingAlarm(id: "missing-alarm")
-        let existingIdentifier = EventAlarmTestFixtures.notificationIdentifier(for: existingAlarm)
+        let initialCenter = EventAlarmTestNotificationCenter()
+        await makeService(
+            eventsProvider: EventAlarmTestEventsProvider(upcomingAlarms: [existingAlarm]),
+            notificationCenter: initialCenter
+        ).scheduleNotificationsForEventAlarms()
+        let existingRequest = try #require(await initialCenter.snapshot().addedRequests.first)
         let notificationCenter = EventAlarmTestNotificationCenter(pendingRequests: [
-            EventAlarmTestFixtures.notificationRequest(identifier: existingIdentifier),
+            existingRequest,
             EventAlarmTestFixtures.notificationRequest(identifier: "event-alarm:stale"),
             EventAlarmTestFixtures.notificationRequest(identifier: "another-feature")
         ])
