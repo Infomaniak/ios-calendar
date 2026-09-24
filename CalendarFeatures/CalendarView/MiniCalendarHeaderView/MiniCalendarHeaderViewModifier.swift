@@ -20,7 +20,10 @@ import DesignSystem
 import SwiftUI
 
 struct MiniCalendarHeaderViewModifier: ViewModifier {
+    @Environment(\.calendar) private var calendar
+
     @State private var displayMode: MiniCalendarView.DisplayMode
+    @State private var displayedDate: Date
 
     @Binding var selectedDate: Date
     @Binding var miniCalendarHeight: CGFloat
@@ -33,6 +36,10 @@ struct MiniCalendarHeaderViewModifier: ViewModifier {
         _displayMode = State(initialValue: initialDisplayMode)
         _selectedDate = selectedDate
         _miniCalendarHeight = miniCalendarHeight
+        _displayedDate = State(initialValue: initialDisplayMode.referenceDate(
+            for: selectedDate.wrappedValue,
+            calendar: .current
+        ))
     }
 
     func body(content: Content) -> some View {
@@ -42,7 +49,8 @@ struct MiniCalendarHeaderViewModifier: ViewModifier {
                     .safeAreaInset(edge: .top, spacing: 0) {
                         MiniCalendarView(
                             displayMode: $displayMode,
-                            selectedDate: $selectedDate
+                            selectedDate: $selectedDate,
+                            displayedDate: $displayedDate
                         )
                         .onGeometryChange(for: CGFloat.self) { proxy in
                             proxy.size.height
@@ -55,7 +63,8 @@ struct MiniCalendarHeaderViewModifier: ViewModifier {
                     .safeAreaInset(edge: .top, spacing: 0) {
                         MiniCalendarView(
                             displayMode: $displayMode,
-                            selectedDate: $selectedDate
+                            selectedDate: $selectedDate,
+                            displayedDate: $displayedDate
                         )
                         .background(Material.bar)
                         .onAppear {
@@ -71,7 +80,7 @@ struct MiniCalendarHeaderViewModifier: ViewModifier {
             if #available(iOS 26.0, *) {
                 ToolbarItem(placement: .principal) {
                     Button(action: switchDisplayMode) {
-                        AnimatedTitleView(date: selectedDate)
+                        AnimatedTitleView(date: displayedDate)
                     }
                 }
                 .sharedBackgroundVisibility(.hidden)
@@ -83,7 +92,7 @@ struct MiniCalendarHeaderViewModifier: ViewModifier {
                 .sharedBackgroundVisibility(.hidden)
             } else {
                 ToolbarItem(placement: .topBarLeading) {
-                    AnimatedTitleView(date: selectedDate)
+                    AnimatedTitleView(date: displayedDate)
                 }
             }
 
@@ -99,6 +108,7 @@ struct MiniCalendarHeaderViewModifier: ViewModifier {
     private func switchDisplayMode() {
         withAnimation {
             displayMode = displayMode == .month ? .week : .month
+            displayedDate = displayMode.referenceDate(for: selectedDate, calendar: calendar)
         }
     }
 }

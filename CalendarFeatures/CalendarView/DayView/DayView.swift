@@ -183,7 +183,6 @@ struct DayContentView: View {
                 .onChange(of: mainViewState.selectedDate) { oldSelectedDate, selectedDate in
                     guard calendar.isDate(date, inSameDayAs: selectedDate),
                           !calendar.isDate(date, inSameDayAs: oldSelectedDate) else { return }
-                    // Lazy paging can prepare this day before the active timeline finishes scrolling.
                     scrollToCorrectPosition(proxy)
                 }
                 .dayViewZoom(

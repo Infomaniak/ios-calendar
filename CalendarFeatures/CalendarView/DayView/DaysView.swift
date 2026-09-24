@@ -48,8 +48,6 @@ struct DayPager: View {
                     miniCalendarHeight: $miniCalendarHeight,
                     date: date
                 )
-                // Restore vertical insets consumed by the pager. The horizontal inset
-                // already positions the page after the iPad sidebar.
                 .safeAreaPadding(.top, max(0, proxy.safeAreaInsets.top - miniCalendarHeight))
                 .safeAreaPadding(.bottom, proxy.safeAreaInsets.bottom)
             }

@@ -22,7 +22,7 @@ struct MiniCalendarPager: View {
     let displayMode: MiniCalendarView.DisplayMode
 
     @Binding var selectedDate: Date
-    @Binding var displayedPage: ReferenceDatePage
+    @Binding var displayedDate: Date
 
     private var periodOffsets: Range<Int> {
         switch displayMode {
@@ -33,30 +33,17 @@ struct MiniCalendarPager: View {
         }
     }
 
-    private var displayedDate: Binding<Date> {
-        Binding {
-            displayedPage.referenceDate
-        } set: { date in
-            displayedPage = ReferenceDatePage(
-                referenceDate: date,
-                referenceDateInterval: displayMode.referenceDateInterval
-            )
-        }
-    }
-
     var body: some View {
         CalendarPeriodPager(
             component: displayMode.referenceDateInterval,
             periodOffsets: periodOffsets,
-            date: displayedDate
+            date: $displayedDate
         ) { date in
-            let page = ReferenceDatePage(referenceDate: date, referenceDateInterval: displayMode.referenceDateInterval)
-
             switch displayMode {
             case .month:
-                MonthHeaderView(page: page, selectedDate: $selectedDate)
+                MonthHeaderView(referenceDate: date, selectedDate: $selectedDate)
             case .week:
-                WeekHeaderView(page: page, selectedDate: $selectedDate)
+                WeekHeaderView(referenceDate: date, selectedDate: $selectedDate)
             }
         }
         .fixedSize(horizontal: false, vertical: true)
