@@ -27,12 +27,6 @@ import InterAppLogin
 import MultiplatformCalendar
 import OSLog
 
-struct FakeEventProvider: EventAlarmEventsProviding {
-    func eventAlarmsToDisplay(range: Range<Date>) async throws -> [Event] {
-        return []
-    }
-}
-
 open class CalendarTargetAssembly: TargetAssembly {
     private static let apiEnvironment: ApiEnvironment = .prod
     private static let dbRootPath = "calendar"
@@ -111,7 +105,7 @@ open class CalendarTargetAssembly: TargetAssembly {
                 OrientationManager()
             },
             Factory(type: EventAlarmNotificationsService.self) { _, _ in
-                EventAlarmNotificationsService(eventsProvider: FakeEventProvider())
+                EventAlarmNotificationsService()
             }
         ]
     }
