@@ -34,6 +34,10 @@
  * Destructive toolbar action and confirmation button in event details. Deletes the displayed calendar event. */
 "buttonDeleteEvent" = "Slet denne begivenhed";
 
+"buttonDeleteAllEvents" = "Alle begivenheder";
+
+"buttonDeleteThisAndFollowingEvents" = "Denne og alle efterfølgende begivenheder";
+
 /* loco:6a4de9659924fbe9f10f1002 */
 "buttonJoin" = "Tilmeld dig";
 
@@ -84,6 +88,10 @@
  * Confirmation dialog title shown before deleting the displayed calendar event. */
 "deleteEventAlertTitle" = "Er du sikker på, at du vil slette denne begivenhed?";
 
+"deleteEventErrorTitle" = "Begivenheden kunne ikke slettes";
+
+"deleteRecurringEventAlertTitle" = "Hvilke begivenheder vil du slette?";
+
 /* loco:6a856424c3b19782760f9b12 */
 "descriptionTitle" = "Beskrivelse";
 
@@ -96,6 +104,8 @@
 
 /* loco:6a63163836b2bc1b160c0a12 */
 "eventColorLabel" = "Begivenhedens farve";
+
+"eventOccurrenceNotFound" = "Denne begivenhed er ikke længere tilgængelig.";
 
 /* loco:6a6315016659664bd10ce392 */
 "eventTitle" = "Arrangementstitel";

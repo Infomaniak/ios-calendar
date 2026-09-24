@@ -34,6 +34,10 @@
  * Destructive toolbar action and confirmation button in event details. Deletes the displayed calendar event. */
 "buttonDeleteEvent" = "Ta bort detta evenemang";
 
+"buttonDeleteAllEvents" = "Alla evenemang";
+
+"buttonDeleteThisAndFollowingEvents" = "Detta och alla följande evenemang";
+
 /* loco:6a4de9659924fbe9f10f1002 */
 "buttonJoin" = "Gå med";
 
@@ -84,6 +88,10 @@
  * Confirmation dialog title shown before deleting the displayed calendar event. */
 "deleteEventAlertTitle" = "Är du säker på att du vill ta bort detta evenemang?";
 
+"deleteEventErrorTitle" = "Det gick inte att ta bort evenemanget";
+
+"deleteRecurringEventAlertTitle" = "Vilka evenemang vill du ta bort?";
+
 /* loco:6a856424c3b19782760f9b12 */
 "descriptionTitle" = "Beskrivning";
 
@@ -96,6 +104,8 @@
 
 /* loco:6a63163836b2bc1b160c0a12 */
 "eventColorLabel" = "Evenemangets färg";
+
+"eventOccurrenceNotFound" = "Det här evenemanget är inte längre tillgängligt.";
 
 /* loco:6a6315016659664bd10ce392 */
 "eventTitle" = "Evenemangstitel";

@@ -22,15 +22,25 @@ import MultiplatformCalendar
 public struct UpdateEventUseCase: Sendable {
     public init() {}
 
-    public func execute(eventId: String, draft: EventDraft, originalData: EventEditData) async throws {
+    public func execute(
+        occurrenceId: String,
+        scope: RecurrenceScope,
+        draft: EventDraft,
+        originalData: EventEditData
+    ) async throws {
         let errors = EventDraftValidator().validate(draft)
         guard errors.isEmpty else {
             throw EventDraftValidator.ValidationErrors(errors: errors)
         }
 
         @InjectService var calendarSDK: CalendarCoreGraph
+        let id = OccurrenceId.companion.parse(value: occurrenceId)
+        guard let occurrence = try await calendarSDK.calendarManager.getOccurrence(occurrenceId: id) else {
+            throw EventOccurrenceError.notFound
+        }
+        let target = occurrence.targetedAs(scope: scope)
         try await calendarSDK.calendarManager.updateEvent(
-            eventId: eventId,
+            target: target,
             data: draft.toEventEditData(preserving: originalData)
         )
     }

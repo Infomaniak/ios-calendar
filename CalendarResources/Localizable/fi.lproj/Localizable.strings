@@ -34,6 +34,10 @@
  * Destructive toolbar action and confirmation button in event details. Deletes the displayed calendar event. */
 "buttonDeleteEvent" = "Poista tämä tapahtuma";
 
+"buttonDeleteAllEvents" = "Kaikki tapahtumat";
+
+"buttonDeleteThisAndFollowingEvents" = "Tämä ja seuraavat tapahtumat";
+
 /* loco:6a4de9659924fbe9f10f1002 */
 "buttonJoin" = "Liity mukaan";
 
@@ -84,6 +88,10 @@
  * Confirmation dialog title shown before deleting the displayed calendar event. */
 "deleteEventAlertTitle" = "Haluatko varmasti poistaa tämän tapahtuman?";
 
+"deleteEventErrorTitle" = "Tapahtuman poistaminen epäonnistui";
+
+"deleteRecurringEventAlertTitle" = "Mitkä tapahtumat haluat poistaa?";
+
 /* loco:6a856424c3b19782760f9b12 */
 "descriptionTitle" = "Kuvaus";
 
@@ -96,6 +104,8 @@
 
 /* loco:6a63163836b2bc1b160c0a12 */
 "eventColorLabel" = "Tapahtuman väri";
+
+"eventOccurrenceNotFound" = "Tämä tapahtuma ei ole enää saatavilla.";
 
 /* loco:6a6315016659664bd10ce392 */
 "eventTitle" = "Tapahtuman nimi";

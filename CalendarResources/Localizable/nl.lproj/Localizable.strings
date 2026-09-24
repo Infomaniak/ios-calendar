@@ -34,6 +34,10 @@
  * Destructive toolbar action and confirmation button in event details. Deletes the displayed calendar event. */
 "buttonDeleteEvent" = "Dit evenement verwijderen";
 
+"buttonDeleteAllEvents" = "Alle evenementen";
+
+"buttonDeleteThisAndFollowingEvents" = "Dit en alle volgende evenementen";
+
 /* loco:6a4de9659924fbe9f10f1002 */
 "buttonJoin" = "Lid worden";
 
@@ -84,6 +88,10 @@
  * Confirmation dialog title shown before deleting the displayed calendar event. */
 "deleteEventAlertTitle" = "Weet u zeker dat u dit evenement wilt verwijderen?";
 
+"deleteEventErrorTitle" = "Het evenement kon niet worden verwijderd";
+
+"deleteRecurringEventAlertTitle" = "Welke evenementen wilt u verwijderen?";
+
 /* loco:6a856424c3b19782760f9b12 */
 "descriptionTitle" = "Beschrijving";
 
@@ -96,6 +104,8 @@
 
 /* loco:6a63163836b2bc1b160c0a12 */
 "eventColorLabel" = "Kleur van het evenement";
+
+"eventOccurrenceNotFound" = "Dit evenement is niet meer beschikbaar.";
 
 /* loco:6a6315016659664bd10ce392 */
 "eventTitle" = "Titel van het evenement";

@@ -78,6 +78,7 @@ public extension UIEvent {
 public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
     public let id: String
     public let masterId: String
+    public let occurrenceId: String
     public let calendarId: String
 
     public let title: String
@@ -88,6 +89,7 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
     public let colors: UIEvent.Colors
     public let classification: UIClassification?
     public let canEdit: Bool
+    public let isOccurrence: Bool
 
     public let startDate: Date
     public let endDate: Date
@@ -112,6 +114,7 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
     public init(
         id: String,
         masterId: String? = nil,
+        occurrenceId: String? = nil,
         title: String,
         description: String? = nil,
         startDate: Date,
@@ -126,10 +129,12 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
         colors: UIEvent.Colors,
         classification: UIClassification? = .public,
         timing: UITiming,
-        canEdit: Bool
+        canEdit: Bool,
+        isOccurrence: Bool = false
     ) {
         self.id = id
         self.masterId = masterId ?? id
+        self.occurrenceId = occurrenceId ?? masterId ?? id
         self.title = title.trimmingCharacters(in: .whitespacesAndNewlines)
         self.description = description
         self.startDate = startDate
@@ -145,6 +150,7 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
         self.classification = classification
         self.timing = timing
         self.canEdit = canEdit
+        self.isOccurrence = isOccurrence
     }
 }
 
@@ -154,6 +160,7 @@ public extension UIEvent {
 
         id = "\(eventDaySlice.position.index)-\(event.occurrenceIdValue)"
         masterId = event.masterEventIdValue
+        occurrenceId = event.occurrenceIdValue
         calendarId = event.calendarIdValue
 
         title = event.title.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -190,6 +197,7 @@ public extension UIEvent {
         classification = .init(classification: event.classification)
 
         canEdit = event.canEdit
+        isOccurrence = event.isOccurrence
     }
 }
 
