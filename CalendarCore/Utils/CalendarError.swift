@@ -18,11 +18,18 @@
 
 import CalendarResources
 import Foundation
+import InfomaniakCoreUIResources
 
-public enum EventOccurrenceError: LocalizedError {
-    case notFound
+public enum CalendarError: LocalizedError {
+    case eventOccurrenceNotFound
+    case unknown
 
     public var errorDescription: String? {
-        CalendarResourcesStrings.eventOccurrenceNotFound
+        switch self {
+        case .eventOccurrenceNotFound:
+            return CalendarResourcesStrings.eventOccurrenceNotFound
+        default:
+            return CoreUILocalizable.anErrorHasOccurred
+        }
     }
 }

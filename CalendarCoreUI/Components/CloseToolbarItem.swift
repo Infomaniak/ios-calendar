@@ -19,18 +19,33 @@
 import CalendarResources
 import SwiftUI
 
+public struct CloseToolbarItem: ToolbarContent {
+    private let action: () -> Void
+
+    public init(action: @escaping () -> Void) {
+        self.action = action
+    }
+
+    public var body: some ToolbarContent {
+        ToolbarItem(placement: .cancellationAction) {
+            if #available(iOS 26.0, *) {
+                Button(role: .close, action: action)
+            } else {
+                Button(action: action) {
+                    Label(
+                        CalendarResourcesStrings.closeLabel,
+                        systemImage: "xmark"
+                    )
+                }
+            }
+        }
+    }
+}
+
 public extension View {
     func closeToolbarItem(_ close: @escaping () -> Void) -> some View {
         toolbar {
-            ToolbarItem(placement: .cancellationAction) {
-                if #available(iOS 26.0, *) {
-                    Button(role: .close, action: close)
-                } else {
-                    Button(action: close) {
-                        Label(CalendarResourcesStrings.closeLabel, systemImage: "xmark")
-                    }
-                }
-            }
+            CloseToolbarItem(action: close)
         }
     }
 

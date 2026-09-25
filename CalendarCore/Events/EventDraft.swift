@@ -83,7 +83,9 @@ public extension EventDraft {
             timing: sdkTiming(recurrenceRule: originalData?.timing.recurrenceRule),
             location: originalData?.location,
             description: description,
-            timeBlocking: isOccupied ? .blocks : .doesNotBlock,
+            timeBlocking: originalData.map {
+                isOccupied == ($0.timeBlocking != .doesNotBlock) ? $0.timeBlocking : (isOccupied ? .blocks : .doesNotBlock)
+            } ?? (isOccupied ? .blocks : .doesNotBlock),
             calendarId: calendarId,
             eventColor: originalData?.eventColor,
             alarms: originalData?.alarms ?? AlarmListEditReplace(alarms: [])
