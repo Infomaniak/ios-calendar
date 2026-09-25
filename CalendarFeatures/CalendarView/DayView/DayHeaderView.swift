@@ -61,7 +61,7 @@ struct DayHeaderView: View {
                 .font(.caption2)
                 .foregroundStyle(theme.color.contentTertiary)
                 .padding(.trailing, value: .small)
-                .frame(width: DayContentView.Constants.leadingInset, alignment: .trailing)
+                .frame(width: TimelineBackgroundView.Constants.leadingInset, alignment: .trailing)
 
                 HStack(spacing: 2) {
                     Text(date, format: .dateTime.weekday(.wide))
@@ -81,7 +81,7 @@ struct DayHeaderView: View {
                         .font(.caption2)
                         .foregroundStyle(theme.color.contentTertiary)
                         .padding(.trailing, value: .small)
-                        .frame(width: DayContentView.Constants.leadingInset, alignment: .trailing)
+                        .frame(width: TimelineBackgroundView.Constants.leadingInset, alignment: .trailing)
                         .multilineTextAlignment(.trailing)
 
                     ScrollView {
