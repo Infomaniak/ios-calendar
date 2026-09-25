@@ -22,6 +22,9 @@ import SwiftUI
 public enum DefaultPreferences {
     public static let matomoAuthorized = true
     public static let sentryAuthorized = true
+
+    public static let dayViewScrollPosition = 0.0
+
     public static let theme: Theme = .system
     public static let firstWeekday = Calendar.autoupdatingCurrent.firstWeekday
     public static let displayWeekends = true
