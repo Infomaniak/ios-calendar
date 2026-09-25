@@ -30,8 +30,8 @@ struct TimelineIndicatorView: View {
 
     var body: some View {
         HStack(spacing: theme.spacing.twoXs) {
-            Text(date.formatted(DayTimelineView.Constants.dateFormater))
-                .font(DayTimelineView.Constants.labelFont)
+            Text(date.formatted(TimelineBackgroundView.Constants.dateFormater))
+                .font(TimelineBackgroundView.Constants.labelFont)
                 .padding(.horizontal, theme.spacing.xs)
                 .padding(.vertical, theme.spacing.twoXs)
                 .foregroundStyle(theme.color.contentInverse)
