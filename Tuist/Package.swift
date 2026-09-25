@@ -10,6 +10,7 @@ let packageSettings = PackageSettings(
         "DesignSystem": .framework,
         "DeviceAssociation": .framework,
         "ESDSCalendar": .framework,
+        "ESDSSymbols": .framework,
         "Eventually": .framework,
         "InfomaniakCoreCommonUI": .framework,
         "InfomaniakCoreSwiftUI": .framework,

@@ -17,6 +17,7 @@
  */
 
 import CalendarResources
+import ESDSSymbols
 import Foundation
 import MultiplatformCalendar
 
@@ -37,12 +38,12 @@ public enum UIClassification: String, Sendable, CaseIterable {
         }
     }
 
-    public var icon: CalendarResourcesImages? {
+    public var icon: ESDSSymbols.Symbol? {
         switch self {
         case .public:
-            return CalendarResourcesAsset.Images.lockOpen
+            return ESDSSymbols.lockOpen
         case .private:
-            return CalendarResourcesAsset.Images.lock
+            return ESDSSymbols.lock
         default:
             return nil
         }

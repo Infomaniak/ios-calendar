@@ -19,6 +19,7 @@
 import CalendarResources
 import DesignSystem
 import ESDSFoundation
+import ESDSSymbols
 import SwiftUI
 
 struct ExpandableDatePicker<ID: Hashable>: View {
@@ -109,14 +110,14 @@ struct ExpandableDatePicker<ID: Hashable>: View {
                     timeZonePickerId = id
                 } label: {
                     HStack(spacing: IKPadding.micro) {
-                        Label(CalendarResourcesStrings.timeZoneLabel, image: CalendarResourcesAsset.Images.globe)
+                        Label(CalendarResourcesStrings.timeZoneLabel, symbol: ESDSSymbols.globe)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .labelStyle(.formLabel)
 
                         Text(timeZone, format: .timeZone(.displayName))
                             .foregroundStyle(theme.color.contentTertiary)
 
-                        CalendarResourcesAsset.Images.chevronRight.swiftUIImage
+                        ESDSSymbols.chevronRight.image
                             .iconSize(IKIconSize.large)
                             .foregroundStyle(theme.color.contentTertiary)
                     }
