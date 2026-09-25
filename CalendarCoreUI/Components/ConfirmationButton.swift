@@ -16,19 +16,24 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import InfomaniakDI
-import MultiplatformCalendar
+import CalendarResources
+import Foundation
+import SwiftUI
 
-public struct DeleteEventUseCase: Sendable {
-    public init() {}
+public struct ConfirmationButton: View {
+    private let action: @MainActor () -> Void
 
-    public func execute(occurrenceId: String, scope: RecurrenceScope) async throws {
-        @InjectService var calendarSDK: CalendarCoreGraph
-        let id = OccurrenceId.companion.parse(value: occurrenceId)
-        guard let occurrence = try await calendarSDK.calendarManager.getOccurrence(occurrenceId: id) else {
-            throw CalendarError.eventOccurrenceNotFound
+    public init(action: @MainActor @escaping () -> Void) {
+        self.action = action
+    }
+
+    public var body: some View {
+        if #available(iOS 26.0, *) {
+            Button(role: .confirm, action: action)
+        } else {
+            Button(action: action) {
+                Label(CalendarResourcesStrings.buttonConfirm, image: CalendarResourcesAsset.Images.check)
+            }
         }
-        let target = occurrence.targetedAs(scope: scope)
-        try await calendarSDK.calendarManager.deleteEvent(target: target)
     }
 }

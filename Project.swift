@@ -49,6 +49,7 @@ let preloadingView = Feature(
 let eventDetailsView = Feature(
     name: "EventDetailsView",
     additionalDependencies: [
+        TargetDependency.target(name: "CalendarEventFormView"),
         TargetDependency.target(name: "\(Constants.projectName)Resources"),
         TargetDependency.external(name: "DesignSystem"),
         TargetDependency.external(name: "ESDSCalendar"),
@@ -251,6 +252,7 @@ let project = Project(
             dependencies: [
                 .target(name: Constants.projectName),
                 .target(name: "\(Constants.projectName)Core"),
+                .target(name: "\(Constants.projectName)CoreUI"),
                 eventFormView.asDependency,
                 .external(name: "MultiplatformCalendar")
             ]

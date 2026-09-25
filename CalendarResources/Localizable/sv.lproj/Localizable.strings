@@ -33,6 +33,7 @@
 /* loco:6ab387c24e3a9ba3e7049042
  * Destructive toolbar action and confirmation button in event details. Deletes the displayed calendar event. */
 "buttonDeleteEvent" = "Ta bort detta evenemang";
+"buttonEditThisEvent" = "Detta evenemang";
 
 "buttonDeleteAllEvents" = "Alla evenemang";
 
@@ -98,6 +99,7 @@
 /* loco:6aacf103d307b996c00e20ce
  * Title case in languages where appropriate. */
 "editEventTitle" = "Redigera evenemang";
+"editRecurringEventAlertTitle" = "Vilka evenemang vill du redigera?";
 
 /* loco:6a631392189120de490885c4 */
 "endLabel" = "Slut";

@@ -17,6 +17,7 @@
  */
 
 import CalendarCore
+import CalendarCoreUI
 @testable import CalendarEventFormView
 import Foundation
 import Testing
@@ -24,6 +25,41 @@ import Testing
 @MainActor
 struct EventFormViewModelTests {
     private let calendar = Calendar(identifier: .gregorian)
+
+    @Test
+    func editingPrefillsStoredValuesWithoutMarkingFormChanged() throws {
+        let original = try EventDraft(
+            calendarId: "0",
+            title: "Stored title",
+            description: "Stored description",
+            startDate: date("2026-09-22T10:10:00Z"),
+            startTimeZone: timeZone("Europe/Zurich"),
+            endDate: date("2026-09-22T11:10:00Z"),
+            endTimeZone: timeZone("Europe/Zurich"),
+            isOccupied: false
+        )
+        let editData = try original.toEventEditData()
+        let draft = EventDraft.fromEvent(.preview, editData: editData)
+        let viewModel = EventFormViewModel(editionMode: .editDraft(draft: draft))
+
+        #expect(viewModel.draft.title == original.title)
+        #expect(viewModel.draft.description == original.description)
+        #expect(viewModel.draft.startDate == original.startDate)
+        #expect(viewModel.draft.endDate == original.endDate)
+        #expect(viewModel.draft.startTimeZone == original.startTimeZone)
+        #expect(viewModel.draft.calendarId == original.calendarId)
+        #expect(viewModel.draft.isOccupied == false)
+        #expect(viewModel.isEdited == false)
+    }
+
+    @Test
+    func editingWithoutEventCannotCreateAnotherEvent() async throws {
+        let viewModel = try makeViewModel()
+
+        await #expect(throws: EventOccurrenceError.self) {
+            try await viewModel.saveEvent()
+        }
+    }
 
     @Test(arguments: [
         ("2026-09-22T09:10:00Z", "2026-09-22T11:10:00Z"),
