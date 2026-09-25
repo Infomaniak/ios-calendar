@@ -16,17 +16,26 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Foundation
+import DesignSystem
 import SwiftUI
 
-public enum DefaultPreferences {
-    public static let matomoAuthorized = true
-    public static let sentryAuthorized = true
+struct TimelineGeometry {
+    let startOfDay: Date
+    let pointsPerHour: CGFloat
 
-    public static let dayViewScrollPosition = 0.0
+    var eventLayoutPadding: EdgeInsets {
+        let verticalInset = TimelineBackgroundView.Constants.verticalInset - TimelineBackgroundView.Constants.indexHeight / 2
 
-    public static let theme: Theme = .system
-    public static let firstWeekday = Calendar.autoupdatingCurrent.firstWeekday
-    public static let displayWeekends = true
-    public static let defaultEventDuration = DefaultEventDuration.thirtyMinutes
+        return EdgeInsets(
+            top: verticalInset,
+            leading: TimelineBackgroundView.Constants.leadingInset + IKPadding.medium,
+            bottom: verticalInset,
+            trailing: IKPadding.medium
+        )
+    }
+
+    func yPosition(for date: Date) -> CGFloat {
+        let elapsedHours = date.timeIntervalSince(startOfDay) / 3600
+        return elapsedHours * pointsPerHour + TimelineBackgroundView.Constants.verticalInset
+    }
 }
