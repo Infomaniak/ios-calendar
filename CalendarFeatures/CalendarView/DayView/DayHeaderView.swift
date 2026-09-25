@@ -33,7 +33,7 @@ struct DayHeaderView: View {
     }
 
     private var headerHeight: CGFloat {
-        let rowHeight = 16 + DayContentView.Constants.verticalInset * 2 + IKPadding.mini
+        let rowHeight = 16 + TimelineBackgroundView.Constants.verticalInset * 2 + IKPadding.mini
         let extraPadding = eventPairs.count > 2 ? IKPadding.mini : 0
         return CGFloat(visibleRowCount) * rowHeight + extraPadding
     }
@@ -55,7 +55,7 @@ struct DayHeaderView: View {
                 .font(.caption2)
                 .foregroundStyle(theme.color.contentTertiary)
                 .padding(.trailing, value: .small)
-                .frame(width: DayContentView.Constants.leadingInset, alignment: .trailing)
+                .frame(width: TimelineBackgroundView.Constants.leadingInset, alignment: .trailing)
 
                 HStack(spacing: 2) {
                     Text(date, format: .dateTime.weekday(.wide))
@@ -75,7 +75,7 @@ struct DayHeaderView: View {
                         .font(.caption2)
                         .foregroundStyle(theme.color.contentTertiary)
                         .padding(.trailing, value: .small)
-                        .frame(width: DayContentView.Constants.leadingInset, alignment: .trailing)
+                        .frame(width: TimelineBackgroundView.Constants.leadingInset, alignment: .trailing)
                         .multilineTextAlignment(.trailing)
 
                     ScrollView {

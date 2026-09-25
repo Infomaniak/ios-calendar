@@ -18,17 +18,17 @@
 
 import SwiftUI
 
-private struct DayViewZoomFocus {
+private struct TimelineZoomFocus {
     let date: Date
     let verticalPosition: CGFloat
 }
 
-struct DayViewZoomModifier: ViewModifier {
+struct TimelineZoomModifier: ViewModifier {
     static let zoomSensitivity: CGFloat = 0.66
 
     @Environment(\.calendar) private var calendar
 
-    @State private var zoomFocus: DayViewZoomFocus?
+    @State private var zoomFocus: TimelineZoomFocus?
 
     @Binding var pointsPerHour: CGFloat
     @Binding var currentMagnification: CGFloat
@@ -47,13 +47,13 @@ struct DayViewZoomModifier: ViewModifier {
                         zoomFocus = focus
 
                         let magnification = adjustedMagnification(value.magnification)
-                        let newPointsPerHour = DayContentView.Constants.PointsPerHour.clamped(pointsPerHour * magnification)
+                        let newPointsPerHour = TimelineViewConstants.PointsPerHour.clamped(pointsPerHour * magnification)
                         currentMagnification = magnification
                         scroll(to: focus, pointsPerHour: newPointsPerHour)
                     }
                     .onEnded { value in
                         let magnification = adjustedMagnification(value.magnification)
-                        let newPointsPerHour = DayContentView.Constants.PointsPerHour.clamped(pointsPerHour * magnification)
+                        let newPointsPerHour = TimelineViewConstants.PointsPerHour.clamped(pointsPerHour * magnification)
                         if let zoomFocus {
                             scroll(to: zoomFocus, pointsPerHour: newPointsPerHour)
                         }
@@ -69,26 +69,26 @@ struct DayViewZoomModifier: ViewModifier {
         return 1 + (magnification - 1) * Self.zoomSensitivity
     }
 
-    private func zoomFocus(at verticalPosition: CGFloat) -> DayViewZoomFocus {
-        let focusPosition = scrollOffset + verticalPosition - DayContentView.Constants.verticalInset
+    private func zoomFocus(at verticalPosition: CGFloat) -> TimelineZoomFocus {
+        let focusPosition = scrollOffset + verticalPosition - TimelineBackgroundView.Constants.verticalInset
         let elapsedHours = focusPosition / pointsPerHour
         let clampedElapsedHours = min(max(elapsedHours, 0), maximumElapsedHours)
         let focusDate = calendar.startOfDay(for: date)
             .addingTimeInterval(TimeInterval(clampedElapsedHours) * 3600)
 
-        return DayViewZoomFocus(date: focusDate, verticalPosition: verticalPosition)
+        return TimelineZoomFocus(date: focusDate, verticalPosition: verticalPosition)
     }
 
-    private func scroll(to focus: DayViewZoomFocus, pointsPerHour: CGFloat) {
+    private func scroll(to focus: TimelineZoomFocus, pointsPerHour: CGFloat) {
         let elapsedHours = focus.date.timeIntervalSince(calendar.startOfDay(for: date)) / 3600
-        let focusPosition = elapsedHours * pointsPerHour + DayContentView.Constants.verticalInset
+        let focusPosition = elapsedHours * pointsPerHour + TimelineBackgroundView.Constants.verticalInset
         scrollPosition.scrollTo(y: focusPosition - focus.verticalPosition)
     }
 }
 
 extension View {
     // swiftlint:disable:next function_parameter_count
-    func dayViewZoom(
+    func timelineZoom(
         pointsPerHour: Binding<CGFloat>,
         currentMagnification: Binding<CGFloat>,
         scrollPosition: Binding<ScrollPosition>,
@@ -96,7 +96,7 @@ extension View {
         scrollOffset: CGFloat,
         maximumElapsedHours: CGFloat
     ) -> some View {
-        modifier(DayViewZoomModifier(
+        modifier(TimelineZoomModifier(
             pointsPerHour: pointsPerHour,
             currentMagnification: currentMagnification,
             scrollPosition: scrollPosition,
