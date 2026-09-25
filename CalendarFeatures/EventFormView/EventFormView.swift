@@ -21,6 +21,7 @@ import CalendarCoreUI
 import CalendarResources
 import DesignSystem
 import ESDSFoundation
+import ESDSSymbols
 import SwiftUI
 
 public enum EditionMode {
@@ -121,7 +122,7 @@ public struct EventFormView: View {
                     Label {
                         Text(CalendarResourcesStrings.occupiedLabel)
                     } icon: {
-                        CalendarResourcesAsset.Images.briefcase.swiftUIImage
+                        ESDSSymbols.briefcase.image
                     }
                     .labelStyle(.formLabel)
                 }
@@ -180,7 +181,7 @@ public struct EventFormView: View {
                         completion()
                     }
                 } label: {
-                    Label(CalendarResourcesStrings.buttonConfirm, image: CalendarResourcesAsset.Images.check)
+                    Label(CalendarResourcesStrings.buttonConfirm, symbol: ESDSSymbols.check)
                         .labelStyle(.iconOnly)
                 }
                 .buttonStyle(.borderedProminent)

@@ -19,6 +19,7 @@
 import CalendarCoreUI
 import CalendarResources
 import DesignSystem
+import ESDSSymbols
 import InfomaniakDI
 @preconcurrency import MultiplatformCalendar
 import SwiftUI
@@ -44,7 +45,7 @@ struct EventCalendarRow: View {
                 } label: {
                     Label(
                         CalendarResourcesStrings.sectionCalendarHeader,
-                        image: CalendarResourcesAsset.Images.productCalendar
+                        symbol: ESDSSymbols.productCalendar
                     )
                     .labelStyle(.formLabel)
                 }

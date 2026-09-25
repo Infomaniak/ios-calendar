@@ -20,6 +20,7 @@ import CalendarCoreUI
 import CalendarResources
 import DesignSystem
 import ESDSFoundation
+import ESDSSymbols
 import InfomaniakCoreSwiftUI
 import SwiftUI
 
@@ -43,7 +44,7 @@ public struct MeetingRoomView: View {
                     .foregroundStyle(theme.color.contentPrimary)
 
                 HStack(spacing: IKPadding.mini) {
-                    CalendarResourcesAsset.Images.usersStacked.swiftUIImage
+                    ESDSSymbols.usersStacked.image
                         .iconSize(IKIconSize.medium)
                         .foregroundStyle(theme.color.contentSecondary)
                     Text(CalendarResourcesStrings.roomSeatsLabel(roomCapacity))
@@ -63,7 +64,7 @@ public struct MeetingRoomView: View {
             }
             .padding(.trailing, IKPadding.large)
         } icon: {
-            CalendarResourcesAsset.Images.doorOpen.swiftUIImage
+            ESDSSymbols.doorOpen.image
         }
         .labelStyle(.formLabel)
         .frame(maxWidth: .infinity, alignment: .leading)

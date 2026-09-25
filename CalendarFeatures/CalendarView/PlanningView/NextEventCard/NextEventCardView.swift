@@ -20,6 +20,7 @@ import CalendarCoreUI
 import CalendarResources
 import DesignSystem
 import ESDSFoundation
+import ESDSSymbols
 import InfomaniakDI
 import MultiplatformCalendar
 import SwiftUI
@@ -171,7 +172,7 @@ struct NextEventContentCardView: View {
 
                 VStack(alignment: .leading, spacing: 0) {
                     HStack(spacing: lerp(a: 0, b: theme.spacing.sm)) {
-                        CalendarResourcesAsset.Images.clock.swiftUIImage
+                        ESDSSymbols.clock.image
                             .resizable()
                             .scaledToFit()
                             .animateHide(progress: progress, fullHeight: Constants.informationSize)
@@ -182,7 +183,7 @@ struct NextEventContentCardView: View {
 
                     if let location = event.location {
                         HStack(spacing: theme.spacing.sm) {
-                            CalendarResourcesAsset.Images.mapPin.swiftUIImage
+                            ESDSSymbols.mapPin.image
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: Constants.informationIconSize, height: Constants.informationIconSize)
@@ -196,7 +197,7 @@ struct NextEventContentCardView: View {
 
                     if event.kMeetLink != nil {
                         HStack(spacing: theme.spacing.sm) {
-                            CalendarResourcesAsset.Images.productKmeet.swiftUIImage
+                            ESDSSymbols.productKmeet.image
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: Constants.informationIconSize, height: Constants.informationIconSize)

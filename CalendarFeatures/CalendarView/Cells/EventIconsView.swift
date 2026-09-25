@@ -19,6 +19,7 @@
 import CalendarCoreUI
 import CalendarResources
 import DesignSystem
+import ESDSSymbols
 import SwiftUI
 
 private extension Image {
@@ -48,15 +49,15 @@ struct EventIconsView: View {
     var body: some View {
         HStack(spacing: IKPadding.micro) {
             if hasLocation && shouldShowLocationIcon {
-                CalendarResourcesAsset.Images.mapPin.swiftUIImage
+                ESDSSymbols.mapPin.image
                     .resizableIcon(CalendarResourcesStrings.contentDescriptionHasLocation)
             }
             if hasKMeetLink {
-                CalendarResourcesAsset.Images.productKmeet.swiftUIImage
+                ESDSSymbols.productKmeet.image
                     .resizableIcon(CalendarResourcesStrings.contentDescriptionHasKMeetLink)
             }
             if hasAttendees {
-                CalendarResourcesAsset.Images.usersStacked.swiftUIImage
+                ESDSSymbols.usersStacked.image
                     .resizableIcon(CalendarResourcesStrings.contentDescriptionHasAttendees)
             }
         }

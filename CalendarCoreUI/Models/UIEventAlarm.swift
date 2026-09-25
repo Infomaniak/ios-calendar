@@ -17,6 +17,7 @@
  */
 
 import CalendarResources
+import ESDSSymbols
 import Foundation
 @preconcurrency import MultiplatformCalendar
 
@@ -101,14 +102,14 @@ public enum UIAlarmAction: Identifiable, Sendable, Hashable {
         }
     }
 
-    public var icon: CalendarResourcesImages {
+    public var icon: ESDSSymbols.Symbol {
         switch self {
         case .display:
-            return CalendarResourcesAsset.Images.bubbleTopRightCircle
+            return ESDSSymbols.bubbleTopRightCircle
         case .audio:
-            return CalendarResourcesAsset.Images.bell
+            return ESDSSymbols.bell
         default:
-            return CalendarResourcesAsset.Images.bell
+            return ESDSSymbols.bell
         }
     }
 }
