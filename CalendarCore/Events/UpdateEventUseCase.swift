@@ -25,8 +25,7 @@ public struct UpdateEventUseCase: Sendable {
     public func execute(
         occurrenceId: String,
         scope: RecurrenceScope,
-        draft: EventDraft,
-        originalData: EventEditData
+        draft: EventDraft
     ) async throws {
         let errors = EventDraftValidator().validate(draft)
         guard errors.isEmpty else {
@@ -35,9 +34,11 @@ public struct UpdateEventUseCase: Sendable {
 
         @InjectService var calendarSDK: CalendarCoreGraph
         let id = OccurrenceId.companion.parse(value: occurrenceId)
-        guard let occurrence = try await calendarSDK.calendarManager.getOccurrence(occurrenceId: id) else {
-            throw EventOccurrenceError.notFound
+        guard let occurrence = try await calendarSDK.calendarManager.getOccurrence(occurrenceId: id),
+              let originalData = try await calendarSDK.calendarManager.getEditData(occurrenceId: id) else {
+            throw CalendarError.eventOccurrenceNotFound
         }
+
         let target = occurrence.targetedAs(scope: scope)
         try await calendarSDK.calendarManager.updateEvent(
             target: target,
