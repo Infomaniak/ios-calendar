@@ -21,6 +21,7 @@ import CalendarCoreUI
 import CalendarResources
 import DesignSystem
 import ESDSFoundation
+import ESDSSymbols
 import MultiplatformCalendar
 import OSLog
 import SwiftUI
@@ -121,7 +122,7 @@ public struct EventFormView: View {
                     Label {
                         Text(CalendarResourcesStrings.occupiedLabel)
                     } icon: {
-                        CalendarResourcesAsset.Images.briefcase.swiftUIImage
+                        ESDSSymbols.briefcase.image
                     }
                     .labelStyle(.formLabel)
                 }

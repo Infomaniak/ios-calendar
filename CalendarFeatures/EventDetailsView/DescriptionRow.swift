@@ -19,6 +19,7 @@
 import CalendarResources
 import DesignSystem
 import ESDSFoundation
+import ESDSSymbols
 import SwiftUI
 
 struct DescriptionRow: View {
@@ -32,7 +33,7 @@ struct DescriptionRow: View {
 
     var body: some View {
         HStack(alignment: .top, spacing: 0) {
-            CalendarResourcesAsset.Images.listLeft.swiftUIImage
+            ESDSSymbols.listLeft.image
                 .iconSize(IKIconSize.large)
                 .accessibilityHidden(true)
                 .foregroundStyle(theme.color.contentSecondary)

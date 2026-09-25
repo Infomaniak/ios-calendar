@@ -17,9 +17,9 @@
  */
 
 import CalendarCoreUI
-import CalendarResources
 import DesignSystem
 import ESDSFoundation
+import ESDSSymbols
 import InfomaniakCoreUIResources
 import SwiftUI
 
@@ -68,13 +68,13 @@ public extension UIParticipationStatus {
     var icon: Image {
         switch self {
         case .accepted:
-            CalendarResourcesAsset.Images.circleCheck.swiftUIImage
+            ESDSSymbols.circleCheck.image
         case .declined:
-            CalendarResourcesAsset.Images.circleCross.swiftUIImage
+            ESDSSymbols.circleCross.image
         case .tentative:
-            CalendarResourcesAsset.Images.circleQuestion.swiftUIImage
+            ESDSSymbols.circleQuestion.image
         case .needsAction:
-            CalendarResourcesAsset.Images.clock.swiftUIImage
+            ESDSSymbols.clock.image
         }
     }
 

@@ -19,6 +19,7 @@
 import CalendarCore
 import CalendarCoreUI
 import CalendarResources
+import ESDSSymbols
 import SwiftUI
 
 struct NextEventCardButtonGeometryView: View {
@@ -60,11 +61,11 @@ struct NextEventCardButton: View {
         var icon: Image {
             switch self {
             case .joinKMeetRoom:
-                return CalendarResourcesAsset.Images.productKmeet.swiftUIImage
+                return ESDSSymbols.productKmeet.image
             case .openMap:
-                return CalendarResourcesAsset.Images.mapPin.swiftUIImage
+                return ESDSSymbols.mapPin.image
             case .showEventDetails:
-                return CalendarResourcesAsset.Images.productCalendar.swiftUIImage
+                return ESDSSymbols.productCalendar.image
             }
         }
 
