@@ -69,8 +69,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-design-system.git",
       "state" : {
-        "revision" : "e2332b943b7b52cb46ef3cef0ba0fa5109ef9475",
-        "version" : "0.3.0"
+        "revision" : "d3a2f3c91409052966d0cb5c987eb27097518e89",
+        "version" : "0.4.0"
       }
     },
     {
