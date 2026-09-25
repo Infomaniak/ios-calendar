@@ -19,6 +19,7 @@
 import CalendarResources
 import DesignSystem
 import ESDSFoundation
+import ESDSSymbols
 import SwiftUI
 
 struct DescriptionRow: View {
@@ -31,52 +32,48 @@ struct DescriptionRow: View {
     let description: String
 
     var body: some View {
-        HStack(alignment: .top, spacing: 0) {
-            CalendarResourcesAsset.Images.listLeft.swiftUIImage
-                .iconSize(IKIconSize.large)
-                .accessibilityHidden(true)
-                .foregroundStyle(theme.color.contentSecondary)
-                .padding(.trailing, IKPadding.medium)
+        VStack {
+            HStack(spacing: IKPadding.medium) {
+                ESDSSymbols.listLeft.image
+                    .iconSize(IKIconSize.medium)
+                    .accessibilityHidden(true)
+                    .foregroundStyle(theme.color.contentSecondary)
 
-            VStack(alignment: .leading) {
                 Text(CalendarResourcesStrings.descriptionTitle)
                     .foregroundStyle(theme.color.contentPrimary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
 
-                Text(description)
-                    .lineLimit(isExpanded ? nil : 2)
-                    .textSelection(.enabled)
-                    .foregroundStyle(theme.color.contentSecondary)
-                    .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { visibleHeight in
-                        if fullHeight > visibleHeight + 1 {
-                            isTruncated = true
-                        } else if !isExpanded {
-                            isTruncated = false
-                        }
+                if isTruncated {
+                    Image(systemName: "chevron.down")
+                        .rotationEffect(.degrees(isExpanded ? 180 : 0))
+                        .foregroundStyle(theme.color.contentTertiary)
+                        .frame(height: 20, alignment: .center)
+                        .accessibilityHidden(true)
+                }
+            }
+
+            Text(description)
+                .lineLimit(isExpanded ? nil : 2)
+                .textSelection(.enabled)
+                .foregroundStyle(theme.color.contentSecondary)
+                .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { visibleHeight in
+                    if fullHeight > visibleHeight + 1 {
+                        isTruncated = true
+                    } else if !isExpanded {
+                        isTruncated = false
                     }
-                    .background(
-                        Text(description)
-                            .fixedSize(horizontal: false, vertical: true)
-                            .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { fullHeight = $0 }
-                            .hidden()
-                    )
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-
-            if isTruncated {
-                Image(systemName: "chevron.down")
-                    .rotationEffect(.degrees(isExpanded ? 180 : 0))
-                    .foregroundStyle(theme.color.contentTertiary)
-                    .frame(height: 20, alignment: .center)
-                    .accessibilityHidden(true)
-            }
+                }
+                .background(
+                    Text(description)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { fullHeight = $0 }
+                        .hidden()
+                )
         }
-        .frame(maxHeight: .infinity, alignment: .top)
         .contentShape(.rect)
         .onTapGesture {
             guard isTruncated else { return }
-            withAnimation {
-                isExpanded.toggle()
-            }
+            isExpanded.toggle()
         }
     }
 }

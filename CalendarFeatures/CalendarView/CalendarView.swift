@@ -20,21 +20,22 @@ import CalendarCore
 import CalendarCoreUI
 import CalendarEventFormView
 import CalendarResources
+import ESDSSymbols
 import SwiftUI
 
 extension CalendarViewMode {
     var icon: Image {
         switch self {
         case .planning:
-            return CalendarResourcesAsset.Images.rowsTwo.swiftUIImage
+            return ESDSSymbols.rowsTwo.image
         case .day:
-            return CalendarResourcesAsset.Images.overlineRectangleUnderline.swiftUIImage
+            return ESDSSymbols.rectangleOverlineUnderline.image
         case .threeDays:
-            return CalendarResourcesAsset.Images.columnsThree.swiftUIImage
+            return ESDSSymbols.columnsThree.image
         case .week:
-            return CalendarResourcesAsset.Images.columnsFour.swiftUIImage
+            return ESDSSymbols.columnsFour.image
         case .month:
-            return CalendarResourcesAsset.Images.gridThreeTwo.swiftUIImage
+            return ESDSSymbols.gridThreeTwo.image
         }
     }
 

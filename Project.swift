@@ -52,6 +52,7 @@ let eventDetailsView = Feature(
         TargetDependency.target(name: "\(Constants.projectName)Resources"),
         TargetDependency.external(name: "DesignSystem"),
         TargetDependency.external(name: "ESDSCalendar"),
+        TargetDependency.external(name: "ESDSSymbols"),
         TargetDependency.external(name: "InfomaniakCoreSwiftUI"),
         TargetDependency.external(name: "InfomaniakDI")
     ]
@@ -63,6 +64,7 @@ let eventFormView = Feature(
         TargetDependency.target(name: "CalendarResources"),
         TargetDependency.external(name: "DesignSystem"),
         TargetDependency.external(name: "ESDSFoundation"),
+        TargetDependency.external(name: "ESDSSymbols"),
         TargetDependency.external(name: "InfomaniakDI")
     ]
 )
@@ -75,6 +77,7 @@ let calendarView = Feature(
         TargetDependency.target(name: "\(Constants.projectName)Resources"),
         TargetDependency.external(name: "DesignSystem"),
         TargetDependency.external(name: "ESDSCalendar"),
+        TargetDependency.external(name: "ESDSSymbols"),
         TargetDependency.external(name: "InfiniteScrollViews"),
         TargetDependency.external(name: "InfomaniakDI"),
         TargetDependency.external(name: "Eventually")
@@ -102,6 +105,7 @@ let calendarListView = Feature(
         settingsView,
         TargetDependency.target(name: "CalendarResources"),
         TargetDependency.external(name: "ESDSFoundation"),
+        TargetDependency.external(name: "ESDSSymbols"),
         TargetDependency.external(name: "InfomaniakDI"),
         TargetDependency.external(name: "InfomaniakCoreSwiftUI")
     ]
@@ -116,6 +120,7 @@ let mainView = Feature(
         calendarListView,
         settingsView,
         TargetDependency.target(name: "CalendarResources"),
+        TargetDependency.external(name: "ESDSSymbols"),
         TargetDependency.external(name: "InfomaniakDI")
     ]
 )
@@ -197,6 +202,7 @@ let project = Project(
                 ],
                 dependencies: [
                     .target(name: "\(Constants.projectName)Resources"),
+                    .external(name: "ESDSSymbols"),
                     .external(name: "MultiplatformCalendar"),
                     .external(name: "DeviceAssociation"),
                     .external(name: "InfomaniakCore"),
@@ -220,6 +226,7 @@ let project = Project(
                     .target(name: "\(Constants.projectName)Core"),
                     .target(name: "\(Constants.projectName)Resources"),
                     .external(name: "ESDSFoundation"),
+                    .external(name: "ESDSSymbols"),
                     .external(name: "InfomaniakCore"),
                     .external(name: "InfomaniakCoreSwiftUI"),
                     .external(name: "InfomaniakDI"),

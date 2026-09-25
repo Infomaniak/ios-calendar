@@ -21,6 +21,7 @@ import CalendarCoreUI
 import CalendarResources
 import DesignSystem
 import ESDSFoundation
+import ESDSSymbols
 import SwiftUI
 
 public struct EventDetailsView: View {
@@ -97,7 +98,7 @@ public struct EventDetailsView: View {
                             OpenLinkRow(
                                 title: CalendarResourcesStrings.participateKMeetTitle,
                                 buttonTitle: CalendarResourcesStrings.buttonJoin,
-                                icon: CalendarResourcesAsset.Images.productKmeet.swiftUIImage,
+                                icon: ESDSSymbols.productKmeet.image,
                                 linkURL: kMeetLink,
                                 showLink: false
                             )
@@ -150,7 +151,7 @@ public struct EventDetailsView: View {
                 if event.canEdit {
                     ToolbarItem(placement: .primaryAction) {
                         Button { /* Does nothing yet */ } label: {
-                            Label(CalendarResourcesStrings.editEventTitle, image: CalendarResourcesAsset.Images.pen)
+                            Label(CalendarResourcesStrings.editEventTitle, symbol: ESDSSymbols.pen)
                         }
                         .disabled(true)
                     }
@@ -163,7 +164,7 @@ public struct EventDetailsView: View {
                                 ProgressView()
                                     .progressViewStyle(.circular)
                             } else {
-                                Label(CalendarResourcesStrings.buttonDeleteEvent, image: CalendarResourcesAsset.Images.trash)
+                                Label(CalendarResourcesStrings.buttonDeleteEvent, symbol: ESDSSymbols.trash)
                             }
                         }
                         .allowsHitTesting(!isDeletingEvent)

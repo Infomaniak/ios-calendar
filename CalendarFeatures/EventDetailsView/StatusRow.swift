@@ -17,15 +17,15 @@
  */
 
 import CalendarCoreUI
-import CalendarResources
+import ESDSSymbols
 import SwiftUI
 
 struct StatusRow: View {
     let text: String
-    let icon: CalendarResourcesImages
+    let icon: ESDSSymbols.Symbol
 
     var body: some View {
-        Label(text, image: icon)
+        Label(text, symbol: icon)
             .labelStyle(.formLabel)
     }
 }

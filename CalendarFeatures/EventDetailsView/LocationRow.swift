@@ -18,8 +18,8 @@
 
 import CalendarCore
 import CalendarCoreUI
-import CalendarResources
 import DesignSystem
+import ESDSSymbols
 import MapKit
 import SwiftUI
 
@@ -42,7 +42,7 @@ public struct LocationRow: View {
             openInMaps()
         } label: {
             HStack(spacing: IKPadding.mini) {
-                Label(address, image: CalendarResourcesAsset.Images.mapPin)
+                Label(address, symbol: ESDSSymbols.mapPin)
                     .labelStyle(.formLabel)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .multilineTextAlignment(.leading)

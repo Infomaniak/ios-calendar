@@ -16,15 +16,11 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import CalendarResources
+import ESDSSymbols
 import SwiftUI
 
 public extension Label where Title == Text, Icon == Image {
-    init(_ title: String, image: CalendarResourcesImages) {
-        self.init {
-            Text(title)
-        } icon: {
-            image.swiftUIImage
-        }
+    init(_ title: String, symbol: ESDSSymbols.Symbol) {
+        self.init { Text(title) } icon: { symbol.image }
     }
 }
