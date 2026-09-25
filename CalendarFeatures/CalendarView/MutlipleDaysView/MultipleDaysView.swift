@@ -16,17 +16,14 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Foundation
 import SwiftUI
 
-public enum DefaultPreferences {
-    public static let matomoAuthorized = true
-    public static let sentryAuthorized = true
+struct MultipleDaysView: View {
+    var body: some View {
+        Text("Hello, World!")
+    }
+}
 
-    public static let dayViewScrollPosition = 0.0
-
-    public static let theme: Theme = .system
-    public static let firstWeekday = Calendar.autoupdatingCurrent.firstWeekday
-    public static let displayWeekends = true
-    public static let defaultEventDuration = DefaultEventDuration.thirtyMinutes
+#Preview {
+    MultipleDaysView()
 }

@@ -18,11 +18,9 @@
 
 import SwiftUI
 
-public struct WeekView: View {
-    public init() {}
-
-    public var body: some View {
-        Text("WeekView")
+struct WeekView: View {
+    var body: some View {
+        Text("Hello, World!")
     }
 }
 
