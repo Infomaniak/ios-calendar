@@ -31,6 +31,11 @@ final class EventFormViewModel {
         case end
     }
 
+    enum EditFormAction {
+        case new
+        case editDraft(occurrenceId: String, scope: RecurrenceScope)
+    }
+
     private(set) var availableCalendars = [UICalendar]()
 
     var draft: EventDraft
@@ -61,13 +66,13 @@ final class EventFormViewModel {
         self.draft = draft
     }
 
-    func saveEvent(scope: RecurrenceScope = .thisOccurrence) async throws {
-        switch editionMode {
+    func saveEvent(action: EditFormAction) async throws {
+        switch action {
         case .new:
             try await CreateEventUseCase().execute(draft: draft)
-        case .editDraft(_, let editingEvent):
+        case .editDraft(let occurrenceId, let scope):
             try await UpdateEventUseCase().execute(
-                occurrenceId: editingEvent.occurrenceId,
+                occurrenceId: occurrenceId,
                 scope: scope,
                 draft: draft
             )

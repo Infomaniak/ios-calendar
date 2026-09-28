@@ -211,10 +211,18 @@ public struct EventFormView: View {
     }
 
     private func saveEvent(scope: RecurrenceScope) {
+        let action: EventFormViewModel.EditFormAction
+        switch viewModel.editionMode {
+        case .new:
+            action = .new
+        case .editDraft(_, let editingEvent):
+            action = .editDraft(occurrenceId: editingEvent.occurrenceId, scope: scope)
+        }
+
         isSaving = true
         Task {
             do {
-                try await viewModel.saveEvent(scope: scope)
+                try await viewModel.saveEvent(action: action)
 
                 dismiss()
             } catch {
