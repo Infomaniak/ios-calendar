@@ -40,7 +40,7 @@ struct EventFormViewModelTests {
         )
         let editData = try original.toEventEditData()
         let draft = EventDraft.fromEvent(.preview, editData: editData)
-        let viewModel = EventFormViewModel(editionMode: .editDraft(draft: draft))
+        let viewModel = EventFormViewModel(editionMode: .editDraft(draft: draft, editingEvent: .preview))
 
         #expect(viewModel.draft.title == original.title)
         #expect(viewModel.draft.description == original.description)
@@ -50,15 +50,6 @@ struct EventFormViewModelTests {
         #expect(viewModel.draft.calendarId == original.calendarId)
         #expect(viewModel.draft.isOccupied == false)
         #expect(viewModel.isEdited == false)
-    }
-
-    @Test
-    func editingWithoutEventCannotCreateAnotherEvent() async throws {
-        let viewModel = try makeViewModel()
-
-        await #expect(throws: CalendarError.self) {
-            try await viewModel.saveEvent()
-        }
     }
 
     @Test(arguments: [
@@ -202,7 +193,7 @@ struct EventFormViewModelTests {
             endDate: date(end),
             endTimeZone: timeZone(endTimeZone)
         )
-        return EventFormViewModel(editionMode: .editDraft(draft: draft))
+        return EventFormViewModel(editionMode: .editDraft(draft: draft, editingEvent: .preview))
     }
 
     private func date(_ value: String) throws -> Date {

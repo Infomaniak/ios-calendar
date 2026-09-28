@@ -27,7 +27,7 @@ import SwiftUI
 
 public enum EditionMode {
     case new
-    case editDraft(draft: EventDraft)
+    case editDraft(draft: EventDraft, editingEvent: CalendarCoreUI.UIEvent)
 
     var navigationTitle: String {
         switch self {
@@ -55,16 +55,8 @@ public struct EventFormView: View {
     @State private var hasFocusedKeyboardOnce = false
     @FocusState private var isTitleFocused: Bool
 
-    private let editionMode: EditionMode
-    private let editingEvent: CalendarCoreUI.UIEvent?
-
-    public init(
-        editionMode: EditionMode,
-        editingEvent: CalendarCoreUI.UIEvent? = nil
-    ) {
+    public init(editionMode: EditionMode) {
         _viewModel = State(wrappedValue: EventFormViewModel(editionMode: editionMode))
-        self.editionMode = editionMode
-        self.editingEvent = editingEvent
     }
 
     public var body: some View {
@@ -179,10 +171,10 @@ public struct EventFormView: View {
             await viewModel.observeCalendars()
         }
         .scrollDismissesKeyboard(.interactively)
-        .navigationTitle(Text(editionMode.navigationTitle))
+        .navigationTitle(Text(viewModel.editionMode.navigationTitle))
         .toolbarTitleDisplayMode(.inline)
         .toolbar {
-            if editingEvent == nil {
+            if case .new = viewModel.editionMode {
                 CloseToolbarItem(action: dismiss.callAsFunction)
             }
 
@@ -211,7 +203,7 @@ public struct EventFormView: View {
     }
 
     private func didTapSave() {
-        if editingEvent?.isOccurrence == true {
+        if case .editDraft(_, let editingEvent) = viewModel.editionMode, editingEvent.isOccurrence {
             isShowingRecurrenceScope = true
         } else {
             saveEvent(scope: .thisOccurrence)
@@ -222,7 +214,7 @@ public struct EventFormView: View {
         isSaving = true
         Task {
             do {
-                try await viewModel.saveEvent(editingOccurrenceId: editingEvent?.occurrenceId, scope: scope)
+                try await viewModel.saveEvent(scope: scope)
 
                 dismiss()
             } catch {
@@ -233,7 +225,7 @@ public struct EventFormView: View {
     }
 
     private func focusTitleIfNecessary() {
-        guard case .new = editionMode, !hasFocusedKeyboardOnce else {
+        guard case .new = viewModel.editionMode, !hasFocusedKeyboardOnce else {
             return
         }
 

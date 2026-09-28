@@ -218,8 +218,10 @@ public struct EventDetailsView: View {
             }
             .navigationDestination(item: $editData) { editData in
                 EventFormView(
-                    editionMode: .editDraft(draft: EventDraft.fromEvent(event, editData: editData)),
-                    editingEvent: event
+                    editionMode: .editDraft(
+                        draft: EventDraft.fromEvent(event, editData: editData),
+                        editingEvent: event
+                    )
                 )
             }
             .navigationBarTitleDisplayMode(.inline)
