@@ -220,9 +220,7 @@ public struct EventDetailsView: View {
                 EventFormView(
                     editionMode: .editDraft(draft: EventDraft.fromEvent(event, editData: editData)),
                     editingEvent: event
-                ) {
-                    self.editData = nil
-                }
+                )
             }
             .navigationBarTitleDisplayMode(.inline)
             .listSectionSpacing(IKPadding.large)

@@ -57,17 +57,14 @@ public struct EventFormView: View {
 
     private let editionMode: EditionMode
     private let editingEvent: CalendarCoreUI.UIEvent?
-    private let completion: () -> Void
 
     public init(
         editionMode: EditionMode,
-        editingEvent: CalendarCoreUI.UIEvent? = nil,
-        completion: @escaping () -> Void = {},
+        editingEvent: CalendarCoreUI.UIEvent? = nil
     ) {
         _viewModel = State(wrappedValue: EventFormViewModel(editionMode: editionMode))
         self.editionMode = editionMode
         self.editingEvent = editingEvent
-        self.completion = completion
     }
 
     public var body: some View {
@@ -186,7 +183,7 @@ public struct EventFormView: View {
         .toolbarTitleDisplayMode(.inline)
         .toolbar {
             if editingEvent == nil {
-                CloseToolbarItem(action: completion)
+                CloseToolbarItem(action: dismiss.callAsFunction)
             }
 
             ToolbarItem(placement: .confirmationAction) {
@@ -251,7 +248,7 @@ public struct EventFormView: View {
     VStack {}
         .sheet(isPresented: .constant(true)) {
             NavigationStack {
-                EventFormView(editionMode: .new) {}
+                EventFormView(editionMode: .new)
             }
             .interactiveDismissDisabled()
         }
