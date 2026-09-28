@@ -34,6 +34,12 @@
  * Destructive toolbar action and confirmation button in event details. Deletes the displayed calendar event. */
 "buttonDeleteEvent" = "Delete this event";
 
+/* Destructive action for deleting the entire recurring series. */
+"buttonDeleteAllEvents" = "All the events";
+
+/* Deletes the selected occurrence and all later occurrences of a recurring event. */
+"buttonDeleteThisAndFollowingEvents" = "This and following events";
+
 /* loco:6a4de9659924fbe9f10f1002 */
 "buttonJoin" = "Join";
 
@@ -84,6 +90,12 @@
  * Confirmation dialog title shown before deleting the displayed calendar event. */
 "deleteEventAlertTitle" = "Are you sure you want to delete this event?";
 
+/* Alert title shown when deleting an event fails. */
+"deleteEventErrorTitle" = "Could not delete the event";
+
+/* Scope choice shown when deleting an occurrence of a recurring event. */
+"deleteRecurringEventAlertTitle" = "Which events do you want to delete?";
+
 /* loco:6a856424c3b19782760f9b12 */
 "descriptionTitle" = "Description";
 
@@ -96,6 +108,9 @@
 
 /* loco:6a63163836b2bc1b160c0a12 */
 "eventColorLabel" = "Event colour";
+
+/* Shown when an event occurrence no longer exists during an edit or deletion. */
+"eventOccurrenceNotFound" = "This event is no longer available.";
 
 /* loco:6a6315016659664bd10ce392 */
 "eventTitle" = "Event title";

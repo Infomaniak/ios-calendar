@@ -117,6 +117,22 @@ struct EventDraftValidatorTests {
         #expect(validationErrors.errorDescription == expectedDescription)
     }
 
+    @Test
+    func updateRejectsInvalidDraftBeforeResolvingOccurrence() async throws {
+        let originalData = try makeDraft().toEventEditData()
+        var draft = makeDraft()
+        draft.calendarId = nil
+
+        await #expect(throws: EventDraftValidator.ValidationErrors.self) {
+            try await UpdateEventUseCase().execute(
+                occurrenceId: "missing-event",
+                scope: .thisOccurrence,
+                draft: draft,
+                originalData: originalData
+            )
+        }
+    }
+
     private func makeDraft() -> EventDraft {
         let startDate = Date(timeIntervalSince1970: 1000)
         return EventDraft(

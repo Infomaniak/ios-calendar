@@ -77,7 +77,7 @@ public extension UIEvent {
 
 public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
     public let id: String
-    public let masterId: String
+    public let occurrenceId: String
     public let calendarId: String
 
     public let title: String
@@ -88,6 +88,7 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
     public let colors: UIEvent.Colors
     public let classification: UIClassification?
     public let canEdit: Bool
+    public let isOccurrence: Bool
 
     public let startDate: Date
     public let endDate: Date
@@ -111,7 +112,7 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
 
     public init(
         id: String,
-        masterId: String? = nil,
+        occurrenceId: String,
         title: String,
         description: String? = nil,
         startDate: Date,
@@ -126,10 +127,11 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
         colors: UIEvent.Colors,
         classification: UIClassification? = .public,
         timing: UITiming,
-        canEdit: Bool
+        canEdit: Bool,
+        isOccurrence: Bool = false
     ) {
         self.id = id
-        self.masterId = masterId ?? id
+        self.occurrenceId = occurrenceId
         self.title = title.trimmingCharacters(in: .whitespacesAndNewlines)
         self.description = description
         self.startDate = startDate
@@ -145,6 +147,7 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
         self.classification = classification
         self.timing = timing
         self.canEdit = canEdit
+        self.isOccurrence = isOccurrence
     }
 }
 
@@ -153,7 +156,7 @@ public extension UIEvent {
         let event = eventDaySlice.event
 
         id = "\(eventDaySlice.position.index)-\(event.occurrenceIdValue)"
-        masterId = event.masterEventIdValue
+        occurrenceId = event.occurrenceIdValue
         calendarId = event.calendarIdValue
 
         title = event.title.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -190,6 +193,7 @@ public extension UIEvent {
         classification = .init(classification: event.classification)
 
         canEdit = event.canEdit
+        isOccurrence = event.isOccurrence
     }
 }
 
@@ -198,6 +202,7 @@ public extension UIEvent {
 public extension UIEvent {
     static let alarmsPreview = UIEvent(
         id: "0",
+        occurrenceId: "0",
         title: "Event Title",
         startDate: Date().addingTimeInterval(3600),
         endDate: Date().addingTimeInterval(7200),
@@ -213,6 +218,7 @@ public extension UIEvent {
 
     static let preview = UIEvent(
         id: "0",
+        occurrenceId: "1",
         title: "Event Title",
         startDate: Date().addingTimeInterval(3600),
         endDate: Date().addingTimeInterval(7200),
@@ -227,6 +233,7 @@ public extension UIEvent {
 
     static let shortPreview = UIEvent(
         id: "1",
+        occurrenceId: "1",
         title: "Short Title With A Very Long Title But It's Okay Because We Want To Test The UI And See How It Looks With A Long Title",
         startDate: Date(),
         endDate: Date().addingTimeInterval(60 * 15),
@@ -240,6 +247,7 @@ public extension UIEvent {
     )
     static let mediumPreview = UIEvent(
         id: "2",
+        occurrenceId: "2",
         title: "Medium Title With A Very Long Title But It's Okay Because We Want To Test The UI And See How It Looks With A Long Title",
         startDate: Date(),
         endDate: Date().addingTimeInterval(60 * 60 * 2),
@@ -253,6 +261,7 @@ public extension UIEvent {
     )
     static let longPreview = UIEvent(
         id: "3",
+        occurrenceId: "3",
         title: "Long Title With A Very Long Title But It's Okay Because We Want To Test The UI And See How It Looks With A Long Title",
         startDate: Date(),
         endDate: Date().addingTimeInterval(60 * 60 * 24 * 2),
@@ -271,6 +280,7 @@ public extension UIEvent {
         let randomEndDate = randomStartDate.addingTimeInterval(Double.random(in: 3600 ... 7200))
         return UIEvent(
             id: "\(index)",
+            occurrenceId: "\(index)",
             title: "Event \(index)",
             startDate: randomStartDate,
             endDate: randomEndDate,

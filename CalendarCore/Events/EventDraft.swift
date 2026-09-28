@@ -86,7 +86,7 @@ public extension EventDraft {
             timeBlocking: isOccupied ? .blocks : .doesNotBlock,
             calendarId: calendarId,
             eventColor: originalData?.eventColor,
-            alarms: originalData?.alarms ?? []
+            alarms: originalData?.alarms ?? AlarmListEditReplace(alarms: [])
         )
     }
 
