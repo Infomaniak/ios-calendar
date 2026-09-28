@@ -26,25 +26,25 @@ extension Slide {
             Slide(
                 backgroundImage: UIImage(),
                 backgroundImageTintColor: nil,
-                content: .illustration(UIImage(systemName: "1.calendar")!),
+                content: .illustration(UIImage(systemName: "1.calendar") ?? UIImage(systemName: "calendar")!),
                 bottomView: OnboardingTextView(text: .oneSlide)
             ),
             Slide(
                 backgroundImage: UIImage(),
                 backgroundImageTintColor: nil,
-                content: .illustration(UIImage(systemName: "2.calendar")!),
+                content: .illustration(UIImage(systemName: "2.calendar") ?? UIImage(systemName: "calendar")!),
                 bottomView: OnboardingTextView(text: .twoSlide)
             ),
             Slide(
                 backgroundImage: UIImage(),
                 backgroundImageTintColor: nil,
-                content: .illustration(UIImage(systemName: "3.calendar")!),
+                content: .illustration(UIImage(systemName: "3.calendar") ?? UIImage(systemName: "calendar")!),
                 bottomView: OnboardingTextView(text: .threeSlide)
             ),
             Slide(
                 backgroundImage: UIImage(),
                 backgroundImageTintColor: nil,
-                content: .illustration(UIImage(systemName: "4.calendar")!),
+                content: .illustration(UIImage(systemName: "4.calendar") ?? UIImage(systemName: "calendar")!),
                 bottomView: OnboardingTextView(text: .fourSlide)
             )
         ]
