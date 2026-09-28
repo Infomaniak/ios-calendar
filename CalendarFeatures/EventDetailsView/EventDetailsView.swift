@@ -163,14 +163,9 @@ public struct EventDetailsView: View {
                         Button(role: .destructive) {
                             isShowingDeleteConfirmationDialog = true
                         } label: {
-                            if isDeletingEvent {
-                                ProgressView()
-                                    .progressViewStyle(.circular)
-                            } else {
-                                Label(CalendarResourcesStrings.buttonDeleteEvent, image: CalendarResourcesAsset.Images.trash)
-                            }
+                            Label(CalendarResourcesStrings.buttonDeleteEvent, image: CalendarResourcesAsset.Images.trash)
                         }
-                        .disabled(isDeletingEvent || !event.canEdit)
+                        .disabled(isDeletingEvent)
                         .confirmationDialog(
                             !event.isOccurrence
                                 ? CalendarResourcesStrings.deleteEventAlertTitle
