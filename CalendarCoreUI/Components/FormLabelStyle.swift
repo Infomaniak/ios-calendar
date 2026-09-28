@@ -28,8 +28,8 @@ public struct FormLabelStyle: LabelStyle {
     public func makeBody(configuration: Configuration) -> some View {
         HStack(spacing: IKPadding.mini) {
             configuration.icon
-                .font(.system(size: 20))
-                .frame(width: 20, height: 20)
+                .font(.system(size: 24))
+                .frame(width: 24, height: 24)
                 .foregroundStyle(theme.color.contentSecondary)
                 .accessibilityHidden(true)
 

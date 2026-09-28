@@ -32,15 +32,10 @@ struct DescriptionRow: View {
     let description: String
 
     var body: some View {
-        VStack {
+        VStack(alignment: .leading) {
             HStack(spacing: IKPadding.medium) {
-                ESDSSymbols.listLeft.image
-                    .iconSize(IKIconSize.medium)
-                    .accessibilityHidden(true)
-                    .foregroundStyle(theme.color.contentSecondary)
-
-                Text(CalendarResourcesStrings.descriptionTitle)
-                    .foregroundStyle(theme.color.contentPrimary)
+                Label(CalendarResourcesStrings.descriptionTitle, symbol: ESDSSymbols.listLeft)
+                    .labelStyle(.formLabel)
                     .frame(maxWidth: .infinity, alignment: .leading)
 
                 if isTruncated {
