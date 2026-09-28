@@ -56,7 +56,7 @@ struct EventFormViewModelTests {
     func editingWithoutEventCannotCreateAnotherEvent() async throws {
         let viewModel = try makeViewModel()
 
-        await #expect(throws: EventOccurrenceError.self) {
+        await #expect(throws: CalendarError.self) {
             try await viewModel.saveEvent()
         }
     }
