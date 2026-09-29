@@ -111,9 +111,7 @@ struct EventAlarmNotificationsServiceTests {
             id: "alarm-id",
             eventId: "event-id",
             firesAt: firesAt,
-            title: "Team meeting",
-            location: "Meeting room",
-            alarmDescription: "Join the meeting"
+            title: "Team meeting"
         )
         let notificationCenter = EventAlarmTestNotificationCenter()
         let eventsProvider = EventAlarmTestEventsProvider(upcomingAlarms: [upcomingAlarm])
@@ -129,14 +127,18 @@ struct EventAlarmNotificationsServiceTests {
             [.year, .month, .day, .hour, .minute, .second],
             from: firesAt
         ))
-        #expect(request.content.title == "Team meeting")
-        #expect(request.content.body == "Join the meeting")
+        #expect(request.content.body == "Team meeting")
         #expect(request.content.categoryIdentifier == NotificationsHelper.CategoryIdentifier.eventAlarm)
         #expect(request.content.userInfo[NotificationsHelper.UserInfoKeys.eventId] as? String == "event-id")
     }
 
-    @Test func fallsBackToEventLocationWhenAlarmHasNoDescription() async throws {
-        let upcomingAlarm = EventAlarmTestFixtures.upcomingAlarm(id: "alarm-id", location: "Meeting room")
+    @Test func usesEventTitleAsBodyRegardlessOfAlarmDescriptionAndLocation() async throws {
+        let upcomingAlarm = EventAlarmTestFixtures.upcomingAlarm(
+            id: "alarm-id",
+            title: "Team meeting",
+            location: "Meeting room",
+            alarmDescription: "Join the meeting"
+        )
         let notificationCenter = EventAlarmTestNotificationCenter()
         let eventsProvider = EventAlarmTestEventsProvider(upcomingAlarms: [upcomingAlarm])
         let service = makeService(eventsProvider: eventsProvider, notificationCenter: notificationCenter)
@@ -144,7 +146,30 @@ struct EventAlarmNotificationsServiceTests {
         await service.scheduleNotificationsForEventAlarms()
 
         let request = try #require(await notificationCenter.snapshot().addedRequests.first)
-        #expect(request.content.body == "Meeting room")
+        #expect(request.content.body == "Team meeting")
+    }
+
+    @Test func reschedulesPendingAlarmWhenEventTitleChanged() async throws {
+        let initialCenter = EventAlarmTestNotificationCenter()
+        await makeService(
+            eventsProvider: EventAlarmTestEventsProvider(upcomingAlarms: [
+                EventAlarmTestFixtures.upcomingAlarm(id: "alarm-id", title: "Old title")
+            ]),
+            notificationCenter: initialCenter
+        ).scheduleNotificationsForEventAlarms()
+        let pendingRequest = try #require(await initialCenter.snapshot().addedRequests.first)
+        let notificationCenter = EventAlarmTestNotificationCenter(pendingRequests: [pendingRequest])
+        let eventsProvider = EventAlarmTestEventsProvider(upcomingAlarms: [
+            EventAlarmTestFixtures.upcomingAlarm(id: "alarm-id", title: "New title")
+        ])
+        let service = makeService(eventsProvider: eventsProvider, notificationCenter: notificationCenter)
+
+        await service.scheduleNotificationsForEventAlarms()
+
+        let snapshot = await notificationCenter.snapshot()
+        #expect(snapshot.addedRequests.map(\.identifier) == ["event-alarm:alarm-id"])
+        #expect(snapshot.addedRequests.first?.content.body == "New title")
+        #expect(snapshot.removedIdentifiers.isEmpty)
     }
 
     private func makeService(
@@ -289,6 +314,9 @@ private enum EventAlarmTestFixtures {
             timeBlocking: nil,
             classification: nil,
             categories: [],
+            meetRoomUrl: nil,
+            bookableUuid: nil,
+            attachments: [],
             timing: timing,
             lastModified: nil,
             attendees: [],
