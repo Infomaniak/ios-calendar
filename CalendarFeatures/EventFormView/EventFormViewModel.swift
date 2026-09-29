@@ -43,6 +43,7 @@ final class EventFormViewModel {
     let editionMode: EditionMode
 
     private let validator = EventDraftValidator()
+    private let userDefaults: UserDefaults
 
     var validationErrors: Set<EventDraftValidator.ValidationError> {
         validator.validate(draft)
@@ -52,8 +53,9 @@ final class EventFormViewModel {
         originalDraft != draft
     }
 
-    init(editionMode: EditionMode) {
+    init(editionMode: EditionMode, userDefaults: UserDefaults) {
         self.editionMode = editionMode
+        self.userDefaults = userDefaults
         let draft: EventDraft
         switch editionMode {
         case .new:
@@ -77,6 +79,7 @@ final class EventFormViewModel {
                 draft: draft
             )
         }
+        userDefaults.lastSelectedCalendarId = draft.calendarId
     }
 
     func updateTimeZone(_ timeZone: Foundation.TimeZone, for pickerId: DatePickerId, calendar: Foundation.Calendar) {
@@ -120,13 +123,20 @@ final class EventFormViewModel {
     func observeCalendars() async {
         @InjectService var calendarSDK: CalendarCoreGraph
         for await calendars in calendarSDK.calendarManager.observeCalendars() {
-            availableCalendars = calendars.map { UICalendar(calendar: $0) }.filter { $0.accessLevel.canWrite }
-
-            if draft.calendarId == nil {
-                let calendarId = availableCalendars.first?.id
-                originalDraft.calendarId = calendarId
-                draft.calendarId = calendarId
-            }
+            updateAvailableCalendars(calendars.map { UICalendar(calendar: $0) })
         }
+    }
+
+    func updateAvailableCalendars(_ calendars: [UICalendar]) {
+        availableCalendars = calendars.filter { $0.accessLevel.canWrite }
+
+        guard case .new = editionMode else { return }
+        guard draft.calendarId == nil || !availableCalendars.contains(where: { $0.id == draft.calendarId }) else { return }
+        let calendarId = availableCalendars.first { $0.id == userDefaults.lastSelectedCalendarId }?.id
+            ?? availableCalendars.first?.id
+        if draft.calendarId == originalDraft.calendarId {
+            originalDraft.calendarId = calendarId
+        }
+        draft.calendarId = calendarId
     }
 }
