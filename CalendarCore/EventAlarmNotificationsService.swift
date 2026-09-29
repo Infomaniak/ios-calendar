@@ -201,7 +201,7 @@ public final class EventAlarmNotificationsService: Sendable {
         content.sound = .default
         content.categoryIdentifier = NotificationsHelper.CategoryIdentifier.eventAlarm
         content.userInfo = [
-            NotificationsHelper.UserInfoKeys.eventId: upcomingAlarm.event.masterEventIdValue
+            NotificationsHelper.UserInfoKeys.eventId: upcomingAlarm.event.occurrenceIdValue
         ]
 
         return UNNotificationRequest(identifier: notificationID(for: upcomingAlarm), content: content, trigger: trigger)
