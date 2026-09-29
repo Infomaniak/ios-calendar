@@ -32,8 +32,8 @@ public struct EventAlarmEventsProvider: EventAlarmEventsProviding {
     public init() {}
 
     public func eventAlarmsToDisplay(range: Range<Date>, limit: Int) async throws -> [UpcomingAlarm] {
-        let from = range.lowerBound.kotlinInstant
-        let horizon = range.upperBound.kotlinInstant.minus(other: from)
+        let from = range.lowerBound.instant
+        let horizon = range.upperBound.instant.minus(other: from)
 
         @InjectService var calendarSDK: CalendarCoreGraph
         for await upcomingAlarms in calendarSDK.calendarManager.observeUpcomingAlarms(
@@ -43,12 +43,6 @@ public struct EventAlarmEventsProvider: EventAlarmEventsProviding {
         }
 
         return []
-    }
-}
-
-private extension Date {
-    var kotlinInstant: KotlinInstant {
-        KotlinInstant.companion.fromEpochMilliseconds(epochMilliseconds: Int64(timeIntervalSince1970 * 1000))
     }
 }
 

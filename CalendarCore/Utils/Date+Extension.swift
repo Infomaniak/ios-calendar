@@ -17,9 +17,14 @@
  */
 
 import Foundation
+import MultiplatformCalendar
 
 public extension Date {
-    func startOfDay(_ calendar: Calendar) -> Date {
+    func startOfDay(_ calendar: Foundation.Calendar) -> Date {
         return calendar.startOfDay(for: self)
+    }
+
+    var instant: KotlinInstant {
+        KotlinInstant.companion.fromEpochMilliseconds(epochMilliseconds: Int64(timeIntervalSince1970 * 1000))
     }
 }
