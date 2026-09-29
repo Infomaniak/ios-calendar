@@ -17,14 +17,20 @@
  */
 
 import Foundation
-import MultiplatformCalendar
+import OSLog
+import UserNotifications
 
-public extension Date {
-    func startOfDay(_ calendar: Foundation.Calendar) -> Date {
-        return calendar.startOfDay(for: self)
+public enum NotificationsHelper {
+    public enum CategoryIdentifier {
+        public static let eventAlarm = "com.calendar.notification.eventAlarm"
     }
 
-    var instant: KotlinInstant {
-        KotlinInstant.companion.fromEpochMilliseconds(epochMilliseconds: Int64(timeIntervalSince1970 * 1000))
+    public enum UserInfoKeys {
+        public static let eventId = "event_id"
+    }
+
+    public static func askForPermissions() async {
+        let options: UNAuthorizationOptions = [.alert, .sound, .badge]
+        _ = try? await UNUserNotificationCenter.current().requestAuthorization(options: options)
     }
 }
