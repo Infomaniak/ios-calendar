@@ -72,7 +72,7 @@ public struct CalendarView: View {
             case .day:
                 DaysView()
             case .week:
-                WeekView()
+                WeeksView()
             case .threeDays:
                 MultipleDaysView()
             case .month:
