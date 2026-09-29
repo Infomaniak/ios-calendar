@@ -28,8 +28,6 @@ import OSLog
 import SwiftUI
 
 public struct EventDetailsView: View {
-    @Namespace private var namespace
-
     @Environment(\.dismiss) private var dismiss
 
     @State private var alarms: [UIEventAlarm]
