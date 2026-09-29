@@ -21,18 +21,19 @@ import CalendarCoreUI
 import CalendarResources
 import DesignSystem
 import ESDSFoundation
+import MultiplatformCalendar
+import OSLog
 import SwiftUI
 
 public enum EditionMode {
     case new
-    case editEvent(origin: CalendarCoreUI.UIEvent, calendar: UICalendar)
-    case editDraft(draft: EventDraft)
+    case editDraft(draft: EventDraft, editingEvent: CalendarCoreUI.UIEvent)
 
     var navigationTitle: String {
         switch self {
         case .new:
             return CalendarResourcesStrings.createEventTitle
-        case .editEvent, .editDraft:
+        case .editDraft:
             return CalendarResourcesStrings.editEventTitle
         }
     }
@@ -41,22 +42,21 @@ public enum EditionMode {
 public struct EventFormView: View {
     @Environment(\.calendar) private var calendar
     @Environment(\.esdsTheme) private var theme
+    @Environment(\.dismiss) private var dismiss
 
     @State private var viewModel: EventFormViewModel
     @State private var expandedDatePickerId: EventFormViewModel.DatePickerId?
     @State private var timeZonePickerId: EventFormViewModel.DatePickerId?
     @State private var isNavigatingToAttendeesList = false
+    @State private var isShowingRecurrenceScope = false
+    @State private var isSaving = false
+    @State private var saveErrorMessage: CalendarError?
 
     @State private var hasFocusedKeyboardOnce = false
     @FocusState private var isTitleFocused: Bool
 
-    private let editionMode: EditionMode
-    private let completion: () -> Void
-
-    public init(editionMode: EditionMode, completion: @escaping () -> Void = {}) {
+    public init(editionMode: EditionMode) {
         _viewModel = State(wrappedValue: EventFormViewModel(editionMode: editionMode))
-        self.editionMode = editionMode
-        self.completion = completion
     }
 
     public var body: some View {
@@ -163,6 +163,7 @@ public struct EventFormView: View {
                 )
             }
         }
+        .disabled(isSaving)
         .onAppear {
             focusTitleIfNecessary()
         }
@@ -170,29 +171,69 @@ public struct EventFormView: View {
             await viewModel.observeCalendars()
         }
         .scrollDismissesKeyboard(.interactively)
-        .navigationTitle(Text(editionMode.navigationTitle))
+        .navigationTitle(Text(viewModel.editionMode.navigationTitle))
         .toolbarTitleDisplayMode(.inline)
         .toolbar {
+            if case .new = viewModel.editionMode {
+                CloseToolbarItem(action: dismiss.callAsFunction)
+            }
+
             ToolbarItem(placement: .confirmationAction) {
-                Button {
-                    Task {
-                        try? await viewModel.createEvent()
-                        completion()
+                ConfirmationButton(action: didTapSave)
+                    .disabled(isSaving || !viewModel.validationErrors.isEmpty || !viewModel.isEdited)
+                    .confirmationDialog(
+                        CalendarResourcesStrings.editRecurringEventAlertTitle,
+                        isPresented: $isShowingRecurrenceScope,
+                        titleVisibility: .visible
+                    ) {
+                        Button(CalendarResourcesStrings.buttonEditThisEvent) {
+                            saveEvent(scope: .thisOccurrence)
+                        }
+                        Button(CalendarResourcesStrings.buttonDeleteThisAndFollowingEvents) {
+                            saveEvent(scope: .thisAndFollowing)
+                        }
+                        Button(CalendarResourcesStrings.buttonDeleteAllEvents) {
+                            saveEvent(scope: .allOccurrences)
+                        }
                     }
-                } label: {
-                    Label(CalendarResourcesStrings.buttonConfirm, image: CalendarResourcesAsset.Images.check)
-                        .labelStyle(.iconOnly)
-                }
-                .buttonStyle(.borderedProminent)
-                .disabled(!viewModel.validationErrors.isEmpty)
             }
         }
-        .closeToolbarItem(completion)
+        .alert(error: $saveErrorMessage) {}
         .interactiveDismissDisabled(viewModel.isEdited)
     }
 
+    private func didTapSave() {
+        if case .editDraft(_, let editingEvent) = viewModel.editionMode, editingEvent.isOccurrence {
+            isShowingRecurrenceScope = true
+        } else {
+            saveEvent(scope: .thisOccurrence)
+        }
+    }
+
+    private func saveEvent(scope: RecurrenceScope) {
+        let action: EventFormViewModel.EditFormAction
+        switch viewModel.editionMode {
+        case .new:
+            action = .new
+        case .editDraft(_, let editingEvent):
+            action = .editDraft(occurrenceId: editingEvent.occurrenceId, scope: scope)
+        }
+
+        isSaving = true
+        Task {
+            do {
+                try await viewModel.saveEvent(action: action)
+
+                dismiss()
+            } catch {
+                saveErrorMessage = (error as? CalendarError) ?? CalendarError.unknown
+            }
+            isSaving = false
+        }
+    }
+
     private func focusTitleIfNecessary() {
-        guard case .new = editionMode, !hasFocusedKeyboardOnce else {
+        guard case .new = viewModel.editionMode, !hasFocusedKeyboardOnce else {
             return
         }
 
@@ -207,7 +248,7 @@ public struct EventFormView: View {
     VStack {}
         .sheet(isPresented: .constant(true)) {
             NavigationStack {
-                EventFormView(editionMode: .new) {}
+                EventFormView(editionMode: .new)
             }
             .interactiveDismissDisabled()
         }

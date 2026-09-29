@@ -18,9 +18,11 @@
 
 import CalendarCore
 import CalendarCoreUI
+import CalendarEventFormView
 import CalendarResources
 import DesignSystem
 import ESDSFoundation
+import InfomaniakDI
 import MultiplatformCalendar
 import OSLog
 import SwiftUI
@@ -37,6 +39,10 @@ public struct EventDetailsView: View {
     @State private var isShowingDeleteConfirmationDialog = false
     @State private var isShowingDeleteError = false
     @State private var deleteErrorMessage = ""
+    @State private var isLoadingEdit = false
+    @State private var editData: EventEditData?
+    @State private var isShowingEditError = false
+    @State private var editErrorMessage = ""
 
     private let event: CalendarCoreUI.UIEvent
 
@@ -153,10 +159,12 @@ public struct EventDetailsView: View {
 
                 if event.canEdit {
                     ToolbarItem(placement: .primaryAction) {
-                        Button { /* Does nothing yet */ } label: {
+                        Button {
+                            loadEditData()
+                        } label: {
                             Label(CalendarResourcesStrings.editEventTitle, image: CalendarResourcesAsset.Images.pen)
                         }
-                        .disabled(true)
+                        .disabled(isLoadingEdit || isDeletingEvent)
                     }
 
                     ToolbarItem(placement: .destructiveAction) {
@@ -201,6 +209,19 @@ public struct EventDetailsView: View {
             } message: {
                 Text(deleteErrorMessage)
             }
+            .alert(CalendarResourcesStrings.editEventTitle, isPresented: $isShowingEditError) {
+                Button(CalendarResourcesStrings.buttonConfirm) {}
+            } message: {
+                Text(editErrorMessage)
+            }
+            .navigationDestination(item: $editData) { editData in
+                EventFormView(
+                    editionMode: .editDraft(
+                        draft: EventDraft.fromEvent(event, editData: editData),
+                        editingEvent: event
+                    )
+                )
+            }
             .navigationBarTitleDisplayMode(.inline)
             .listSectionSpacing(IKPadding.large)
             .contentMargins(.top, 0, for: .scrollContent)
@@ -220,6 +241,25 @@ public struct EventDetailsView: View {
                     .frame(maxWidth: .infinity, alignment: .center)
                 }
             }
+        }
+    }
+
+    private func loadEditData() {
+        isLoadingEdit = true
+        Task {
+            do {
+                @InjectService var calendarSDK: CalendarCoreGraph
+                let id = OccurrenceId.companion.parse(value: event.occurrenceId)
+                guard let data = try await calendarSDK.calendarManager.getEditData(occurrenceId: id) else {
+                    throw CalendarError.eventOccurrenceNotFound
+                }
+                editData = data
+            } catch {
+                Logger.view.error("Failed to load event edit data: \(error.localizedDescription)")
+                editErrorMessage = error.localizedDescription
+                isShowingEditError = true
+            }
+            isLoadingEdit = false
         }
     }
 

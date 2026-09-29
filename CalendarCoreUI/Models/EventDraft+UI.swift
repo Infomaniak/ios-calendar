@@ -25,16 +25,17 @@ public extension EventDraft {
         return isPrivate ? .private : .public
     }
 
-    static func fromEvent(_ event: UIEvent, calendar: UICalendar) -> EventDraft {
+    static func fromEvent(_ event: UIEvent, editData: EventEditData) -> EventDraft {
+        let timing = UITiming(eventTiming: editData.timing)
         return EventDraft(
-            calendarId: calendar.id,
-            title: event.title,
-            description: event.description ?? "",
-            allDay: event.isAllDay,
-            startDate: event.timing.start,
-            startTimeZone: event.timing.startTimeZone,
-            endDate: event.timing.end,
-            endTimeZone: event.timing.endTimeZone,
+            calendarId: event.calendarId,
+            title: editData.title,
+            description: editData.description_ ?? "",
+            allDay: editData.timing.isAllDay,
+            startDate: timing.start,
+            startTimeZone: timing.startTimeZone,
+            endDate: timing.end,
+            endTimeZone: timing.endTimeZone,
             attendees: event.attendees.map {
                 Attendee(
                     email: $0.email,
@@ -45,7 +46,7 @@ public extension EventDraft {
                     responseNeeded: false
                 )
             },
-            isOccupied: false,
+            isOccupied: editData.timeBlocking != .doesNotBlock,
             isPrivate: event.classification == .private
         )
     }

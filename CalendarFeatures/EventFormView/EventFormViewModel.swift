@@ -31,10 +31,16 @@ final class EventFormViewModel {
         case end
     }
 
+    enum EditFormAction {
+        case new
+        case editDraft(occurrenceId: String, scope: RecurrenceScope)
+    }
+
     private(set) var availableCalendars = [UICalendar]()
 
     var draft: EventDraft
     private var originalDraft: EventDraft
+    let editionMode: EditionMode
 
     private let validator = EventDraftValidator()
 
@@ -47,13 +53,12 @@ final class EventFormViewModel {
     }
 
     init(editionMode: EditionMode) {
+        self.editionMode = editionMode
         let draft: EventDraft
         switch editionMode {
         case .new:
             draft = EventDraft.empty()
-        case .editEvent(let origin, let calendar):
-            draft = EventDraft.fromEvent(origin, calendar: calendar)
-        case .editDraft(let existingDraft):
+        case .editDraft(let existingDraft, _):
             draft = existingDraft
         }
 
@@ -61,8 +66,17 @@ final class EventFormViewModel {
         self.draft = draft
     }
 
-    func createEvent() async throws {
-        try await CreateEventUseCase().execute(draft: draft)
+    func saveEvent(action: EditFormAction) async throws {
+        switch action {
+        case .new:
+            try await CreateEventUseCase().execute(draft: draft)
+        case .editDraft(let occurrenceId, let scope):
+            try await UpdateEventUseCase().execute(
+                occurrenceId: occurrenceId,
+                scope: scope,
+                draft: draft
+            )
+        }
     }
 
     func updateTimeZone(_ timeZone: Foundation.TimeZone, for pickerId: DatePickerId, calendar: Foundation.Calendar) {

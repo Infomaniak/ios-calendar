@@ -34,6 +34,8 @@
  * Destructive toolbar action and confirmation button in event details. Deletes the displayed calendar event. */
 "buttonDeleteEvent" = "Delete this event";
 
+"buttonEditThisEvent" = "This event";
+
 /* Destructive action for deleting the entire recurring series. */
 "buttonDeleteAllEvents" = "All the events";
 
@@ -102,6 +104,8 @@
 /* loco:6aacf103d307b996c00e20ce
  * Title case in languages where appropriate. */
 "editEventTitle" = "Edit Event";
+
+"editRecurringEventAlertTitle" = "Which events do you want to edit?";
 
 /* loco:6a631392189120de490885c4 */
 "endLabel" = "End";

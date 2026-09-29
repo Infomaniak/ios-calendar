@@ -119,7 +119,6 @@ struct EventDraftValidatorTests {
 
     @Test
     func updateRejectsInvalidDraftBeforeResolvingOccurrence() async throws {
-        let originalData = try makeDraft().toEventEditData()
         var draft = makeDraft()
         draft.calendarId = nil
 
@@ -127,10 +126,32 @@ struct EventDraftValidatorTests {
             try await UpdateEventUseCase().execute(
                 occurrenceId: "missing-event",
                 scope: .thisOccurrence,
-                draft: draft,
-                originalData: originalData
+                draft: draft
             )
         }
+    }
+
+    @Test
+    func updatingDraftPreservesUneditedEventFields() throws {
+        let original = try makeDraft().toEventEditData()
+        let stored = try EventEditData(
+            title: original.title,
+            timing: original.timing,
+            location: "Meeting room",
+            description: original.description_,
+            timeBlocking: nil,
+            calendarId: original.calendarId,
+            eventColor: original.eventColor,
+            alarms: original.alarms
+        )
+        var draft = makeDraft()
+        draft.title = "Updated title"
+        let updated = try draft.toEventEditData(preserving: stored)
+
+        #expect(updated.title == "Updated title")
+        #expect(updated.location == stored.location)
+        #expect(updated.timeBlocking == nil)
+        #expect(updated.alarms === stored.alarms)
     }
 
     private func makeDraft() -> EventDraft {
