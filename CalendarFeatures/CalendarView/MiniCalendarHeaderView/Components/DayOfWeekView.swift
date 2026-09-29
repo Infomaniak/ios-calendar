@@ -31,7 +31,7 @@ struct DayOfWeekView: View {
         HStack(spacing: 0) {
             ForEach(0 ..< 7) { dayOffset in
                 ZStack {
-                    if let weekDayDate = Calendar.current.date(byAdding: .day, value: dayOffset, to: weekStartDate) {
+                    if let weekDayDate = calendar.date(byAdding: .day, value: dayOffset, to: weekStartDate) {
                         Text(weekDayDate, format: .dateTime.weekday(.narrow))
                             .font(.caption)
                             .foregroundColor(theme.color.contentPrimary)
