@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarCore
 import CalendarCoreUI
 import DesignSystem
 import ESDSFoundation
@@ -29,12 +30,12 @@ struct AlertsSectionView: View {
     @Binding var alarms: [UIEventAlarm]
 
     var body: some View {
-        ForEach(alarms.indices, id: \.self) { index in
+        ForEach(alarms) { alarm in
             LabeledContent {
-                Text(alarms[index].offset.rawValue)
+                Text(alarm.label)
                     .foregroundStyle(theme.color.contentSecondary)
             } label: {
-                Label(alarms[index].action.label, symbol: alarms[index].action.icon)
+                Label(alarm.action.label, symbol: alarm.action.icon)
                     .labelStyle(.formLabel)
             }
         }

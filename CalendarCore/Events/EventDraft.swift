@@ -33,8 +33,12 @@ public struct EventDraft: Equatable, Sendable {
 
     public var attendees: [Attendee]
 
+    public var alarms: [EventAlarmDraft]
+
     public var isOccupied: Bool
     public var isPrivate: Bool
+
+    private let initialAlarms: [EventAlarmDraft]
 
     public init(
         calendarId: String? = nil,
@@ -46,6 +50,7 @@ public struct EventDraft: Equatable, Sendable {
         endDate: Date,
         endTimeZone: TimeZone? = .current,
         attendees: [Attendee] = [],
+        alarms: [EventAlarmDraft] = [],
         isOccupied: Bool = true,
         isPrivate: Bool = false
     ) {
@@ -58,6 +63,11 @@ public struct EventDraft: Equatable, Sendable {
         self.endDate = endDate
         self.endTimeZone = endTimeZone
         self.attendees = attendees
+        self.alarms = alarms.isEmpty ? [
+            EventAlarmDraft(action: .email, trigger: nil, attachments: [], attendees: [], description: nil, summary: nil),
+            EventAlarmDraft(action: .display, trigger: nil, attachments: [], attendees: [], description: nil, summary: nil)
+        ] : alarms
+        initialAlarms = self.alarms
         self.isOccupied = isOccupied
         self.isPrivate = isPrivate
     }
@@ -88,10 +98,17 @@ public extension EventDraft {
             } ?? (isOccupied ? .blocks : .doesNotBlock),
             calendarId: calendarId,
             eventColor: originalData?.eventColor,
-            alarms: originalData?.alarms ?? AlarmListEditReplace(alarms: []),
+            alarms: sdkAlarms(preserving: originalData?.alarms),
             attendees: originalData?.attendees ?? [],
             organizer: originalData?.organizer
         )
+    }
+
+    private func sdkAlarms(preserving originalAlarms: AlarmListEdit?) -> AlarmListEdit {
+        if let originalAlarms, alarms == initialAlarms {
+            return originalAlarms
+        }
+        return AlarmListEditReplace(alarms: alarms.compactMap { $0.toSDK() })
     }
 
     private func sdkTiming(preserving originalTiming: EventTiming?) throws -> EventTiming {

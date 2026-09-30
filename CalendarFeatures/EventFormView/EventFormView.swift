@@ -137,6 +137,16 @@ public struct EventFormView: View {
                 }
             }
 
+            Section {
+                ForEach($viewModel.draft.alarms) { $alarm in
+                    EventAlarmRowView(alarm: $alarm)
+                }
+
+                AddAlarmButton { newAlarm in
+                    viewModel.draft.alarms.append(newAlarm)
+                }
+            }
+
             if !viewModel.availableCalendars.isEmpty {
                 Section {
                     LabeledContent(CalendarResourcesStrings.calendarsMenuSectionTitle) {
@@ -252,6 +262,5 @@ public struct EventFormView: View {
             NavigationStack {
                 EventFormView(editionMode: .new)
             }
-            .interactiveDismissDisabled()
         }
 }
