@@ -74,6 +74,7 @@ let calendarView = Feature(
         eventDetailsView,
         eventFormView,
         TargetDependency.target(name: "\(Constants.projectName)Resources"),
+        TargetDependency.external(name: "AsyncAlgorithms"),
         TargetDependency.external(name: "DesignSystem"),
         TargetDependency.external(name: "ESDSCalendar"),
         TargetDependency.external(name: "Eventually"),

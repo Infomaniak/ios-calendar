@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import AsyncAlgorithms
 import CalendarCore
 import CalendarCoreUI
 import InfiniteScrollViews
@@ -94,30 +95,38 @@ struct DaysView: View {
             return .selection
         }
         .task(id: mainViewState.selectedDate) {
-            await observeCalendars(mainViewState.selectedDate)
+            await observeEventsAt(date: mainViewState.selectedDate, in: calendar)
         }
     }
 
-    private func observeCalendars(_ date: Date) async {
+    @concurrent
+    private func observeEventsAt(date: Date, in calendar: Foundation.Calendar) async {
         let centerDate = date.startOfDay(calendar)
         let startDate = calendar.date(byAdding: .day, value: -3, to: centerDate) ?? centerDate
         let endDate = calendar.date(byAdding: .day, value: 3, to: centerDate) ?? centerDate
 
         @InjectService var calendarSDK: CalendarCoreGraph
-        for await daySlices in calendarSDK.calendarManager.observeDaySlices(start: startDate.instant, end: endDate.instant) {
-            guard !Task.isCancelled else {
-                return
-            }
+        for await daySlices in calendarSDK.calendarManager.observeDaySlices(
+            start: startDate.instant,
+            end: endDate.instant
+        )._throttle(for: .milliseconds(500)) {
+            guard !Task.isCancelled else { return }
+            let accounts = await calendarAccounts
 
             let uiEvents = daySlices.values.flatMap { eventDaySlices in
                 eventDaySlices.compactMap {
-                    let account = calendarAccounts[Int($0.event.accountIdValue)]
+                    let account = accounts[Int($0.event.accountIdValue)]
                     return CalendarCoreUI.UIEvent(eventDaySlice: $0, userEmail: account?.user.email ?? "")
                 }
             }
 
+            guard !Task.isCancelled else { return }
             let groupedEvents = Dictionary(grouping: uiEvents) { $0.startDate.startOfDay(calendar) }
-            viewModel.events = groupedEvents
+
+            guard !Task.isCancelled else { return }
+            await MainActor.run {
+                viewModel.events = groupedEvents
+            }
         }
     }
 }

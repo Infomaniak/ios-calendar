@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import AsyncAlgorithms
 import CalendarCore
 import CalendarCoreUI
 import Foundation
@@ -104,14 +105,20 @@ final class PlanningViewModel {
         currentObserveTask?.cancel()
         currentObserveTask = Task.detached { [weak self] in
             @InjectService var calendarSDK: CalendarCoreGraph
-            for await daySlices in calendarSDK.calendarManager.observeDaySlices(start: start.instant, end: end.instant) {
-                guard let self else { return }
+            for await daySlices in calendarSDK.calendarManager.observeDaySlices(
+                start: start.instant,
+                end: end.instant
+            )._throttle(for: .milliseconds(500)) {
+                guard !Task.isCancelled, let self else { return }
+
                 let uiEvents = daySlices.values.flatMap { eventDaySlices in
                     eventDaySlices.compactMap {
                         let account = self.calendarAccounts[Int($0.event.accountIdValue)]
                         return CalendarCoreUI.UIEvent(eventDaySlice: $0, userEmail: account?.user.email ?? "")
                     }
                 }
+
+                guard !Task.isCancelled else { return }
                 await ingest(uiEvents: uiEvents)
             }
         }
@@ -126,6 +133,8 @@ final class PlanningViewModel {
             eventsByDay: groupedEvents,
             calendar: calendar
         )
+
+        guard !Task.isCancelled else { return }
         await MainActor.run {
             eventsByDay = groupedEvents
             days = newDays
