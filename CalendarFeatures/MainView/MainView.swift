@@ -36,13 +36,15 @@ public struct MainView: View {
                 CompactMainView()
             }
         }
-        .task(id: calendarAccounts) {
-            await syncCalendars()
+        .onChange(of: calendarAccounts) {
+            syncCalendars()
         }
         .sceneLifecycle(willEnterForeground: willEnterForeground)
     }
 
     private func willEnterForeground() {
+        syncCalendars()
+
         Task {
             await NotificationsHelper.askForPermissions()
 
@@ -51,13 +53,10 @@ public struct MainView: View {
         }
     }
 
-    private func syncCalendars() async {
-        @InjectService var calendarSDK: CalendarCoreGraph
-
-        do {
-            try await calendarSDK.calendarManager.syncEvents()
-        } catch {
-            Logger.view.error("Failed to sync calendars: \(error.localizedDescription)")
+    private func syncCalendars() {
+        Task {
+            @InjectService var syncHelper: CalendarSyncHelper
+            await syncHelper.syncCalendars()
         }
     }
 }
