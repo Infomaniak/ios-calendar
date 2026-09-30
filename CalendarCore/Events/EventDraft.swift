@@ -19,7 +19,7 @@
 import Foundation
 import MultiplatformCalendar
 
-public struct EventDraft: Equatable, Sendable {
+public struct EventDraft: Hashable, Equatable, Sendable {
     public var calendarId: String?
 
     public var title: String
@@ -32,6 +32,8 @@ public struct EventDraft: Equatable, Sendable {
     public var endTimeZone: TimeZone?
 
     public var attendees: [Attendee]
+
+    public var alarms: [EventAlarmDraft]
 
     public var isOccupied: Bool
     public var isPrivate: Bool
@@ -46,6 +48,7 @@ public struct EventDraft: Equatable, Sendable {
         endDate: Date,
         endTimeZone: TimeZone? = .current,
         attendees: [Attendee] = [],
+        alarms: [EventAlarmDraft] = [],
         isOccupied: Bool = true,
         isPrivate: Bool = false
     ) {
@@ -58,12 +61,38 @@ public struct EventDraft: Equatable, Sendable {
         self.endDate = endDate
         self.endTimeZone = endTimeZone
         self.attendees = attendees
+        self.alarms = alarms
         self.isOccupied = isOccupied
         self.isPrivate = isPrivate
     }
 }
 
 public extension EventDraft {
+    init(event: Event, editData: EventEditData) {
+        let isPrivate: Bool
+        switch onEnum(of: event.classification) {
+        case .private:
+            isPrivate = true
+        default:
+            isPrivate = false
+        }
+
+        self = EventDraft(
+            calendarId: event.calendarIdValue,
+            title: editData.title,
+            description: editData.description_ ?? "",
+            allDay: editData.timing.isAllDay,
+            startDate: editData.timing.startInstantLocal().toNSDate(),
+            startTimeZone: editData.timing.startTimeZone,
+            endDate: editData.timing.endInstantLocal().toNSDate(),
+            endTimeZone: editData.timing.endTimeZone,
+            attendees: event.attendees,
+            alarms: event.alarms.map { EventAlarmDraft(eventAlarm: $0) },
+            isOccupied: editData.timeBlocking != .doesNotBlock,
+            isPrivate: isPrivate
+        )
+    }
+
     static func empty() -> EventDraft {
         let startDate = Date()
 
@@ -104,7 +133,7 @@ public extension EventDraft {
             } ?? (isOccupied ? .blocks : .doesNotBlock),
             calendarId: calendarId,
             eventColor: originalData?.eventColor,
-            alarms: originalData?.alarms ?? AlarmListEditReplace(alarms: []),
+            alarms: AlarmListEditReplace(alarms: alarms.map { $0.sdkValue }),
             attendees: originalData?.attendees ?? [],
             organizer: originalData?.organizer,
             meetRoom: originalData?.meetRoom

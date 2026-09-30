@@ -133,7 +133,9 @@ struct EventDraftValidatorTests {
 
     @Test
     func updatingDraftPreservesUneditedEventFields() throws {
-        let original = try makeDraft().toEventEditData()
+        var draft = makeDraft()
+        draft.alarms = [EventAlarmDraft(offset: .oneHourBefore)]
+        let original = try draft.toEventEditData()
         let attendee = AttendeeEdit(email: "guest@example.com", displayName: "Guest", type: .individual, role: .requested)
         let organizer = Organizer(email: "organizer@example.com", displayName: "Organizer", contact: nil)
         let recurrenceDate = IcalDateValueFloating(
@@ -145,7 +147,7 @@ struct EventDraftValidatorTests {
             rDates: [recurrenceDate],
             exDates: [recurrenceDate]
         )
-        let stored = try EventEditData(
+        let stored = EventEditData(
             title: original.title,
             timing: timing,
             location: "Meeting room",
@@ -158,14 +160,15 @@ struct EventDraftValidatorTests {
             organizer: organizer,
             meetRoom: nil
         )
-        var draft = makeDraft()
         draft.title = "Updated title"
         let updated = try draft.toEventEditData(preserving: stored)
+        let updatedAlarms = try #require(updated.alarms as? AlarmListEditReplace)
 
         #expect(updated.title == "Updated title")
         #expect(updated.location == stored.location)
         #expect(updated.timeBlocking == nil)
-        #expect(updated.alarms === stored.alarms)
+        #expect(updatedAlarms.alarms.map { UIAlarmAction(alarmAction: $0.action) } == draft.alarms.map(\.action))
+        #expect(updatedAlarms.alarms.map { UIAlarmTrigger(alarmTrigger: $0.trigger) } == draft.alarms.map(\.trigger))
         #expect(updated.attendees == stored.attendees)
         #expect(updated.organizer == stored.organizer)
         #expect(updated.timing.rDates.first as? IcalDateValueFloating == recurrenceDate)
