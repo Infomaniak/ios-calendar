@@ -56,7 +56,7 @@ public struct EventFormView: View {
     @FocusState private var isTitleFocused: Bool
 
     public init(editionMode: EditionMode) {
-        _viewModel = State(wrappedValue: EventFormViewModel(editionMode: editionMode))
+        _viewModel = State(wrappedValue: EventFormViewModel(editionMode: editionMode, userDefaults: .shared))
     }
 
     public var body: some View {

@@ -35,6 +35,7 @@ public extension UserDefaults.Keys {
     static let displayWeekends = UserDefaults.Keys(rawValue: "displayWeekends")
     static let defaultEventDuration = UserDefaults.Keys(rawValue: "defaultEventDuration")
     static let customTimeZoneIdentifier = UserDefaults.Keys(rawValue: "customTimeZoneIdentifier")
+    static let lastSelectedCalendarId = UserDefaults.Keys(rawValue: "lastSelectedCalendarId")
 }
 
 public extension UserDefaults {
@@ -116,6 +117,15 @@ public extension UserDefaults {
         }
         set {
             set(newValue, forKey: key(.customTimeZoneIdentifier))
+        }
+    }
+
+    var lastSelectedCalendarId: String? {
+        get {
+            string(forKey: key(.lastSelectedCalendarId))
+        }
+        set {
+            set(newValue, forKey: key(.lastSelectedCalendarId))
         }
     }
 }

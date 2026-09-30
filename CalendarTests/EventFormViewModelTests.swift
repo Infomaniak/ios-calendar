@@ -26,6 +26,49 @@ import Testing
 struct EventFormViewModelTests {
     private let calendar = Calendar(identifier: .gregorian)
 
+    @Test(arguments: [true, false])
+    func newEventSelectsLastSavedWritableCalendarOrFallsBackToFirst(isSavedCalendarAvailable: Bool) throws {
+        let suiteName = "EventFormViewModelTests.\(UUID().uuidString)"
+        let userDefaults = try #require(UserDefaults(suiteName: suiteName))
+        defer { userDefaults.removePersistentDomain(forName: suiteName) }
+        userDefaults.lastSelectedCalendarId = "saved"
+
+        let viewModel = EventFormViewModel(editionMode: .new, userDefaults: userDefaults)
+        let first = makeCalendar(id: "first")
+        let saved = makeCalendar(id: "saved")
+        viewModel.updateAvailableCalendars(isSavedCalendarAvailable ? [first, saved] : [first])
+
+        #expect(viewModel.draft.calendarId == (isSavedCalendarAvailable ? saved.id : first.id))
+        #expect(viewModel.isEdited == false)
+        #expect(userDefaults.lastSelectedCalendarId == "saved")
+
+        viewModel.draft.calendarId = first.id
+        viewModel.updateAvailableCalendars([first, saved])
+        #expect(viewModel.draft.calendarId == first.id)
+    }
+
+    @Test
+    func editingEventKeepsItsCalendarRatherThanUsingLastSavedCalendar() throws {
+        let suiteName = "EventFormViewModelTests.\(UUID().uuidString)"
+        let userDefaults = try #require(UserDefaults(suiteName: suiteName))
+        defer { userDefaults.removePersistentDomain(forName: suiteName) }
+        userDefaults.lastSelectedCalendarId = "saved"
+
+        let draft = EventDraft(
+            calendarId: "event",
+            startDate: Date(),
+            endDate: Date().addingTimeInterval(3600)
+        )
+        let viewModel = EventFormViewModel(
+            editionMode: .editDraft(draft: draft, editingEvent: .preview),
+            userDefaults: userDefaults
+        )
+        viewModel.updateAvailableCalendars([makeCalendar(id: "saved")])
+
+        #expect(viewModel.draft.calendarId == "event")
+        #expect(viewModel.isEdited == false)
+    }
+
     @Test
     func editingPrefillsStoredValuesWithoutMarkingFormChanged() throws {
         let original = try EventDraft(
@@ -40,7 +83,7 @@ struct EventFormViewModelTests {
         )
         let editData = try original.toEventEditData()
         let draft = EventDraft.fromEvent(.preview, editData: editData)
-        let viewModel = EventFormViewModel(editionMode: .editDraft(draft: draft, editingEvent: .preview))
+        let viewModel = EventFormViewModel(editionMode: .editDraft(draft: draft, editingEvent: .preview), userDefaults: .shared)
 
         #expect(viewModel.draft.title == original.title)
         #expect(viewModel.draft.description == original.description)
@@ -193,7 +236,18 @@ struct EventFormViewModelTests {
             endDate: date(end),
             endTimeZone: timeZone(endTimeZone)
         )
-        return EventFormViewModel(editionMode: .editDraft(draft: draft, editingEvent: .preview))
+        return EventFormViewModel(editionMode: .editDraft(draft: draft, editingEvent: .preview), userDefaults: .shared)
+    }
+
+    private func makeCalendar(id: String) -> UICalendar {
+        UICalendar(
+            id: id,
+            displayName: id,
+            colorArgb: 0,
+            accountId: 1,
+            isVisible: true,
+            accessLevel: .owner
+        )
     }
 
     private func date(_ value: String) throws -> Date {
