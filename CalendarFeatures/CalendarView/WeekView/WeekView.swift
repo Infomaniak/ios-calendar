@@ -29,13 +29,17 @@ struct WeekView: View {
     let date: Date
 
     var body: some View {
-        WeekContentView(date: date, events: weeksViewModel.events(forWeekOf: date, calendar: calendar))
+        WeekContentView(
+            date: date,
+            events: weeksViewModel.events(forWeekOf: date, calendar: calendar)
+        )
     }
 }
 
 struct WeekContentView: View {
     @Environment(\.calendar) private var calendar
     @Environment(\.esdsTheme) private var theme
+    @Environment(MainViewState.self) private var mainViewState
 
     @State private var scrollPosition = ScrollPosition()
     @State private var scrollOffset = CGFloat.zero
@@ -48,6 +52,10 @@ struct WeekContentView: View {
     private var weekDates: [Date] {
         let weekStart = calendar.weekStart(for: date)
         return (0 ..< 7).compactMap { calendar.date(byAdding: .day, value: $0, to: weekStart) }
+    }
+
+    private var isSelected: Bool {
+        return calendar.isDate(date, equalTo: mainViewState.selectedDate, toGranularity: .weekOfYear)
     }
 
     var body: some View {
@@ -70,6 +78,10 @@ struct WeekContentView: View {
             }
         } overlay: { _ in
             EmptyView()
+        }
+        .additionalSafeAreaBarView(id: calendar.weekStart(for: date), version: weekDates, isActive: isSelected) {
+            WeekHeaderView(date: date, weekDates: weekDates)
+                .padding(.horizontal, value: .medium)
         }
     }
 
@@ -110,4 +122,5 @@ struct WeekContentView: View {
 
 #Preview {
     WeekContentView(date: .now, events: [:])
+        .environment(MainViewState())
 }
