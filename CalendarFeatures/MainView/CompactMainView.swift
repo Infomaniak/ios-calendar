@@ -20,6 +20,7 @@ import CalendarCalendarListView
 import CalendarCalendarView
 import CalendarCoreUI
 import CalendarResources
+import ESDSSymbols
 import SwiftUI
 
 public struct CompactMainView: View {
@@ -32,7 +33,7 @@ public struct CompactMainView: View {
                         Button {
                             isShowingCalendarListView = true
                         } label: {
-                            CalendarResourcesAsset.Images.list.swiftUIImage
+                            ESDSSymbols.list.image
                         }
                         .accessibilityLabel(CalendarResourcesStrings.openCalendarListTitle)
                     }

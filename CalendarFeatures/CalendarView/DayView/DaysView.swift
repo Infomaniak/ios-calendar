@@ -79,10 +79,7 @@ struct DaysView: View {
         @Bindable var mainViewState = mainViewState
 
         PagedInfiniteDateView(selectedDate: $mainViewState.selectedDate) { date in
-            DayView(
-                miniCalendarHeight: $miniCalendarHeight,
-                date: date
-            )
+            DayView(miniCalendarHeight: $miniCalendarHeight, date: date)
         }
         .modifier(IgnoreTopSafeAreaModifier())
         .ignoresSafeArea(.all, edges: .bottom)

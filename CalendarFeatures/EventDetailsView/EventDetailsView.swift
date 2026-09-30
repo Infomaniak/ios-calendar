@@ -107,7 +107,7 @@ public struct EventDetailsView: View {
                             OpenLinkRow(
                                 title: CalendarResourcesStrings.participateKMeetTitle,
                                 buttonTitle: CalendarResourcesStrings.buttonJoin,
-                                icon: CalendarResourcesAsset.Images.productKmeet.swiftUIImage,
+                                icon: ESDSSymbols.productKmeet.image,
                                 linkURL: kMeetLink,
                                 showLink: false
                             )
@@ -162,7 +162,7 @@ public struct EventDetailsView: View {
                         Button {
                             loadEditData()
                         } label: {
-                            Label(CalendarResourcesStrings.editEventTitle, image: CalendarResourcesAsset.Images.pen)
+                            Label(CalendarResourcesStrings.editEventTitle, symbol: ESDSSymbols.pen)
                         }
                         .disabled(isLoadingEdit || isDeletingEvent)
                     }
@@ -171,7 +171,7 @@ public struct EventDetailsView: View {
                         Button(role: .destructive) {
                             isShowingDeleteConfirmationDialog = true
                         } label: {
-                            Label(CalendarResourcesStrings.buttonDeleteEvent, image: CalendarResourcesAsset.Images.trash)
+                            Label(CalendarResourcesStrings.buttonDeleteEvent, symbol: ESDSSymbols.trash)
                         }
                         .disabled(isDeletingEvent)
                         .confirmationDialog(
