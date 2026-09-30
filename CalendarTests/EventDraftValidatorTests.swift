@@ -155,7 +155,8 @@ struct EventDraftValidatorTests {
             eventColor: original.eventColor,
             alarms: original.alarms,
             attendees: [attendee],
-            organizer: organizer
+            organizer: organizer,
+            meetRoom: original.meetRoom
         )
         var draft = makeDraft()
         draft.title = "Updated title"

@@ -31,18 +31,14 @@ public struct UITiming: Sendable, Hashable, Equatable {
         self.startTimeZone = startTimeZone
         self.endTimeZone = endTimeZone
     }
+}
 
-    public init(eventTiming: MultiplatformCalendar.EventTiming) {
+public extension UITiming {
+    init(eventTiming: MultiplatformCalendar.EventTiming) {
         start = eventTiming.startInstantLocal().toNSDate()
         end = eventTiming.endInstantLocal().toNSDate()
-        switch onEnum(of: eventTiming.bounds) {
-        case .unanchored:
-            startTimeZone = nil
-            endTimeZone = nil
-        case .zoned(let bounds):
-            startTimeZone = TimeZone(identifier: bounds.start.timeZone.id)
-            endTimeZone = TimeZone(identifier: bounds.end.timeZone.id)
-        }
+        startTimeZone = eventTiming.startTimeZone
+        endTimeZone = eventTiming.endTimeZone
     }
 }
 

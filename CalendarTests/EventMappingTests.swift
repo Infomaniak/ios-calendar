@@ -130,7 +130,8 @@ struct EventMappingTests {
             organizer: Organizer(email: attendee.email, displayName: "Guest", contact: contact),
             colors: colors,
             canEdit: true,
-            alarms: []
+            alarms: [],
+            recurrenceMasterBounds: nil
         )
         let mapped = UIEventDetails(event: event, userEmail: " GUEST@EXAMPLE.COM ")
 
@@ -227,6 +228,9 @@ struct EventMappingTests {
             colors: colors,
             timing: floatingTiming,
             hasAttendees: true,
+            hasMeetRoom: true,
+            isBookable: false,
+            isRecurring: false,
             myStatus: .delegated
         )
     }

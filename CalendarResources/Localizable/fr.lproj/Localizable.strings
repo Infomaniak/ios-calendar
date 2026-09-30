@@ -7,21 +7,48 @@
 /* loco:6a7dc536ea258dafd7031a62 */
 "addExternalCalendarTitle" = "Ajouter un calendrier externe";
 
+/* loco:6ad212588dcfe8aeb202d4e7
+ * Use concise wording for the alarm offset preset at the event start. */
+"alarmOffsetAtTimeOfEvent" = "À l’heure de l’évènement";
+
+/* loco:6ad212589c12c20df00cfb84
+ * The %s placeholder is a localized duration string. Preserve the placeholder; use Android-compatible %s formatting. */
+"alarmOffsetCustomAfter" = "%@ après";
+
+/* loco:6ad2125808e8622507027d16
+ * The %s placeholder is a localized duration string. Preserve the placeholder; use Android-compatible %s formatting. */
+"alarmOffsetCustomBefore" = "%@ avant";
+
+/* loco:6ad2125883ca17287b0d8244
+ * Short option label in the alarm offset picker. */
+"alarmOffsetNone" = "Aucun";
+
 /* loco:6a3d35f26bb2f27bf40b0052 */
 "allDayLabel" = "Journée";
+
+/* loco:6ab6586771adb245e7040925 */
+"attendees" = "Invités";
 
 /* loco:6aacf10357a2cbe67c064fc2
  * Keep the message concise. */
 "attendeesNotEditableMessage" = "Pas encore modifiable.";
 
 /* loco:6aaaaf0a7756fd68ac03a4a9 */
-"attendeesTitle" = "Invités";
+"attendeesTitle" = "Ajouter des invités";
 
 /* loco:6aa8faa176a90afcee024da6 */
 "availableLabel" = "Disponible";
 
 /* loco:6a748d3bf80dbe43e8081862 */
 "buttonAddAccount" = "Ajouter un compte";
+
+/* loco:6ad212596c8e25e006022e98
+ * Concise action label. */
+"buttonAddAlert" = "Ajouter un rappel";
+
+/* loco:6ad212598003500aa70e3c48
+ * Concise action label. */
+"buttonAddOtherReminder" = "Ajouter un autre rappel";
 
 /* loco:6aacf103044c45865c018ea2
  * Use a concise imperative action. */
@@ -30,15 +57,20 @@
 /* loco:6a7dc6dcf678fdc6400639d9 */
 "buttonDeleteAccount" = "Supprimer le compte";
 
+/* loco:6ab531ef90c31f6d6806f3c2
+ * Destructive action for deleting every occurrence of a recurring event. */
+"buttonDeleteAllEvents" = "Tous les évènements";
+
 /* loco:6ab387c24e3a9ba3e7049042
  * Destructive toolbar action and confirmation button in event details. Deletes the displayed calendar event. */
 "buttonDeleteEvent" = "Supprimer cet évènement";
 
-"buttonEditThisEvent" = "Cet évènement";
-
-"buttonDeleteAllEvents" = "Tous les évènements";
-
+/* loco:6ab531b433d14113560aa25c
+ * Destructive action for a recurring event. Deletes the selected occurrence and all later occurrences, leaving earlier ones unchanged. */
 "buttonDeleteThisAndFollowingEvents" = "Cet évènement et les suivants";
+
+/* loco:6ad217df3b24e434ea055745 */
+"buttonEditThisEvent" = "Cet évènement";
 
 /* loco:6a4de9659924fbe9f10f1002 */
 "buttonJoin" = "Rejoindre";
@@ -83,6 +115,10 @@
  * Title case in languages where appropriate. */
 "createEventTitle" = "Créer un évènement";
 
+/* loco:6ad21259d4b4cace400ff463
+ * Short option label. */
+"customAlarmLabel" = "Personnalisé";
+
 /* loco:6a203e6bc6a8e2e3c9024e12 */
 "dayTitle" = "Jour";
 
@@ -90,8 +126,12 @@
  * Confirmation dialog title shown before deleting the displayed calendar event. */
 "deleteEventAlertTitle" = "Voulez-vous vraiment supprimer cet évènement ?";
 
+/* loco:6ab53260988e9eaeaa0aa733
+ * Alert title shown when deleting a calendar event fails. */
 "deleteEventErrorTitle" = "Impossible de supprimer l’évènement";
 
+/* loco:6ab532636bd95750540e8ac7
+ * Confirmation dialog title asking which occurrences of a recurring event to delete. */
 "deleteRecurringEventAlertTitle" = "Quels évènements souhaitez-vous supprimer ?";
 
 /* loco:6a856424c3b19782760f9b12 */
@@ -101,6 +141,7 @@
  * Title case in languages where appropriate. */
 "editEventTitle" = "Modifier l’évènement";
 
+/* loco:6ad217df3b24e434ea055746 */
 "editRecurringEventAlertTitle" = "Quels évènements souhaitez-vous modifier ?";
 
 "emptyStateNoTimeZone" = "Aucun fuseau horaire trouvé";
@@ -111,6 +152,8 @@
 /* loco:6a63163836b2bc1b160c0a12 */
 "eventColorLabel" = "Couleur de l’évènement";
 
+/* loco:6ab536937bf24fda0b06e226
+ * Shown when the requested event occurrence no longer exists during editing or deletion. */
 "eventOccurrenceNotFound" = "Cet évènement n’est plus disponible.";
 
 /* loco:6a6315016659664bd10ce392 */
@@ -157,6 +200,9 @@
 /* loco:6a7dc6669b0d18a8380bb172 */
 "hideAccountToggle" = "Masquer le compte";
 
+/* loco:6ab67eb683c1c9886c0a5d34 */
+"kMeetMeeting" = "Réunion kMeet";
+
 /* loco:6a6312ad25e577a9830d55c2 */
 "locationOrRoomLabel" = "Lieu ou salle";
 
@@ -167,11 +213,27 @@
  * Keep this label concise. */
 "noAttendeesLabel" = "Aucun";
 
+/* loco:6ab66baea1af66c0fa02a5d2 */
+"notificationAllDay" = "Toute la journée";
+
+/* loco:6ab66d691206e55a540a2ea2 */
+"notificationChannelEventRemindersDescription" = "Notifications pour les évènements à venir et rappels";
+
+/* loco:6ab66db49a651e12e40b77b4 */
+"notificationChannelEventRemindersTitle" = "Rappels d’évènements";
+
 /* loco:6a8db088bdcf38c11d0c8a94 */
 "notificationDefaultDescription" = "Alarme d’évènement";
 
+/* loco:6ab66df37c507bf2920ddc25 */
+"notificationDefaultEventTitle" = "Rappel d’évènement";
+
 /* loco:6a8ed23a8523fc2ec50554a2 */
 "notificationTypeEmail" = "E-mail";
+
+/* loco:6ad0ba8a429f3fc71606ac94
+ * Label for audio or unrecognized calendar alarm notification types. Plain text; no format arguments. */
+"notificationTypeOther" = "Autre";
 
 /* loco:6a8ed665614bffbffe09a5d2 */
 "notificationTypePush" = "Notification";
@@ -188,6 +250,18 @@
 /* loco:6a858ecb52e69982a407cb02 */
 "openTitle" = "Ouvrir";
 
+/* loco:6ad212598dcfe8aeb202d4e9
+ * Short form label. */
+"otherReminderAlarmKindLabel" = "Type de rappel";
+
+/* loco:6ad2125a410170059a09ae53
+ * Short form label. */
+"otherReminderNumberLabel" = "Nombre";
+
+/* loco:6ad212599c12c20df00cfb86
+ * Short form label. */
+"otherReminderPeriodLabel" = "Période";
+
 /* loco:6a858ffd1be4d033d804961f */
 "participateKMeetTitle" = "Participer au kMeet";
 
@@ -203,8 +277,16 @@
 /* loco:6a7c5a5bac18c7aa4e0a94a2 */
 "publicLabel" = "Public";
 
+/* loco:6ad212688003500aa70e3c4a
+ * Short screen title. */
+"reminderTitle" = "Rappel";
+
 /* loco:6a7c237bd92250395c0ccfd2 */
 "roomFloorLabel" = "%@ étage";
+
+/* loco:6ad2125ab800a34fc300c974
+ * Short section heading. */
+"sectionAlertsHeader" = "Rappels";
 
 /* loco:6a6315c87ee8c4a584018c52 */
 "sectionCalendarHeader" = "Calendrier";

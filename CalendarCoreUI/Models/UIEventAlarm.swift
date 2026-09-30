@@ -16,176 +16,31 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import CalendarResources
-import ESDSSymbols
+import CalendarCore
 import Foundation
-@preconcurrency import MultiplatformCalendar
+import MultiplatformCalendar
 
-public struct UIEventAlarm: Sendable, Hashable {
+public struct UIEventAlarm: Identifiable, Sendable, Hashable {
+    public let id: String
     public let action: UIAlarmAction
-    public let trigger: UIAlarmTrigger?
-    public var offset: AlarmOffset
+    public let label: String
+}
 
-    public init(action: UIAlarmAction, trigger: UIAlarmTrigger) {
-        self.action = action
-        self.trigger = trigger
-        offset = AlarmOffset(trigger: trigger)
+public extension UIEventAlarm {
+    init(eventAlarm: MultiplatformCalendar.EventAlarm) {
+        id = eventAlarm.id?.value ?? UUID().uuidString
+        label = UIAlarmTrigger(alarmTrigger: eventAlarm.trigger).label
+        action = UIAlarmAction(alarmAction: eventAlarm.action)
     }
 }
 
 public extension UIEventAlarm {
-    init(sdk: MultiplatformCalendar.EventAlarm) {
-        action = UIAlarmAction(sdk: sdk.action)
-        trigger = UIAlarmTrigger(sdk: sdk.trigger)
-        offset = AlarmOffset(trigger: trigger)
-    }
-}
-
-public enum UITriggerRelation: String, Sendable, Hashable, CaseIterable {
-    case start
-    case end
-}
-
-public enum UIAlarmTrigger: Sendable, Hashable {
-    case relative(offset: TimeInterval, relatedTo: UITriggerRelation)
-    case absolute(instant: Date)
-}
-
-public enum UIAlarmAction: Identifiable, Sendable, Hashable {
-    case display
-    case audio
-    case email
-    case unknown(String)
-
-    public var id: String {
-        switch self {
-        case .display:
-            return "display"
-        case .audio:
-            return "audio"
-        case .email:
-            return "email"
-        case .unknown(let raw):
-            return "unknown_\(raw)"
-        }
+    private init(draft: EventAlarmDraft) {
+        id = "\(draft.id.hashValue)"
+        action = draft.action
+        label = draft.label
     }
 
-    public var label: String {
-        switch self {
-        case .display:
-            return CalendarResourcesStrings.notificationTypePush
-        case .audio:
-            return "Notification audio"
-        case .email:
-            return CalendarResourcesStrings.notificationTypeEmail
-        case .unknown(let raw):
-            return raw
-        }
-    }
-
-    public var icon: ESDSSymbols {
-        switch self {
-        case .display:
-            return .bubbleTopRightCircle
-        case .audio:
-            return .bell
-        default:
-            return .bell
-        }
-    }
-}
-
-public enum AlarmOffset: String, CaseIterable, Identifiable, Hashable, Sendable {
-    case none = "None"
-    case fiveMinutesBefore = "5 minutes before"
-    case oneHourBefore = "1 hour before"
-    case oneHourAfter = "1 hour after"
-    case fiveMinutesAfter = "5 minutes after"
-
-    public var id: String {
-        rawValue
-    }
-
-    public func triggerDate(for startDate: Date, to endDate: Date) -> Date? {
-        switch self {
-        case .none: return nil
-        case .fiveMinutesBefore: return Calendar.current.date(byAdding: .minute, value: -5, to: startDate)
-        case .fiveMinutesAfter: return Calendar.current.date(byAdding: .minute, value: +5, to: endDate)
-        case .oneHourBefore: return Calendar.current.date(byAdding: .hour, value: -1, to: startDate)
-        case .oneHourAfter: return Calendar.current.date(byAdding: .hour, value: +1, to: endDate)
-        }
-    }
-
-    public init(trigger: UIAlarmTrigger?) {
-        switch trigger {
-        case .relative(let offset, let relatedTo):
-            switch (offset, relatedTo) {
-            case (-300, UITriggerRelation.start):
-                self = .fiveMinutesBefore
-            case (-3600, UITriggerRelation.start):
-                self = .oneHourBefore
-            case (-300, UITriggerRelation.end):
-                self = .fiveMinutesAfter
-            case (-3600, UITriggerRelation.end):
-                self = .oneHourAfter
-            default: self = .none
-            }
-
-        default:
-            self = .none
-        }
-    }
-}
-
-public extension UIAlarmAction {
-    init(sdk: any AlarmAction) {
-        switch sdk {
-        case is AlarmActionDisplay: self = .display
-        case is AlarmActionAudio: self = .audio
-        case is AlarmActionEmail: self = .email
-        case let unknown as AlarmActionUnknown:
-            self = .unknown(unknown.raw)
-        default:
-            self = .unknown("")
-        }
-    }
-}
-
-extension UIAlarmTrigger {
-    init?(sdk: any AlarmTrigger) {
-        switch sdk {
-        case let relative as AlarmTriggerRelative:
-            self = .relative(
-                offset: TimeInterval(relative.offset),
-                relatedTo: UITriggerRelation(sdk: relative.relatedTo)
-            )
-        case let absolute as AlarmTriggerAbsolute:
-            self = .absolute(instant: absolute.instant.toNSDate())
-        default:
-            return nil
-        }
-    }
-}
-
-extension UITriggerRelation {
-    init(sdk: TriggerRelation) {
-        // À adapter selon les cas réels du SDK
-        switch sdk {
-        case .start: self = .start
-        case .end: self = .end
-        }
-    }
-}
-
-/// Preview data for SwiftUI previews
-public extension UIEventAlarm {
-    static let preview = UIEventAlarm(
-        action: .display,
-        trigger: .relative(offset: -300, relatedTo: .start)
-    )
-
-    static let previews: [UIEventAlarm] = [
-        UIEventAlarm(action: .display, trigger: .relative(offset: -300, relatedTo: .start)),
-        UIEventAlarm(action: .email, trigger: .relative(offset: -3600, relatedTo: .end))
-    ]
+    static let preview = UIEventAlarm(draft: .preview)
+    static let previews = EventAlarmDraft.previews.map { UIEventAlarm(draft: $0) }
 }

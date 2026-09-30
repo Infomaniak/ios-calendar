@@ -16,15 +16,17 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import CalendarCore
+@testable import CalendarCore
 import CalendarCoreUI
 @testable import CalendarEventFormView
 import Foundation
+import MultiplatformCalendar
+import SwiftUI
 import Testing
 
 @MainActor
 struct EventFormViewModelTests {
-    private let calendar = Calendar(identifier: .gregorian)
+    private let calendar = Foundation.Calendar(identifier: .gregorian)
 
     @Test(arguments: [true, false])
     func newEventSelectsLastSavedWritableCalendarOrFallsBackToFirst(isSavedCalendarAvailable: Bool) throws {
@@ -82,7 +84,8 @@ struct EventFormViewModelTests {
             isOccupied: false
         )
         let editData = try original.toEventEditData()
-        let draft = EventDraft.fromEvent(.preview, editData: editData)
+        let event = makeEvent(editData: editData)
+        let draft = EventDraft(event: event, editData: editData)
         let viewModel = EventFormViewModel(editionMode: .editDraft(draft: draft, editingEvent: .preview), userDefaults: .shared)
 
         #expect(viewModel.draft.title == original.title)
@@ -244,6 +247,160 @@ struct EventFormViewModelTests {
         #expect(viewModel.draft == originalDraft)
     }
 
+    @Test
+    func editingAlarmsMarksFormChanged() throws {
+        let viewModel = try makeViewModel()
+
+        viewModel.draft.alarms.append(EventAlarmDraft(offset: .oneHourBefore))
+
+        #expect(viewModel.isEdited)
+    }
+
+    @Test
+    func addingThenRemovingAlarmRestoresUnchangedForm() throws {
+        let viewModel = try makeViewModel()
+        let originalDraft = viewModel.draft
+        let alarm = EventAlarmDraft(offset: .oneHourBefore, action: .email)
+
+        viewModel.draft.alarms.append(alarm)
+        #expect(viewModel.isEdited)
+
+        viewModel.draft.alarms.removeAll { $0.id == alarm.id }
+
+        #expect(viewModel.draft == originalDraft)
+        #expect(!viewModel.isEdited)
+    }
+
+    @Test
+    func settingAlarmToNoneRemovesOnlyThatRow() throws {
+        let viewModel = try makeViewModel()
+        let first = EventAlarmDraft(offset: .oneDayBefore, action: .email)
+        let middle = EventAlarmDraft(offset: .oneHourBefore, action: .email)
+        let last = EventAlarmDraft(offset: .fiveMinutesBefore, action: .email)
+        let notification = EventAlarmDraft(offset: .atTimeOfEvent)
+        viewModel.draft.alarms = [notification, first, middle, last]
+        let rows = makeAlarmRows(viewModel: viewModel)
+
+        let middleBinding = rows.alarmBinding(for: middle)
+        middleBinding.wrappedValue = middle.with(offset: .none)
+        #expect(viewModel.draft.alarms.map(\.id) == [notification.id, first.id, last.id])
+        #expect(middleBinding.wrappedValue.id == middle.id)
+
+        rows.alarmBinding(for: first).wrappedValue = first.with(offset: .none)
+        #expect(viewModel.draft.alarms.map(\.id) == [notification.id, last.id])
+
+        rows.alarmBinding(for: last).wrappedValue = last.with(offset: .none)
+        #expect(viewModel.draft.alarms == [notification])
+    }
+
+    @Test
+    func alarmBindingsFollowIdentityAfterOtherRowsAreRemoved() throws {
+        let viewModel = try makeViewModel()
+        let first = EventAlarmDraft(offset: .oneHourBefore, action: .email)
+        let second = EventAlarmDraft(offset: .fiveMinutesBefore, action: .email)
+        viewModel.draft.alarms = [first, second]
+        let rows = makeAlarmRows(viewModel: viewModel)
+        let firstBinding = rows.alarmBinding(for: first)
+        let secondBinding = rows.alarmBinding(for: second)
+
+        firstBinding.wrappedValue = first.with(offset: .none)
+        secondBinding.wrappedValue = second.with(offset: .oneDayBefore)
+
+        #expect(viewModel.draft.alarms == [second.with(offset: .oneDayBefore)])
+        firstBinding.wrappedValue = first.with(offset: .oneHourBefore)
+        #expect(viewModel.draft.alarms == [second.with(offset: .oneDayBefore)])
+    }
+
+    @Test
+    func changingAlarmTypeUpdatesSameAlarmWithoutDuplicatingIt() throws {
+        let viewModel = try makeViewModel()
+        let alarm = EventAlarmDraft(offset: .oneHourBefore, action: .email)
+        viewModel.draft.alarms = [alarm]
+        let rows = makeAlarmRows(viewModel: viewModel)
+        let updated = alarm.with(trigger: .relative(offset: -600, relatedTo: .start), action: .display)
+
+        rows.alarmBinding(for: alarm).wrappedValue = updated
+
+        #expect(viewModel.draft.alarms == [updated])
+        #expect(viewModel.draft.alarms[0].id == alarm.id)
+    }
+
+    @Test
+    func prefilledAlarmsDoNotMarkFormChanged() throws {
+        let original = try EventDraft(
+            calendarId: "0",
+            startDate: date("2026-09-22T10:10:00Z"),
+            startTimeZone: timeZone("Europe/Zurich"),
+            endDate: date("2026-09-22T11:10:00Z"),
+            endTimeZone: timeZone("Europe/Zurich")
+        )
+        let editData = try original.toEventEditData()
+        let event = makeEvent(editData: editData, alarms: [
+            EventAlarm(
+                action: AlarmActionEmail(),
+                trigger: AlarmTriggerRelative(offset: KotlinDuration.rawValue(fromTimeInterval: -3600), relatedTo: .start),
+                id: nil
+            ),
+            EventAlarm(
+                action: AlarmActionDisplay(),
+                trigger: AlarmTriggerRelative(offset: KotlinDuration.rawValue(fromTimeInterval: -300), relatedTo: .start),
+                id: nil
+            )
+        ])
+        let draft = EventDraft(event: event, editData: editData)
+        let viewModel = EventFormViewModel(
+            editionMode: .editDraft(draft: draft, editingEvent: UIEventDetails(event: event, userEmail: nil)),
+            userDefaults: .shared
+        )
+
+        #expect(viewModel.draft.alarms.count == 2)
+        #expect(viewModel.draft.alarms.map(\.action) == [.email, .display])
+        #expect(viewModel.draft.alarms.map(\.offset) == [.oneHourBefore, .fiveMinutesBefore])
+        #expect(viewModel.isEdited == false)
+    }
+
+    private func makeEvent(editData: EventEditData, alarms: [EventAlarm] = []) -> MultiplatformCalendar.Event {
+        let themedColor = ThemedColor(light: 0, dark: 0)
+        return MultiplatformCalendar.Event(
+            masterEventId: "event",
+            occurrenceId: OccurrenceId.Master(masterId: "event"),
+            calendarId: editData.calendarId,
+            accountId: 1,
+            title: editData.title,
+            description: editData.description_,
+            location: editData.location,
+            status: .confirmed,
+            timeBlocking: editData.timeBlocking,
+            classification: ClassificationPublic(),
+            categories: [],
+            meetRoomUrl: nil,
+            bookableUuid: nil,
+            attachments: [],
+            timing: editData.timing,
+            lastModified: nil,
+            attendees: [],
+            organizer: nil,
+            colors: EventColors(
+                calendarSourceColor: 0,
+                sourceColor: 0,
+                containerColor: 0,
+                onContainerColor: themedColor,
+                containerVariantColor: 0,
+                onContainerVariantColor: themedColor
+            ),
+            canEdit: true,
+            alarms: alarms,
+            recurrenceMasterBounds: nil
+        )
+    }
+
+    private func makeAlarmRows(viewModel: EventFormViewModel) -> EventAlarmTypeRowsView {
+        EventAlarmTypeRowsView(
+            alarms: Binding(get: { viewModel.draft.alarms }, set: { viewModel.draft.alarms = $0 }),
+            action: .email
+        )
+    }
+
     private func makeViewModel(
         start: String = "2026-09-22T10:10:00Z",
         end: String = "2026-09-22T11:10:00Z",
@@ -275,7 +432,8 @@ struct EventFormViewModelTests {
         try #require(ISO8601DateFormatter().date(from: value))
     }
 
-    private func timeZone(_ identifier: String) throws -> TimeZone {
-        try #require(TimeZone(identifier: identifier))
+    private func timeZone(_ identifier: String) throws -> Foundation.TimeZone {
+        let timeZone = Foundation.TimeZone(identifier: identifier)
+        return try #require(timeZone)
     }
 }
