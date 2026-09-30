@@ -16,9 +16,9 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import AsyncAlgorithms
 import CalendarCore
 import CalendarCoreUI
-import InfiniteScrollViews
 import InfomaniakDI
 import MultiplatformCalendar
 import Observation
@@ -38,45 +38,32 @@ final class WeeksViewModel {
     }
 }
 
-private struct PagedInfiniteWeekView<Content: View>: View {
+struct WeekPager: View {
     @Environment(\.calendar) private var calendar
 
     @Binding var selectedDate: Date
-
-    @ViewBuilder let content: (Date) -> Content
 
     private var weekStart: Binding<Date> {
         Binding {
             calendar.weekStart(for: selectedDate)
         } set: { newWeekStart in
+            guard !calendar.isDate(newWeekStart, equalTo: selectedDate, toGranularity: .weekOfYear) else { return }
             selectedDate = newWeekStart
         }
     }
 
     var body: some View {
-        PagedInfiniteScrollView(
-            changeIndex: weekStart,
-            content: content,
-            increaseIndexAction: increaseIndexAction,
-            decreaseIndexAction: decreaseIndexAction,
-            shouldAnimateBetween: shouldAnimateBetween,
-            transitionStyle: .scroll,
-            navigationOrientation: .horizontal,
-            backgroundColor: .clear
-        )
-    }
-
-    private func increaseIndexAction(_ index: Date) -> Date? {
-        return calendar.date(byAdding: .weekOfYear, value: 1, to: calendar.weekStart(for: index))
-    }
-
-    private func decreaseIndexAction(_ index: Date) -> Date? {
-        return calendar.date(byAdding: .weekOfYear, value: -1, to: calendar.weekStart(for: index))
-    }
-
-    private func shouldAnimateBetween(_ newValue: Date, _ oldValue: Date) -> (Bool, UIPageViewController.NavigationDirection) {
-        let isSameWeek = calendar.isDate(newValue, equalTo: oldValue, toGranularity: .weekOfYear)
-        return (!isSameWeek, newValue > oldValue ? .forward : .reverse)
+        GeometryReader { proxy in
+            CalendarPeriodPager(
+                component: .weekOfYear,
+                periodOffsets: -5218 ..< 5219,
+                date: weekStart
+            ) { date in
+                WeekView(date: date)
+                    .safeAreaPadding(.bottom, proxy.safeAreaInsets.bottom)
+            }
+            .ignoresSafeArea(.all, edges: [.top, .bottom])
+        }
     }
 }
 
@@ -91,17 +78,15 @@ struct WeeksView: View {
     var body: some View {
         @Bindable var mainViewState = mainViewState
 
-        PagedInfiniteWeekView(selectedDate: $mainViewState.selectedDate) { date in
-            WeekView(date: date)
-        }
-        .ignoresSafeArea(.all, edges: .bottom)
-        .environment(viewModel)
-        .task(id: calendar.weekStart(for: mainViewState.selectedDate)) {
-            await observeCalendars(around: mainViewState.selectedDate)
-        }
+        WeekPager(selectedDate: $mainViewState.selectedDate)
+            .environment(viewModel)
+            .task(id: calendar.weekStart(for: mainViewState.selectedDate)) {
+                await observeEventsAround(date: mainViewState.selectedDate, in: calendar)
+            }
     }
 
-    private func observeCalendars(around date: Date) async {
+    @concurrent
+    private func observeEventsAround(date: Date, in calendar: Foundation.Calendar) async {
         let weekStart = calendar.weekStart(for: date)
         guard let startDate = calendar.date(byAdding: .weekOfYear, value: -1, to: weekStart),
               let endDate = calendar.date(byAdding: .weekOfYear, value: 2, to: weekStart) else {
@@ -109,21 +94,30 @@ struct WeeksView: View {
         }
 
         @InjectService var calendarSDK: CalendarCoreGraph
-        for await daySlices in calendarSDK.calendarManager.observeDaySlices(start: startDate.instant, end: endDate.instant) {
+        for await daySlices in calendarSDK.calendarManager.observeDaySlices(
+            start: startDate.instant,
+            end: endDate.instant
+        )._throttle(for: .milliseconds(500)) {
             guard !Task.isCancelled else { return }
+            let accounts = await calendarAccounts
 
             let uiEvents = daySlices.values.flatMap { eventDaySlices in
                 eventDaySlices.compactMap {
-                    let account = calendarAccounts[Int($0.event.accountIdValue)]
+                    let account = accounts[Int($0.event.accountIdValue)]
                     return CalendarCoreUI.UIEvent(eventDaySlice: $0, userEmail: account?.user.email ?? "")
                 }
             }
 
+            guard !Task.isCancelled else { return }
             let newEventPages = Dictionary(grouping: uiEvents) { calendar.weekStart(for: $0.startDate) }
                 .mapValues { weekEvents in
                     WeekPage(events: Dictionary(grouping: weekEvents) { $0.startDate.startOfDay(calendar) })
                 }
-            viewModel.eventPages = newEventPages
+
+            guard !Task.isCancelled else { return }
+            await MainActor.run {
+                viewModel.eventPages = newEventPages
+            }
         }
     }
 }

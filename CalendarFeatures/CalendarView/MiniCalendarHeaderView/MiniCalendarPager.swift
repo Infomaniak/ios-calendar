@@ -44,7 +44,7 @@ struct MiniCalendarPager: View {
             case .month:
                 MonthHeaderView(referenceDate: date, selectedDate: $selectedDate)
             case .week:
-                WeekHeaderView(referenceDate: date, selectedDate: $selectedDate)
+                MiniCalendarWeekHeaderView(referenceDate: date, selectedDate: $selectedDate)
             }
         }
         .fixedSize(horizontal: false, vertical: true)
