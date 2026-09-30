@@ -144,6 +144,10 @@ public struct EventFormView: View {
                 }
             }
 
+            Section {
+                EditableAlarmsView(alarms: $viewModel.draft.alarms)
+            }
+
             if !viewModel.availableCalendars.isEmpty {
                 Section {
                     LabeledContent(CalendarResourcesStrings.calendarsMenuSectionTitle) {
@@ -259,6 +263,5 @@ public struct EventFormView: View {
             NavigationStack {
                 EventFormView(editionMode: .new(selectedDate: Date()))
             }
-            .interactiveDismissDisabled()
         }
 }
