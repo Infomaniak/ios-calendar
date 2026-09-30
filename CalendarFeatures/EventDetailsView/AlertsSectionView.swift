@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarCore
 import CalendarCoreUI
 import CalendarResources
 import DesignSystem
@@ -31,7 +32,7 @@ struct AlertsSectionView: View {
     var body: some View {
         ForEach(alarms.indices, id: \.self) { index in
             LabeledContent {
-                Text(alarms[index].offset.rawValue)
+                Text(alarms[index].label)
                     .foregroundStyle(theme.color.contentSecondary)
             } label: {
                 Label(alarms[index].action.label, image: alarms[index].action.icon)

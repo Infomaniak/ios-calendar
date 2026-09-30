@@ -7,6 +7,30 @@
 /* loco:6a7dc536ea258dafd7031a62 */
 "addExternalCalendarTitle" = "Lägg till en extern kalender";
 
+"alarmOffsetAtTimeOfEvent" = "Vid händelsens tidpunkt";
+
+"alarmOffsetCustomAfter" = "%@ efter";
+
+"alarmOffsetCustomBefore" = "%@ före";
+
+"alarmOffsetFifteenMinutesBefore" = "15 minuter före";
+
+"alarmOffsetFiveMinutesAfter" = "5 minuter efter";
+
+"alarmOffsetFiveMinutesBefore" = "5 minuter före";
+
+"alarmOffsetNone" = "Ingen";
+
+"alarmOffsetOneDayBefore" = "1 dag före";
+
+"alarmOffsetOneHourAfter" = "1 timme efter";
+
+"alarmOffsetOneHourBefore" = "1 timme före";
+
+"alarmOffsetTenMinutesBefore" = "10 minuter före";
+
+"alarmOffsetThirtyMinutesBefore" = "30 minuter före";
+
 /* loco:6a3d35f26bb2f27bf40b0052 */
 "allDayLabel" = "Hela dagen";
 
@@ -22,6 +46,10 @@
 
 /* loco:6a748d3bf80dbe43e8081862 */
 "buttonAddAccount" = "Lägg till ett konto";
+
+"buttonAddAlert" = "Lägg till en påminnelse";
+
+"buttonAddOtherReminder" = "Lägg till en annan påminnelse";
 
 /* loco:6aacf103044c45865c018ea2
  * Use a concise imperative action. */
@@ -83,6 +111,8 @@
 "createEventTitle" = "Skapa evenemang";
 
 /* loco:6a203e6bc6a8e2e3c9024e12 */
+"customAlarmLabel" = "Anpassad";
+
 "dayTitle" = "Dag";
 
 /* loco:6ab387c299a39db974067272
@@ -184,6 +214,14 @@
 /* loco:6a858ecb52e69982a407cb02 */
 "openTitle" = "Öppna";
 
+"otherReminderAlarmKindLabel" = "Påminnelsetyp";
+
+"otherReminderNumberLabel" = "Antal";
+
+"otherReminderPeriodLabel" = "Period";
+
+"reminderTitle" = "Påminnelse";
+
 /* loco:6a858ffd1be4d033d804961f */
 "participateKMeetTitle" = "Delta i kMeet";
 
@@ -201,6 +239,8 @@
 
 /* loco:6a7c237bd92250395c0ccfd2 */
 "roomFloorLabel" = "%@ våningen";
+
+"sectionAlertsHeader" = "Påminnelser";
 
 /* loco:6a6315c87ee8c4a584018c52 */
 "sectionCalendarHeader" = "Kalender";

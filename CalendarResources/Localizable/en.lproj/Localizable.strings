@@ -7,6 +7,30 @@
 /* loco:6a7dc536ea258dafd7031a62 */
 "addExternalCalendarTitle" = "Add an external calendar";
 
+"alarmOffsetAtTimeOfEvent" = "At the time of the event";
+
+"alarmOffsetCustomAfter" = "%@ after";
+
+"alarmOffsetCustomBefore" = "%@ before";
+
+"alarmOffsetFifteenMinutesBefore" = "15 minutes before";
+
+"alarmOffsetFiveMinutesAfter" = "5 minutes after";
+
+"alarmOffsetFiveMinutesBefore" = "5 minutes before";
+
+"alarmOffsetNone" = "None";
+
+"alarmOffsetOneDayBefore" = "1 day before";
+
+"alarmOffsetOneHourAfter" = "1 hour after";
+
+"alarmOffsetOneHourBefore" = "1 hour before";
+
+"alarmOffsetTenMinutesBefore" = "10 minutes before";
+
+"alarmOffsetThirtyMinutesBefore" = "30 minutes before";
+
 /* loco:6a3d35f26bb2f27bf40b0052 */
 "allDayLabel" = "All Day";
 
@@ -22,6 +46,10 @@
 
 /* loco:6a748d3bf80dbe43e8081862 */
 "buttonAddAccount" = "Add an account";
+
+"buttonAddAlert" = "Add an alert";
+
+"buttonAddOtherReminder" = "Add other reminder";
 
 /* loco:6aacf103044c45865c018ea2
  * Use a concise imperative action. */
@@ -86,6 +114,8 @@
 "createEventTitle" = "Create Event";
 
 /* loco:6a203e6bc6a8e2e3c9024e12 */
+"customAlarmLabel" = "Custom";
+
 "dayTitle" = "Day";
 
 /* loco:6ab387c299a39db974067272
@@ -191,6 +221,14 @@
 /* loco:6a858ecb52e69982a407cb02 */
 "openTitle" = "Open";
 
+"otherReminderAlarmKindLabel" = "Alarm type";
+
+"otherReminderNumberLabel" = "Number";
+
+"otherReminderPeriodLabel" = "Period";
+
+"reminderTitle" = "Reminder";
+
 /* loco:6a858ffd1be4d033d804961f */
 "participateKMeetTitle" = "Join kMeet";
 
@@ -208,6 +246,8 @@
 
 /* loco:6a7c237bd92250395c0ccfd2 */
 "roomFloorLabel" = "%@ floor";
+
+"sectionAlertsHeader" = "Alerts";
 
 /* loco:6a6315c87ee8c4a584018c52 */
 "sectionCalendarHeader" = "Calendar";

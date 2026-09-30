@@ -223,6 +223,31 @@ struct EventFormViewModelTests {
         #expect(viewModel.draft == originalDraft)
     }
 
+    @Test
+    func editingAlarmsMarksFormChanged() throws {
+        let viewModel = try makeViewModel()
+
+        viewModel.draft.alarms.append(UIEventAlarm(offset: .oneHourBefore))
+
+        #expect(viewModel.isEdited)
+    }
+
+    @Test
+    func prefilledAlarmsDoNotMarkFormChanged() throws {
+        let original = try EventDraft(
+            calendarId: "0",
+            startDate: date("2026-09-22T10:10:00Z"),
+            startTimeZone: timeZone("Europe/Zurich"),
+            endDate: date("2026-09-22T11:10:00Z"),
+            endTimeZone: timeZone("Europe/Zurich")
+        )
+        let draft = try EventDraft.fromEvent(.alarmsPreview, editData: original.toEventEditData())
+        let viewModel = EventFormViewModel(editionMode: .editDraft(draft: draft, editingEvent: .alarmsPreview))
+
+        #expect(viewModel.draft.alarms.count == 2)
+        #expect(viewModel.isEdited == false)
+    }
+
     private func makeViewModel(
         start: String = "2026-09-22T10:10:00Z",
         end: String = "2026-09-22T11:10:00Z",

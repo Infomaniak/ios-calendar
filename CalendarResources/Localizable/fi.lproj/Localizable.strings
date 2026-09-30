@@ -7,6 +7,30 @@
 /* loco:6a7dc536ea258dafd7031a62 */
 "addExternalCalendarTitle" = "Lisää ulkoinen kalenteri";
 
+"alarmOffsetAtTimeOfEvent" = "Tapahtuman ajankohtana";
+
+"alarmOffsetCustomAfter" = "%@ jälkeen";
+
+"alarmOffsetCustomBefore" = "%@ ennen";
+
+"alarmOffsetFifteenMinutesBefore" = "15 minuuttia ennen";
+
+"alarmOffsetFiveMinutesAfter" = "5 minuutin jälkeen";
+
+"alarmOffsetFiveMinutesBefore" = "5 minuuttia ennen";
+
+"alarmOffsetNone" = "Ei mitään";
+
+"alarmOffsetOneDayBefore" = "1 päivä ennen";
+
+"alarmOffsetOneHourAfter" = "1 tunnin jälkeen";
+
+"alarmOffsetOneHourBefore" = "1 tunti ennen";
+
+"alarmOffsetTenMinutesBefore" = "10 minuuttia ennen";
+
+"alarmOffsetThirtyMinutesBefore" = "30 minuuttia ennen";
+
 /* loco:6a3d35f26bb2f27bf40b0052 */
 "allDayLabel" = "Koko päivän";
 
@@ -22,6 +46,10 @@
 
 /* loco:6a748d3bf80dbe43e8081862 */
 "buttonAddAccount" = "Lisää tili";
+
+"buttonAddAlert" = "Lisää muistutus";
+
+"buttonAddOtherReminder" = "Lisää muu muistutus";
 
 /* loco:6aacf103044c45865c018ea2
  * Use a concise imperative action. */
@@ -83,6 +111,8 @@
 "createEventTitle" = "Luo tapahtuma";
 
 /* loco:6a203e6bc6a8e2e3c9024e12 */
+"customAlarmLabel" = "Mukautettu";
+
 "dayTitle" = "Päivä";
 
 /* loco:6ab387c299a39db974067272
@@ -184,6 +214,14 @@
 /* loco:6a858ecb52e69982a407cb02 */
 "openTitle" = "Avaa";
 
+"otherReminderAlarmKindLabel" = "Muistutuksen tyyppi";
+
+"otherReminderNumberLabel" = "Määrä";
+
+"otherReminderPeriodLabel" = "Jakso";
+
+"reminderTitle" = "Muistutus";
+
 /* loco:6a858ffd1be4d033d804961f */
 "participateKMeetTitle" = "Osallistu kMeet-tapahtumaan";
 
@@ -201,6 +239,8 @@
 
 /* loco:6a7c237bd92250395c0ccfd2 */
 "roomFloorLabel" = "%@ kerros";
+
+"sectionAlertsHeader" = "Muistutukset";
 
 /* loco:6a6315c87ee8c4a584018c52 */
 "sectionCalendarHeader" = "Kalenteri";

@@ -33,8 +33,13 @@ public struct EventDraft: Equatable, Sendable {
 
     public var attendees: [Attendee]
 
+    public var alarms: [UIEventAlarm]
+
     public var isOccupied: Bool
     public var isPrivate: Bool
+
+    /// Alarms as they were when the draft was created, used to detect alarm edits.
+    private let initialAlarms: [UIEventAlarm]
 
     public init(
         calendarId: String? = nil,
@@ -46,6 +51,7 @@ public struct EventDraft: Equatable, Sendable {
         endDate: Date,
         endTimeZone: TimeZone? = .current,
         attendees: [Attendee] = [],
+        alarms: [UIEventAlarm] = [],
         isOccupied: Bool = true,
         isPrivate: Bool = false
     ) {
@@ -58,6 +64,8 @@ public struct EventDraft: Equatable, Sendable {
         self.endDate = endDate
         self.endTimeZone = endTimeZone
         self.attendees = attendees
+        self.alarms = alarms
+        initialAlarms = alarms
         self.isOccupied = isOccupied
         self.isPrivate = isPrivate
     }
@@ -69,7 +77,11 @@ public extension EventDraft {
 
         return EventDraft(
             startDate: startDate,
-            endDate: startDate.addingTimeInterval(UserDefaults.shared.defaultEventDuration.timeInterval)
+            endDate: startDate.addingTimeInterval(UserDefaults.shared.defaultEventDuration.timeInterval),
+            alarms: [
+                UIEventAlarm(action: .email, trigger: nil, attachments: [], attendees: [], description: nil, summary: nil),
+                UIEventAlarm(action: .display, trigger: nil, attachments: [], attendees: [], description: nil, summary: nil)
+            ]
         )
     }
 
@@ -88,8 +100,17 @@ public extension EventDraft {
             } ?? (isOccupied ? .blocks : .doesNotBlock),
             calendarId: calendarId,
             eventColor: originalData?.eventColor,
-            alarms: originalData?.alarms ?? AlarmListEditReplace(alarms: [])
+            alarms: sdkAlarms(preserving: originalData?.alarms)
         )
+    }
+
+    /// Untouched alarms are sent as-is so the SDK can preserve them (their server uid cannot be rebuilt),
+    /// while edited alarms are replaced by the whole list.
+    private func sdkAlarms(preserving originalAlarms: AlarmListEdit?) -> AlarmListEdit {
+        guard alarms != initialAlarms else {
+            return originalAlarms ?? AlarmListEditReplace(alarms: [])
+        }
+        return AlarmListEditReplace(alarms: alarms.compactMap { $0.toSDK() })
     }
 
     private func sdkTiming(recurrenceRule: RecurrenceRule?) throws -> EventTiming {

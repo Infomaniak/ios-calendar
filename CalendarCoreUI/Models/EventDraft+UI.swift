@@ -46,6 +46,7 @@ public extension EventDraft {
                     responseNeeded: false
                 )
             },
+            alarms: event.alarms,
             isOccupied: editData.timeBlocking != .doesNotBlock,
             isPrivate: event.classification == .private
         )

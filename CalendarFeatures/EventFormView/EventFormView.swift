@@ -48,6 +48,7 @@ public struct EventFormView: View {
     @State private var expandedDatePickerId: EventFormViewModel.DatePickerId?
     @State private var timeZonePickerId: EventFormViewModel.DatePickerId?
     @State private var isNavigatingToAttendeesList = false
+    @State private var isShowingAddReminder = false
     @State private var isShowingRecurrenceScope = false
     @State private var isSaving = false
     @State private var saveErrorMessage: CalendarError?
@@ -135,11 +136,40 @@ public struct EventFormView: View {
                 }
             }
 
+            Section {
+                ForEach(viewModel.draft.alarms.indices, id: \.self) { index in
+                    EventAlarmRow(
+                        alarm: viewModel.draft.alarms[index],
+                        onSelectOffset: { preset in
+                            viewModel.draft.alarms[index] = viewModel.draft.alarms[index].with(offset: preset)
+                        },
+                        onSelectCustomReminder: { alarm in
+                            viewModel.draft.alarms[index] = alarm
+                        }
+                    )
+                }
+
+                Button {
+                    isShowingAddReminder = true
+                } label: {
+                    Text(CalendarResourcesStrings.buttonAddOtherReminder)
+                        .foregroundStyle(theme.color.contentPrimary)
+                }
+            }
+
             if !viewModel.availableCalendars.isEmpty {
                 Section {
                     LabeledContent(CalendarResourcesStrings.calendarsMenuSectionTitle) {
                         CalendarPicker(calendarId: $viewModel.draft.calendarId, calendars: viewModel.availableCalendars)
                     }
+                }
+            }
+        }
+        .sheet(isPresented: $isShowingAddReminder) {
+            NavigationStack {
+                AddReminderView(alarm: UIEventAlarm(offset: .fiveMinutesBefore)) { alarm in
+                    viewModel.draft.alarms.append(alarm)
+                    isShowingAddReminder = false
                 }
             }
         }
@@ -250,6 +280,5 @@ public struct EventFormView: View {
             NavigationStack {
                 EventFormView(editionMode: .new)
             }
-            .interactiveDismissDisabled()
         }
 }

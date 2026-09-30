@@ -7,6 +7,30 @@
 /* loco:6a7dc536ea258dafd7031a62 */
 "addExternalCalendarTitle" = "Ajouter un calendrier externe";
 
+"alarmOffsetAtTimeOfEvent" = "À l’heure de l’événement";
+
+"alarmOffsetCustomAfter" = "%@ après";
+
+"alarmOffsetCustomBefore" = "%@ avant";
+
+"alarmOffsetFifteenMinutesBefore" = "15 minutes avant";
+
+"alarmOffsetFiveMinutesAfter" = "5 minutes après";
+
+"alarmOffsetFiveMinutesBefore" = "5 minutes avant";
+
+"alarmOffsetNone" = "Aucun";
+
+"alarmOffsetOneDayBefore" = "1 jour avant";
+
+"alarmOffsetOneHourAfter" = "1 heure après";
+
+"alarmOffsetOneHourBefore" = "1 heure avant";
+
+"alarmOffsetTenMinutesBefore" = "10 minutes avant";
+
+"alarmOffsetThirtyMinutesBefore" = "30 minutes avant";
+
 /* loco:6a3d35f26bb2f27bf40b0052 */
 "allDayLabel" = "Journée";
 
@@ -22,6 +46,10 @@
 
 /* loco:6a748d3bf80dbe43e8081862 */
 "buttonAddAccount" = "Ajouter un compte";
+
+"buttonAddAlert" = "Ajouter un rappel";
+
+"buttonAddOtherReminder" = "Ajouter un autre rappel";
 
 /* loco:6aacf103044c45865c018ea2
  * Use a concise imperative action. */
@@ -84,6 +112,8 @@
 "createEventTitle" = "Créer un évènement";
 
 /* loco:6a203e6bc6a8e2e3c9024e12 */
+"customAlarmLabel" = "Personnalisé";
+
 "dayTitle" = "Jour";
 
 /* loco:6ab387c299a39db974067272
@@ -186,6 +216,14 @@
 /* loco:6a858ecb52e69982a407cb02 */
 "openTitle" = "Ouvrir";
 
+"otherReminderAlarmKindLabel" = "Type de rappel";
+
+"otherReminderNumberLabel" = "Nombre";
+
+"otherReminderPeriodLabel" = "Période";
+
+"reminderTitle" = "Rappel";
+
 /* loco:6a858ffd1be4d033d804961f */
 "participateKMeetTitle" = "Participer au kMeet";
 
@@ -203,6 +241,8 @@
 
 /* loco:6a7c237bd92250395c0ccfd2 */
 "roomFloorLabel" = "%@ étage";
+
+"sectionAlertsHeader" = "Rappels";
 
 /* loco:6a6315c87ee8c4a584018c52 */
 "sectionCalendarHeader" = "Calendrier";
