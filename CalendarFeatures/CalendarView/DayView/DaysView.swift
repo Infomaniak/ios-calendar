@@ -78,13 +78,8 @@ struct DaysView: View {
                 return .selection
             }
             .task(id: mainViewState.selectedDate) {
-                await observeCalendars(mainViewState.selectedDate)
+                await observeEventsAt(date: mainViewState.selectedDate, in: calendar)
             }
-            return .selection
-        }
-        .task(id: mainViewState.selectedDate) {
-            await observeEventsAt(date: mainViewState.selectedDate, in: calendar)
-        }
     }
 
     @concurrent

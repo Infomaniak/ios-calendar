@@ -27,7 +27,7 @@ struct CalendarPeriodPager<Content: View>: View {
 
     let component: Calendar.Component
     let periodOffsets: Range<Int>
-    var viewCount = 3
+    var viewCount = 1
 
     @Binding var date: Date
 
