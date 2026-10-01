@@ -1,5 +1,5 @@
 {
-  "originHash" : "87338bbb561a248b8a40ce327928d938052e93698e440714f7494a7c6f0691ba",
+  "originHash" : "d68adf373837c989484189089e251afca370c895b7a73db8e3bb451779621d5b",
   "pins" : [
     {
       "identity" : "alamofire",
@@ -8,6 +8,15 @@
       "state" : {
         "revision" : "bda9ed57d72988a3a2ada33d824583541f86eac6",
         "version" : "5.12.2"
+      }
+    },
+    {
+      "identity" : "dotlottie-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/LottieFiles/dotlottie-ios",
+      "state" : {
+        "revision" : "ddc69d0ae3a90894b15b5a925c73232ff1d94307",
+        "version" : "0.16.9"
       }
     },
     {
@@ -96,8 +105,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-login",
       "state" : {
-        "revision" : "b53d08cd0830cfed227ce1b79dbaccd29827b81d",
-        "version" : "7.8.1"
+        "revision" : "8296f4575d7568bb3c30c8acb4672b45a16bf481",
+        "version" : "7.9.0"
       }
     },
     {
@@ -105,8 +114,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-onboarding",
       "state" : {
-        "revision" : "ca793dc5613ae4fd67b209e3f5f0222e00a6da4d",
-        "version" : "1.4.4"
+        "branch" : "fix/onboarding-display-on-iphone-duo",
+        "revision" : "e7ddca4f3bba3e879f95a547cb655960aeb7d02a"
       }
     },
     {
@@ -177,8 +186,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-swift",
       "state" : {
-        "revision" : "ca03df491ec5e4bb8af0bca1e9957d08c10ec2da",
-        "version" : "20.0.5"
+        "revision" : "a40ced79265b644a896e393b0f3a37e7916e7de3",
+        "version" : "20.0.6"
       }
     },
     {
@@ -186,8 +195,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getsentry/sentry-cocoa",
       "state" : {
-        "revision" : "d9df1c4e8d8466c7f8b3c56150378927dadf1b8e",
-        "version" : "9.29.0"
+        "revision" : "b539e098293067be54fa5cf1f11d9e16cdbba94a",
+        "version" : "9.30.0"
       }
     },
     {
@@ -213,8 +222,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-async-algorithms",
       "state" : {
-        "revision" : "789dcf1f3d3f00251482f40a432ab7144c181987",
-        "version" : "1.1.6"
+        "revision" : "13713a4ffdee8abd929f92568ee9462a46ae26e0",
+        "version" : "1.1.7"
       }
     },
     {
