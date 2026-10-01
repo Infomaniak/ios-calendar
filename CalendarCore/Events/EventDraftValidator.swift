@@ -44,6 +44,10 @@ public struct EventDraftValidator: Sendable {
     public struct ValidationErrors: LocalizedError, Equatable {
         public let errors: Set<ValidationError>
 
+        public init(errors: Set<ValidationError>) {
+            self.errors = errors
+        }
+
         public var errorDescription: String? {
             ValidationError.allCases
                 .filter(errors.contains)

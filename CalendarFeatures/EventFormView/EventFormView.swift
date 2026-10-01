@@ -21,6 +21,7 @@ import CalendarCoreUI
 import CalendarResources
 import DesignSystem
 import ESDSFoundation
+import FoundationModels
 import MultiplatformCalendar
 import OSLog
 import SwiftUI
@@ -51,6 +52,8 @@ public struct EventFormView: View {
     @State private var isShowingRecurrenceScope = false
     @State private var isSaving = false
     @State private var saveErrorMessage: CalendarError?
+
+    @State private var isShowingAIGenerationView = false
 
     @State private var hasFocusedKeyboardOnce = false
     @FocusState private var isTitleFocused: Bool
@@ -197,9 +200,29 @@ public struct EventFormView: View {
                         }
                     }
             }
+
+            if #available(anyAppleOS 26.0, *) {
+                if SystemLanguageModel.default.isAvailable {
+                    ToolbarItem(placement: .primaryAction) {
+                        Button("Generate with AI", systemImage: "sparkle") {
+                            isShowingAIGenerationView = true
+                        }
+                    }
+                }
+            }
         }
         .alert(error: $saveErrorMessage) {}
         .interactiveDismissDisabled(viewModel.isEdited)
+        .overlay {
+            if #available(anyAppleOS 26.0, *) {
+                if isShowingAIGenerationView {
+                    AIEventGenerationView(draft: viewModel.draft) { draft in
+                        viewModel.draft = draft
+                        isShowingAIGenerationView = false
+                    }
+                }
+            }
+        }
     }
 
     private func didTapSave() {
