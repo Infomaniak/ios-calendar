@@ -63,15 +63,31 @@ struct MiniCalendarView: View {
 
     @Binding var displayMode: DisplayMode
     @Binding var selectedDate: Date
-    @Binding var displayedPage: ReferenceDatePage
 
     @State private var viewModel = MiniCalendarViewModel()
+
+    private var pageBinding: Binding<ReferenceDatePage> {
+        Binding {
+            ReferenceDatePage(
+                referenceDate: displayMode.referenceDate(for: selectedDate, calendar: calendar),
+                referenceDateInterval: displayMode.referenceDateInterval
+            )
+        } set: { page in
+            let currentReferenceDate = displayMode.referenceDate(for: selectedDate, calendar: calendar)
+            let direction = page.referenceDate > currentReferenceDate ? 1 : -1
+            guard let date = calendar.date(byAdding: displayMode.referenceDateInterval, value: direction, to: selectedDate) else {
+                return
+            }
+
+            selectedDate = date
+        }
+    }
 
     var body: some View {
         VStack(spacing: 0) {
             DayOfWeekView()
             PagedInfiniteScrollView(
-                changeIndex: $displayedPage,
+                changeIndex: pageBinding,
                 content: { page in
                     switch displayMode {
                     case .month:
@@ -90,20 +106,12 @@ struct MiniCalendarView: View {
             .id(displayMode)
 
             if displayMode == .month {
-                MonthPickerView(selectedDate: $selectedDate, displayedPage: $displayedPage)
+                MonthPickerView(selectedDate: $selectedDate)
             }
         }
         .environment(viewModel)
-        .task(id: displayedPage.referenceDate) {
-            await updateCalendarDotsFor(date: displayedPage.referenceDate, calendar: calendar)
-        }
-        .onChange(of: selectedDate) { _, newValue in
-            withAnimation {
-                displayedPage = ReferenceDatePage(
-                    referenceDate: displayMode.referenceDate(for: newValue, calendar: calendar),
-                    referenceDateInterval: displayMode.referenceDateInterval
-                )
-            }
+        .task(id: pageBinding.wrappedValue.referenceDate) {
+            await updateCalendarDotsFor(date: pageBinding.wrappedValue.referenceDate, calendar: calendar)
         }
     }
 
@@ -173,9 +181,5 @@ struct MiniCalendarView: View {
 #Preview {
     @Previewable @State var displayMode: MiniCalendarView.DisplayMode = .week
     @Previewable @State var selectedDate = Date()
-    @Previewable @State var displayedPage = ReferenceDatePage(
-        referenceDate: Date(),
-        referenceDateInterval: MiniCalendarView.DisplayMode.week.referenceDateInterval
-    )
-    MiniCalendarView(displayMode: $displayMode, selectedDate: $selectedDate, displayedPage: $displayedPage)
+    MiniCalendarView(displayMode: $displayMode, selectedDate: $selectedDate)
 }
