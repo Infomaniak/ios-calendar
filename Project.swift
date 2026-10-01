@@ -256,6 +256,7 @@ let project = Project(
                 .target(name: Constants.projectName),
                 .target(name: "\(Constants.projectName)Core"),
                 .target(name: "\(Constants.projectName)CoreUI"),
+                calendarView.asDependency,
                 eventFormView.asDependency,
                 .external(name: "MultiplatformCalendar")
             ]
