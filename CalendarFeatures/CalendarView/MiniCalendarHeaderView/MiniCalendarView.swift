@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import AsyncAlgorithms
 import CalendarCore
 import CalendarCoreUI
 import DesignSystem
@@ -144,7 +145,9 @@ struct MiniCalendarView: View {
         for await colorsByDay in calendarSDK.calendarManager.observeMonthlyDotColors(
             startMonth: previousYearMonth,
             endMonth: nextYearMonth
-        ) {
+        )._throttle(for: .milliseconds(500)) {
+            guard !Task.isCancelled else { return }
+
             let datesWithEventDots: [Date: [Color]] = Dictionary(
                 uniqueKeysWithValues: colorsByDay.compactMap { dayDate, visibleColors in
                     guard let date = calendar.date(from: .init(
@@ -159,6 +162,7 @@ struct MiniCalendarView: View {
                 }
             )
 
+            guard !Task.isCancelled else { return }
             await MainActor.run {
                 viewModel.datesWithEventDots = datesWithEventDots
             }

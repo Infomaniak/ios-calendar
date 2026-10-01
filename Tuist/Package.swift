@@ -6,9 +6,11 @@ import ProjectDescription
 
 let packageSettings = PackageSettings(
     productTypes: [
+        "AsyncAlgorithms": .framework,
         "DesignSystem": .framework,
         "DeviceAssociation": .framework,
         "ESDSCalendar": .framework,
+        "Eventually": .framework,
         "InfomaniakCoreCommonUI": .framework,
         "InfomaniakCoreSwiftUI": .framework,
         "InfomaniakCoreUIKit": .framework,
@@ -20,8 +22,7 @@ let packageSettings = PackageSettings(
         "InterAppLogin": .framework,
         "NukeUI": .framework,
         "Nuke": .framework,
-        "_LottieStub": .framework,
-        "Eventually": .framework
+        "_LottieStub": .framework
     ]
 )
 #endif
@@ -29,6 +30,8 @@ let packageSettings = PackageSettings(
 let package = Package(
     name: "Calendar",
     dependencies: [
+        .package(url: "https://github.com/apple/swift-async-algorithms", .upToNextMajor(from: "1.1.0")),
+        .package(url: "https://github.com/Infomaniak/Eventually.git", branch: "main"),
         .package(url: "https://github.com/Infomaniak/InfiniteScrollViews", branch: "feat/custom-background-color"),
         .package(url: "https://github.com/Infomaniak/ios-core", .upToNextMajor(from: "19.0.0")),
         .package(url: "https://github.com/Infomaniak/ios-core-uikit", .upToNextMajor(from: "2.0.0")),
@@ -40,7 +43,6 @@ let package = Package(
         .package(url: "https://github.com/Infomaniak/ios-features", .upToNextMajor(from: "10.2.0")),
         .package(url: "https://github.com/Infomaniak/ios-login", .upToNextMajor(from: "7.8.0")),
         .package(url: "https://github.com/Infomaniak/ios-onboarding", .upToNextMajor(from: "1.1.2")),
-        .package(url: "https://github.com/Infomaniak/multiplatform-calendar", .upToNextMajor(from: "0.11.0")),
-        .package(url: "https://github.com/Infomaniak/Eventually.git", branch: "main")
+        .package(url: "https://github.com/Infomaniak/multiplatform-calendar", .upToNextMajor(from: "0.11.0"))
     ]
 )

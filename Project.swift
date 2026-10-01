@@ -24,14 +24,14 @@ let onboardingView = Feature(
     name: "OnboardingView",
     additionalDependencies: [
         TargetDependency.target(name: "\(Constants.projectName)Resources"),
-        TargetDependency.external(name: "InfomaniakCore"),
         TargetDependency.external(name: "InfomaniakCoreCommonUI"),
         TargetDependency.external(name: "InfomaniakCoreSwiftUI"),
+        TargetDependency.external(name: "InfomaniakCore"),
+        TargetDependency.external(name: "InfomaniakCreateAccount"),
         TargetDependency.external(name: "InfomaniakDeviceCheck"),
         TargetDependency.external(name: "InfomaniakLogin"),
         TargetDependency.external(name: "InfomaniakOnboarding"),
-        TargetDependency.external(name: "InterAppLogin"),
-        TargetDependency.external(name: "InfomaniakCreateAccount")
+        TargetDependency.external(name: "InterAppLogin")
     ]
 )
 
@@ -74,11 +74,12 @@ let calendarView = Feature(
         eventDetailsView,
         eventFormView,
         TargetDependency.target(name: "\(Constants.projectName)Resources"),
+        TargetDependency.external(name: "AsyncAlgorithms"),
         TargetDependency.external(name: "DesignSystem"),
         TargetDependency.external(name: "ESDSCalendar"),
+        TargetDependency.external(name: "Eventually"),
         TargetDependency.external(name: "InfiniteScrollViews"),
-        TargetDependency.external(name: "InfomaniakDI"),
-        TargetDependency.external(name: "Eventually")
+        TargetDependency.external(name: "InfomaniakDI")
     ]
 )
 
@@ -89,9 +90,9 @@ let settingsView = Feature(
         TargetDependency.target(name: "\(Constants.projectName)Resources"),
         TargetDependency.external(name: "DesignSystem"),
         TargetDependency.external(name: "ESDSFoundation"),
+        TargetDependency.external(name: "InfomaniakCore"),
         TargetDependency.external(name: "InfomaniakCoreCommonUI"),
         TargetDependency.external(name: "InfomaniakCoreUIResources"),
-        TargetDependency.external(name: "InfomaniakCore"),
         TargetDependency.external(name: "InfomaniakDI"),
         TargetDependency.external(name: "InfomaniakLogin")
     ]
@@ -103,8 +104,8 @@ let calendarListView = Feature(
         settingsView,
         TargetDependency.target(name: "CalendarResources"),
         TargetDependency.external(name: "ESDSFoundation"),
-        TargetDependency.external(name: "InfomaniakDI"),
-        TargetDependency.external(name: "InfomaniakCoreSwiftUI")
+        TargetDependency.external(name: "InfomaniakCoreSwiftUI"),
+        TargetDependency.external(name: "InfomaniakDI")
     ]
 )
 
@@ -175,13 +176,13 @@ let project = Project(
                 .target(name: "\(Constants.projectName)CoreUI"),
                 .target(name: "\(Constants.projectName)Resources"),
                 rootView.asDependency,
+                .external(name: "ESDSCalendar"),
                 .external(name: "InfomaniakCore"),
                 .external(name: "InfomaniakCoreSwiftUI"),
+                .external(name: "InfomaniakCreateAccount"),
                 .external(name: "InfomaniakDI"),
                 .external(name: "InfomaniakLogin"),
-                .external(name: "InterAppLogin"),
-                .external(name: "InfomaniakCreateAccount"),
-                .external(name: "ESDSCalendar")
+                .external(name: "InterAppLogin")
             ],
             settings: .settings(base: Constants.baseSettings),
             environmentVariables: [
@@ -199,14 +200,15 @@ let project = Project(
                 ],
                 dependencies: [
                     .target(name: "\(Constants.projectName)Resources"),
-                    .external(name: "MultiplatformCalendar"),
+                    .external(name: "AsyncAlgorithms"),
                     .external(name: "DeviceAssociation"),
                     .external(name: "InfomaniakCore"),
                     .external(name: "InfomaniakCoreCommonUI"),
                     .external(name: "InfomaniakDI"),
                     .external(name: "InfomaniakDeviceCheck"),
                     .external(name: "InfomaniakLogin"),
-                    .external(name: "InterAppLogin")
+                    .external(name: "InterAppLogin"),
+                    .external(name: "MultiplatformCalendar")
                 ],
                 settings: .settings(base: Constants.baseSettings)),
         .target(name: "\(Constants.projectName)CoreUI",
