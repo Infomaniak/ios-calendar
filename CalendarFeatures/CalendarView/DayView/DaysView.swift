@@ -44,9 +44,10 @@ struct DayPager: View {
                 date: $selectedDate
             ) { date in
                 DayView(date: date)
+                    .safeAreaPadding(.top, proxy.safeAreaInsets.top)
                     .safeAreaPadding(.bottom, proxy.safeAreaInsets.bottom)
             }
-            .ignoresSafeArea(.all, edges: .bottom)
+            .ignoresSafeArea(.all, edges: [.top, .bottom])
         }
     }
 }

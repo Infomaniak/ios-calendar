@@ -43,7 +43,7 @@ struct MiniCalendarHeaderViewModifier: ViewModifier {
         Group {
             if #available(iOS 26.0, *) {
                 content
-                    .safeAreaInset(edge: .top, spacing: 0) {
+                    .safeAreaBar(edge: .top, spacing: 0) {
                         MiniCalendarView(
                             displayMode: $displayMode,
                             selectedDate: $selectedDate,
