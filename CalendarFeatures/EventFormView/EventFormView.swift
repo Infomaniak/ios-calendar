@@ -204,8 +204,10 @@ public struct EventFormView: View {
             if #available(anyAppleOS 26.0, *) {
                 if SystemLanguageModel.default.isAvailable {
                     ToolbarItem(placement: .primaryAction) {
-                        Button("Generate with AI", systemImage: "sparkle") {
+                        Button {
                             isShowingAIGenerationView = true
+                        } label: {
+                            Label("Generate with AI", image: CalendarResourcesAsset.Images.euria)
                         }
                     }
                 }
