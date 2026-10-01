@@ -205,7 +205,8 @@ public struct EventFormView: View {
                 if SystemLanguageModel.default.isAvailable {
                     ToolbarItem(placement: .primaryAction) {
                         Button {
-                            isShowingAIGenerationView = true
+                            isTitleFocused = false
+                            setAIGenerationPresented(true)
                         } label: {
                             Label("Generate with AI", image: CalendarResourcesAsset.Images.euria)
                         }
@@ -215,15 +216,28 @@ public struct EventFormView: View {
         }
         .alert(error: $saveErrorMessage) {}
         .interactiveDismissDisabled(viewModel.isEdited)
-        .overlay {
+        .sensoryFeedback(.impact(weight: .light, intensity: 0.7), trigger: isShowingAIGenerationView) { _, isPresented in
+            isPresented
+        }
+        .fullScreenCover(isPresented: $isShowingAIGenerationView) {
             if #available(anyAppleOS 26.0, *) {
-                if isShowingAIGenerationView {
-                    AIEventGenerationView(draft: viewModel.draft) { draft in
-                        viewModel.draft = draft
-                        isShowingAIGenerationView = false
-                    }
+                AIEventGenerationView(draft: viewModel.draft) { draft in
+                    viewModel.draft = draft
+                    setAIGenerationPresented(false)
+                } onDismiss: {
+                    setAIGenerationPresented(false)
                 }
+                .presentationBackground(.clear)
+                .interactiveDismissDisabled()
             }
+        }
+    }
+
+    private func setAIGenerationPresented(_ isPresented: Bool) {
+        var transaction = Transaction()
+        transaction.disablesAnimations = true
+        withTransaction(transaction) {
+            isShowingAIGenerationView = isPresented
         }
     }
 
