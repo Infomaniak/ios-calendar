@@ -58,6 +58,7 @@ final class MonthPickerScrollingTests: XCTestCase {
         try await Task.sleep(for: .seconds(1))
         let scrollView = try XCTUnwrap(findScrollView(in: controller.view))
         let initialOffset = scrollView.contentOffset.x
+        let initialLeadingOffset = leadingOffset(of: scrollView, layoutDirection: layoutDirection)
         XCTAssertGreaterThan(initialOffset, scrollView.bounds.width)
 
         for direction in [-1.0, 1.0] {
@@ -84,8 +85,13 @@ final class MonthPickerScrollingTests: XCTestCase {
         try await Task.sleep(for: .seconds(1))
         let resetScrollView = try XCTUnwrap(findScrollView(in: controller.view))
         XCTAssertFalse(resetScrollView === scrollView)
-        let centeredOffset = (resetScrollView.contentSize.width - resetScrollView.bounds.width) / 2
-        XCTAssertEqual(resetScrollView.contentOffset.x, centeredOffset, accuracy: resetScrollView.contentSize.width * 0.1)
+        // Both origins are September, so compare their positions from the logical leading edge.
+        // The estimated midpoint of variable-width lazy content is not the origin month's position.
+        XCTAssertEqual(
+            leadingOffset(of: resetScrollView, layoutDirection: layoutDirection),
+            initialLeadingOffset,
+            accuracy: resetScrollView.bounds.width
+        )
     }
 
     @MainActor
@@ -111,5 +117,12 @@ final class MonthPickerScrollingTests: XCTestCase {
     private func findScrollView(in view: UIView) -> UIScrollView? {
         if let scrollView = view as? UIScrollView { return scrollView }
         return view.subviews.lazy.compactMap { self.findScrollView(in: $0) }.first
+    }
+
+    private func leadingOffset(of scrollView: UIScrollView, layoutDirection: LayoutDirection) -> CGFloat {
+        if layoutDirection == .rightToLeft {
+            return scrollView.contentSize.width - scrollView.bounds.maxX
+        }
+        return scrollView.contentOffset.x
     }
 }
