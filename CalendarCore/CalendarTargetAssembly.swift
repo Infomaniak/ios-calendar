@@ -65,6 +65,9 @@ open class CalendarTargetAssembly: TargetAssembly {
             Factory(type: AccountManager.self) { _, _ in
                 AccountManager()
             },
+            Factory(type: CalendarSyncHelper.self) { _, _ in
+                CalendarSyncHelper()
+            },
             Factory(type: InfomaniakNetworkLoginable.self) { _, _ in
                 InfomaniakNetworkLogin(config: loginConfig)
             },

@@ -117,7 +117,8 @@ let mainView = Feature(
         calendarListView,
         settingsView,
         TargetDependency.target(name: "CalendarResources"),
-        TargetDependency.external(name: "InfomaniakDI")
+        TargetDependency.external(name: "InfomaniakDI"),
+        TargetDependency.external(name: "InfomaniakCore")
     ]
 )
 
