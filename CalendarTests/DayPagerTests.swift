@@ -130,7 +130,7 @@ final class DayPagerTests: XCTestCase {
         var body: some View {
             @Bindable var mainViewState = state.mainViewState
 
-            DayPager(selectedDate: $mainViewState.selectedDate, miniCalendarHeight: .constant(0))
+            DayPager(selectedDate: $mainViewState.selectedDate)
                 .frame(width: state.width, height: 600)
                 .environment(\.calendar, state.calendar)
                 .environment(mainViewState)

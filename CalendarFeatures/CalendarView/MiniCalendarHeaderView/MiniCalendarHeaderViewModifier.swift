@@ -26,16 +26,13 @@ struct MiniCalendarHeaderViewModifier: ViewModifier {
     @State private var displayedDate: Date
 
     @Binding var selectedDate: Date
-    @Binding var miniCalendarHeight: CGFloat
 
     init(
         selectedDate: Binding<Date>,
-        miniCalendarHeight: Binding<CGFloat>,
         initialDisplayMode: MiniCalendarView.DisplayMode = .week
     ) {
         _displayMode = State(initialValue: initialDisplayMode)
         _selectedDate = selectedDate
-        _miniCalendarHeight = miniCalendarHeight
         _displayedDate = State(initialValue: initialDisplayMode.referenceDate(
             for: selectedDate.wrappedValue,
             calendar: .current
@@ -52,11 +49,6 @@ struct MiniCalendarHeaderViewModifier: ViewModifier {
                             selectedDate: $selectedDate,
                             displayedDate: $displayedDate
                         )
-                        .onGeometryChange(for: CGFloat.self) { proxy in
-                            proxy.size.height
-                        } action: { newHeight in
-                            miniCalendarHeight = newHeight
-                        }
                     }
             } else {
                 content

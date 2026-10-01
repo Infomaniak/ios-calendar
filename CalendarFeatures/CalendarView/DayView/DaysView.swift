@@ -35,7 +35,6 @@ final class DaysViewModel {
 
 struct DayPager: View {
     @Binding var selectedDate: Date
-    @Binding var miniCalendarHeight: CGFloat
 
     var body: some View {
         GeometryReader { proxy in
@@ -44,14 +43,9 @@ struct DayPager: View {
                 periodOffsets: -36525 ..< 36526,
                 date: $selectedDate
             ) { date in
-                DayView(
-                    miniCalendarHeight: $miniCalendarHeight,
-                    date: date
-                )
-                .safeAreaPadding(.top, max(0, proxy.safeAreaInsets.top - miniCalendarHeight))
-                .safeAreaPadding(.bottom, proxy.safeAreaInsets.bottom)
+                DayView(date: date)
+                    .safeAreaPadding(.bottom, proxy.safeAreaInsets.bottom)
             }
-            .modifier(IgnoreTopSafeAreaModifier())
             .ignoresSafeArea(.all, edges: .bottom)
         }
     }
@@ -64,12 +58,10 @@ struct DaysView: View {
 
     @State private var viewModel = DaysViewModel()
 
-    @Binding var miniCalendarHeight: CGFloat
-
     var body: some View {
         @Bindable var mainViewState = mainViewState
 
-        DayPager(selectedDate: $mainViewState.selectedDate, miniCalendarHeight: $miniCalendarHeight)
+        DayPager(selectedDate: $mainViewState.selectedDate)
             .environment(viewModel)
             .sensoryFeedback(trigger: mainViewState.selectedDate) { oldValue, newValue in
                 guard !calendar.isDate(oldValue, inSameDayAs: newValue) else {
@@ -114,17 +106,6 @@ struct DaysView: View {
     }
 }
 
-private struct IgnoreTopSafeAreaModifier: ViewModifier {
-    func body(content: Content) -> some View {
-        if #available(iOS 26.0, *) {
-            content
-                .ignoresSafeArea(.all, edges: .top)
-        } else {
-            content
-        }
-    }
-}
-
 #Preview {
-    DaysView(miniCalendarHeight: .constant(0))
+    DaysView()
 }
