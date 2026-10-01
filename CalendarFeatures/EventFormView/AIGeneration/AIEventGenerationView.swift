@@ -38,12 +38,13 @@ struct AIEventGenerationView: View {
                 .ignoresSafeArea()
 
             TextField("What's going on?", text: $prompt)
-                .textFieldStyle(.roundedBorder)
+                .textFieldStyle(AIPromptTextFieldStyle())
                 .disabled(didSubmitPrompt)
                 .onSubmit {
                     guard !prompt.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
                     didSubmitPrompt = true
                 }
+                .padding(24)
         }
         .task(id: didSubmitPrompt) {
             guard didSubmitPrompt else { return }
@@ -66,6 +67,20 @@ struct AIEventGenerationView: View {
             Logger.view.error("Failed to generate event draft: \(error.localizedDescription)")
             generationError = .unknown
         }
+    }
+}
+
+private struct AIPromptTextFieldStyle: TextFieldStyle {
+    @Environment(\.isEnabled) private var isEnabled
+
+    func _body(configuration: TextField<Self._Label>) -> some View {
+        configuration
+            .font(.body)
+            .foregroundStyle(isEnabled ? Color.white : Color.white.opacity(0.65))
+            .tint(.white)
+            .environment(\.colorScheme, .dark)
+            .padding(24)
+            .background(.black, in: RoundedRectangle(cornerRadius: 28, style: .continuous))
     }
 }
 
