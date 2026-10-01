@@ -233,8 +233,6 @@ struct DayContentView: View {
 }
 
 struct GlassHeaderBarModifier<BarContent: View>: ViewModifier {
-    @State private var dayHeaderHeight: CGFloat = 0
-
     let miniCalendarHeight: CGFloat
     @ViewBuilder let barContent: () -> BarContent
 
@@ -242,22 +240,19 @@ struct GlassHeaderBarModifier<BarContent: View>: ViewModifier {
         if #available(iOS 26.0, *) {
             content
                 .scrollEdgeEffectStyle(.hard, for: .top)
-                .safeAreaBar(edge: .top) {
-                    Color.clear
-                        .frame(height: miniCalendarHeight + dayHeaderHeight)
-                        .glassEffect(.identity, in: Rectangle())
-                        .allowsHitTesting(false)
-                }
-                .overlay(alignment: .top) {
-                    barContent()
-                        .padding(.horizontal, value: .medium)
-                        .onGeometryChange(for: CGFloat.self) { proxy in
-                            proxy.size.height
-                        } action: { newHeight in
-                            guard dayHeaderHeight != newHeight else { return }
-                            dayHeaderHeight = newHeight
-                        }
-                        .padding(.top, miniCalendarHeight)
+                .safeAreaBar(edge: .top, spacing: 0) {
+                    VStack(spacing: 0) {
+                        // Space under the mini calendar so it stays within the bar's edge effect.
+                        Color.clear
+                            .frame(height: miniCalendarHeight)
+                            .allowsHitTesting(false)
+
+                        barContent()
+                            .padding(.horizontal, value: .medium)
+                            .padding(.top, value: .mini)
+                            .frame(maxWidth: .infinity)
+                            .glassEffect(.regular, in: Rectangle())
+                    }
                 }
         } else {
             content.safeAreaInset(edge: .top) {
