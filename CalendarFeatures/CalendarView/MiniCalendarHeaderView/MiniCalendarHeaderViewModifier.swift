@@ -24,6 +24,7 @@ struct MiniCalendarHeaderViewModifier: ViewModifier {
 
     @State private var displayMode: MiniCalendarView.DisplayMode
     @State private var displayedDate: Date
+    @State private var barItems = [SafeAreaBarItem]()
 
     @Binding var selectedDate: Date
 
@@ -44,20 +45,28 @@ struct MiniCalendarHeaderViewModifier: ViewModifier {
             if #available(iOS 26.0, *) {
                 content
                     .safeAreaBar(edge: .top, spacing: 0) {
-                        MiniCalendarView(
-                            displayMode: $displayMode,
-                            selectedDate: $selectedDate,
-                            displayedDate: $displayedDate
-                        )
+                        VStack(spacing: 0) {
+                            MiniCalendarView(
+                                displayMode: $displayMode,
+                                selectedDate: $selectedDate,
+                                displayedDate: $displayedDate
+                            )
+
+                            barItemsView
+                        }
                     }
             } else {
                 content
                     .safeAreaInset(edge: .top, spacing: 0) {
-                        MiniCalendarView(
-                            displayMode: $displayMode,
-                            selectedDate: $selectedDate,
-                            displayedDate: $displayedDate
-                        )
+                        VStack(spacing: 0) {
+                            MiniCalendarView(
+                                displayMode: $displayMode,
+                                selectedDate: $selectedDate,
+                                displayedDate: $displayedDate
+                            )
+
+                            barItemsView
+                        }
                         .background(Material.bar)
                         .onAppear {
                             let navBarAppearance = UINavigationBarAppearance()
@@ -95,6 +104,15 @@ struct MiniCalendarHeaderViewModifier: ViewModifier {
             }
         }
         .navigationBarTitleDisplayMode(.inline)
+        .onPreferenceChange(SafeAreaBarItemsKey.self) { items in
+            barItems = items
+        }
+    }
+
+    private var barItemsView: some View {
+        ForEach(barItems) { item in
+            item.content
+        }
     }
 
     private func switchDisplayMode() {

@@ -28,22 +28,16 @@ struct DayHeaderView: View {
     let events: [CalendarCoreUI.UIEvent]
     let date: Date
 
-    private var visibleRowCount: Int {
-        min(eventPairs.count, 2)
+    @State private var isShowingAllEvents = false
+
+    private static let maxVisibleRows = 2
+
+    private var visibleEventPairs: [(CalendarCoreUI.UIEvent, CalendarCoreUI.UIEvent?)] {
+        Self.pairs(of: Array(events.prefix(Self.maxVisibleRows * 2)))
     }
 
-    private var headerHeight: CGFloat {
-        let rowHeight = 16 + DayContentView.Constants.verticalInset * 2 + IKPadding.mini
-        let extraPadding = eventPairs.count > 2 ? IKPadding.mini : 0
-        return CGFloat(visibleRowCount) * rowHeight + extraPadding
-    }
-
-    private var eventPairs: [(CalendarCoreUI.UIEvent, CalendarCoreUI.UIEvent?)] {
-        stride(from: 0, to: events.count, by: 2).map { index in
-            let firstEvent = events[index]
-            let secondEvent = (index + 1 < events.count) ? events[index + 1] : nil
-            return (firstEvent, secondEvent)
-        }
+    private var hiddenEventCount: Int {
+        max(events.count - Self.maxVisibleRows * 2, 0)
     }
 
     var body: some View {
@@ -71,40 +65,88 @@ struct DayHeaderView: View {
 
             if !events.isEmpty {
                 HStack(alignment: .top, spacing: 0) {
-                    Text(CalendarResourcesStrings.allDayLabel)
-                        .font(.caption2)
-                        .foregroundStyle(theme.color.contentTertiary)
-                        .padding(.trailing, value: .small)
-                        .frame(width: DayContentView.Constants.leadingInset, alignment: .trailing)
-                        .multilineTextAlignment(.trailing)
+                    VStack(alignment: .trailing, spacing: IKPadding.micro) {
+                        Text(CalendarResourcesStrings.allDayLabel)
+                            .font(.caption2)
+                            .foregroundStyle(theme.color.contentTertiary)
+                            .multilineTextAlignment(.trailing)
 
-                    ScrollView {
-                        VStack(spacing: IKPadding.micro) {
-                            ForEach(eventPairs, id: \.0.id) { firstEvent, secondEvent in
-                                HStack(spacing: IKPadding.micro) {
-                                    EventDetailsPopoverButton(event: firstEvent) {
-                                        Text(firstEvent.displayTitle)
-                                            .allDayEventStyle(for: firstEvent)
-                                    }
-
-                                    if let secondEvent {
-                                        EventDetailsPopoverButton(event: secondEvent) {
-                                            Text(secondEvent.displayTitle)
-                                                .allDayEventStyle(for: secondEvent)
-                                        }
-                                    }
-                                }
+                        if hiddenEventCount > 0 {
+                            Button {
+                                isShowingAllEvents = true
+                            } label: {
+                                Text(hiddenEventCount, format: .number.sign(strategy: .always()))
+                                    .font(.caption.bold())
+                                    .foregroundStyle(theme.color.contentSecondary)
+                            }
+                            .buttonStyle(.plain)
+                            .popover(isPresented: $isShowingAllEvents) {
+                                AllDayEventsPopoverView(events: events)
                             }
                         }
                     }
-                    .scrollDisabled(eventPairs.count <= 2)
-                    .frame(height: headerHeight)
-                    .contentMargins(.bottom, IKPadding.micro, for: .scrollContent)
-                    .contentMargins(.top, 0, for: .scrollContent)
+                    .padding(.trailing, value: .small)
+                    .frame(width: DayContentView.Constants.leadingInset, alignment: .trailing)
+
+                    AllDayEventRows(eventPairs: visibleEventPairs)
                 }
+                .padding(.bottom, IKPadding.micro)
             }
         }
         .padding(.bottom, events.isEmpty ? IKPadding.mini : 0)
+    }
+}
+
+extension DayHeaderView {
+    static func pairs(of events: [CalendarCoreUI.UIEvent]) -> [(CalendarCoreUI.UIEvent, CalendarCoreUI.UIEvent?)] {
+        stride(from: 0, to: events.count, by: 2).map { index in
+            let secondEvent = index + 1 < events.count ? events[index + 1] : nil
+            return (events[index], secondEvent)
+        }
+    }
+}
+
+private struct AllDayEventRows: View {
+    let eventPairs: [(CalendarCoreUI.UIEvent, CalendarCoreUI.UIEvent?)]
+
+    var body: some View {
+        VStack(spacing: IKPadding.micro) {
+            ForEach(eventPairs, id: \.0.id) { firstEvent, secondEvent in
+                HStack(spacing: IKPadding.micro) {
+                    EventDetailsPopoverButton(event: firstEvent) {
+                        Text(firstEvent.displayTitle)
+                            .allDayEventStyle(for: firstEvent)
+                    }
+
+                    if let secondEvent {
+                        EventDetailsPopoverButton(event: secondEvent) {
+                            Text(secondEvent.displayTitle)
+                                .allDayEventStyle(for: secondEvent)
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+private struct AllDayEventsPopoverView: View {
+    let events: [CalendarCoreUI.UIEvent]
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: IKPadding.micro) {
+                ForEach(events, id: \.id) { event in
+                    EventDetailsPopoverButton(event: event) {
+                        Text(event.displayTitle)
+                            .allDayEventStyle(for: event)
+                    }
+                }
+            }
+            .padding(value: .medium)
+        }
+        .selfSizingPopover(idealWidth: 320)
+        .presentationCompactAdaptation(.popover)
     }
 }
 
