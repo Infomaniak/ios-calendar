@@ -75,7 +75,10 @@ struct CalendarPeriodPager<Content: View>: View {
                     self.date = periodDate
                 }
                 guard visiblePeriod != index else { return }
-                withAnimation {
+
+                var transaction = Transaction(animation: .default)
+                transaction.disablesAnimations = visiblePeriod.map { abs(index - $0) > 1 } ?? true
+                withTransaction(transaction) {
                     visiblePeriod = index
                 }
             } else {
