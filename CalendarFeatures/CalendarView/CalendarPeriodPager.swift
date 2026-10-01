@@ -27,6 +27,7 @@ struct CalendarPeriodPager<Content: View>: View {
 
     let component: Calendar.Component
     let periodOffsets: Range<Int>
+    var viewCount = 3
 
     @Binding var date: Date
 
@@ -39,7 +40,7 @@ struct CalendarPeriodPager<Content: View>: View {
                     LazyHStack(spacing: 0) {
                         ForEach(periods) { period in
                             CalendarPeriodPage(period: period, content: content)
-                                .containerRelativeFrame(.horizontal)
+                                .containerRelativeFrame(.horizontal, count: viewCount, spacing: 0)
                         }
                     }
                     .scrollTargetLayout()
