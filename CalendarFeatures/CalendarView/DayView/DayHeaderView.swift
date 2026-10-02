@@ -25,19 +25,31 @@ import SwiftUI
 struct DayHeaderView: View {
     @Environment(\.esdsTheme) private var theme
 
+    @ScaledMetric(relativeTo: .caption) private var eventTitleLineHeight: CGFloat = 16
+
     let events: [CalendarCoreUI.UIEvent]
     let date: Date
 
-    @State private var isShowingAllEvents = false
-
     private static let maxVisibleRows = 2
 
-    private var visibleEventPairs: [(CalendarCoreUI.UIEvent, CalendarCoreUI.UIEvent?)] {
-        Self.pairs(of: Array(events.prefix(Self.maxVisibleRows * 2)))
+    private var eventPairs: [(CalendarCoreUI.UIEvent, CalendarCoreUI.UIEvent?)] {
+        stride(from: 0, to: events.count, by: 2).map { index in
+            let secondEvent = index + 1 < events.count ? events[index + 1] : nil
+            return (events[index], secondEvent)
+        }
     }
 
-    private var hiddenEventCount: Int {
-        max(events.count - Self.maxVisibleRows * 2, 0)
+    private var isAllDayListScrollable: Bool {
+        eventPairs.count > Self.maxVisibleRows
+    }
+
+    /// Fixed height of the all-day list: the visible rows plus, when scrollable, a peek of the next row.
+    private var allDayListHeight: CGFloat {
+        let rowHeight = eventTitleLineHeight + IKPadding.mini * 2
+        let visibleRowCount = CGFloat(min(eventPairs.count, Self.maxVisibleRows))
+        let rowsHeight = visibleRowCount * rowHeight + (visibleRowCount - 1) * IKPadding.micro
+        let peekHeight = isAllDayListScrollable ? IKPadding.micro + IKPadding.mini : 0
+        return rowsHeight + peekHeight
     }
 
     var body: some View {
@@ -65,88 +77,41 @@ struct DayHeaderView: View {
 
             if !events.isEmpty {
                 HStack(alignment: .top, spacing: 0) {
-                    VStack(alignment: .trailing, spacing: IKPadding.micro) {
-                        Text(CalendarResourcesStrings.allDayLabel)
-                            .font(.caption2)
-                            .foregroundStyle(theme.color.contentTertiary)
-                            .multilineTextAlignment(.trailing)
+                    Text(CalendarResourcesStrings.allDayLabel)
+                        .font(.caption2)
+                        .foregroundStyle(theme.color.contentTertiary)
+                        .padding(.trailing, value: .small)
+                        .frame(width: DayContentView.Constants.leadingInset, alignment: .trailing)
+                        .multilineTextAlignment(.trailing)
 
-                        if hiddenEventCount > 0 {
-                            Button {
-                                isShowingAllEvents = true
-                            } label: {
-                                Text(hiddenEventCount, format: .number.sign(strategy: .always()))
-                                    .font(.caption.bold())
-                                    .foregroundStyle(theme.color.contentSecondary)
-                            }
-                            .buttonStyle(.plain)
-                            .popover(isPresented: $isShowingAllEvents) {
-                                AllDayEventsPopoverView(events: events)
+                    ScrollView {
+                        LazyVStack(spacing: IKPadding.micro) {
+                            ForEach(eventPairs, id: \.0.id) { firstEvent, secondEvent in
+                                HStack(spacing: IKPadding.micro) {
+                                    EventDetailsPopoverButton(event: firstEvent) {
+                                        Text(firstEvent.displayTitle)
+                                            .allDayEventStyle(for: firstEvent)
+                                    }
+
+                                    if let secondEvent {
+                                        EventDetailsPopoverButton(event: secondEvent) {
+                                            Text(secondEvent.displayTitle)
+                                                .allDayEventStyle(for: secondEvent)
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
-                    .padding(.trailing, value: .small)
-                    .frame(width: DayContentView.Constants.leadingInset, alignment: .trailing)
-
-                    AllDayEventRows(eventPairs: visibleEventPairs)
+                    .scrollDisabled(!isAllDayListScrollable)
+                    .scrollIndicators(isAllDayListScrollable ? .automatic : .hidden)
+                    .frame(height: allDayListHeight)
                 }
                 .padding(.bottom, IKPadding.micro)
             }
         }
+        .padding(.top, IKPadding.medium)
         .padding(.bottom, events.isEmpty ? IKPadding.mini : 0)
-    }
-}
-
-extension DayHeaderView {
-    static func pairs(of events: [CalendarCoreUI.UIEvent]) -> [(CalendarCoreUI.UIEvent, CalendarCoreUI.UIEvent?)] {
-        stride(from: 0, to: events.count, by: 2).map { index in
-            let secondEvent = index + 1 < events.count ? events[index + 1] : nil
-            return (events[index], secondEvent)
-        }
-    }
-}
-
-private struct AllDayEventRows: View {
-    let eventPairs: [(CalendarCoreUI.UIEvent, CalendarCoreUI.UIEvent?)]
-
-    var body: some View {
-        VStack(spacing: IKPadding.micro) {
-            ForEach(eventPairs, id: \.0.id) { firstEvent, secondEvent in
-                HStack(spacing: IKPadding.micro) {
-                    EventDetailsPopoverButton(event: firstEvent) {
-                        Text(firstEvent.displayTitle)
-                            .allDayEventStyle(for: firstEvent)
-                    }
-
-                    if let secondEvent {
-                        EventDetailsPopoverButton(event: secondEvent) {
-                            Text(secondEvent.displayTitle)
-                                .allDayEventStyle(for: secondEvent)
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-private struct AllDayEventsPopoverView: View {
-    let events: [CalendarCoreUI.UIEvent]
-
-    var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: IKPadding.micro) {
-                ForEach(events, id: \.id) { event in
-                    EventDetailsPopoverButton(event: event) {
-                        Text(event.displayTitle)
-                            .allDayEventStyle(for: event)
-                    }
-                }
-            }
-            .padding(value: .medium)
-        }
-        .selfSizingPopover(idealWidth: 320)
-        .presentationCompactAdaptation(.popover)
     }
 }
 
