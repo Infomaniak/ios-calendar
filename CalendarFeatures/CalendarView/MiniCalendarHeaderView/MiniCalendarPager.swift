@@ -19,10 +19,11 @@
 import SwiftUI
 
 struct MiniCalendarPager: View {
+    @Environment(\.calendar) private var calendar
+
     let displayMode: MiniCalendarView.DisplayMode
 
     @Binding var selectedDate: Date
-    @Binding var displayedDate: Date
 
     private var periodOffsets: Range<Int> {
         switch displayMode {
@@ -37,7 +38,7 @@ struct MiniCalendarPager: View {
         CalendarPeriodPager(
             component: displayMode.referenceDateInterval,
             periodOffsets: periodOffsets,
-            date: $displayedDate
+            date: displayedDate
         ) { date in
             switch displayMode {
             case .month:
@@ -47,5 +48,23 @@ struct MiniCalendarPager: View {
             }
         }
         .fixedSize(horizontal: false, vertical: true)
+    }
+
+    /// Derived from `selectedDate`, which stays the single source of truth: paging moves the selection.
+    private var displayedDate: Binding<Date> {
+        Binding {
+            displayMode.referenceDate(for: selectedDate, calendar: calendar)
+        } set: { newReferenceDate in
+            let component = displayMode.referenceDateInterval
+            let currentReferenceDate = displayMode.referenceDate(for: selectedDate, calendar: calendar)
+            guard let offset = calendar.dateComponents([component], from: currentReferenceDate, to: newReferenceDate)
+                .value(for: component),
+                offset != 0,
+                let date = calendar.date(byAdding: component, value: offset, to: selectedDate) else {
+                return
+            }
+
+            selectedDate = date
+        }
     }
 }

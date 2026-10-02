@@ -30,7 +30,6 @@ struct MonthPickerView: View {
     @State private var scrollPosition = ScrollPosition(idType: Int.self)
 
     @Binding var selectedDate: Date
-    @Binding var displayedDate: Date
 
     var body: some View {
         VStack(spacing: IKPadding.small) {
@@ -43,8 +42,7 @@ struct MonthPickerView: View {
                         ForEach(months) { month in
                             MonthPickerCell(
                                 month: month,
-                                selectedDate: $selectedDate,
-                                displayedDate: $displayedDate
+                                selectedDate: $selectedDate
                             )
                         }
                     }
@@ -58,9 +56,9 @@ struct MonthPickerView: View {
         }
         .padding(.vertical, value: .mini)
         .onChange(of: calendar, initial: true) { _, _ in
-            resetMonths(around: displayedDate)
+            resetMonths(around: calendar.monthStart(for: selectedDate))
         }
-        .onChange(of: displayedDate) { _, newValue in
+        .onChange(of: calendar.monthStart(for: selectedDate)) { _, newValue in
             if let index = months?.index(for: newValue) {
                 withAnimation {
                     scrollPosition.scrollTo(id: index)
@@ -92,7 +90,6 @@ private struct MonthPickerCell: View {
     let month: CalendarPeriodCollection.Period
 
     @Binding var selectedDate: Date
-    @Binding var displayedDate: Date
 
     var body: some View {
         let date = month.date
@@ -105,7 +102,7 @@ private struct MonthPickerCell: View {
                     .padding(.vertical, IKPadding.micro)
             }
 
-            MonthButton(date: date, selectedDate: $selectedDate, displayedDate: $displayedDate)
+            MonthButton(date: date, selectedDate: $selectedDate)
         }
         .padding(.horizontal, IKPadding.micro)
     }
@@ -118,14 +115,13 @@ private struct MonthButton: View {
     let date: Date
 
     @Binding var selectedDate: Date
-    @Binding var displayedDate: Date
 
     private var isCurrentMonth: Bool {
         return calendar.isDate(date, equalTo: .now, toGranularity: .month)
     }
 
     private var isSelected: Bool {
-        return calendar.isDate(date, equalTo: displayedDate, toGranularity: .month)
+        return calendar.isDate(date, equalTo: selectedDate, toGranularity: .month)
     }
 
     var body: some View {
@@ -154,6 +150,5 @@ private struct MonthButton: View {
 
 #Preview {
     @Previewable @State var selectedDate = Date()
-    @Previewable @State var displayedDate = Calendar.current.monthStart(for: .now)
-    MonthPickerView(selectedDate: $selectedDate, displayedDate: $displayedDate)
+    MonthPickerView(selectedDate: $selectedDate)
 }

@@ -57,7 +57,6 @@ struct MiniCalendarView: View {
 
     @Binding var displayMode: DisplayMode
     @Binding var selectedDate: Date
-    @Binding var displayedDate: Date
 
     @State private var viewModel = MiniCalendarViewModel()
 
@@ -66,22 +65,19 @@ struct MiniCalendarView: View {
             DayOfWeekView()
             MiniCalendarPager(
                 displayMode: displayMode,
-                selectedDate: $selectedDate,
-                displayedDate: $displayedDate
+                selectedDate: $selectedDate
             )
 
             if displayMode == .month {
-                MonthPickerView(selectedDate: $selectedDate, displayedDate: $displayedDate)
+                MonthPickerView(selectedDate: $selectedDate)
             }
         }
         .environment(viewModel)
-        .task(id: displayedDate) {
-            await updateCalendarDotsFor(date: displayedDate, calendar: calendar)
-        }
-        .onChange(of: selectedDate) { _, newValue in
-            withAnimation {
-                displayedDate = displayMode.referenceDate(for: newValue, calendar: calendar)
-            }
+        .task(id: displayMode.referenceDate(for: selectedDate, calendar: calendar)) {
+            await updateCalendarDotsFor(
+                date: displayMode.referenceDate(for: selectedDate, calendar: calendar),
+                calendar: calendar
+            )
         }
     }
 
@@ -126,6 +122,5 @@ struct MiniCalendarView: View {
 #Preview {
     @Previewable @State var displayMode: MiniCalendarView.DisplayMode = .week
     @Previewable @State var selectedDate = Date()
-    @Previewable @State var displayedDate = Calendar.current.weekStart(for: .now)
-    MiniCalendarView(displayMode: $displayMode, selectedDate: $selectedDate, displayedDate: $displayedDate)
+    MiniCalendarView(displayMode: $displayMode, selectedDate: $selectedDate)
 }

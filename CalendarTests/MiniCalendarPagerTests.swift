@@ -72,7 +72,7 @@ final class MiniCalendarPagerTests: XCTestCase {
         }
         try await Task.sleep(for: .seconds(1))
         var scrollView = try XCTUnwrap(findScrollView(in: controller.view))
-        let origin = state.displayedDate
+        let origin = state.selectedDate
         let component = displayMode.referenceDateInterval
         let initialOffset = scrollView.contentOffset.x
         let initialWidth = scrollView.bounds.width
@@ -83,14 +83,13 @@ final class MiniCalendarPagerTests: XCTestCase {
         let direction: CGFloat = layoutDirection == .leftToRight ? 1 : -1
         for pageOffset in [1, -1, -24, 24] {
             let targetOffset = initialOffset + CGFloat(pageOffset) * initialWidth * direction
-            state.displayedDate = try XCTUnwrap(calendar.date(byAdding: component, value: pageOffset, to: origin))
+            state.selectedDate = try XCTUnwrap(calendar.date(byAdding: component, value: pageOffset, to: origin))
             try await Task.sleep(for: .seconds(1))
             XCTAssertEqual(scrollView.contentOffset.x, targetOffset, accuracy: 1)
-            XCTAssertEqual(state.displayedDate, calendar.date(byAdding: component, value: pageOffset, to: origin))
-            XCTAssertEqual(state.selectedDate, selectedDate)
+            XCTAssertEqual(state.selectedDate, calendar.date(byAdding: component, value: pageOffset, to: origin))
         }
 
-        state.displayedDate = try XCTUnwrap(calendar.date(byAdding: component, value: 120, to: origin))
+        state.selectedDate = try XCTUnwrap(calendar.date(byAdding: component, value: 120, to: origin))
         try await Task.sleep(for: .seconds(1))
         XCTAssertEqual(scrollView.contentOffset.x, initialOffset + 120 * initialWidth * direction, accuracy: 1)
 
@@ -98,10 +97,10 @@ final class MiniCalendarPagerTests: XCTestCase {
         try await Task.sleep(for: .seconds(1))
         XCTAssertEqual(scrollView.bounds.width, 320, accuracy: 1)
         XCTAssertEqual(scrollView.contentOffset.x.truncatingRemainder(dividingBy: 320), 0, accuracy: 1)
-        XCTAssertEqual(state.displayedDate, calendar.date(byAdding: component, value: 120, to: origin))
+        XCTAssertEqual(state.selectedDate, calendar.date(byAdding: component, value: 120, to: origin))
 
         let distantDate = try XCTUnwrap(calendar.date(byAdding: .year, value: 150, to: selectedDate))
-        state.displayedDate = displayMode.referenceDate(for: distantDate, calendar: calendar)
+        state.selectedDate = distantDate
         try await Task.sleep(for: .seconds(1))
         let resetScrollView = try XCTUnwrap(findScrollView(in: controller.view))
         XCTAssertFalse(resetScrollView === scrollView)
@@ -112,22 +111,17 @@ final class MiniCalendarPagerTests: XCTestCase {
             accuracy: 1
         )
 
+        state.selectedDate = selectedDate
         state.displayMode = displayMode == .month ? .week : .month
-        state.displayedDate = state.displayMode.referenceDate(for: selectedDate, calendar: calendar)
         try await Task.sleep(for: .seconds(1))
         scrollView = try XCTUnwrap(findScrollView(in: controller.view))
         XCTAssertEqual(scrollView.bounds.height, DayCellView.maxHeight * (state.displayMode == .month ? 6 : 1), accuracy: 1)
-        XCTAssertEqual(state.displayedDate, state.displayMode.referenceDate(for: selectedDate, calendar: calendar))
         XCTAssertEqual(state.selectedDate, selectedDate)
 
-        let dateBeforeCalendarChange = state.displayedDate
         state.calendar.firstWeekday = 1
         state.calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Asia/Tokyo"))
         try await Task.sleep(for: .seconds(1))
-        XCTAssertEqual(
-            state.displayedDate,
-            state.displayMode.referenceDate(for: dateBeforeCalendarChange, calendar: state.calendar)
-        )
+        XCTAssertEqual(state.selectedDate, selectedDate)
         let updatedScrollView = try XCTUnwrap(findScrollView(in: controller.view))
         XCTAssertFalse(updatedScrollView === scrollView)
         XCTAssertEqual(
@@ -140,7 +134,6 @@ final class MiniCalendarPagerTests: XCTestCase {
     @Observable
     fileprivate final class PagerTestState {
         var selectedDate: Date
-        var displayedDate: Date
         var displayMode: MiniCalendarView.DisplayMode
         var width: CGFloat = 390
         var calendar: Calendar
@@ -149,7 +142,6 @@ final class MiniCalendarPagerTests: XCTestCase {
             selectedDate = date
             self.displayMode = displayMode
             self.calendar = calendar
-            displayedDate = displayMode.referenceDate(for: date, calendar: calendar)
         }
     }
 
@@ -179,8 +171,7 @@ final class MiniCalendarPagerTests: XCTestCase {
         private var pager: some View {
             MiniCalendarPager(
                 displayMode: state.displayMode,
-                selectedDate: $state.selectedDate,
-                displayedDate: $state.displayedDate
+                selectedDate: $state.selectedDate
             )
             .frame(width: state.width)
         }
