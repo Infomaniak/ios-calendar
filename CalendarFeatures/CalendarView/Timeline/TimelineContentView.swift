@@ -36,6 +36,7 @@ struct TimelineContentView<EventContent: View, Overlay: View>: View {
 
     @State private var currentMagnification: CGFloat = 1.0
     @State private var pointsPerHour = TimelineViewConstants.PointsPerHour.default
+    @State private var visibleHeight = CGFloat.zero
 
     @Binding var scrollPosition: ScrollPosition
     @Binding var scrollOffset: CGFloat
@@ -66,7 +67,9 @@ struct TimelineContentView<EventContent: View, Overlay: View>: View {
             GeometryReader { _ in
                 let geometry = TimelineGeometry(
                     startOfDay: calendar.startOfDay(for: date),
-                    pointsPerHour: effectivePointsPerHour
+                    pointsPerHour: effectivePointsPerHour,
+                    contentHeight: contentHeight,
+                    visibleHeight: visibleHeight
                 )
 
                 ZStack(alignment: .topLeading) {
@@ -94,6 +97,11 @@ struct TimelineContentView<EventContent: View, Overlay: View>: View {
             scrollProxy.contentOffset.y + scrollProxy.contentInsets.top
         } action: { _, newValue in
             scrollOffset = newValue
+        }
+        .onScrollGeometryChange(for: CGFloat.self) { scrollProxy in
+            scrollProxy.containerSize.height - scrollProxy.contentInsets.top - scrollProxy.contentInsets.bottom
+        } action: { _, newValue in
+            visibleHeight = newValue
         }
         .timelineZoom(
             pointsPerHour: $pointsPerHour,

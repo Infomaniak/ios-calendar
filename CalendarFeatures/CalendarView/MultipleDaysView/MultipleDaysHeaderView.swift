@@ -21,12 +21,19 @@ import DesignSystem
 import ESDSFoundation
 import SwiftUI
 
-struct WeekHeaderView: View {
+struct MultipleDaysHeaderView: View {
+    /// The header is rendered by the shared top bar, which only refreshes it when its version changes.
+    struct Version: Hashable {
+        let layout: MultipleDaysLayout
+        let weekOfYear: Int
+    }
+
     @Environment(\.calendar) private var calendar
     @Environment(\.esdsTheme) private var theme
 
+    let layout: MultipleDaysLayout
     let date: Date
-    let weekDates: [Date]
+    let pagerScrollSync: CalendarPeriodPagerScrollSync
 
     var body: some View {
         HStack(spacing: 0) {
@@ -36,20 +43,15 @@ struct WeekHeaderView: View {
                 .padding(.trailing, value: .small)
                 .frame(width: TimelineBackgroundView.Constants.leadingInset, alignment: .trailing)
 
-            ForEach(weekDates, id: \.self) { weekDate in
-                LargeDayHeaderView(date: weekDate)
+            CalendarPeriodPagerMirror(scrollSync: pagerScrollSync, viewCount: layout.pagerViewCount) { pagerDate in
+                HStack(spacing: 0) {
+                    ForEach(layout.pageDates(for: pagerDate, calendar: calendar), id: \.self) { day in
+                        LargeDayHeaderView(date: day)
+                    }
+                }
             }
+            .fixedSize(horizontal: false, vertical: true)
         }
+        .padding(.horizontal, value: .medium)
     }
-}
-
-#Preview {
-    WeekHeaderView(
-        date: .now,
-        weekDates: (0 ..< 7).compactMap { Calendar.current.date(
-            byAdding: .day,
-            value: $0,
-            to: Calendar.current.weekStart(for: .now)
-        ) }
-    )
 }
