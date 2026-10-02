@@ -25,6 +25,8 @@ struct MiniCalendarHeaderViewModifier: ViewModifier {
     @State private var displayMode: MiniCalendarView.DisplayMode
     @State private var displayedDate: Date
     @State private var barItems = [SafeAreaBarItem]()
+    @State private var miniCalendarHeight: CGFloat = 0
+    @State private var barItemsHeight: CGFloat = 0
 
     @Binding var selectedDate: Date
 
@@ -51,9 +53,30 @@ struct MiniCalendarHeaderViewModifier: ViewModifier {
                                 selectedDate: $selectedDate,
                                 displayedDate: $displayedDate
                             )
+                            .onGeometryChange(for: CGFloat.self) { proxy in
+                                proxy.size.height
+                            } action: { newHeight in
+                                miniCalendarHeight = newHeight
+                            }
 
+                            // Bar items are drawn in an overlay: scrollable content inside the bar
+                            // inflates the scroll edge effect and glitches when it bounces.
+                            Color.clear
+                                .frame(height: barItemsHeight)
+                                .glassEffect(.identity, in: Rectangle())
+                                .allowsHitTesting(false)
+                        }
+                    }
+                    .overlay(alignment: .top) {
+                        VStack(spacing: 0) {
                             barItemsView
                         }
+                        .onGeometryChange(for: CGFloat.self) { proxy in
+                            proxy.size.height
+                        } action: { newHeight in
+                            barItemsHeight = newHeight
+                        }
+                        .padding(.top, miniCalendarHeight)
                     }
             } else {
                 content
