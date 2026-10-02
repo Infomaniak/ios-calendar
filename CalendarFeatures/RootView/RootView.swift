@@ -40,6 +40,7 @@ public struct RootView: View {
                 OnboardingView()
             case .preloading:
                 PreloadingView()
+                    .ignoresSafeArea()
             }
         }
     }
