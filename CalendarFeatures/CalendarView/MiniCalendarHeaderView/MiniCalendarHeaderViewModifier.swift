@@ -55,7 +55,6 @@ struct MiniCalendarHeaderViewModifier: ViewModifier {
                             // inflates the scroll edge effect and glitches when it bounces.
                             Color.clear
                                 .frame(height: barItemsHeight)
-                                .glassEffect(.identity, in: Rectangle())
                                 .allowsHitTesting(false)
                         }
                     }
