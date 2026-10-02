@@ -17,11 +17,17 @@
  */
 
 import DesignSystem
-import InfiniteScrollViews
 import SwiftUI
 
 struct MonthPickerView: View {
+    private enum Constants {
+        static let monthOffsets = -1200 ..< 1201
+    }
+
     @Environment(\.calendar) private var calendar
+
+    @State private var months: CalendarPeriodCollection?
+    @State private var scrollPosition = ScrollPosition(idType: Int.self)
 
     @Binding var selectedDate: Date
 
@@ -30,48 +36,75 @@ struct MonthPickerView: View {
             Divider()
                 .padding(.horizontal, value: .small)
 
-            InfiniteScrollViewReader { proxy in
-                InfiniteScrollView(
-                    changeIndex: calendar.monthStart(for: selectedDate),
-                    increaseIndexAction: referenceDateAfter,
-                    decreaseIndexAction: referenceDateBefore,
-                    orientation: .horizontal,
-                ) { monthDate in
-                    HStack(spacing: IKPadding.micro) {
-                        if shouldDisplayYear(for: monthDate) {
-                            Text(monthDate, format: .dateTime.year())
-                                .font(.subheadline.weight(.emphasized))
-                                .padding(.horizontal, IKPadding.small)
-                                .padding(.vertical, IKPadding.micro)
+            if let months {
+                ScrollView(.horizontal) {
+                    LazyHStack(spacing: 0) {
+                        ForEach(months) { month in
+                            MonthPickerCell(
+                                month: month,
+                                selectedDate: $selectedDate
+                            )
                         }
-
-                        MonthButton(
-                            date: monthDate,
-                            selectedDate: $selectedDate
-                        )
                     }
-                    .padding(.horizontal, IKPadding.micro)
+                    .scrollTargetLayout()
                 }
-                .onChange(of: calendar.monthStart(for: selectedDate)) { _, newValue in
-                    withAnimation {
-                        proxy.scrollTo(newValue)
-                    }
-                }
+                .scrollIndicators(.hidden)
+                .scrollPosition($scrollPosition, anchor: .center)
+                .fixedSize(horizontal: false, vertical: true)
+                .id(months.origin)
             }
         }
         .padding(.vertical, value: .mini)
+        .onChange(of: calendar, initial: true) { _, _ in
+            resetMonths(around: calendar.monthStart(for: selectedDate))
+        }
+        .onChange(of: calendar.monthStart(for: selectedDate)) { _, newValue in
+            if let index = months?.index(for: newValue) {
+                withAnimation {
+                    scrollPosition.scrollTo(id: index)
+                }
+            } else {
+                resetMonths(around: newValue)
+            }
+        }
     }
 
-    private func referenceDateAfter(_ page: Date) -> Date? {
-        return calendar.date(byAdding: .month, value: 1, to: page)
+    private func resetMonths(around month: Date) {
+        var transaction = Transaction()
+        transaction.disablesAnimations = true
+        withTransaction(transaction) {
+            months = CalendarPeriodCollection(
+                calendar: calendar,
+                component: .month,
+                origin: month,
+                indices: Constants.monthOffsets
+            )
+            scrollPosition.scrollTo(id: 0)
+        }
     }
+}
 
-    private func referenceDateBefore(_ page: Date) -> Date? {
-        return calendar.date(byAdding: .month, value: -1, to: page)
-    }
+private struct MonthPickerCell: View {
+    @Environment(\.calendar) private var calendar
 
-    private func shouldDisplayYear(for date: Date) -> Bool {
-        return calendar.component(.month, from: date) == 1
+    let month: CalendarPeriodCollection.Period
+
+    @Binding var selectedDate: Date
+
+    var body: some View {
+        let date = month.date
+
+        HStack(spacing: IKPadding.micro) {
+            if calendar.component(.month, from: date) == 1 {
+                Text(date, format: .dateTime.year())
+                    .font(.subheadline.weight(.emphasized))
+                    .padding(.horizontal, IKPadding.small)
+                    .padding(.vertical, IKPadding.micro)
+            }
+
+            MonthButton(date: date, selectedDate: $selectedDate)
+        }
+        .padding(.horizontal, IKPadding.micro)
     }
 }
 

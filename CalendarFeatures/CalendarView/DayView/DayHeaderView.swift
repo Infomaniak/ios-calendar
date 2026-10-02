@@ -25,25 +25,31 @@ import SwiftUI
 struct DayHeaderView: View {
     @Environment(\.esdsTheme) private var theme
 
+    @ScaledMetric(relativeTo: .caption) private var eventTitleLineHeight: CGFloat = 16
+
     let events: [CalendarCoreUI.UIEvent]
     let date: Date
 
-    private var visibleRowCount: Int {
-        min(eventPairs.count, 2)
-    }
-
-    private var headerHeight: CGFloat {
-        let rowHeight = 16 + DayContentView.Constants.verticalInset * 2 + IKPadding.mini
-        let extraPadding = eventPairs.count > 2 ? IKPadding.mini : 0
-        return CGFloat(visibleRowCount) * rowHeight + extraPadding
-    }
+    private static let maxVisibleRows = 2
 
     private var eventPairs: [(CalendarCoreUI.UIEvent, CalendarCoreUI.UIEvent?)] {
         stride(from: 0, to: events.count, by: 2).map { index in
-            let firstEvent = events[index]
-            let secondEvent = (index + 1 < events.count) ? events[index + 1] : nil
-            return (firstEvent, secondEvent)
+            let secondEvent = index + 1 < events.count ? events[index + 1] : nil
+            return (events[index], secondEvent)
         }
+    }
+
+    private var isAllDayListScrollable: Bool {
+        eventPairs.count > Self.maxVisibleRows
+    }
+
+    /// Fixed height of the all-day list: the visible rows plus, when scrollable, a peek of the next row.
+    private var allDayListHeight: CGFloat {
+        let rowHeight = eventTitleLineHeight + IKPadding.mini * 2
+        let visibleRowCount = CGFloat(min(eventPairs.count, Self.maxVisibleRows))
+        let rowsHeight = visibleRowCount * rowHeight + (visibleRowCount - 1) * IKPadding.micro
+        let peekHeight = isAllDayListScrollable ? IKPadding.micro + IKPadding.mini : 0
+        return rowsHeight + peekHeight
     }
 
     var body: some View {
@@ -79,7 +85,7 @@ struct DayHeaderView: View {
                         .multilineTextAlignment(.trailing)
 
                     ScrollView {
-                        VStack(spacing: IKPadding.micro) {
+                        LazyVStack(spacing: IKPadding.micro) {
                             ForEach(eventPairs, id: \.0.id) { firstEvent, secondEvent in
                                 HStack(spacing: IKPadding.micro) {
                                     EventDetailsPopoverButton(event: firstEvent) {
@@ -97,13 +103,14 @@ struct DayHeaderView: View {
                             }
                         }
                     }
-                    .scrollDisabled(eventPairs.count <= 2)
-                    .frame(height: headerHeight)
-                    .contentMargins(.bottom, IKPadding.micro, for: .scrollContent)
-                    .contentMargins(.top, 0, for: .scrollContent)
+                    .scrollDisabled(!isAllDayListScrollable)
+                    .scrollIndicators(isAllDayListScrollable ? .automatic : .hidden)
+                    .frame(height: allDayListHeight)
                 }
+                .padding(.bottom, IKPadding.micro)
             }
         }
+        .padding(.top, IKPadding.medium)
         .padding(.bottom, events.isEmpty ? IKPadding.mini : 0)
     }
 }

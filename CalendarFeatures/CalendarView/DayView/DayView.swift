@@ -26,15 +26,12 @@ struct DayView: View {
     @Environment(\.calendar) private var calendar
     @Environment(DaysViewModel.self) private var daysViewModel
 
-    @Binding var miniCalendarHeight: CGFloat
-
     let date: Date
 
     var body: some View {
         DayContentView(
             date: date,
-            events: daysViewModel.events(for: date, calendar: calendar),
-            miniCalendarHeight: miniCalendarHeight
+            events: daysViewModel.events(for: date, calendar: calendar)
         )
     }
 }
@@ -86,7 +83,6 @@ struct DayContentView: View {
 
     let date: Date
     let events: [CalendarCoreUI.UIEvent]
-    let miniCalendarHeight: CGFloat
 
     private var hourMarks: [Date] {
         let startOfDay = Calendar.current.startOfDay(for: date)
@@ -105,6 +101,10 @@ struct DayContentView: View {
         marks.append(startOfNextDay)
 
         return marks
+    }
+
+    private var allDayEvents: [CalendarCoreUI.UIEvent] {
+        return events.filter(\.isAllDay)
     }
 
     private var effectivePointsPerHour: CGFloat {
@@ -135,7 +135,10 @@ struct DayContentView: View {
                             startOfDay: calendar.startOfDay(for: date),
                             hourSlotHeight: effectivePointsPerHour,
                             horizontalHourSlotHeight: horizontalPointsPerHour,
-                            config: .init(hSpacing: Constants.layoutHorizontalSpacing, vSpacing: Constants.layoutVerticalSpacing)
+                            config: .init(
+                                hSpacing: Constants.layoutHorizontalSpacing,
+                                vSpacing: Constants.layoutVerticalSpacing
+                            )
                         ) { textHeights in
                             guard coveredTextHeights != textHeights else { return }
                             coveredTextHeights = textHeights
@@ -180,6 +183,11 @@ struct DayContentView: View {
                 .onAppear {
                     scrollToCorrectPosition(proxy)
                 }
+                .onChange(of: mainViewState.selectedDate) { oldSelectedDate, selectedDate in
+                    guard calendar.isDate(date, inSameDayAs: selectedDate),
+                          !calendar.isDate(date, inSameDayAs: oldSelectedDate) else { return }
+                    scrollToCorrectPosition(proxy)
+                }
                 .dayViewZoom(
                     pointsPerHour: $pointsPerHour,
                     currentMagnification: $currentMagnification,
@@ -188,10 +196,15 @@ struct DayContentView: View {
                     scrollOffset: scrollOffset,
                     maximumElapsedHours: CGFloat(hourMarks.count - 1)
                 )
-                .modifier(GlassHeaderBarModifier(miniCalendarHeight: miniCalendarHeight) {
-                    DayHeaderView(events: events.filter(\.isAllDay), date: date)
-                })
             }
+        }
+        .additionalSafeAreaBarView(
+            id: date,
+            version: allDayEvents,
+            isActive: calendar.isDate(date, inSameDayAs: mainViewState.selectedDate)
+        ) {
+            DayHeaderView(events: allDayEvents, date: date)
+                .padding(.horizontal, value: .medium)
         }
     }
 
@@ -227,48 +240,10 @@ struct DayContentView: View {
     }
 }
 
-struct GlassHeaderBarModifier<BarContent: View>: ViewModifier {
-    @State private var dayHeaderHeight: CGFloat = 0
-
-    let miniCalendarHeight: CGFloat
-    @ViewBuilder let barContent: () -> BarContent
-
-    func body(content: Content) -> some View {
-        if #available(iOS 26.0, *) {
-            content
-                .scrollEdgeEffectStyle(.hard, for: .top)
-                .safeAreaBar(edge: .top) {
-                    Color.clear
-                        .frame(height: miniCalendarHeight + dayHeaderHeight)
-                        .glassEffect(.identity, in: Rectangle())
-                        .allowsHitTesting(false)
-                }
-                .overlay(alignment: .top) {
-                    barContent()
-                        .padding(.horizontal, value: .medium)
-                        .onGeometryChange(for: CGFloat.self) { proxy in
-                            proxy.size.height
-                        } action: { newHeight in
-                            guard dayHeaderHeight != newHeight else { return }
-                            dayHeaderHeight = newHeight
-                        }
-                        .padding(.top, miniCalendarHeight)
-                }
-        } else {
-            content.safeAreaInset(edge: .top) {
-                barContent()
-                    .padding(.horizontal, value: .medium)
-                    .background(Material.bar)
-            }
-        }
-    }
-}
-
 #Preview {
     DayContentView(
         date: .now,
-        events: [.preview, .preview],
-        miniCalendarHeight: 0
+        events: [.preview, .preview]
     )
     .environment(MainViewState())
 }

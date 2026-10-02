@@ -21,42 +21,65 @@ import SwiftUI
 
 struct MiniCalendarHeaderViewModifier: ViewModifier {
     @State private var displayMode: MiniCalendarView.DisplayMode
+    @State private var barItems = [SafeAreaBarItem]()
+    @State private var miniCalendarHeight: CGFloat = 0
+    @State private var barItemsHeight: CGFloat = 0
 
     @Binding var selectedDate: Date
-    @Binding var miniCalendarHeight: CGFloat
 
     init(
         selectedDate: Binding<Date>,
-        miniCalendarHeight: Binding<CGFloat>,
         initialDisplayMode: MiniCalendarView.DisplayMode = .week
     ) {
         _displayMode = State(initialValue: initialDisplayMode)
         _selectedDate = selectedDate
-        _miniCalendarHeight = miniCalendarHeight
     }
 
     func body(content: Content) -> some View {
         Group {
             if #available(iOS 26.0, *) {
                 content
-                    .safeAreaInset(edge: .top, spacing: 0) {
-                        MiniCalendarView(
-                            displayMode: $displayMode,
-                            selectedDate: $selectedDate
-                        )
+                    .safeAreaBar(edge: .top, spacing: 0) {
+                        VStack(spacing: 0) {
+                            MiniCalendarView(
+                                displayMode: $displayMode,
+                                selectedDate: $selectedDate
+                            )
+                            .onGeometryChange(for: CGFloat.self) { proxy in
+                                proxy.size.height
+                            } action: { newHeight in
+                                miniCalendarHeight = newHeight
+                            }
+
+                            // Bar items are drawn in an overlay: scrollable content inside the bar
+                            // inflates the scroll edge effect and glitches when it bounces.
+                            Color.clear
+                                .frame(height: barItemsHeight)
+                                .allowsHitTesting(false)
+                        }
+                    }
+                    .overlay(alignment: .top) {
+                        VStack(spacing: 0) {
+                            barItemsView
+                        }
                         .onGeometryChange(for: CGFloat.self) { proxy in
                             proxy.size.height
                         } action: { newHeight in
-                            miniCalendarHeight = newHeight
+                            barItemsHeight = newHeight
                         }
+                        .padding(.top, miniCalendarHeight)
                     }
             } else {
                 content
                     .safeAreaInset(edge: .top, spacing: 0) {
-                        MiniCalendarView(
-                            displayMode: $displayMode,
-                            selectedDate: $selectedDate
-                        )
+                        VStack(spacing: 0) {
+                            MiniCalendarView(
+                                displayMode: $displayMode,
+                                selectedDate: $selectedDate
+                            )
+
+                            barItemsView
+                        }
                         .background(Material.bar)
                         .onAppear {
                             let navBarAppearance = UINavigationBarAppearance()
@@ -94,6 +117,15 @@ struct MiniCalendarHeaderViewModifier: ViewModifier {
             }
         }
         .navigationBarTitleDisplayMode(.inline)
+        .onPreferenceChange(SafeAreaBarItemsKey.self) { items in
+            barItems = items
+        }
+    }
+
+    private var barItemsView: some View {
+        ForEach(barItems) { item in
+            item.content
+        }
     }
 
     private func switchDisplayMode() {

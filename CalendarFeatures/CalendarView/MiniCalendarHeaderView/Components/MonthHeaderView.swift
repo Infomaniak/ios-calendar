@@ -24,13 +24,13 @@ struct MonthHeaderView: View {
     @Environment(\.calendar) private var calendar
     @Environment(MiniCalendarViewModel.self) private var viewModel
 
-    let page: ReferenceDatePage
+    let referenceDate: Date
     @Binding var selectedDate: Date
 
     private let maximumRowCount = 6
 
     private var monthStart: Date {
-        calendar.monthStart(for: page.referenceDate)
+        calendar.monthStart(for: referenceDate)
     }
 
     private var gridStart: Date {
@@ -92,10 +92,7 @@ struct MonthHeaderView: View {
 #Preview {
     @Previewable @State var selectedDate = Date()
     MonthHeaderView(
-        page: ReferenceDatePage(
-            referenceDate: Calendar.current.monthStart(for: Date()),
-            referenceDateInterval: MiniCalendarView.DisplayMode.month.referenceDateInterval
-        ),
+        referenceDate: Calendar.current.monthStart(for: .now),
         selectedDate: $selectedDate
     )
     .environment(MiniCalendarViewModel())
