@@ -30,18 +30,16 @@ struct AIEventGenerationView: View {
         case dismissing
     }
 
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
-
     @State private var prompt = ""
 
     @State private var generatedDraft: EventDraft?
     @State private var generationError: CalendarError?
 
     @State private var phase = Phase.appearing
+
     @State private var isBackgroundVisible = false
     @State private var isGlowVisible = false
     @State private var isPromptVisible = false
-    @State private var isShowingThinking = false
 
     @FocusState private var isPromptFocused: Bool
 
@@ -62,10 +60,10 @@ struct AIEventGenerationView: View {
             .accessibilityLabel("Cancel event generation")
             .ignoresSafeArea()
 
-            TextField("What's going on?", text: $prompt, axis: .vertical)
-                .textFieldStyle(AIPromptTextFieldStyle(isThinking: isShowingThinking))
+            TextField("What's going on?", text: $prompt)
+                .textFieldStyle(AIPromptTextFieldStyle(isThinking: phase == .generating))
                 .focused($isPromptFocused)
-                .submitLabel(.go)
+                .submitLabel(.send)
                 .disabled(phase != .ready)
                 .onSubmit {
                     guard phase == .ready, !prompt.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
@@ -73,11 +71,11 @@ struct AIEventGenerationView: View {
                     }
 
                     isPromptFocused = false
-                    isShowingThinking = true
                     phase = .generating
                 }
-                .padding(24)
-                .offset(y: isPromptVisible || reduceMotion ? 0 : 160)
+                .padding(.horizontal, 24)
+                .padding(.bottom, 32)
+                .offset(y: isPromptVisible ? 0 : 160)
                 .opacity(isPromptVisible ? 1 : 0)
                 .allowsHitTesting(isPromptVisible)
                 .accessibilityHidden(!isPromptVisible)
@@ -103,7 +101,7 @@ struct AIEventGenerationView: View {
     }
 
     private func animateAppearance() async throws {
-        let fadeDuration = reduceMotion ? 0.1 : 0.2
+        let fadeDuration = 0.15
         withAnimation(.spring(duration: fadeDuration, bounce: 0)) {
             isBackgroundVisible = true
         }
@@ -114,24 +112,24 @@ struct AIEventGenerationView: View {
         }
         try await Task.sleep(for: .seconds(fadeDuration))
 
-        let promptDuration = reduceMotion ? 0.1 : 0.3
+        let promptDuration = 0.2
         withAnimation(.snappy(duration: promptDuration, extraBounce: 0.4)) {
             isPromptVisible = true
         }
-        try await Task.sleep(for: .seconds(promptDuration + 0.5))
+        try await Task.sleep(for: .seconds(promptDuration + 0.2))
 
         phase = .ready
     }
 
     private func animateDismissal() async throws {
         isPromptFocused = false
-        let promptDuration = reduceMotion ? 0.12 : 0.22
+        let promptDuration = 0.15
         withAnimation(.spring(duration: promptDuration, bounce: 0)) {
             isPromptVisible = false
         }
         try await Task.sleep(for: .seconds(promptDuration))
 
-        let fadeDuration = reduceMotion ? 0.12 : 0.3
+        let fadeDuration = 0.2
         withAnimation(.spring(duration: fadeDuration, bounce: 0)) {
             isGlowVisible = false
             isBackgroundVisible = false
@@ -148,6 +146,7 @@ struct AIEventGenerationView: View {
 
     private func cancel() {
         guard phase != .dismissing else { return }
+
         generatedDraft = nil
         phase = .dismissing
     }
@@ -156,6 +155,7 @@ struct AIEventGenerationView: View {
         do {
             let result = try await AIEventGenerator().generateDraftFrom(userRequest: prompt, basedOn: draft)
             try Task.checkCancellation()
+
             guard phase == .generating else { return }
             generatedDraft = result
             phase = .dismissing
@@ -165,15 +165,14 @@ struct AIEventGenerationView: View {
             guard !Task.isCancelled, phase == .generating else { return }
             Logger.view.error("Failed to generate event draft: \(error.localizedDescription)")
             generationError = .unknown
-            isShowingThinking = false
             phase = .ready
         }
     }
 }
 
+@available(anyAppleOS 26.0, *)
 private struct AIPromptTextFieldStyle: TextFieldStyle {
     @Environment(\.isEnabled) private var isEnabled
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     let isThinking: Bool
 
@@ -197,33 +196,16 @@ private struct AIPromptTextFieldStyle: TextFieldStyle {
                         .foregroundStyle(.white.opacity(0.85))
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .transition(AnyTransition.opacity.combined(with: .offset(y: reduceMotion ? 0 : 6)))
+                .transition(AnyTransition.opacity.combined(with: .offset(y: 6)))
             }
         }
         .padding(24)
-        .background(.black, in: RoundedRectangle(cornerRadius: 28, style: .continuous))
-        .overlay {
-            RoundedRectangle(cornerRadius: 28, style: .continuous)
-                .strokeBorder(
-                    LinearGradient(
-                        colors: [Color(red: 0.22, green: 0.84, blue: 1).opacity(0.35),
-                                 Color(red: 0.09, green: 0.28, blue: 1).opacity(0.15)],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    ),
-                    lineWidth: 1
-                )
-                .allowsHitTesting(false)
-        }
-        .animation(.spring(duration: reduceMotion ? 0.12 : 0.3, bounce: 0), value: isThinking)
-        .phaseAnimator(isThinking && !reduceMotion ? [false, true] : [false]) { content, isBright in
-            content.shadow(
-                color: Color(red: 0.06, green: 0.43, blue: 0.98).opacity(isBright ? 0.4 : 0.22),
-                radius: isBright ? 20 : 14
-            )
-        } animation: { _ in
-            .spring(duration: 1.4, bounce: 0)
-        }
+        .glassEffect(.regular.tint(.black), in: .rect(cornerRadius: 28))
+        .shadow(
+            color: Color(red: 0.06, green: 0.43, blue: 0.98).opacity(isThinking ? 0.6 : 0.3),
+            radius: isThinking ? 30 : 20
+        )
+        .animation(.bouncy(duration: 0.3), value: isThinking)
     }
 }
 

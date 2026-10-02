@@ -22,7 +22,6 @@ private final class AIEventGenerationShaderBundle {}
 
 @available(anyAppleOS 26.0, *)
 struct AIEventGenerationBackground: View {
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     @State private var startDate = Date.now
 
@@ -36,15 +35,15 @@ struct AIEventGenerationBackground: View {
     var body: some View {
         GeometryReader { geometry in
             TimelineView(.animation) { timeline in
-                let time = reduceMotion ? 0 : timeline.date.timeIntervalSince(startDate)
+                let time = timeline.date.timeIntervalSince(startDate)
                 let size = Shader.Argument.float2(geometry.size)
                 let elapsed = Shader.Argument.float(Float(time))
-                let isRippleEnabled = isAppearing && isBackgroundVisible && !reduceMotion && time < 0.95
+                let isRippleEnabled = isAppearing && isBackgroundVisible && time < 0.95
 
                 ZStack {
                     Rectangle()
                         .colorEffect(Self.shaders.euriaBackground(size, elapsed))
-                        .opacity(isBackgroundVisible ? 0.05 : 0)
+                        .opacity(isBackgroundVisible ? 0.1 : 0)
                         .visualEffect { content, proxy in
                             content.layerEffect(
                                 Self.shaders.euriaRipple(
@@ -74,18 +73,18 @@ struct AIEventGenerationBackground: View {
     private var glowMask: some View {
         ZStack {
             ConcentricRectangle()
-                .stroke(.white, lineWidth: 30)
-                .blur(radius: 20)
+                .stroke(.white, lineWidth: 50)
+                .blur(radius: 35)
                 .opacity(0.35)
 
             ConcentricRectangle()
-                .stroke(.white, lineWidth: 10)
-                .blur(radius: 6)
+                .stroke(.white, lineWidth: 20)
+                .blur(radius: 12)
                 .opacity(0.65)
 
             ConcentricRectangle()
-                .stroke(.white, lineWidth: 2)
+                .stroke(.white, lineWidth: 5)
         }
-        .padding(2)
+        .blur(radius: 3)
     }
 }

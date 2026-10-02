@@ -202,7 +202,7 @@ public struct EventFormView: View {
             }
 
             if #available(anyAppleOS 26.0, *) {
-                if SystemLanguageModel.default.isAvailable {
+                if AIEventGenerator().isAvailable {
                     ToolbarItem(placement: .primaryAction) {
                         Button {
                             isTitleFocused = false
@@ -216,7 +216,7 @@ public struct EventFormView: View {
         }
         .alert(error: $saveErrorMessage) {}
         .interactiveDismissDisabled(viewModel.isEdited)
-        .sensoryFeedback(.impact(weight: .light, intensity: 0.7), trigger: isShowingAIGenerationView) { _, isPresented in
+        .sensoryFeedback(.impact(weight: .medium, intensity: 0.7), trigger: isShowingAIGenerationView) { _, isPresented in
             isPresented
         }
         .fullScreenCover(isPresented: $isShowingAIGenerationView) {

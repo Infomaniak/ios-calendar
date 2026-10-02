@@ -28,14 +28,19 @@ struct AIEventGenerator {
         case invalidGeneratedDates
     }
 
+    private let model = SystemLanguageModel.default
+
+    var isAvailable: Bool {
+        return model.isAvailable
+    }
+
     func generateDraftFrom(userRequest: String, basedOn draft: EventDraft) async throws -> EventDraft {
         let request = userRequest.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !request.isEmpty else {
             throw DomainError.invalidRequest
         }
 
-        let model = SystemLanguageModel.default
-        guard model.isAvailable else {
+        guard isAvailable else {
             throw DomainError.modelNotAvailable
         }
 
