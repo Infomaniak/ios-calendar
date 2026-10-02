@@ -119,9 +119,9 @@ struct DayEventView: View {
 
 #Preview {
     VStack {
-        DayEventView(event: .mediumPreview, pointsPerHour: DayContentView.Constants.PointsPerHour.default)
-        DayEventView(event: .preview, pointsPerHour: DayContentView.Constants.PointsPerHour.default)
-        DayEventView(event: .shortPreview, pointsPerHour: DayContentView.Constants.PointsPerHour.default)
+        DayEventView(event: .mediumPreview, pointsPerHour: TimelineViewConstants.PointsPerHour.default)
+        DayEventView(event: .preview, pointsPerHour: TimelineViewConstants.PointsPerHour.default)
+        DayEventView(event: .shortPreview, pointsPerHour: TimelineViewConstants.PointsPerHour.default)
     }
     .padding()
     .frame(maxHeight: .infinity)

@@ -18,6 +18,22 @@
 
 import SwiftUI
 
+enum CalendarPeriodPagerScrollBehavior {
+    /// Scrolls the whole container width at once.
+    case paging
+    /// Snaps to each period and moves by a single period per gesture when several are visible.
+    case viewAligned
+}
+
+/// Shares the scroll state of a `CalendarPeriodPager` so a `CalendarPeriodPagerMirror` can follow it.
+@Observable
+@MainActor
+final class CalendarPeriodPagerScrollSync {
+    fileprivate(set) var periods: CalendarPeriodCollection?
+    fileprivate(set) var generation = 0
+    fileprivate(set) var contentOffset = CGFloat.zero
+}
+
 struct CalendarPeriodPager<Content: View>: View {
     @Environment(\.calendar) private var calendar
 
@@ -28,10 +44,17 @@ struct CalendarPeriodPager<Content: View>: View {
     let component: Calendar.Component
     let periodOffsets: Range<Int>
     var viewCount = 1
+    var scrollBehavior = CalendarPeriodPagerScrollBehavior.paging
+    var scrollSync: CalendarPeriodPagerScrollSync?
 
     @Binding var date: Date
 
     @ViewBuilder let content: (Date) -> Content
+
+    /// The date bound to the pager is the leading period when several periods are visible.
+    private var scrollAnchor: UnitPoint {
+        return viewCount > 1 ? .leading : .center
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -46,9 +69,15 @@ struct CalendarPeriodPager<Content: View>: View {
                     .scrollTargetLayout()
                 }
                 .scrollIndicators(.hidden, axes: .horizontal)
-                .scrollTargetBehavior(.paging)
-                .scrollPosition(id: $visiblePeriod, anchor: .center)
+                .calendarPeriodScrollTargetBehavior(scrollBehavior)
+                .scrollPosition(id: $visiblePeriod, anchor: scrollAnchor)
+                .onScrollGeometryChange(for: CGFloat.self) { scrollGeometry in
+                    scrollGeometry.contentOffset.x
+                } action: { _, contentOffset in
+                    scrollSync?.contentOffset = contentOffset
+                }
                 .onScrollPhaseChange { previousPhase, phase in
+                    NSLog("%@", "DBG[\(viewCount)] phase \(previousPhase) -> \(phase) visible=\(String(describing: visiblePeriod))")
                     scrollPhase = phase
                     guard previousPhase.isScrolling, phase == .idle else { return }
                     updateDate()
@@ -64,11 +93,13 @@ struct CalendarPeriodPager<Content: View>: View {
         .onChange(of: component) { _, _ in
             resetPeriods()
         }
-        .onChange(of: visiblePeriod) { _, _ in
+        .onChange(of: visiblePeriod) { old, new in
+            NSLog("%@", "DBG[\(viewCount)] visiblePeriod \(String(describing: old)) -> \(String(describing: new)) phase=\(scrollPhase)")
             guard scrollPhase == .interacting || scrollPhase == .decelerating else { return }
             updateDate()
         }
-        .onChange(of: date) { _, date in
+        .onChange(of: date) { old, date in
+            NSLog("%@", "DBG[\(viewCount)] date \(old) -> \(date)")
             if let periods, let index = periods.index(for: date) {
                 let periodDate = periods[index].date
                 if date != periodDate {
@@ -98,6 +129,8 @@ struct CalendarPeriodPager<Content: View>: View {
         transaction.disablesAnimations = true
         withTransaction(transaction) {
             self.periods = periods
+            scrollSync?.periods = periods
+            scrollSync?.generation += 1
             scrollPhase = .idle
             visiblePeriod = 0
             date = periods.origin
@@ -112,6 +145,78 @@ struct CalendarPeriodPager<Content: View>: View {
         let date = periods[index].date
         guard self.date != date else { return }
         self.date = date
+    }
+}
+
+/// Non-interactive copy of a `CalendarPeriodPager` that follows its scroll position, e.g. a header above a timeline.
+/// It must have the same width as the followed pager.
+struct CalendarPeriodPagerMirror<Content: View>: View {
+    let scrollSync: CalendarPeriodPagerScrollSync
+    var viewCount = 1
+
+    @ViewBuilder let content: (Date) -> Content
+
+    var body: some View {
+        if let periods = scrollSync.periods {
+            CalendarPeriodMirrorScrollView(
+                periods: periods,
+                scrollSync: scrollSync,
+                viewCount: viewCount,
+                content: content
+            )
+            .id(scrollSync.generation)
+        }
+    }
+}
+
+private struct CalendarPeriodMirrorScrollView<Content: View>: View {
+    @State private var scrollPosition: ScrollPosition
+
+    let periods: CalendarPeriodCollection
+    let scrollSync: CalendarPeriodPagerScrollSync
+    let viewCount: Int
+    let content: (Date) -> Content
+
+    init(
+        periods: CalendarPeriodCollection,
+        scrollSync: CalendarPeriodPagerScrollSync,
+        viewCount: Int,
+        content: @escaping (Date) -> Content
+    ) {
+        _scrollPosition = State(initialValue: ScrollPosition(x: scrollSync.contentOffset))
+        self.periods = periods
+        self.scrollSync = scrollSync
+        self.viewCount = viewCount
+        self.content = content
+    }
+
+    var body: some View {
+        ScrollView(.horizontal) {
+            LazyHStack(spacing: 0) {
+                ForEach(periods) { period in
+                    CalendarPeriodPage(period: period, content: content)
+                        .containerRelativeFrame(.horizontal, count: viewCount, spacing: 0)
+                }
+            }
+        }
+        .scrollIndicators(.hidden, axes: .horizontal)
+        .scrollDisabled(true)
+        .scrollPosition($scrollPosition)
+        .onChange(of: scrollSync.contentOffset) { _, contentOffset in
+            scrollPosition.scrollTo(x: contentOffset)
+        }
+    }
+}
+
+private extension View {
+    @ViewBuilder
+    func calendarPeriodScrollTargetBehavior(_ behavior: CalendarPeriodPagerScrollBehavior) -> some View {
+        switch behavior {
+        case .paging:
+            scrollTargetBehavior(.paging)
+        case .viewAligned:
+            scrollTargetBehavior(.viewAligned(limitBehavior: .alwaysByOne))
+        }
     }
 }
 
