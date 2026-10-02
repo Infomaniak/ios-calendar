@@ -88,6 +88,10 @@ struct DayContentView: View {
                 .onAppear {
                     scrollToCorrectPosition(geometry)
                 }
+                .onChange(of: geometry.visibleHeight > 0) { _, hasVisibleHeight in
+                    guard hasVisibleHeight else { return }
+                    scrollToCorrectPosition(geometry)
+                }
                 .onChange(of: mainViewState.selectedDate) { oldSelectedDate, selectedDate in
                     guard calendar.isDate(date, inSameDayAs: selectedDate),
                           !calendar.isDate(date, inSameDayAs: oldSelectedDate) else { return }
@@ -125,8 +129,10 @@ struct DayContentView: View {
     }
 
     private func scrollToCorrectPosition(_ geometry: TimelineGeometry) {
+        guard geometry.visibleHeight > 0 else { return }
+
         if calendar.isDate(date, inSameDayAs: .now) {
-            scrollPosition.scrollTo(y: geometry.yPosition(for: .now))
+            scrollPosition.scrollTo(y: geometry.centeredScrollOffset(for: .now))
         } else {
             scrollPosition.scrollTo(y: UserDefaults.shared.dayViewScrollPosition)
         }
