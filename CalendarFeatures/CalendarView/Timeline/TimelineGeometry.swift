@@ -22,6 +22,8 @@ import SwiftUI
 struct TimelineGeometry {
     let startOfDay: Date
     let pointsPerHour: CGFloat
+    let contentHeight: CGFloat
+    let visibleHeight: CGFloat
 
     var eventLayoutPadding: EdgeInsets {
         let verticalInset = TimelineBackgroundView.Constants.verticalInset - TimelineBackgroundView.Constants.indexHeight / 2
@@ -37,5 +39,11 @@ struct TimelineGeometry {
     func yPosition(for date: Date) -> CGFloat {
         let elapsedHours = date.timeIntervalSince(startOfDay) / 3600
         return elapsedHours * pointsPerHour + TimelineBackgroundView.Constants.verticalInset
+    }
+
+    func centeredScrollOffset(for date: Date) -> CGFloat {
+        let centeredOffset = yPosition(for: date) - visibleHeight / 2
+        let maximumOffset = max(contentHeight - visibleHeight, 0)
+        return min(max(centeredOffset, 0), maximumOffset)
     }
 }
