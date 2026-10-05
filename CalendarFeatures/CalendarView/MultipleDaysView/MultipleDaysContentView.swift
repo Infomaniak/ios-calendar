@@ -22,9 +22,9 @@ import DesignSystem
 import ESDSFoundation
 import SwiftUI
 
-/// Shared timeline whose hour background stays still while only the day columns scroll horizontally.
 struct MultipleDaysContentView: View {
     @Environment(\.calendar) private var calendar
+
     @Environment(\.esdsTheme) private var theme
     @Environment(MultipleDaysViewModel.self) private var viewModel
 
@@ -33,9 +33,9 @@ struct MultipleDaysContentView: View {
     @State private var pagerScrollSync = CalendarPeriodPagerScrollSync()
 
     let layout: MultipleDaysLayout
+
     @Binding var selectedDate: Date
 
-    /// Start of the pager element containing the selected date, paging moves the selection.
     private var pagerDate: Binding<Date> {
         Binding {
             layout.pagerDate(for: selectedDate, calendar: calendar)
@@ -46,11 +46,7 @@ struct MultipleDaysContentView: View {
     }
 
     var body: some View {
-        TimelineContentView(
-            scrollPosition: $scrollPosition,
-            scrollOffset: $scrollOffset,
-            date: selectedDate
-        ) { geometry in
+        TimelineContentView(scrollPosition: $scrollPosition, scrollOffset: $scrollOffset, date: selectedDate) { geometry in
             CalendarPeriodPager(
                 component: layout.pagerComponent,
                 periodOffsets: layout.pagerOffsets,
@@ -86,7 +82,7 @@ struct MultipleDaysContentView: View {
                 scrollToCorrectPosition(geometry)
             }
         } overlay: { _ in
-            EmptyView()
+            // Nothing yet
         }
         .onChange(of: scrollOffset) { _, newValue in
             UserDefaults.shared.dayViewScrollPosition = newValue
