@@ -24,15 +24,14 @@ import SwiftUI
 
 struct MultipleDaysContentView: View {
     @Environment(\.calendar) private var calendar
-
     @Environment(\.esdsTheme) private var theme
-    @Environment(MultipleDaysViewModel.self) private var viewModel
 
     @State private var scrollPosition = ScrollPosition()
     @State private var scrollOffset = CGFloat.zero
     @State private var pagerScrollSync = CalendarPeriodPagerScrollSync()
 
     let layout: MultipleDaysLayout
+    let events: [Date: [CalendarCoreUI.UIEvent]]
 
     @Binding var selectedDate: Date
 
@@ -57,23 +56,14 @@ struct MultipleDaysContentView: View {
             ) { date in
                 HStack(spacing: 0) {
                     ForEach(layout.pageDates(for: date, calendar: calendar), id: \.self) { day in
-                        MultipleDaysColumnView(
-                            date: day,
-                            events: viewModel.events(for: day, calendar: calendar).filter { !$0.isAllDay },
-                            pointsPerHour: geometry.pointsPerHour
-                        )
+                        MultipleDaysColumnView(date: day, events: events(for: day), pointsPerHour: geometry.pointsPerHour)
                     }
                 }
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
             .overlay(alignment: .leading) {
                 MultipleDaysColumnView.Separator()
             }
             .onAppear {
-                scrollToCorrectPosition(geometry)
-            }
-            .onChange(of: geometry.visibleHeight > 0) { _, hasVisibleHeight in
-                guard hasVisibleHeight else { return }
                 scrollToCorrectPosition(geometry)
             }
             .onChange(of: selectedDate) { oldSelectedDate, newSelectedDate in
@@ -87,20 +77,17 @@ struct MultipleDaysContentView: View {
         .onChange(of: scrollOffset) { _, newValue in
             UserDefaults.shared.dayViewScrollPosition = newValue
         }
-        .additionalSafeAreaBarView(
-            id: layout,
-            version: MultipleDaysHeaderView.Version(
-                layout: layout,
-                weekOfYear: calendar.component(.weekOfYear, from: selectedDate)
-            )
-        ) {
+        .additionalSafeAreaBarView(id: layout, version: calendar.component(.weekOfYear, from: selectedDate)) {
             MultipleDaysHeaderView(layout: layout, date: selectedDate, pagerScrollSync: pagerScrollSync)
         }
     }
 
-    private func scrollToCorrectPosition(_ geometry: TimelineGeometry) {
-        guard geometry.visibleHeight > 0 else { return }
+    private func events(for date: Date) -> [CalendarCoreUI.UIEvent] {
+        guard let events = events[calendar.startOfDay(for: date)] else { return [] }
+        return events.filter { !$0.isAllDay }
+    }
 
+    private func scrollToCorrectPosition(_ geometry: TimelineGeometry) {
         if layout.isSelectingToday(selectedDate, calendar: calendar) {
             let timeOfDay = Date.now.timeIntervalSince(calendar.startOfDay(for: .now))
             scrollPosition.scrollTo(y: geometry.centeredScrollOffset(for: geometry.startOfDay.addingTimeInterval(timeOfDay)))
@@ -112,6 +99,5 @@ struct MultipleDaysContentView: View {
 
 #Preview {
     @Previewable @State var selectedDate = Date.now
-    MultipleDaysContentView(layout: .week, selectedDate: $selectedDate)
-        .environment(MultipleDaysViewModel())
+    MultipleDaysContentView(layout: .week, events: [:], selectedDate: $selectedDate)
 }
