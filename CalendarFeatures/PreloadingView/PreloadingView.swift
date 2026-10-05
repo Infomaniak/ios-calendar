@@ -29,6 +29,7 @@ public struct PreloadingView: View {
 
     public var body: some View {
         ProgressView()
+            .ignoresSafeArea()
             .progressViewStyle(.circular)
             .task { await preloadAndTransitionToRootView() }
     }
