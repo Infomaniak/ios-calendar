@@ -17,18 +17,15 @@
  */
 
 import Foundation
+import SwiftUI
 
-/// Describes how `MultipleDaysView` groups and scrolls its day columns.
 enum MultipleDaysLayout: Hashable {
-    /// Displays every day of a calendar period on a single page (e.g. a week) and scrolls page by page.
     case paged(Calendar.Component)
-    /// Displays `visibleDays` days next to each other and scrolls day by day.
     case continuous(visibleDays: Int)
 
     static let week = MultipleDaysLayout.paged(.weekOfYear)
     static let threeDays = MultipleDaysLayout.continuous(visibleDays: 3)
 
-    /// Calendar component represented by one element of the pager.
     var pagerComponent: Calendar.Component {
         switch self {
         case .paged(let component):
@@ -38,7 +35,6 @@ enum MultipleDaysLayout: Hashable {
         }
     }
 
-    /// Number of pager elements visible at once.
     var pagerViewCount: Int {
         switch self {
         case .paged:
@@ -48,12 +44,12 @@ enum MultipleDaysLayout: Hashable {
         }
     }
 
-    var pagerScrollBehavior: CalendarPeriodPagerScrollBehavior {
+    var pagerScrollBehavior: AnyScrollTargetBehavior {
         switch self {
         case .paged:
-            return .paging
+            return AnyScrollTargetBehavior(.paging)
         case .continuous:
-            return .viewAligned
+            return AnyScrollTargetBehavior(.viewAligned)
         }
     }
 
@@ -68,12 +64,10 @@ enum MultipleDaysLayout: Hashable {
         }
     }
 
-    /// Start of the pager element containing `date`.
     func pagerDate(for date: Date, calendar: Calendar) -> Date {
         return calendar.dateInterval(of: pagerComponent, for: date)?.start ?? calendar.startOfDay(for: date)
     }
 
-    /// Days displayed by the pager element starting at `pagerDate`.
     func pageDates(for pagerDate: Date, calendar: Calendar) -> [Date] {
         switch self {
         case .paged(let component):
@@ -84,7 +78,6 @@ enum MultipleDaysLayout: Hashable {
         }
     }
 
-    /// Days visible on screen when `selectedDate` is selected.
     func visibleInterval(for selectedDate: Date, calendar: Calendar) -> DateInterval? {
         switch self {
         case .paged(let component):
@@ -96,7 +89,6 @@ enum MultipleDaysLayout: Hashable {
         }
     }
 
-    /// Visible days extended by the amount of days that can be revealed by one scroll gesture on each side.
     func preloadedInterval(for selectedDate: Date, calendar: Calendar) -> DateInterval? {
         guard let visibleInterval = visibleInterval(for: selectedDate, calendar: calendar) else { return nil }
 
@@ -112,13 +104,13 @@ enum MultipleDaysLayout: Hashable {
         }
 
         guard let start = calendar.date(byAdding: component, value: -value, to: visibleInterval.start),
-              let end = calendar.date(byAdding: component, value: value, to: visibleInterval.end) else {
+              let end = calendar.date(byAdding: component, value: value, to: visibleInterval.end)
+        else {
             return nil
         }
         return DateInterval(start: start, end: end)
     }
 
-    /// Whether today is the selected day of a continuous layout or belongs to the selected period of a paged one.
     func isSelectingToday(_ selectedDate: Date, calendar: Calendar) -> Bool {
         return calendar.isDate(selectedDate, equalTo: .now, toGranularity: pagerComponent)
     }

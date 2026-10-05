@@ -34,9 +34,9 @@ final class MultipleDaysViewModel {
     }
 }
 
-/// Displays several days next to each other on a shared timeline.
 struct MultipleDaysView: View {
     @Environment(\.calendar) private var calendar
+
     @Environment(\.calendarAccounts) private var calendarAccounts
     @Environment(MainViewState.self) private var mainViewState
 
