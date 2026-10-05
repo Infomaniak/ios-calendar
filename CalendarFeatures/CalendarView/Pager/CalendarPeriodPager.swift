@@ -18,13 +18,11 @@
 
 import SwiftUI
 
-/// Shares the scroll state of a `CalendarPeriodPager` so a `CalendarPeriodPagerMirror` can follow it.
 @Observable
 @MainActor
 final class CalendarPeriodPagerScrollSync {
-    fileprivate(set) var periods: CalendarPeriodCollection?
-    fileprivate(set) var generation = 0
-    fileprivate(set) var contentOffset = CGFloat.zero
+    var periods: CalendarPeriodCollection?
+    var contentOffset = CGFloat.zero
 }
 
 struct CalendarPeriodPager<Content: View>: View {
@@ -119,7 +117,6 @@ struct CalendarPeriodPager<Content: View>: View {
         withTransaction(transaction) {
             self.periods = periods
             scrollSync?.periods = periods
-            scrollSync?.generation += 1
             scrollPhase = .idle
             visiblePeriod = 0
             date = periods.origin
@@ -137,67 +134,7 @@ struct CalendarPeriodPager<Content: View>: View {
     }
 }
 
-/// Non-interactive copy of a `CalendarPeriodPager` that follows its scroll position, e.g. a header above a timeline.
-/// It must have the same width as the followed pager.
-struct CalendarPeriodPagerMirror<Content: View>: View {
-    let scrollSync: CalendarPeriodPagerScrollSync
-    var viewCount = 1
-
-    @ViewBuilder let content: (Date) -> Content
-
-    var body: some View {
-        if let periods = scrollSync.periods {
-            CalendarPeriodMirrorScrollView(
-                periods: periods,
-                scrollSync: scrollSync,
-                viewCount: viewCount,
-                content: content
-            )
-            .id(scrollSync.generation)
-        }
-    }
-}
-
-private struct CalendarPeriodMirrorScrollView<Content: View>: View {
-    @State private var scrollPosition: ScrollPosition
-
-    let periods: CalendarPeriodCollection
-    let scrollSync: CalendarPeriodPagerScrollSync
-    let viewCount: Int
-    let content: (Date) -> Content
-
-    init(
-        periods: CalendarPeriodCollection,
-        scrollSync: CalendarPeriodPagerScrollSync,
-        viewCount: Int,
-        content: @escaping (Date) -> Content
-    ) {
-        _scrollPosition = State(initialValue: ScrollPosition(x: scrollSync.contentOffset))
-        self.periods = periods
-        self.scrollSync = scrollSync
-        self.viewCount = viewCount
-        self.content = content
-    }
-
-    var body: some View {
-        ScrollView(.horizontal) {
-            LazyHStack(spacing: 0) {
-                ForEach(periods) { period in
-                    CalendarPeriodPage(period: period, content: content)
-                        .containerRelativeFrame(.horizontal, count: viewCount, spacing: 0)
-                }
-            }
-        }
-        .scrollIndicators(.hidden, axes: .horizontal)
-        .scrollDisabled(true)
-        .scrollPosition($scrollPosition)
-        .onChange(of: scrollSync.contentOffset) { _, contentOffset in
-            scrollPosition.scrollTo(x: contentOffset)
-        }
-    }
-}
-
-private struct CalendarPeriodPage<Content: View>: View {
+struct CalendarPeriodPage<Content: View>: View {
     let period: CalendarPeriodCollection.Period
     @ViewBuilder let content: (Date) -> Content
 
