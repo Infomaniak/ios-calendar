@@ -88,10 +88,6 @@ struct DayContentView: View {
                 .onAppear {
                     scrollToCorrectPosition(geometry)
                 }
-                .onChange(of: geometry.visibleHeight > 0) { _, hasVisibleHeight in
-                    guard hasVisibleHeight else { return }
-                    scrollToCorrectPosition(geometry)
-                }
                 .onChange(of: mainViewState.selectedDate) { oldSelectedDate, selectedDate in
                     guard calendar.isDate(date, inSameDayAs: selectedDate),
                           !calendar.isDate(date, inSameDayAs: oldSelectedDate) else { return }
