@@ -79,7 +79,7 @@ struct TimelineContentView<EventContent: View, Overlay: View>: View {
                         leadingOffset: TimelineBackgroundView.Constants.leadingInset,
                         verticalOffset: TimelineBackgroundView.Constants.verticalInset
                     )
-//                    .padding(.horizontal, value: .medium)
+                    .padding(.horizontal, value: .medium)
 
                     eventContent(geometry)
                         .padding(geometry.eventLayoutPadding)

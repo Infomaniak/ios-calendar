@@ -22,12 +22,6 @@ import ESDSFoundation
 import SwiftUI
 
 struct MultipleDaysHeaderView: View {
-    /// The header is rendered by the shared top bar, which only refreshes it when its version changes.
-    struct Version: Hashable {
-        let layout: MultipleDaysLayout
-        let weekOfYear: Int
-    }
-
     @Environment(\.calendar) private var calendar
     @Environment(\.esdsTheme) private var theme
 

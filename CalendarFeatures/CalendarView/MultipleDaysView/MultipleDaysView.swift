@@ -21,18 +21,7 @@ import CalendarCore
 import CalendarCoreUI
 import InfomaniakDI
 import MultiplatformCalendar
-import Observation
 import SwiftUI
-
-@Observable
-@MainActor
-final class MultipleDaysViewModel {
-    var events = [Date: [CalendarCoreUI.UIEvent]]()
-
-    func events(for date: Date, calendar: Foundation.Calendar) -> [CalendarCoreUI.UIEvent] {
-        return events[calendar.startOfDay(for: date)] ?? []
-    }
-}
 
 struct MultipleDaysView: View {
     @Environment(\.calendar) private var calendar
@@ -40,15 +29,14 @@ struct MultipleDaysView: View {
     @Environment(\.calendarAccounts) private var calendarAccounts
     @Environment(MainViewState.self) private var mainViewState
 
-    @State private var viewModel = MultipleDaysViewModel()
+    @State private var events = [Date: [CalendarCoreUI.UIEvent]]()
 
     let layout: MultipleDaysLayout
 
     var body: some View {
         @Bindable var mainViewState = mainViewState
 
-        MultipleDaysContentView(layout: layout, selectedDate: $mainViewState.selectedDate)
-            .environment(viewModel)
+        MultipleDaysContentView(layout: layout, events: events, selectedDate: $mainViewState.selectedDate)
             .task(id: layout.preloadedInterval(for: mainViewState.selectedDate, calendar: calendar)) {
                 guard let interval = layout.preloadedInterval(for: mainViewState.selectedDate, calendar: calendar) else {
                     return
@@ -79,7 +67,7 @@ struct MultipleDaysView: View {
 
             guard !Task.isCancelled else { return }
             await MainActor.run {
-                viewModel.events = groupedEvents
+                events = groupedEvents
             }
         }
     }
