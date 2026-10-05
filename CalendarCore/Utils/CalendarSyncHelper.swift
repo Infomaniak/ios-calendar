@@ -29,7 +29,7 @@ public actor CalendarSyncHelper: ExpiringActivityDelegate {
 
     public init() {}
 
-    public func syncCalendars() {
+    public func sync() {
         let previousTask = currentSyncTask
         previousTask?.cancel()
 
@@ -37,22 +37,35 @@ public actor CalendarSyncHelper: ExpiringActivityDelegate {
             await previousTask?.value
             guard !Task.isCancelled else { return }
 
-            Self.logger.debug("Calendar sync started")
+            Self.logger.debug("Calendar and contacts sync started")
             let activity = ExpiringActivity(delegate: self)
             activity.start()
 
-            @InjectService var calendarSDK: CalendarCoreGraph
-
-            do {
-                try await calendarSDK.calendarManager.syncEvents()
-            } catch is CancellationError {
-                Self.logger.info("Calendar sync cancelled")
-            } catch {
-                Self.logger.error("Failed to sync calendars: \(error.localizedDescription)")
+            await withTaskGroup(of: Void.self) { group in
+                group.addTask {
+                    @InjectService var calendarSDK: CalendarCoreGraph
+                    do {
+                        try await calendarSDK.calendarManager.syncEvents()
+                    } catch is CancellationError {
+                        Self.logger.info("Calendar sync cancelled")
+                    } catch {
+                        Self.logger.error("Failed to sync calendars: \(error.localizedDescription)")
+                    }
+                }
+                group.addTask {
+                    @InjectService var calendarSDK: CalendarCoreGraph
+                    do {
+                        try await calendarSDK.contactsManager.sync()
+                    } catch is CancellationError {
+                        Self.logger.info("Contacts sync cancelled")
+                    } catch {
+                        Self.logger.error("Failed to sync contacts: \(error.localizedDescription)")
+                    }
+                }
             }
 
             activity.endAll()
-            Self.logger.debug("Calendar done \(Task.isCancelled ? "- Cancelled" : "")")
+            Self.logger.debug("Calendar and contacts sync done \(Task.isCancelled ? "- Cancelled" : "")")
         }
     }
 

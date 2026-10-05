@@ -90,7 +90,11 @@ public actor AccountManager {
         let user = try await getOrCreateUserProfile(token: token)
         let davCredentials = try await getOrCreateDavCredentials(token: token)
 
-        try await calendarSDK.accountManager.doInitAccount(accountId: Int64(token.userId), credentials: davCredentials)
+        try await calendarSDK.accountManager.doInitAccount(
+            accountId: Int64(token.userId),
+            credentials: davCredentials,
+            accessToken: token.accessToken
+        )
         return CalendarAccount(token: token, user: user, davCredentials: davCredentials)
     }
 

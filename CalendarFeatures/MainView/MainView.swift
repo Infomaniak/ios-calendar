@@ -17,6 +17,7 @@
  */
 
 import CalendarCore
+import Contacts
 import InfomaniakDI
 @preconcurrency import MultiplatformCalendar
 import OSLog
@@ -36,27 +37,45 @@ public struct MainView: View {
                 CompactMainView()
             }
         }
-        .onChange(of: calendarAccounts) {
-            syncCalendars()
+        .task(id: calendarAccounts) {
+            syncCalendarsAndContacts()
+            await askForPermissions()
         }
         .sceneLifecycle(willEnterForeground: willEnterForeground)
     }
 
     private func willEnterForeground() {
-        syncCalendars()
+        syncCalendarsAndContacts()
 
         Task {
-            await NotificationsHelper.askForPermissions()
+            await askForPermissions()
 
             @InjectService var eventAlarmNotification: EventAlarmNotificationsService
             await eventAlarmNotification.scheduleNotificationsForEventAlarms()
         }
     }
 
-    private func syncCalendars() {
+    private func askForPermissions() async {
+        guard !calendarAccounts.isEmpty else { return }
+
+        if CNContactStore.authorizationStatus(for: .contacts) == .notDetermined {
+            do {
+                let contactsPermissionGranted = try await CNContactStore().requestAccess(for: .contacts)
+                if contactsPermissionGranted {
+                    syncCalendarsAndContacts()
+                }
+            } catch {
+                Logger.general.error("Failed to request contacts permission: \(error.localizedDescription)")
+            }
+        }
+
+        await NotificationsHelper.askForPermissions()
+    }
+
+    private func syncCalendarsAndContacts() {
         Task {
             @InjectService var syncHelper: CalendarSyncHelper
-            await syncHelper.syncCalendars()
+            await syncHelper.sync()
         }
     }
 }
