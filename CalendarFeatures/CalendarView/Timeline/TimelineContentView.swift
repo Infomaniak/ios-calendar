@@ -42,6 +42,8 @@ struct TimelineContentView<EventContent: View, Overlay: View>: View {
     @Binding var scrollOffset: CGFloat
 
     let date: Date
+    var leadingPadding: CGFloat = IKPadding.medium
+    var trailingPadding: CGFloat = IKPadding.medium
     @ViewBuilder let eventContent: (TimelineGeometry) -> EventContent
     @ViewBuilder let overlay: (TimelineGeometry) -> Overlay
 
@@ -79,11 +81,12 @@ struct TimelineContentView<EventContent: View, Overlay: View>: View {
                         leadingOffset: TimelineBackgroundView.Constants.leadingInset,
                         verticalOffset: TimelineBackgroundView.Constants.verticalInset
                     )
-                    .padding(.horizontal, value: .medium)
 
                     eventContent(geometry)
                         .padding(geometry.eventLayoutPadding)
                 }
+                .padding(.leading, leadingPadding)
+                .padding(.trailing, trailingPadding)
                 .overlay(alignment: .topLeading) {
                     overlay(geometry)
                         .allowsHitTesting(false)

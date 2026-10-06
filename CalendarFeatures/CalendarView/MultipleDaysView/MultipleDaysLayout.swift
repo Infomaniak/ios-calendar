@@ -78,17 +78,6 @@ enum MultipleDaysLayout: Hashable {
         }
     }
 
-    func visibleInterval(for selectedDate: Date, calendar: Calendar) -> DateInterval? {
-        switch self {
-        case .paged(let component):
-            return calendar.dateInterval(of: component, for: selectedDate)
-        case .continuous:
-            let start = calendar.startOfDay(for: selectedDate)
-            guard let end = calendar.date(byAdding: .day, value: pagerViewCount, to: start) else { return nil }
-            return DateInterval(start: start, end: end)
-        }
-    }
-
     func preloadedInterval(for selectedDate: Date, calendar: Calendar) -> DateInterval? {
         guard let visibleInterval = visibleInterval(for: selectedDate, calendar: calendar) else { return nil }
 
@@ -105,10 +94,19 @@ enum MultipleDaysLayout: Hashable {
 
         guard let start = calendar.date(byAdding: component, value: -value, to: visibleInterval.start),
               let end = calendar.date(byAdding: component, value: value, to: visibleInterval.end)
-        else {
-            return nil
-        }
+        else { return nil }
         return DateInterval(start: start, end: end)
+    }
+
+    private func visibleInterval(for selectedDate: Date, calendar: Calendar) -> DateInterval? {
+        switch self {
+        case .paged(let component):
+            return calendar.dateInterval(of: component, for: selectedDate)
+        case .continuous:
+            let start = calendar.startOfDay(for: selectedDate)
+            guard let end = calendar.date(byAdding: .day, value: pagerViewCount, to: start) else { return nil }
+            return DateInterval(start: start, end: end)
+        }
     }
 
     func isSelectingToday(_ selectedDate: Date, calendar: Calendar) -> Bool {

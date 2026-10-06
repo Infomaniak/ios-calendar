@@ -45,7 +45,12 @@ struct MultipleDaysContentView: View {
     }
 
     var body: some View {
-        TimelineContentView(scrollPosition: $scrollPosition, scrollOffset: $scrollOffset, date: selectedDate) { geometry in
+        TimelineContentView(
+            scrollPosition: $scrollPosition,
+            scrollOffset: $scrollOffset,
+            date: selectedDate,
+            trailingPadding: 0
+        ) { geometry in
             CalendarPeriodPager(
                 component: layout.pagerComponent,
                 periodOffsets: layout.pagerOffsets,
