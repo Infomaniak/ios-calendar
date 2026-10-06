@@ -32,6 +32,11 @@ enum TimelineViewConstants {
 }
 
 struct TimelineContentView<EventContent: View, Overlay: View>: View {
+    private struct ScrollMetrics: Equatable {
+        let offset: CGFloat
+        let visibleHeight: CGFloat
+    }
+
     @Environment(\.calendar) private var calendar
 
     @State private var currentMagnification: CGFloat = 1.0
@@ -96,15 +101,14 @@ struct TimelineContentView<EventContent: View, Overlay: View>: View {
         }
         .contentMargins(.vertical, IKPadding.small, for: .scrollContent)
         .scrollPosition($scrollPosition)
-        .onScrollGeometryChange(for: CGFloat.self) { scrollProxy in
-            scrollProxy.contentOffset.y + scrollProxy.contentInsets.top
-        } action: { _, newValue in
-            scrollOffset = newValue
-        }
-        .onScrollGeometryChange(for: CGFloat.self) { scrollProxy in
-            scrollProxy.containerSize.height - scrollProxy.contentInsets.top - scrollProxy.contentInsets.bottom
-        } action: { _, newValue in
-            visibleHeight = newValue
+        .onScrollGeometryChange(for: ScrollMetrics.self) { scrollProxy in
+            ScrollMetrics(
+                offset: scrollProxy.contentOffset.y + scrollProxy.contentInsets.top,
+                visibleHeight: scrollProxy.containerSize.height - scrollProxy.contentInsets.top - scrollProxy.contentInsets.bottom
+            )
+        } action: { _, metrics in
+            scrollOffset = metrics.offset
+            visibleHeight = metrics.visibleHeight
         }
         .timelineZoom(
             pointsPerHour: $pointsPerHour,
