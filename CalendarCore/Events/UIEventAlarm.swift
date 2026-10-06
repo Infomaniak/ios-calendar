@@ -175,16 +175,16 @@ public enum UIAlarmAction: Identifiable, Sendable, Hashable {
 }
 
 public enum AlarmOffset: String, CaseIterable, Identifiable, Hashable, Sendable {
-    case none = "None"
-    case atTimeOfEvent = "At the time of the event"
-    case fiveMinutesBefore = "5 minutes before"
-    case tenMinutesBefore = "10 minutes before"
-    case fifteenMinutesBefore = "15 minutes before"
-    case thirtyMinutesBefore = "30 minutes before"
-    case oneHourBefore = "1 hour before"
-    case oneDayBefore = "1 day before"
-    case fiveMinutesAfter = "5 minutes after"
-    case oneHourAfter = "1 hour after"
+    case none
+    case atTimeOfEvent
+    case fiveMinutesBefore
+    case tenMinutesBefore
+    case fifteenMinutesBefore
+    case thirtyMinutesBefore
+    case oneHourBefore
+    case oneDayBefore
+    case fiveMinutesAfter
+    case oneHourAfter
 
     public var id: String {
         rawValue

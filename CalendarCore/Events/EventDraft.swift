@@ -64,8 +64,11 @@ public struct EventDraft: Equatable, Sendable {
         self.endDate = endDate
         self.endTimeZone = endTimeZone
         self.attendees = attendees
-        self.alarms = alarms
-        initialAlarms = alarms
+        self.alarms = alarms.isEmpty ? [
+            UIEventAlarm(action: .email, trigger: nil, attachments: [], attendees: [], description: nil, summary: nil),
+            UIEventAlarm(action: .display, trigger: nil, attachments: [], attendees: [], description: nil, summary: nil)
+        ] : alarms
+        initialAlarms = self.alarms
         self.isOccupied = isOccupied
         self.isPrivate = isPrivate
     }
@@ -77,11 +80,7 @@ public extension EventDraft {
 
         return EventDraft(
             startDate: startDate,
-            endDate: startDate.addingTimeInterval(UserDefaults.shared.defaultEventDuration.timeInterval),
-            alarms: [
-                UIEventAlarm(action: .email, trigger: nil, attachments: [], attendees: [], description: nil, summary: nil),
-                UIEventAlarm(action: .display, trigger: nil, attachments: [], attendees: [], description: nil, summary: nil)
-            ]
+            endDate: startDate.addingTimeInterval(UserDefaults.shared.defaultEventDuration.timeInterval)
         )
     }
 

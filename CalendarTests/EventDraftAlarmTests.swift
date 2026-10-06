@@ -37,6 +37,29 @@ struct EventDraftAlarmTests {
     }
 
     @Test
+    func draftWithoutAlarmsStartsWithDisabledRowsAndPreservesOriginalData() throws {
+        let draft = try makeDraft()
+        let storedEditData = try makeStoredEditData(alarms: [])
+
+        #expect(draft.alarms.map(\.action) == [.email, .display])
+        #expect(draft.alarms.allSatisfy { $0.trigger == nil })
+        #expect(try draft.toEventEditData(preserving: storedEditData).alarms is AlarmListEditPreserve)
+    }
+
+    @Test
+    func enablingDefaultEmailAlarmReplacesEmptyAlarms() throws {
+        var draft = try makeDraft()
+        let storedEditData = try makeStoredEditData(alarms: [])
+        draft.alarms[0] = draft.alarms[0].with(offset: .fiveMinutesBefore)
+
+        let editData = try draft.toEventEditData(preserving: storedEditData)
+        let alarms = try #require((editData.alarms as? AlarmListEditReplace)?.alarms)
+
+        #expect(alarms.count == 1)
+        #expect(try UIEventAlarm(sdk: #require(alarms.first)).action == .email)
+    }
+
+    @Test
     func fromEventPrefillsAlarms() throws {
         let editData = try makeDraft().toEventEditData()
 
@@ -137,6 +160,14 @@ struct EventDraftAlarmTests {
 
         #expect(roundTripped.trigger == offset.trigger)
         #expect(roundTripped.offset == offset)
+    }
+
+    @Test
+    func onlyEmailAndNotificationAlarmsAreEditable() {
+        #expect(UIAlarmAction.email.isEditable)
+        #expect(UIAlarmAction.display.isEditable)
+        #expect(!UIAlarmAction.audio.isEditable)
+        #expect(!UIAlarmAction.unknown("X-CUSTOM").isEditable)
     }
 
     // MARK: - Helpers

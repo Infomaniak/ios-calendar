@@ -44,6 +44,24 @@ struct EventAlarmRow: View {
     }
 
     var body: some View {
+        if alarm.action.isEditable {
+            editableRow
+        } else {
+            LabeledContent {
+                Text(alarm.label)
+                    .foregroundStyle(theme.color.contentTertiary)
+            } label: {
+                rowLabel
+            }
+        }
+    }
+
+    private var rowLabel: some View {
+        Label(alarm.action.label, image: alarm.action.icon)
+            .labelStyle(.formLabel)
+    }
+
+    private var editableRow: some View {
         Picker(selection: selectionBinding) {
             Section {
                 ForEach(AlarmOffset.presets) { preset in
@@ -58,8 +76,7 @@ struct EventAlarmRow: View {
             Text(CalendarResourcesStrings.customAlarmLabel)
                 .tag(AlarmRowSelection.custom)
         } label: {
-            Label(alarm.action.label, image: alarm.action.icon)
-                .labelStyle(.formLabel)
+            rowLabel
         }
         .tint(theme.color.contentTertiary)
         .pickerStyle(.menu)

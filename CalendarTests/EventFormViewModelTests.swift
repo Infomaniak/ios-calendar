@@ -242,7 +242,10 @@ struct EventFormViewModelTests {
             endTimeZone: timeZone("Europe/Zurich")
         )
         let draft = try EventDraft.fromEvent(.alarmsPreview, editData: original.toEventEditData())
-        let viewModel = EventFormViewModel(editionMode: .editDraft(draft: draft, editingEvent: .alarmsPreview))
+        let viewModel = EventFormViewModel(
+            editionMode: .editDraft(draft: draft, editingEvent: .alarmsPreview),
+            userDefaults: .shared
+        )
 
         #expect(viewModel.draft.alarms.count == 2)
         #expect(viewModel.isEdited == false)
