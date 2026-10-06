@@ -64,9 +64,7 @@ public struct EventDraft: Equatable, Sendable {
 }
 
 public extension EventDraft {
-    static func empty() -> EventDraft {
-        let startDate = Date()
-
+    static func empty(startDate: Date = Date()) -> EventDraft {
         return EventDraft(
             startDate: startDate,
             endDate: startDate.addingTimeInterval(UserDefaults.shared.defaultEventDuration.timeInterval)

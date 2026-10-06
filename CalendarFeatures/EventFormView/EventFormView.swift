@@ -55,8 +55,12 @@ public struct EventFormView: View {
     @State private var hasFocusedKeyboardOnce = false
     @FocusState private var isTitleFocused: Bool
 
-    public init(editionMode: EditionMode) {
-        _viewModel = State(wrappedValue: EventFormViewModel(editionMode: editionMode, userDefaults: .shared))
+    public init(editionMode: EditionMode, startDate: Date = Date()) {
+        _viewModel = State(wrappedValue: EventFormViewModel(
+            editionMode: editionMode,
+            userDefaults: .shared,
+            startDate: startDate
+        ))
     }
 
     public var body: some View {

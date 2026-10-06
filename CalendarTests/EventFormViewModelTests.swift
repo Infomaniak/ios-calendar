@@ -26,6 +26,17 @@ import Testing
 struct EventFormViewModelTests {
     private let calendar = Calendar(identifier: .gregorian)
 
+    @Test
+    func newEventPrefillsSelectedTimeAndDefaultDurationWithoutMarkingFormChanged() throws {
+        let start = try date("2026-10-06T14:30:00Z")
+        let viewModel = EventFormViewModel(editionMode: .new, userDefaults: .shared, startDate: start)
+
+        #expect(viewModel.draft.startDate == start)
+        #expect(viewModel.draft.endDate == start.addingTimeInterval(UserDefaults.shared.defaultEventDuration.timeInterval))
+        #expect(viewModel.draft.allDay == false)
+        #expect(viewModel.isEdited == false)
+    }
+
     @Test(arguments: [true, false])
     func newEventSelectsLastSavedWritableCalendarOrFallsBackToFirst(isSavedCalendarAvailable: Bool) throws {
         let suiteName = "EventFormViewModelTests.\(UUID().uuidString)"

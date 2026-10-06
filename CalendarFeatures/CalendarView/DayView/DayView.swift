@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarCore
 import CalendarCoreUI
 import DesignSystem
 import ESDSFoundation
@@ -71,6 +72,7 @@ struct DayContentView: View {
     }
 
     @Environment(\.calendar) private var calendar
+    @Environment(\.esdsTheme) private var theme
     @Environment(MainViewState.self) private var mainViewState
 
     @SceneStorage("DayViewScrollPosition") private var storedScrollPosition = 0.0
@@ -80,13 +82,14 @@ struct DayContentView: View {
     @State private var pointsPerHour = Constants.PointsPerHour.default
     @State private var currentMagnification: CGFloat = 1.0
     @State private var coveredTextHeights: [Int: CGFloat] = [:]
+    @State private var draggedEventStartDate: Date?
 
     let date: Date
     let events: [CalendarCoreUI.UIEvent]
 
     private var hourMarks: [Date] {
-        let startOfDay = Calendar.current.startOfDay(for: date)
-        guard let startOfNextDay = Calendar.current.date(byAdding: .day, value: 1, to: startOfDay) else {
+        let startOfDay = calendar.startOfDay(for: date)
+        guard let startOfNextDay = calendar.date(byAdding: .day, value: 1, to: startOfDay) else {
             return []
         }
 
@@ -94,7 +97,7 @@ struct DayContentView: View {
         var currentMark = startOfDay
         while currentMark < startOfNextDay {
             marks.append(currentMark)
-            guard let nextMark = Calendar.current.date(byAdding: .hour, value: 1, to: currentMark) else { break }
+            guard let nextMark = calendar.date(byAdding: .hour, value: 1, to: currentMark) else { break }
             currentMark = nextMark
         }
 
@@ -129,7 +132,29 @@ struct DayContentView: View {
                             pointsPerHour: effectivePointsPerHour,
                             leadingOffset: Self.Constants.leadingInset
                         )
+                        .contentShape(Rectangle())
+                        .onTapGesture { location in
+                            guard location.x >= Self.Constants.leadingInset,
+                                  let startDate = Self.eventStartDate(
+                                      at: location.y,
+                                      on: date,
+                                      pointsPerHour: effectivePointsPerHour,
+                                      calendar: calendar
+                                  ) else { return }
+                            startEventCreation(at: startDate)
+                        }
+                        .gesture(EventCreationLongPressGesture { phase, location in
+                            handleEventCreationLongPress(phase: phase, location: location)
+                        })
                         .padding(.horizontal, value: .medium)
+
+                        if let startDate = draggedEventStartDate {
+                            eventCreationPlaceholder(startDate: startDate)
+                        } else if mainViewState.isShowingEventCreation,
+                                  let startDate = mainViewState.eventCreationStartDate,
+                                  calendar.isDate(startDate, inSameDayAs: date) {
+                            eventCreationPlaceholder(startDate: startDate)
+                        }
 
                         EventuallyLayout(
                             startOfDay: calendar.startOfDay(for: date),
@@ -161,6 +186,7 @@ struct DayContentView: View {
                         if calendar.isDate(date, inSameDayAs: timeline.date) {
                             let timeIndicatorPosition = timeIndicatorPosition(at: timeline.date)
                             TimelineIndicatorView(date: timeline.date)
+                                .allowsHitTesting(false)
                                 .padding(.leading, value: .medium)
                                 .visualEffect { content, proxy in
                                     content
@@ -213,6 +239,70 @@ struct DayContentView: View {
         return elapsedTime * effectivePointsPerHour + Self.Constants.verticalInset
     }
 
+    private func handleEventCreationLongPress(phase: EventCreationLongPressGesture.Phase, location: CGPoint) {
+        switch phase {
+        case .began:
+            guard location.x >= Self.Constants.leadingInset else { return }
+            draggedEventStartDate = eventStartDate(at: location.y)
+        case .changed:
+            guard let previousStartDate = draggedEventStartDate else { return }
+            draggedEventStartDate = eventStartDate(at: location.y) ?? previousStartDate
+        case .ended:
+            guard let startDate = draggedEventStartDate else { return }
+            draggedEventStartDate = nil
+            startEventCreation(at: startDate)
+        case .cancelled:
+            draggedEventStartDate = nil
+        }
+    }
+
+    private func eventStartDate(at verticalPosition: CGFloat) -> Date? {
+        Self.eventStartDate(
+            at: verticalPosition,
+            on: date,
+            pointsPerHour: effectivePointsPerHour,
+            calendar: calendar
+        )
+    }
+
+    private func startEventCreation(at startDate: Date) {
+        mainViewState.eventCreationStartDate = startDate
+        mainViewState.isShowingEventCreation = true
+    }
+
+    private func eventCreationPlaceholder(startDate: Date) -> some View {
+        let startOfDay = calendar.startOfDay(for: date)
+        let startOfNextDay = calendar.date(byAdding: .day, value: 1, to: startOfDay) ?? startDate
+        let endDate = min(
+            startDate.addingTimeInterval(UserDefaults.shared.defaultEventDuration.timeInterval),
+            startOfNextDay
+        )
+        let startPosition = startDate.timeIntervalSince(startOfDay) / 3600 * effectivePointsPerHour
+        let height = endDate.timeIntervalSince(startDate) / 3600 * effectivePointsPerHour
+
+        return RoundedRectangle(cornerRadius: IKRadius.small)
+            .fill(theme.color.backgroundDatavizGrayDim1.opacity(0.25))
+            .frame(height: max(height - 2 * Constants.layoutVerticalSpacing, 0))
+            .padding(.leading, Self.Constants.leadingInset + IKPadding.medium)
+            .padding(.trailing, value: .medium)
+            .offset(y: startPosition + Self.Constants.verticalInset + Constants.layoutVerticalSpacing)
+            .allowsHitTesting(false)
+    }
+
+    static func eventStartDate(
+        at verticalPosition: CGFloat,
+        on date: Date,
+        pointsPerHour: CGFloat,
+        calendar: Calendar
+    ) -> Date? {
+        let elapsedMinutes = ((verticalPosition - Constants.verticalInset) / pointsPerHour * 12).rounded(.up) * 5
+        let startOfDay = calendar.startOfDay(for: date)
+        let startDate = startOfDay.addingTimeInterval(elapsedMinutes * 60)
+        guard verticalPosition >= Constants.verticalInset,
+              calendar.isDate(startDate, inSameDayAs: date) else { return nil }
+        return startDate
+    }
+
     private func scrollToCorrectPosition(_ proxy: GeometryProxy) {
         if calendar.isDate(date, inSameDayAs: .now) {
             let currentTimePosition = timeIndicatorPosition(at: .now)
@@ -246,4 +336,37 @@ struct DayContentView: View {
         events: [.preview, .preview]
     )
     .environment(MainViewState())
+}
+
+struct EventCreationLongPressGesture: UIGestureRecognizerRepresentable {
+    enum Phase {
+        case began
+        case changed
+        case ended
+        case cancelled
+    }
+
+    let action: (Phase, CGPoint) -> Void
+
+    func makeUIGestureRecognizer(context: Context) -> UILongPressGestureRecognizer {
+        let recognizer = UILongPressGestureRecognizer()
+        recognizer.minimumPressDuration = 0.3
+        return recognizer
+    }
+
+    func handleUIGestureRecognizerAction(_ recognizer: UILongPressGestureRecognizer, context: Context) {
+        let location = context.converter.localLocation
+        switch recognizer.state {
+        case .began:
+            action(.began, location)
+        case .changed:
+            action(.changed, location)
+        case .ended:
+            action(.ended, location)
+        case .cancelled, .failed:
+            action(.cancelled, location)
+        default:
+            break
+        }
+    }
 }

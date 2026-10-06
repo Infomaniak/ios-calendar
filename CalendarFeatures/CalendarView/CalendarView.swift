@@ -79,9 +79,11 @@ public struct CalendarView: View {
             }
         }
         .modifier(MiniCalendarHeaderViewModifier(selectedDate: $mainViewState.selectedDate))
-        .sheet(isPresented: $mainViewState.isShowingEventCreation) {
+        .sheet(isPresented: $mainViewState.isShowingEventCreation, onDismiss: {
+            mainViewState.eventCreationStartDate = nil
+        }) {
             NavigationStack {
-                EventFormView(editionMode: .new)
+                EventFormView(editionMode: .new, startDate: mainViewState.eventCreationStartDate ?? Date())
             }
         }
         .toolbar {
@@ -124,6 +126,7 @@ public struct CalendarView: View {
 
             ToolbarItem(placement: .bottomBar) {
                 Button("New", systemImage: "plus") {
+                    mainViewState.eventCreationStartDate = nil
                     mainViewState.isShowingEventCreation = true
                 }
                 .buttonStyle(.borderedProminent)

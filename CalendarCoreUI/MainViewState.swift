@@ -25,6 +25,7 @@ public final class MainViewState {
     public var presentedEvent: UIEvent?
 
     public var isShowingEventCreation = false
+    public var eventCreationStartDate: Date?
 
     public init(selectedDate: Date = Date()) {
         self.selectedDate = selectedDate

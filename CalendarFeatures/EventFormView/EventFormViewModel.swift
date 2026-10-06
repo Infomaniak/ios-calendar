@@ -53,13 +53,13 @@ final class EventFormViewModel {
         originalDraft != draft
     }
 
-    init(editionMode: EditionMode, userDefaults: UserDefaults) {
+    init(editionMode: EditionMode, userDefaults: UserDefaults, startDate: Date = Date()) {
         self.editionMode = editionMode
         self.userDefaults = userDefaults
         let draft: EventDraft
         switch editionMode {
         case .new:
-            draft = EventDraft.empty()
+            draft = EventDraft.empty(startDate: startDate)
         case .editDraft(let existingDraft, _):
             draft = existingDraft
         }

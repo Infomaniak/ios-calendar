@@ -23,6 +23,33 @@ import XCTest
 
 @MainActor
 final class DayPagerTests: XCTestCase {
+    func testTimelineSlotDateUsesZoomAndElapsedTimeAcrossDaylightSavingChanges() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/Zurich"))
+
+        for (month, day, elapsedHours, expectedHour) in [(10, 6, 14, 14), (3, 29, 2, 3), (10, 25, 3, 2)] {
+            let date = try XCTUnwrap(calendar.date(from: DateComponents(year: 2026, month: month, day: day)))
+            for pointsPerHour in [48.0, 64.0, 112.0] {
+                let position = (Double(elapsedHours) + 27.0 / 60) * pointsPerHour + DayContentView.Constants.verticalInset
+                let startDate = try XCTUnwrap(DayContentView.eventStartDate(
+                    at: position,
+                    on: date,
+                    pointsPerHour: pointsPerHour,
+                    calendar: calendar
+                ))
+                XCTAssertTrue(calendar.isDate(startDate, inSameDayAs: date))
+                XCTAssertEqual(calendar.component(.hour, from: startDate), expectedHour)
+                XCTAssertEqual(calendar.component(.minute, from: startDate), 30)
+                XCTAssertEqual(calendar.component(.second, from: startDate), 0)
+            }
+
+            let nextDay = try XCTUnwrap(calendar.date(byAdding: .day, value: 1, to: date))
+            let endPosition = nextDay.timeIntervalSince(date) / 3600 * 64 + DayContentView.Constants.verticalInset
+            XCTAssertNil(DayContentView.eventStartDate(at: endPosition - 1, on: date, pointsPerHour: 64, calendar: calendar))
+            XCTAssertNil(DayContentView.eventStartDate(at: 0, on: date, pointsPerHour: 64, calendar: calendar))
+        }
+    }
+
     func testDayNavigationAndVerticalScrolling() async throws {
         try await checkNavigation()
     }
