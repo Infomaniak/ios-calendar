@@ -16,7 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import DesignSystem
 import SwiftUI
 
 struct TimelineGeometry {
@@ -30,9 +29,9 @@ struct TimelineGeometry {
 
         return EdgeInsets(
             top: verticalInset,
-            leading: TimelineBackgroundView.Constants.leadingInset + IKPadding.medium,
+            leading: TimelineBackgroundView.Constants.leadingInset,
             bottom: verticalInset,
-            trailing: IKPadding.medium
+            trailing: 0
         )
     }
 
