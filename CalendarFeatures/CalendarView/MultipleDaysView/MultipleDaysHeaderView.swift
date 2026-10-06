@@ -46,6 +46,6 @@ struct MultipleDaysHeaderView: View {
             }
             .fixedSize(horizontal: false, vertical: true)
         }
-        .padding(.horizontal, value: .medium)
+        .padding(.leading, value: .medium)
     }
 }
