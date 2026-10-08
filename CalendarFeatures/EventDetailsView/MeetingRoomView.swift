@@ -52,8 +52,8 @@ public struct MeetingRoomView: View {
                         .font(.subheadline.weight(.regular))
                         .foregroundStyle(theme.color.contentSecondary)
 
-                    CalendarResourcesAsset.Images.stair.swiftUIImage
-                        .iconSize(IKIconSize.medium)
+                    ESDSSymbols.zigzagArrowUpRight.image
+                        .font(.system(size: IKIconSize.medium.rawValue))
                         .foregroundStyle(theme.color.contentSecondary)
 
                     let floor = Self.ordinalFormatter.string(from: roomFloor as NSNumber) ?? "\(roomFloor)"
