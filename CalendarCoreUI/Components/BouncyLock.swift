@@ -29,7 +29,7 @@ public struct BouncyLock: View {
     let isUnlocked: Bool
     let lineWidth: CGFloat
 
-    public init(isUnlocked: Bool, lineWidth: CGFloat = 1.75) {
+    public init(isUnlocked: Bool, lineWidth: CGFloat = 1.6) {
         self.isUnlocked = isUnlocked
         self.lineWidth = lineWidth
     }

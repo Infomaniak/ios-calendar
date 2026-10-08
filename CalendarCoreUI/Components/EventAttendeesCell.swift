@@ -19,6 +19,7 @@
 import CalendarResources
 import DesignSystem
 import ESDSFoundation
+import ESDSSymbols
 import InfomaniakCoreSwiftUI
 import SwiftUI
 
@@ -64,7 +65,7 @@ public struct EventAttendeesCell: View {
                     }
                 }
             } icon: {
-                CalendarResourcesAsset.Images.usersStacked.swiftUIImage
+                ESDSSymbols.usersStacked.image
             }
             .labelStyle(.formLabel)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -76,8 +77,8 @@ public struct EventAttendeesCell: View {
                 attendeesAvatarStack
             }
 
-            CalendarResourcesAsset.Images.chevronRight.swiftUIImage
-                .iconSize(IKIconSize.large)
+            ESDSSymbols.chevronRight.image
+                .font(.system(size: IKIconSize.large.rawValue))
                 .foregroundStyle(theme.color.contentTertiary)
         }
     }

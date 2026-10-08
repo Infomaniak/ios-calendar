@@ -20,6 +20,7 @@ import CalendarCoreUI
 import CalendarResources
 import DesignSystem
 import ESDSFoundation
+import ESDSSymbols
 import InfomaniakCoreSwiftUI
 import SwiftUI
 
@@ -28,7 +29,7 @@ struct OpenLinkRow: View {
 
     let title: String
     let buttonTitle: String
-    let icon: Image
+    let icon: ESDSSymbols.Symbol
     let linkURL: URL
     let showLink: Bool
 
@@ -47,7 +48,7 @@ struct OpenLinkRow: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             } icon: {
-                icon
+                icon.image
             }
             .labelStyle(.formLabel)
 
@@ -62,8 +63,8 @@ struct OpenLinkRow: View {
             .buttonStyle(.plain)
 
             ShareLink(item: linkURL) {
-                CalendarResourcesAsset.Images.squareArrowOutUpRight.swiftUIImage
-                    .iconSize(IKIconSize.large)
+                ESDSSymbols.squareArrowOutUpRight.image
+                    .font(.system(size: IKIconSize.large.rawValue))
             }
             .accessibilityLabel(CalendarResourcesStrings.shareLabel)
         }

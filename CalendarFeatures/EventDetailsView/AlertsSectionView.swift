@@ -17,9 +17,9 @@
  */
 
 import CalendarCoreUI
-import CalendarResources
 import DesignSystem
 import ESDSFoundation
+import ESDSSymbols
 import InfomaniakCoreSwiftUI
 import SwiftUI
 
@@ -34,7 +34,7 @@ struct AlertsSectionView: View {
                 Text(alarms[index].offset.rawValue)
                     .foregroundStyle(theme.color.contentSecondary)
             } label: {
-                Label(alarms[index].action.label, image: alarms[index].action.icon)
+                Label(alarms[index].action.label, symbol: alarms[index].action.icon)
                     .labelStyle(.formLabel)
             }
         }

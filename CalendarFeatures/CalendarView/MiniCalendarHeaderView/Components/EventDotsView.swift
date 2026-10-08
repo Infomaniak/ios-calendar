@@ -17,6 +17,7 @@
  */
 
 import ESDSFoundation
+import ESDSSymbols
 import SwiftUI
 
 struct EventDotsView: View {
@@ -38,9 +39,8 @@ struct EventDotsView: View {
                         .frame(width: 6, height: 6)
                 }
 
-                Image(systemName: "plus")
-                    .resizable()
-                    .frame(width: 6, height: 6)
+                ESDSSymbols.plus.image
+                    .font(.system(size: 6))
                     .foregroundStyle(theme.color.contentSecondary)
             } else {
                 ForEach(eventDots.prefix(maxEventCount), id: \.hashValue) { dot in

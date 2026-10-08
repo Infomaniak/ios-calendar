@@ -20,6 +20,7 @@ import CalendarCoreUI
 import CalendarResources
 import DesignSystem
 import ESDSFoundation
+import ESDSSymbols
 import InfomaniakDI
 import MultiplatformCalendar
 import SwiftUI
@@ -171,9 +172,8 @@ struct NextEventContentCardView: View {
 
                 VStack(alignment: .leading, spacing: 0) {
                     HStack(spacing: lerp(a: 0, b: theme.spacing.sm)) {
-                        CalendarResourcesAsset.Images.clock.swiftUIImage
-                            .resizable()
-                            .scaledToFit()
+                        ESDSSymbols.clock.image
+                            .font(.system(size: Constants.informationIconSize))
                             .animateHide(progress: progress, fullHeight: Constants.informationSize)
                             .accessibilityHidden(true)
 
@@ -182,10 +182,8 @@ struct NextEventContentCardView: View {
 
                     if let location = event.location {
                         HStack(spacing: theme.spacing.sm) {
-                            CalendarResourcesAsset.Images.mapPin.swiftUIImage
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: Constants.informationIconSize, height: Constants.informationIconSize)
+                            ESDSSymbols.mapPin.image
+                                .font(.system(size: Constants.informationIconSize))
                                 .accessibilityHidden(true)
 
                             Text(location)
@@ -196,10 +194,8 @@ struct NextEventContentCardView: View {
 
                     if event.kMeetLink != nil {
                         HStack(spacing: theme.spacing.sm) {
-                            CalendarResourcesAsset.Images.productKmeet.swiftUIImage
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: Constants.informationIconSize, height: Constants.informationIconSize)
+                            ESDSSymbols.productKmeet.image
+                                .font(.system(size: Constants.informationIconSize))
                                 .accessibilityHidden(true)
 
                             Text(CalendarResourcesStrings.onlineLabel)

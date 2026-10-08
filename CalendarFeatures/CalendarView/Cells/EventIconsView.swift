@@ -19,13 +19,12 @@
 import CalendarCoreUI
 import CalendarResources
 import DesignSystem
+import ESDSSymbols
 import SwiftUI
 
 private extension Image {
-    func resizableIcon(_ accessibilityLabel: String) -> some View {
-        return resizable()
-            .scaledToFit()
-            .frame(maxWidth: EventIconsView.iconSize, maxHeight: EventIconsView.iconSize)
+    func eventSymbol(_ accessibilityLabel: String) -> some View {
+        return font(.system(size: EventIconsView.iconSize))
             .accessibilityLabel(Text(accessibilityLabel))
     }
 }
@@ -48,16 +47,16 @@ struct EventIconsView: View {
     var body: some View {
         HStack(spacing: IKPadding.micro) {
             if hasLocation && shouldShowLocationIcon {
-                CalendarResourcesAsset.Images.mapPin.swiftUIImage
-                    .resizableIcon(CalendarResourcesStrings.contentDescriptionHasLocation)
+                ESDSSymbols.mapPin.image
+                    .eventSymbol(CalendarResourcesStrings.contentDescriptionHasLocation)
             }
             if hasKMeetLink {
-                CalendarResourcesAsset.Images.productKmeet.swiftUIImage
-                    .resizableIcon(CalendarResourcesStrings.contentDescriptionHasKMeetLink)
+                ESDSSymbols.productKmeet.image
+                    .eventSymbol(CalendarResourcesStrings.contentDescriptionHasKMeetLink)
             }
             if hasAttendees {
-                CalendarResourcesAsset.Images.usersStacked.swiftUIImage
-                    .resizableIcon(CalendarResourcesStrings.contentDescriptionHasAttendees)
+                ESDSSymbols.usersStacked.image
+                    .eventSymbol(CalendarResourcesStrings.contentDescriptionHasAttendees)
             }
         }
     }

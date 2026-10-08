@@ -17,9 +17,9 @@
  */
 
 import CalendarCoreUI
-import CalendarResources
 import DesignSystem
 import ESDSFoundation
+import ESDSSymbols
 import InfomaniakCoreUIResources
 import SwiftUI
 
@@ -33,10 +33,8 @@ struct AnswerButton: View {
     var body: some View {
         Button(action: action) {
             HStack(spacing: IKPadding.micro) {
-                answer.icon
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 20, height: 20)
+                answer.icon.image
+                    .font(.system(size: 20))
                     .accessibilityHidden(true)
 
                 Text(answer.buttonTitle)
@@ -65,16 +63,16 @@ struct AnswerButton: View {
 }
 
 public extension UIParticipationStatus {
-    var icon: Image {
+    var icon: ESDSSymbols.Symbol {
         switch self {
         case .accepted:
-            CalendarResourcesAsset.Images.circleCheck.swiftUIImage
+            ESDSSymbols.circleCheck
         case .declined:
-            CalendarResourcesAsset.Images.circleCross.swiftUIImage
+            ESDSSymbols.circleCross
         case .tentative:
-            CalendarResourcesAsset.Images.circleQuestion.swiftUIImage
+            ESDSSymbols.circleQuestion
         case .needsAction:
-            CalendarResourcesAsset.Images.clock.swiftUIImage
+            ESDSSymbols.clock
         }
     }
 

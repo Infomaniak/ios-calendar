@@ -22,6 +22,7 @@ import CalendarResources
 import CalendarSettingsView
 import DesignSystem
 import ESDSFoundation
+import ESDSSymbols
 import InfomaniakDI
 import MultiplatformCalendar
 import SwiftUI
@@ -50,7 +51,7 @@ public struct CalendarListView: View {
                         Text(CalendarResourcesStrings.accountsTitle)
                             .foregroundStyle(theme.color.contentPrimary)
                     } icon: {
-                        CalendarResourcesAsset.Images.circleUser.swiftUIImage
+                        ESDSSymbols.circleUser.image
                     }
                 }
 
@@ -61,7 +62,7 @@ public struct CalendarListView: View {
                         Text(CalendarResourcesStrings.settingsTitle)
                             .foregroundStyle(theme.color.contentPrimary)
                     } icon: {
-                        CalendarResourcesAsset.Images.cog.swiftUIImage
+                        ESDSSymbols.cog.image
                     }
                 }
 
@@ -70,7 +71,7 @@ public struct CalendarListView: View {
                         Text(CalendarResourcesStrings.helpTitle)
                             .foregroundStyle(theme.color.contentPrimary)
                     } icon: {
-                        CalendarResourcesAsset.Images.headset.swiftUIImage
+                        ESDSSymbols.headset.image
                     }
                 }
                 .buttonStyle(.plain)

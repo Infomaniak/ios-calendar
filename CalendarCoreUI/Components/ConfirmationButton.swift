@@ -17,6 +17,7 @@
  */
 
 import CalendarResources
+import ESDSSymbols
 import Foundation
 import SwiftUI
 
@@ -32,7 +33,7 @@ public struct ConfirmationButton: View {
             Button(role: .confirm, action: action)
         } else {
             Button(action: action) {
-                Label(CalendarResourcesStrings.buttonConfirm, image: CalendarResourcesAsset.Images.check)
+                Label(CalendarResourcesStrings.buttonConfirm, symbol: ESDSSymbols.check)
             }
         }
     }
