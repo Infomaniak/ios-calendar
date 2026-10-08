@@ -51,6 +51,7 @@ tuist test # Or via Xcode Test Navigator
   - Icon sizes: `IKIconSize` constants.
   - Example: `.padding(value: .medium)` not `.padding(16)`.
 - **Icons:** Every icon must come from the design system (`ESDSSymbols`). Import `ESDSSymbols` and use `ESDSSymbols.<symbol>.image` for standalone icons or `Label(title, symbol: ESDSSymbols.<symbol>)` with the existing `Label` extension. Use `ESDSSymbols.Symbol` for stored or computed icon values; do not use raw SF Symbol names (`Image(systemName:)`, `Label(..., systemImage:)`) or custom icon assets.
+- **Symbol sizing:** Size symbols with `.font` using `IKIconSize` or a semantic text style. Remove legacy image-sizing frames when migrating symbols. Do not use `.resizable()`, `.scaledToFit()`, or the image-based `.iconSize` helper for symbols. Keep frames only when independently required by layout or animation; ordinary images and shapes still use frame-based sizing.
 - **Localized strings:** Always use `CalendarResourcesStrings.Localizable.<key>`, never raw string literals.
 - **DI:** Use `@LazyInjectService` or `@InjectService` for dependency injection; register via target assembly classes.
 - **Concurrency:** Use `async/await` and structured concurrency. `RefreshActor` for background sync.

@@ -173,8 +173,7 @@ struct NextEventContentCardView: View {
                 VStack(alignment: .leading, spacing: 0) {
                     HStack(spacing: lerp(a: 0, b: theme.spacing.sm)) {
                         ESDSSymbols.clock.image
-                            .resizable()
-                            .scaledToFit()
+                            .font(.system(size: Constants.informationIconSize))
                             .animateHide(progress: progress, fullHeight: Constants.informationSize)
                             .accessibilityHidden(true)
 
@@ -184,9 +183,7 @@ struct NextEventContentCardView: View {
                     if let location = event.location {
                         HStack(spacing: theme.spacing.sm) {
                             ESDSSymbols.mapPin.image
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: Constants.informationIconSize, height: Constants.informationIconSize)
+                                .font(.system(size: Constants.informationIconSize))
                                 .accessibilityHidden(true)
 
                             Text(location)
@@ -198,9 +195,7 @@ struct NextEventContentCardView: View {
                     if event.kMeetLink != nil {
                         HStack(spacing: theme.spacing.sm) {
                             ESDSSymbols.productKmeet.image
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: Constants.informationIconSize, height: Constants.informationIconSize)
+                                .font(.system(size: Constants.informationIconSize))
                                 .accessibilityHidden(true)
 
                             Text(CalendarResourcesStrings.onlineLabel)

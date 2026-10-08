@@ -108,7 +108,7 @@ public struct EventDetailsView: View {
                             OpenLinkRow(
                                 title: CalendarResourcesStrings.participateKMeetTitle,
                                 buttonTitle: CalendarResourcesStrings.buttonJoin,
-                                icon: ESDSSymbols.productKmeet.image,
+                                icon: ESDSSymbols.productKmeet,
                                 linkURL: kMeetLink,
                                 showLink: false
                             )
@@ -137,8 +137,7 @@ public struct EventDetailsView: View {
                 }
 
                 if let classification = event.classification, let icon = classification.icon,
-                   let text = classification.text
-                {
+                   let text = classification.text {
                     Section {
                         // TODO: Add another row for free/busy status when available
                         StatusRow(text: text, icon: icon)

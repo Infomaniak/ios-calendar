@@ -33,10 +33,8 @@ struct AnswerButton: View {
     var body: some View {
         Button(action: action) {
             HStack(spacing: IKPadding.micro) {
-                answer.icon
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 20, height: 20)
+                answer.icon.image
+                    .font(.system(size: 20))
                     .accessibilityHidden(true)
 
                 Text(answer.buttonTitle)
@@ -65,16 +63,16 @@ struct AnswerButton: View {
 }
 
 public extension UIParticipationStatus {
-    var icon: Image {
+    var icon: ESDSSymbols.Symbol {
         switch self {
         case .accepted:
-            ESDSSymbols.circleCheck.image
+            ESDSSymbols.circleCheck
         case .declined:
-            ESDSSymbols.circleCross.image
+            ESDSSymbols.circleCross
         case .tentative:
-            ESDSSymbols.circleQuestion.image
+            ESDSSymbols.circleQuestion
         case .needsAction:
-            ESDSSymbols.clock.image
+            ESDSSymbols.clock
         }
     }
 

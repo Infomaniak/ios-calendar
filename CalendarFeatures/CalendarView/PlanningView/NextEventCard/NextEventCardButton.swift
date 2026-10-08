@@ -19,6 +19,7 @@
 import CalendarCore
 import CalendarCoreUI
 import CalendarResources
+import DesignSystem
 import ESDSSymbols
 import SwiftUI
 
@@ -58,14 +59,14 @@ struct NextEventCardButton: View {
         case openMap(String)
         case showEventDetails
 
-        var icon: Image {
+        var icon: ESDSSymbols.Symbol {
             switch self {
             case .joinKMeetRoom:
-                return ESDSSymbols.productKmeet.image
+                return ESDSSymbols.productKmeet
             case .openMap:
-                return ESDSSymbols.mapPin.image
+                return ESDSSymbols.mapPin
             case .showEventDetails:
-                return ESDSSymbols.productCalendar.image
+                return ESDSSymbols.productCalendar
             }
         }
 
@@ -94,10 +95,8 @@ struct NextEventCardButton: View {
     var body: some View {
         Button(action: didTapAction) {
             HStack(spacing: 4) {
-                kind.icon
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 16, height: 16)
+                kind.icon.image
+                    .font(.system(size: IKIconSize.medium.rawValue))
                     .accessibilityHidden(true)
 
                 if isExpanded {

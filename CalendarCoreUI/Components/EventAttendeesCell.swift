@@ -78,7 +78,7 @@ public struct EventAttendeesCell: View {
             }
 
             ESDSSymbols.chevronRight.image
-                .iconSize(IKIconSize.large)
+                .font(.system(size: IKIconSize.large.rawValue))
                 .foregroundStyle(theme.color.contentTertiary)
         }
     }

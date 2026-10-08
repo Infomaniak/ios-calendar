@@ -23,10 +23,8 @@ import ESDSSymbols
 import SwiftUI
 
 private extension Image {
-    func resizableIcon(_ accessibilityLabel: String) -> some View {
-        return resizable()
-            .scaledToFit()
-            .frame(maxWidth: EventIconsView.iconSize, maxHeight: EventIconsView.iconSize)
+    func eventSymbol(_ accessibilityLabel: String) -> some View {
+        return font(.system(size: EventIconsView.iconSize))
             .accessibilityLabel(Text(accessibilityLabel))
     }
 }
@@ -50,15 +48,15 @@ struct EventIconsView: View {
         HStack(spacing: IKPadding.micro) {
             if hasLocation && shouldShowLocationIcon {
                 ESDSSymbols.mapPin.image
-                    .resizableIcon(CalendarResourcesStrings.contentDescriptionHasLocation)
+                    .eventSymbol(CalendarResourcesStrings.contentDescriptionHasLocation)
             }
             if hasKMeetLink {
                 ESDSSymbols.productKmeet.image
-                    .resizableIcon(CalendarResourcesStrings.contentDescriptionHasKMeetLink)
+                    .eventSymbol(CalendarResourcesStrings.contentDescriptionHasKMeetLink)
             }
             if hasAttendees {
                 ESDSSymbols.usersStacked.image
-                    .resizableIcon(CalendarResourcesStrings.contentDescriptionHasAttendees)
+                    .eventSymbol(CalendarResourcesStrings.contentDescriptionHasAttendees)
             }
         }
     }

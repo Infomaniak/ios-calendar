@@ -131,6 +131,7 @@ public struct EventFormView: View {
                         Text(CalendarResourcesStrings.privateLabel)
                     } icon: {
                         BouncyLock(isUnlocked: !viewModel.draft.isPrivate)
+                            .frame(width: 22, height: 22)
                     }
                     .labelStyle(.formLabel)
                 }

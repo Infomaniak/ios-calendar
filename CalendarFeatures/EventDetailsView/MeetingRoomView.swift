@@ -45,7 +45,7 @@ public struct MeetingRoomView: View {
 
                 HStack(spacing: IKPadding.mini) {
                     ESDSSymbols.usersStacked.image
-                        .iconSize(IKIconSize.medium)
+                        .font(.system(size: IKIconSize.medium.rawValue))
                         .foregroundStyle(theme.color.contentSecondary)
                     Text(CalendarResourcesStrings.roomSeatsLabel(roomCapacity))
                         .padding(.trailing, IKPadding.mini)

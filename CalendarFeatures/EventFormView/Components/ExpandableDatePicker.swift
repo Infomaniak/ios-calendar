@@ -118,7 +118,7 @@ struct ExpandableDatePicker<ID: Hashable>: View {
                             .foregroundStyle(theme.color.contentTertiary)
 
                         ESDSSymbols.chevronRight.image
-                            .iconSize(IKIconSize.large)
+                            .font(.system(size: IKIconSize.large.rawValue))
                             .foregroundStyle(theme.color.contentTertiary)
                     }
                 }

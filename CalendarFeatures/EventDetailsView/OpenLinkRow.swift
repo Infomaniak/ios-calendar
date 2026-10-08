@@ -29,7 +29,7 @@ struct OpenLinkRow: View {
 
     let title: String
     let buttonTitle: String
-    let icon: Image
+    let icon: ESDSSymbols.Symbol
     let linkURL: URL
     let showLink: Bool
 
@@ -48,7 +48,7 @@ struct OpenLinkRow: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             } icon: {
-                icon
+                icon.image
             }
             .labelStyle(.formLabel)
 
@@ -64,7 +64,7 @@ struct OpenLinkRow: View {
 
             ShareLink(item: linkURL) {
                 ESDSSymbols.squareArrowOutUpRight.image
-                    .iconSize(IKIconSize.large)
+                    .font(.system(size: IKIconSize.large.rawValue))
             }
             .accessibilityLabel(CalendarResourcesStrings.shareLabel)
         }
