@@ -42,7 +42,7 @@ public struct LocationRow: View {
             openInMaps()
         } label: {
             HStack(spacing: IKPadding.mini) {
-                Label(address, symbol: ESDSSymbols.mapPin)
+                Label(address, symbol: .mapPin)
                     .labelStyle(.formLabel)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .multilineTextAlignment(.leading)

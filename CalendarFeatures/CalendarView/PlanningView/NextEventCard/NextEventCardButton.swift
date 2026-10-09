@@ -59,14 +59,14 @@ struct NextEventCardButton: View {
         case openMap(String)
         case showEventDetails
 
-        var icon: ESDSSymbols.Symbol {
+        var icon: ESDSSymbols {
             switch self {
             case .joinKMeetRoom:
-                return ESDSSymbols.productKmeet
+                return .productKmeet
             case .openMap:
-                return ESDSSymbols.mapPin
+                return .mapPin
             case .showEventDetails:
-                return ESDSSymbols.productCalendar
+                return .productCalendar
             }
         }
 

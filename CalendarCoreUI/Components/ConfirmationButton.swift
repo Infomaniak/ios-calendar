@@ -33,7 +33,7 @@ public struct ConfirmationButton: View {
             Button(role: .confirm, action: action)
         } else {
             Button(action: action) {
-                Label(CalendarResourcesStrings.buttonConfirm, symbol: ESDSSymbols.check)
+                Label(CalendarResourcesStrings.buttonConfirm, symbol: .check)
             }
         }
     }

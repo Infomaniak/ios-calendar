@@ -29,7 +29,7 @@ struct OpenLinkRow: View {
 
     let title: String
     let buttonTitle: String
-    let icon: ESDSSymbols.Symbol
+    let icon: ESDSSymbols
     let linkURL: URL
     let showLink: Bool
 

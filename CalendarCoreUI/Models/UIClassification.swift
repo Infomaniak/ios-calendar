@@ -38,12 +38,12 @@ public enum UIClassification: String, Sendable, CaseIterable {
         }
     }
 
-    public var icon: ESDSSymbols.Symbol? {
+    public var icon: ESDSSymbols? {
         switch self {
         case .public:
-            return ESDSSymbols.lockOpen
+            return .lockOpen
         case .private:
-            return ESDSSymbols.lock
+            return .lock
         default:
             return nil
         }

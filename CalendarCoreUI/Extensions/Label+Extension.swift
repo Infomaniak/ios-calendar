@@ -20,7 +20,7 @@ import ESDSSymbols
 import SwiftUI
 
 public extension Label where Title == Text, Icon == Image {
-    init(_ title: String, symbol: ESDSSymbols.Symbol) {
+    init(_ title: String, symbol: ESDSSymbols) {
         self.init { Text(title) } icon: { symbol.image }
     }
 }
