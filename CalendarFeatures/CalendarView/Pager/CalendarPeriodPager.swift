@@ -18,6 +18,13 @@
 
 import SwiftUI
 
+@Observable
+@MainActor
+final class CalendarPeriodPagerScrollSync {
+    var periods: CalendarPeriodCollection?
+    var contentOffset = CGFloat.zero
+}
+
 struct CalendarPeriodPager<Content: View>: View {
     @Environment(\.calendar) private var calendar
 
@@ -28,10 +35,16 @@ struct CalendarPeriodPager<Content: View>: View {
     let component: Calendar.Component
     let periodOffsets: Range<Int>
     var viewCount = 1
+    var scrollBehavior = AnyScrollTargetBehavior(.paging)
+    var scrollSync: CalendarPeriodPagerScrollSync?
 
     @Binding var date: Date
 
     @ViewBuilder let content: (Date) -> Content
+
+    private var scrollAnchor: UnitPoint {
+        return viewCount > 1 ? .leading : .center
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -46,8 +59,13 @@ struct CalendarPeriodPager<Content: View>: View {
                     .scrollTargetLayout()
                 }
                 .scrollIndicators(.hidden, axes: .horizontal)
-                .scrollTargetBehavior(.paging)
-                .scrollPosition(id: $visiblePeriod, anchor: .center)
+                .scrollTargetBehavior(scrollBehavior)
+                .scrollPosition(id: $visiblePeriod, anchor: scrollAnchor)
+                .onScrollGeometryChange(for: CGFloat.self) { scrollGeometry in
+                    scrollGeometry.contentOffset.x
+                } action: { _, contentOffset in
+                    scrollSync?.contentOffset = contentOffset
+                }
                 .onScrollPhaseChange { previousPhase, phase in
                     scrollPhase = phase
                     guard previousPhase.isScrolling, phase == .idle else { return }
@@ -98,6 +116,7 @@ struct CalendarPeriodPager<Content: View>: View {
         transaction.disablesAnimations = true
         withTransaction(transaction) {
             self.periods = periods
+            scrollSync?.periods = periods
             scrollPhase = .idle
             visiblePeriod = 0
             date = periods.origin
@@ -115,7 +134,7 @@ struct CalendarPeriodPager<Content: View>: View {
     }
 }
 
-private struct CalendarPeriodPage<Content: View>: View {
+struct CalendarPeriodPage<Content: View>: View {
     let period: CalendarPeriodCollection.Period
     @ViewBuilder let content: (Date) -> Content
 

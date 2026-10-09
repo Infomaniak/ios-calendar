@@ -23,6 +23,7 @@ import ESDSFoundation
 import SwiftUI
 
 struct DayHeaderView: View {
+    @Environment(\.calendar) private var calendar
     @Environment(\.esdsTheme) private var theme
 
     @ScaledMetric(relativeTo: .caption) private var eventTitleLineHeight: CGFloat = 16
@@ -55,13 +56,11 @@ struct DayHeaderView: View {
     var body: some View {
         VStack {
             HStack(spacing: 0) {
-                Text(CalendarResourcesStrings.weekHeaderWeekNumber(
-                    Calendar.current.component(.weekOfYear, from: date)
-                ))
-                .font(.caption2)
-                .foregroundStyle(theme.color.contentTertiary)
-                .padding(.trailing, value: .small)
-                .frame(width: DayContentView.Constants.leadingInset, alignment: .trailing)
+                Text(CalendarResourcesStrings.weekHeaderWeekNumber(calendar.component(.weekOfYear, from: date)))
+                    .font(.caption2)
+                    .foregroundStyle(theme.color.contentTertiary)
+                    .padding(.trailing, value: .small)
+                    .frame(width: TimelineBackgroundView.Constants.leadingInset, alignment: .trailing)
 
                 HStack(spacing: 2) {
                     Text(date, format: .dateTime.weekday(.wide))
@@ -81,7 +80,7 @@ struct DayHeaderView: View {
                         .font(.caption2)
                         .foregroundStyle(theme.color.contentTertiary)
                         .padding(.trailing, value: .small)
-                        .frame(width: DayContentView.Constants.leadingInset, alignment: .trailing)
+                        .frame(width: TimelineBackgroundView.Constants.leadingInset, alignment: .trailing)
                         .multilineTextAlignment(.trailing)
 
                     ScrollView {

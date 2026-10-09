@@ -16,34 +16,36 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarResources
+import DesignSystem
 import ESDSFoundation
 import SwiftUI
 
-struct DayOfWeekView: View {
+struct MultipleDaysHeaderView: View {
     @Environment(\.calendar) private var calendar
     @Environment(\.esdsTheme) private var theme
 
-    private var weekStartDate: Date {
-        calendar.weekStart(for: Date())
-    }
+    let layout: MultipleDaysLayout
+    let date: Date
+    let pagerScrollSync: CalendarPeriodPagerScrollSync
 
     var body: some View {
         HStack(spacing: 0) {
-            ForEach(0 ..< 7) { dayOffset in
-                ZStack {
-                    if let weekDayDate = calendar.date(byAdding: .day, value: dayOffset, to: weekStartDate) {
-                        Text(weekDayDate, format: .dateTime.weekday(.narrow))
-                            .font(.caption)
-                            .foregroundColor(theme.color.contentPrimary)
+            Text(CalendarResourcesStrings.weekHeaderWeekNumber(calendar.component(.weekOfYear, from: date)))
+                .font(.caption2)
+                .foregroundStyle(theme.color.contentTertiary)
+                .padding(.trailing, value: .small)
+                .frame(width: TimelineBackgroundView.Constants.leadingInset, alignment: .trailing)
+
+            CalendarPeriodPagerMirror(scrollSync: pagerScrollSync, viewCount: layout.pagerViewCount) { pagerDate in
+                HStack(spacing: 0) {
+                    ForEach(layout.pageDates(for: pagerDate, calendar: calendar), id: \.self) { day in
+                        LargeDayHeaderView(date: day)
                     }
                 }
-                .frame(maxWidth: .infinity)
             }
+            .fixedSize(horizontal: false, vertical: true)
         }
-        .padding(.horizontal, value: .small)
+        .padding(.leading, value: .medium)
     }
-}
-
-#Preview {
-    DayOfWeekView()
 }

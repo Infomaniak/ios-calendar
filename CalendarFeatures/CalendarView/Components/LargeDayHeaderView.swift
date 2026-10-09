@@ -16,34 +16,39 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import ESDSFoundation
 import SwiftUI
 
-struct DayOfWeekView: View {
+struct LargeDayHeaderView: View {
     @Environment(\.calendar) private var calendar
     @Environment(\.esdsTheme) private var theme
 
-    private var weekStartDate: Date {
-        calendar.weekStart(for: Date())
+    let date: Date
+
+    private var foreground: Color {
+        if calendar.isDate(date, inSameDayAs: .now) {
+            return theme.color.contentBrand
+        } else {
+            return theme.color.contentPrimary
+        }
     }
 
     var body: some View {
-        HStack(spacing: 0) {
-            ForEach(0 ..< 7) { dayOffset in
-                ZStack {
-                    if let weekDayDate = calendar.date(byAdding: .day, value: dayOffset, to: weekStartDate) {
-                        Text(weekDayDate, format: .dateTime.weekday(.narrow))
-                            .font(.caption)
-                            .foregroundColor(theme.color.contentPrimary)
-                    }
-                }
-                .frame(maxWidth: .infinity)
-            }
+        VStack(spacing: 0) {
+            Text(date, format: .dateTime.weekday(.abbreviated))
+                .textCase(.uppercase)
+                .font(.caption2)
+
+            Text(date, format: .dateTime.day())
+                .font(.title3.weight(.emphasized))
         }
-        .padding(.horizontal, value: .small)
+        .foregroundStyle(foreground)
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, value: .mini)
     }
 }
 
 #Preview {
-    DayOfWeekView()
+    LargeDayHeaderView(date: .now)
 }
