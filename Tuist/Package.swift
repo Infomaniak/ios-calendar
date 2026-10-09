@@ -42,7 +42,7 @@ let package = Package(
         .package(url: "https://github.com/Infomaniak/ios-device-check", .upToNextMajor(from: "1.1.1")),
         .package(url: "https://github.com/Infomaniak/ios-features", .upToNextMajor(from: "10.2.0")),
         .package(url: "https://github.com/Infomaniak/ios-login", .upToNextMajor(from: "7.8.0")),
-        .package(url: "https://github.com/Infomaniak/ios-onboarding", branch: "fix/onboarding-display-on-iphone-duo"),
+        .package(url: "https://github.com/Infomaniak/ios-onboarding", .upToNextMajor(from: "1.5.0")),
         .package(url: "https://github.com/Infomaniak/multiplatform-calendar", .upToNextMajor(from: "0.12.0"))
     ]
 )
