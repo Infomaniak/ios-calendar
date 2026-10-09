@@ -110,7 +110,7 @@ struct ExpandableDatePicker<ID: Hashable>: View {
                     timeZonePickerId = id
                 } label: {
                     HStack(spacing: IKPadding.micro) {
-                        Label(CalendarResourcesStrings.timeZoneLabel, symbol: ESDSSymbols.globe)
+                        Label(CalendarResourcesStrings.timeZoneLabel, symbol: .globe)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .labelStyle(.formLabel)
 
