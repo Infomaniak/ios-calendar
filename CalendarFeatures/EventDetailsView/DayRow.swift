@@ -28,7 +28,7 @@ struct DayRow: View {
     @Environment(\.esdsTheme) private var theme
     @Environment(\.calendar) private var calendar
 
-    let event: CalendarCoreUI.UIEvent
+    let event: UIEventDetails
 
     private var isMultiDay: Bool {
         let endDate = event.timing.end.addingTimeInterval(-1)
@@ -155,9 +155,9 @@ struct DayRow: View {
 }
 
 #Preview {
-    DayRow(event: CalendarCoreUI.UIEvent.preview)
+    DayRow(event: UIEventDetails.preview)
 }
 
 #Preview {
-    DayRow(event: CalendarCoreUI.UIEvent.longPreview)
+    DayRow(event: UIEventDetails.longPreview)
 }

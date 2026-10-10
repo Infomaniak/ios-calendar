@@ -134,15 +134,28 @@ struct EventDraftValidatorTests {
     @Test
     func updatingDraftPreservesUneditedEventFields() throws {
         let original = try makeDraft().toEventEditData()
+        let attendee = AttendeeEdit(email: "guest@example.com", displayName: "Guest", type: .individual, role: .requested)
+        let organizer = Organizer(email: "organizer@example.com", displayName: "Organizer", contact: nil)
+        let recurrenceDate = IcalDateValueFloating(
+            localDateTime: LocalDateTime(year: 2027, month: 1, day: 15, hour: 10, minute: 0, second: 0, nanosecond: 0)
+        )
+        let timing = EventTiming(
+            bounds: original.timing.bounds,
+            recurrenceRule: original.timing.recurrenceRule,
+            rDates: [recurrenceDate],
+            exDates: [recurrenceDate]
+        )
         let stored = try EventEditData(
             title: original.title,
-            timing: original.timing,
+            timing: timing,
             location: "Meeting room",
             description: original.description_,
             timeBlocking: nil,
             calendarId: original.calendarId,
             eventColor: original.eventColor,
-            alarms: original.alarms
+            alarms: original.alarms,
+            attendees: [attendee],
+            organizer: organizer
         )
         var draft = makeDraft()
         draft.title = "Updated title"
@@ -152,6 +165,49 @@ struct EventDraftValidatorTests {
         #expect(updated.location == stored.location)
         #expect(updated.timeBlocking == nil)
         #expect(updated.alarms === stored.alarms)
+        #expect(updated.attendees == stored.attendees)
+        #expect(updated.organizer == stored.organizer)
+        #expect(updated.timing.rDates.first as? IcalDateValueFloating == recurrenceDate)
+        #expect(updated.timing.exDates.first as? IcalDateValueFloating == recurrenceDate)
+    }
+
+    @Test
+    func allDayDraftUsesAllDayBounds() throws {
+        var draft = makeDraft()
+        draft.allDay = true
+        draft.endDate = draft.startDate.addingTimeInterval(86400)
+        let timing = try draft.toEventEditData().timing
+        let bounds = try #require(timing.bounds as? EventBoundsAllDay)
+
+        #expect(timing.isAllDay)
+        #expect(bounds.start != bounds.end)
+    }
+
+    @Test
+    func floatingDraftUsesFloatingBounds() throws {
+        var draft = makeDraft()
+        draft.startTimeZone = nil
+        draft.endTimeZone = nil
+        let timing = try draft.toEventEditData().timing
+
+        #expect(timing.bounds is EventBoundsFloating)
+        #expect(!timing.isAllDay)
+        #expect(timing.startInstantLocal().toNSDate() == draft.startDate)
+        #expect(timing.endInstantLocal().toNSDate() == draft.endDate)
+    }
+
+    @Test
+    func zonedDraftPreservesBothTimeZonesAndInstants() throws {
+        var draft = makeDraft()
+        draft.startTimeZone = Foundation.TimeZone(identifier: "Europe/Zurich")
+        draft.endTimeZone = Foundation.TimeZone(identifier: "Europe/London")
+        let timing = try draft.toEventEditData().timing
+        let bounds = try #require(timing.bounds as? EventBoundsZoned)
+
+        #expect(bounds.start.timeZone.id == "Europe/Zurich")
+        #expect(bounds.end.timeZone.id == "Europe/London")
+        #expect(timing.startInstantLocal().toNSDate() == draft.startDate)
+        #expect(timing.endInstantLocal().toNSDate() == draft.endDate)
     }
 
     private func makeDraft() -> EventDraft {

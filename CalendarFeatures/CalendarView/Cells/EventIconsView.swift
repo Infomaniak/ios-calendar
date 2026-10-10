@@ -33,14 +33,14 @@ struct EventIconsView: View {
     nonisolated static let iconSize: CGFloat = IKIconSize.medium.rawValue
 
     let hasLocation: Bool
-    let hasKMeetLink: Bool
+    let hasMeetRoom: Bool
     let hasAttendees: Bool
     let shouldShowLocationIcon: Bool
 
-    init(event: CalendarCoreUI.UIEvent, shouldShowLocationIcon: Bool = true) {
+    init(event: UIEventSummary, shouldShowLocationIcon: Bool = true) {
         hasLocation = event.location != nil
-        hasKMeetLink = event.kMeetLink != nil
-        hasAttendees = !event.attendees.isEmpty
+        hasMeetRoom = event.hasMeetRoom
+        hasAttendees = event.hasAttendees
         self.shouldShowLocationIcon = shouldShowLocationIcon
     }
 
@@ -50,7 +50,7 @@ struct EventIconsView: View {
                 ESDSSymbols.mapPin.image
                     .eventSymbol(CalendarResourcesStrings.contentDescriptionHasLocation)
             }
-            if hasKMeetLink {
+            if hasMeetRoom {
                 ESDSSymbols.productKmeet.image
                     .eventSymbol(CalendarResourcesStrings.contentDescriptionHasKMeetLink)
             }

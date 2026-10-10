@@ -21,7 +21,7 @@ import CalendarResources
 import SwiftUI
 
 struct PlanningDayEventView: View {
-    let event: CalendarCoreUI.UIEvent
+    let event: UIEventSummary
 
     var body: some View {
         HStack {
@@ -38,5 +38,5 @@ struct PlanningDayEventView: View {
 }
 
 #Preview {
-    PlanningDayEventView(event: CalendarCoreUI.UIEvent.preview)
+    PlanningDayEventView(event: UIEventSummary.preview)
 }

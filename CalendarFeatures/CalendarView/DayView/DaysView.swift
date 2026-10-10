@@ -26,9 +26,9 @@ import SwiftUI
 
 @Observable
 final class DaysViewModel {
-    var events = [Date: [CalendarCoreUI.UIEvent]]()
+    var events = [Date: [UIEventSummary]]()
 
-    func events(for date: Date, calendar: Foundation.Calendar) -> [CalendarCoreUI.UIEvent] {
+    func events(for date: Date, calendar: Foundation.Calendar) -> [UIEventSummary] {
         return events[date.startOfDay(calendar)] ?? []
     }
 }
@@ -54,8 +54,6 @@ struct DayPager: View {
 struct DaysView: View {
     @Environment(\.calendar) private var calendar
     @Environment(MainViewState.self) private var mainViewState
-    @Environment(\.calendarAccounts) private var calendarAccounts
-
     @State private var viewModel = DaysViewModel()
 
     var body: some View {
@@ -86,12 +84,9 @@ struct DaysView: View {
             end: endDate.instant
         )._throttle(for: .milliseconds(500)) {
             guard !Task.isCancelled else { return }
-            let accounts = await calendarAccounts
-
             let uiEvents = daySlices.values.flatMap { eventDaySlices in
-                eventDaySlices.compactMap {
-                    let account = accounts[Int($0.event.accountIdValue)]
-                    return CalendarCoreUI.UIEvent(eventDaySlice: $0, userEmail: account?.user.email ?? "")
+                eventDaySlices.map {
+                    UIEventSummary(eventDaySlice: $0)
                 }
             }
 

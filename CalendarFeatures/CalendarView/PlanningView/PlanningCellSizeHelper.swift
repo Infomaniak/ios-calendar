@@ -24,7 +24,7 @@ struct PlanningCellSizeHelper {
     private let dateHeight = UIFont.preferredFont(forTextStyle: .caption2).lineHeight
     private let titleHeight = UIFont.preferredFont(forTextStyle: .caption1).lineHeight
 
-    func heightForCell(event: CalendarCoreUI.UIEvent) -> CGFloat {
+    func heightForCell(event: UIEventSummary) -> CGFloat {
         if event.isAllDay {
             return titleHeight + dateHeight
         } else {

@@ -45,7 +45,7 @@ public struct EventDetailsView: View {
     @State private var isShowingEditError = false
     @State private var editErrorMessage = ""
 
-    private let event: CalendarCoreUI.UIEvent
+    private let event: UIEventDetails
 
     private var uniqueAttendees: [UIAttendee] {
         var seenEmails = Set<String>()
@@ -59,7 +59,7 @@ public struct EventDetailsView: View {
         event.kMeetLink != nil || event.location != nil
     }
 
-    public init(event: CalendarCoreUI.UIEvent) {
+    public init(event: UIEventDetails) {
         self.event = event
         _alarms = State(initialValue: event.alarms)
         _selectedStatus = State(initialValue: event.user?.status)
@@ -282,5 +282,5 @@ public struct EventDetailsView: View {
 }
 
 #Preview {
-    EventDetailsView(event: CalendarCoreUI.UIEvent.preview)
+    EventDetailsView(event: UIEventDetails.preview)
 }

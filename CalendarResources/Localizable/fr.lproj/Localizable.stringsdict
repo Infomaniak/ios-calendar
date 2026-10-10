@@ -51,6 +51,22 @@
         <string>%d refusés</string>
       </dict>
     </dict>
+    <key>attendeesDelegatedCount</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>%d délégué</string>
+        <key>other</key>
+        <string>%d délégués</string>
+      </dict>
+    </dict>
     <key>attendeesPendingCount</key>
     <dict>
       <key>NSStringLocalizedFormatKey</key>

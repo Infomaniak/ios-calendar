@@ -252,6 +252,7 @@
 
 /* loco:6a8d6480c17afcf08b040832 */
 "statusDeclinedLabel" = "Declined";
+"statusDelegatedLabel" = "Delegated";
 
 /* loco:6a8d6544c0a309a6c5026372 */
 "statusNeedsActionLabel" = "Pending";

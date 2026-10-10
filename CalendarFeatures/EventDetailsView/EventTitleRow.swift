@@ -43,7 +43,7 @@ struct EventTitleRow: View {
 
 #Preview {
     EventTitleRow(
-        title: UIEvent.preview.displayTitle,
+        title: UIEventDetails.preview.displayTitle,
         eventColor: .green
     )
 }

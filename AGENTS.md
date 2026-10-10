@@ -55,6 +55,9 @@ tuist test # Or via Xcode Test Navigator
 - **Localized strings:** Always use `CalendarResourcesStrings.Localizable.<key>`, never raw string literals.
 - **DI:** Use `@LazyInjectService` or `@InjectService` for dependency injection; register via target assembly classes.
 - **Concurrency:** Use `async/await` and structured concurrency. `RefreshActor` for background sync.
+- **KMP events (0.14.0):** Map `EventSummary` to `UIEventSummary` for day slices and lists; fetch `Event` with `getOccurrence` and map it to `UIEventDetails` for details. Upcoming alarms also contain an `EventSummary`.
+- **Event colors:** Use the standalone `UIEventColor` model in its own file, shared by summaries and details.
+- **Optional mapping:** Prefer `if let` over `Optional.map` for assigning optional values in initializers. When `.map` is used, write a closure (`.map { UIContact(contact: $0) }`), not an init reference (`.map(UIContact.init)`).
 - **Formatting:** SwiftFormat excludes `DerivedData`, `Derived`, `Tuist`, `Project.swift`.
 
 

@@ -21,11 +21,11 @@ import DesignSystem
 import SwiftUI
 
 struct DayEventView: View {
-    let event: CalendarCoreUI.UIEvent
+    let event: UIEventSummary
     let pointsPerHour: CGFloat
     let maxVisibleHeight: CGFloat?
 
-    init(event: CalendarCoreUI.UIEvent, pointsPerHour: CGFloat, maxVisibleHeight: CGFloat? = nil) {
+    init(event: UIEventSummary, pointsPerHour: CGFloat, maxVisibleHeight: CGFloat? = nil) {
         self.event = event
         self.pointsPerHour = pointsPerHour
         self.maxVisibleHeight = maxVisibleHeight

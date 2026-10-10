@@ -71,7 +71,7 @@ public extension UIParticipationStatus {
             ESDSSymbols.circleCross
         case .tentative:
             ESDSSymbols.circleQuestion
-        case .needsAction:
+        case .needsAction, .delegated:
             ESDSSymbols.clock
         }
     }

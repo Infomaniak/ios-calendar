@@ -29,17 +29,17 @@ struct EventCellStyle: ViewModifier {
     }
 
     let mode: Mode
-    let colors: CalendarCoreUI.UIEvent.Colors
+    let colors: UIEventColor
     let padding: CGFloat
 
-    init(event: CalendarCoreUI.UIEvent, padding: CGFloat) {
+    init(event: UIEventSummary, padding: CGFloat) {
         colors = event.colors
         self.padding = padding
         mode = Self.computeMode(for: event)
     }
 
     // periphery:ignore - Used for #Preview
-    init(mode: Mode, colors: CalendarCoreUI.UIEvent.Colors = .preview) {
+    init(mode: Mode, colors: UIEventColor = .preview) {
         self.mode = mode
         self.colors = colors
         padding = IKPadding.mini
@@ -92,17 +92,17 @@ struct EventCellStyle: ViewModifier {
             .clipShape(.rect(cornerRadius: 8))
     }
 
-    private static func computeMode(for event: CalendarCoreUI.UIEvent) -> Mode {
+    private static func computeMode(for event: UIEventSummary) -> Mode {
         if event.status == .cancelled {
             return .declined
         }
 
-        guard let attendee = event.user else {
+        guard let status = event.myStatus else {
             return .default
         }
 
-        switch attendee.status {
-        case .accepted:
+        switch status {
+        case .accepted, .delegated:
             return .default
         case .declined:
             return .declined
@@ -115,7 +115,7 @@ struct EventCellStyle: ViewModifier {
 }
 
 extension View {
-    func eventCellStyle(event: CalendarCoreUI.UIEvent, padding: CGFloat = IKPadding.mini) -> some View {
+    func eventCellStyle(event: UIEventSummary, padding: CGFloat = IKPadding.mini) -> some View {
         modifier(EventCellStyle(event: event, padding: padding))
     }
 

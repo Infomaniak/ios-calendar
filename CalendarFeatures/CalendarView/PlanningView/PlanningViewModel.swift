@@ -41,15 +41,11 @@ final class PlanningViewModel {
 
     private let calendar = Calendar.current
     @ObservationIgnored private let startDate: Date
-    @ObservationIgnored private var eventsByDay: [Date: [CalendarCoreUI.UIEvent]] = [:]
+    @ObservationIgnored private var eventsByDay: [Date: [UIEventSummary]] = [:]
     @ObservationIgnored private var observeCenterDate: Date
     @ObservationIgnored private var currentObserveTask: Task<Void, Never>?
 
-    private let calendarAccounts: [CalendarAccount.ID: CalendarAccount]
-
-    init(calendarAccounts: [CalendarAccount.ID: CalendarAccount]) {
-        self.calendarAccounts = calendarAccounts
-
+    init() {
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: Date())
         startDate = calendar.date(byAdding: .day, value: -Self.daysBeforeToday, to: today) ?? today
@@ -112,9 +108,8 @@ final class PlanningViewModel {
                 guard !Task.isCancelled, let self else { return }
 
                 let uiEvents = daySlices.values.flatMap { eventDaySlices in
-                    eventDaySlices.compactMap {
-                        let account = self.calendarAccounts[Int($0.event.accountIdValue)]
-                        return CalendarCoreUI.UIEvent(eventDaySlice: $0, userEmail: account?.user.email ?? "")
+                    eventDaySlices.map {
+                        UIEventSummary(eventDaySlice: $0)
                     }
                 }
 
@@ -125,7 +120,7 @@ final class PlanningViewModel {
     }
 
     @concurrent
-    private func ingest(uiEvents: [CalendarCoreUI.UIEvent]) async {
+    private func ingest(uiEvents: [UIEventSummary]) async {
         let groupedEvents = Dictionary(grouping: uiEvents) { calendar.startOfDay(for: $0.startDate) }
         let newDays = PlanningDay.makeWindow(
             startDate: startDate,

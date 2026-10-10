@@ -27,12 +27,12 @@ struct DayHeaderView: View {
 
     @ScaledMetric(relativeTo: .caption) private var eventTitleLineHeight: CGFloat = 16
 
-    let events: [CalendarCoreUI.UIEvent]
+    let events: [UIEventSummary]
     let date: Date
 
     private static let maxVisibleRows = 2
 
-    private var eventPairs: [(CalendarCoreUI.UIEvent, CalendarCoreUI.UIEvent?)] {
+    private var eventPairs: [(UIEventSummary, UIEventSummary?)] {
         stride(from: 0, to: events.count, by: 2).map { index in
             let secondEvent = index + 1 < events.count ? events[index + 1] : nil
             return (events[index], secondEvent)
@@ -116,7 +116,7 @@ struct DayHeaderView: View {
 }
 
 private extension View {
-    func allDayEventStyle(for event: CalendarCoreUI.UIEvent) -> some View {
+    func allDayEventStyle(for event: UIEventSummary) -> some View {
         font(.caption.bold())
             .lineLimit(1)
             .frame(maxWidth: .infinity, alignment: .leading)

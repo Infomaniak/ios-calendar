@@ -26,7 +26,7 @@ import SwiftUI
 struct NextEventCardButtonGeometryView: View {
     @Binding var size: CGSize
 
-    let event: CalendarCoreUI.UIEvent
+    let event: UIEventDetails
     let progress: Double
 
     var body: some View {
@@ -51,7 +51,7 @@ struct NextEventCardButton: View {
 
     @State private var isExpanded = false
 
-    let event: CalendarCoreUI.UIEvent
+    let event: UIEventDetails
     let progress: Double
 
     enum CallToActionKind {
@@ -119,8 +119,9 @@ struct NextEventCardButton: View {
     private func didTapAction() {
         switch kind {
         case .joinKMeetRoom:
-            // TODO: Join kMeet meeting
-            break
+            if let link = event.kMeetLink {
+                openURL(link)
+            }
         case .openMap(let address):
             guard let url = AppleMapsHelper().addressURL(address) else { return }
             openURL(url)

@@ -37,7 +37,8 @@ public struct EventAttendeesCell: View {
             .accepted: CalendarResourcesStrings.attendeesAcceptedCount,
             .tentative: CalendarResourcesStrings.attendeesTentativeCount,
             .needsAction: CalendarResourcesStrings.attendeesPendingCount,
-            .declined: CalendarResourcesStrings.attendeesDeclinedCount
+            .declined: CalendarResourcesStrings.attendeesDeclinedCount,
+            .delegated: CalendarResourcesStrings.attendeesDelegatedCount
         ]
 
         return UIParticipationStatus.allCases.compactMap { status in

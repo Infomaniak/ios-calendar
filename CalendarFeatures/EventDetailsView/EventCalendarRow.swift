@@ -27,7 +27,7 @@ import SwiftUI
 struct EventCalendarRow: View {
     @State private var selectedCalendar: UICalendar?
 
-    let event: CalendarCoreUI.UIEvent?
+    let event: UIEventDetails?
 
     var body: some View {
         VStack {
@@ -69,5 +69,5 @@ struct EventCalendarRow: View {
 }
 
 #Preview {
-    EventCalendarRow(event: UIEvent.preview)
+    EventCalendarRow(event: UIEventDetails.preview)
 }

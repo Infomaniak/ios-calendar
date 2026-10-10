@@ -82,7 +82,7 @@ struct DayContentView: View {
     @State private var coveredTextHeights: [Int: CGFloat] = [:]
 
     let date: Date
-    let events: [CalendarCoreUI.UIEvent]
+    let events: [UIEventSummary]
 
     private var hourMarks: [Date] {
         let startOfDay = Calendar.current.startOfDay(for: date)
@@ -103,7 +103,7 @@ struct DayContentView: View {
         return marks
     }
 
-    private var allDayEvents: [CalendarCoreUI.UIEvent] {
+    private var allDayEvents: [UIEventSummary] {
         return events.filter(\.isAllDay)
     }
 
