@@ -35,13 +35,13 @@ struct TimelineGeometry {
         )
     }
 
-    func yPosition(for date: Date) -> CGFloat {
-        let elapsedHours = date.timeIntervalSince(startOfDay) / 3600
+    func yPosition(for date: Date, calendar: Calendar) -> CGFloat {
+        let elapsedHours = date.timeIntervalSince(calendar.startOfDay(for: date)) / 3600
         return elapsedHours * pointsPerHour + TimelineBackgroundView.Constants.verticalInset
     }
 
-    func centeredScrollOffset(for date: Date) -> CGFloat {
-        let centeredOffset = yPosition(for: date) - visibleHeight / 2
+    func centeredScrollOffset(for date: Date, calendar: Calendar) -> CGFloat {
+        let centeredOffset = yPosition(for: date, calendar: calendar) - visibleHeight / 2
         let maximumOffset = max(contentHeight - visibleHeight, 0)
         return min(max(centeredOffset, 0), maximumOffset)
     }
