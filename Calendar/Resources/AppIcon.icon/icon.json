@@ -1,16 +1,104 @@
 {
   "fill" : {
-    "automatic-gradient" : "display-p3:0.21176,0.81569,0.92157,1.00000"
+    "automatic-gradient" : "srgb:0.21176,0.81569,0.92157,1.00000"
   },
   "groups" : [
     {
       "layers" : [
         {
-          "fill" : {
-            "solid" : "gray:1.00000,1.00000"
-          },
-          "image-name" : "calendar 2.png",
-          "name" : "calendar 2"
+          "fill-specializations" : [
+            {
+              "value" : "none"
+            },
+            {
+              "appearance" : "dark",
+              "value" : {
+                "solid" : "srgb:0.09412,0.45882,0.52157,1.00000"
+              }
+            },
+            {
+              "appearance" : "tinted",
+              "value" : {
+                "solid" : "srgb:1.00000,1.00000,1.00000,1.00000"
+              }
+            }
+          ],
+          "image-name" : "4 – Layer 5.svg",
+          "name" : "4 – Layer 5"
+        },
+        {
+          "fill-specializations" : [
+            {
+              "appearance" : "dark",
+              "value" : {
+                "solid" : "srgb:0.21176,0.81569,0.92157,1.00000"
+              }
+            },
+            {
+              "appearance" : "tinted",
+              "value" : {
+                "solid" : "srgb:0.21176,0.81569,0.92157,1.00000"
+              }
+            }
+          ],
+          "image-name" : "3 – Layer 4.svg",
+          "name" : "3 – Layer 4"
+        },
+        {
+          "fill-specializations" : [
+            {
+              "appearance" : "dark",
+              "value" : {
+                "solid" : "srgb:0.21176,0.81569,0.92157,1.00000"
+              }
+            },
+            {
+              "appearance" : "tinted",
+              "value" : {
+                "solid" : "srgb:0.21176,0.81569,0.92157,1.00000"
+              }
+            }
+          ],
+          "image-name" : "2 – Layer 4.svg",
+          "name" : "2 – Layer 4",
+          "opacity-specializations" : [
+            {
+              "appearance" : "dark",
+              "value" : 0.75
+            },
+            {
+              "appearance" : "tinted",
+              "value" : 0.7
+            }
+          ]
+        },
+        {
+          "fill-specializations" : [
+            {
+              "appearance" : "dark",
+              "value" : {
+                "solid" : "srgb:0.21176,0.81569,0.92157,1.00000"
+              }
+            },
+            {
+              "appearance" : "tinted",
+              "value" : {
+                "solid" : "srgb:0.21176,0.81569,0.92157,1.00000"
+              }
+            }
+          ],
+          "image-name" : "1 – Layer 4.svg",
+          "name" : "1 – Layer 4",
+          "opacity-specializations" : [
+            {
+              "appearance" : "dark",
+              "value" : 0.4
+            },
+            {
+              "appearance" : "tinted",
+              "value" : 0.4
+            }
+          ]
         }
       ],
       "shadow" : {
@@ -19,7 +107,7 @@
       },
       "translucency" : {
         "enabled" : true,
-        "value" : 0.5
+        "value" : 0.2
       }
     }
   ],
