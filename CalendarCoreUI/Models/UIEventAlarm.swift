@@ -102,14 +102,14 @@ public enum UIAlarmAction: Identifiable, Sendable, Hashable {
         }
     }
 
-    public var icon: ESDSSymbols.Symbol {
+    public var icon: ESDSSymbols {
         switch self {
         case .display:
-            return ESDSSymbols.bubbleTopRightCircle
+            return .bubbleTopRightCircle
         case .audio:
-            return ESDSSymbols.bell
+            return .bell
         default:
-            return ESDSSymbols.bell
+            return .bell
         }
     }
 }

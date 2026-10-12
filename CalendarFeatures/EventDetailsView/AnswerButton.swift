@@ -63,16 +63,16 @@ struct AnswerButton: View {
 }
 
 public extension UIParticipationStatus {
-    var icon: ESDSSymbols.Symbol {
+    var icon: ESDSSymbols {
         switch self {
         case .accepted:
-            ESDSSymbols.circleCheck
+            .circleCheck
         case .declined:
-            ESDSSymbols.circleCross
+            .circleCross
         case .tentative:
-            ESDSSymbols.circleQuestion
+            .circleQuestion
         case .needsAction:
-            ESDSSymbols.clock
+            .clock
         }
     }
 

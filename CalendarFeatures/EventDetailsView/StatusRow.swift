@@ -22,7 +22,7 @@ import SwiftUI
 
 struct StatusRow: View {
     let text: String
-    let icon: ESDSSymbols.Symbol
+    let icon: ESDSSymbols
 
     var body: some View {
         Label(text, symbol: icon)

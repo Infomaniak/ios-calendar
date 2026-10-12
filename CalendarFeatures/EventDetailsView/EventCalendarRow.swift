@@ -45,7 +45,7 @@ struct EventCalendarRow: View {
                 } label: {
                     Label(
                         CalendarResourcesStrings.sectionCalendarHeader,
-                        symbol: ESDSSymbols.productCalendar
+                        symbol: .productCalendar
                     )
                     .labelStyle(.formLabel)
                 }

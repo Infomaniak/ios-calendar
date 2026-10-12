@@ -34,7 +34,7 @@ struct DescriptionRow: View {
     var body: some View {
         VStack(alignment: .leading) {
             HStack(spacing: IKPadding.medium) {
-                Label(CalendarResourcesStrings.descriptionTitle, symbol: ESDSSymbols.listLeft)
+                Label(CalendarResourcesStrings.descriptionTitle, symbol: .listLeft)
                     .labelStyle(.formLabel)
                     .frame(maxWidth: .infinity, alignment: .leading)
 
