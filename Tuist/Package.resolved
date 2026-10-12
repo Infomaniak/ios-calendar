@@ -141,8 +141,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/multiplatform-calendar",
       "state" : {
-        "revision" : "bef94307ac1533c157d40fc4d5c59c74ed78498d",
-        "version" : "0.14.0"
+        "branch" : "spm-ios-snapshot-0.15.0-rollfix-202610160914-38868269616-2",
+        "revision" : "088b04bfb867807c10da15c7492209cc430765e5"
       }
     },
     {
