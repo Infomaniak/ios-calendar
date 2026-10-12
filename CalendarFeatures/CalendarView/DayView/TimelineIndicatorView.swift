@@ -22,7 +22,7 @@ import SwiftUI
 struct TimelineIndicatorView: View {
     @Environment(\.esdsTheme) private var theme
 
-    let date: Date
+    var date: Date?
 
     private var tint: Color {
         theme.color.backgroundDatavizPinkDim1
@@ -30,12 +30,14 @@ struct TimelineIndicatorView: View {
 
     var body: some View {
         HStack(spacing: theme.spacing.twoXs) {
-            Text(date.formatted(TimelineBackgroundView.Constants.dateFormater))
-                .font(TimelineBackgroundView.Constants.labelFont)
-                .padding(.horizontal, theme.spacing.xs)
-                .padding(.vertical, theme.spacing.twoXs)
-                .foregroundStyle(theme.color.contentInverse)
-                .background(tint, in: .capsule)
+            if let date {
+                Text(date.formatted(TimelineBackgroundView.Constants.dateFormater))
+                    .font(TimelineBackgroundView.Constants.labelFont)
+                    .padding(.horizontal, theme.spacing.xs)
+                    .padding(.vertical, theme.spacing.twoXs)
+                    .foregroundStyle(theme.color.contentInverse)
+                    .background(tint, in: .capsule)
+            }
 
             HStack(spacing: 0) {
                 Circle()
@@ -54,4 +56,8 @@ struct TimelineIndicatorView: View {
 
 #Preview {
     TimelineIndicatorView(date: .now)
+}
+
+#Preview("Without time") {
+    TimelineIndicatorView()
 }
