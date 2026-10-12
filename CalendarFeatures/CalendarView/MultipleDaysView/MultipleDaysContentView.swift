@@ -24,7 +24,6 @@ import SwiftUI
 
 struct MultipleDaysContentView: View {
     @Environment(\.calendar) private var calendar
-    @Environment(\.esdsTheme) private var theme
 
     @State private var scrollPosition = ScrollPosition()
     @State private var scrollOffset = CGFloat.zero
@@ -76,8 +75,22 @@ struct MultipleDaysContentView: View {
                       !layout.isSelectingToday(oldSelectedDate, calendar: calendar) else { return }
                 scrollToCorrectPosition(geometry)
             }
-        } overlay: { _ in
-            // Nothing yet
+        } overlay: { geometry in
+            TimelineView(.everyMinute) { timeline in
+                CalendarPeriodPagerMirror(scrollSync: pagerScrollSync, viewCount: layout.pagerViewCount) { date in
+                    HStack(spacing: 0) {
+                        ForEach(layout.pageDates(for: date, calendar: calendar), id: \.self) { day in
+                            TimelineIndicatorView()
+                                .opacity(calendar.isDate(day, inSameDayAs: timeline.date) ? 1 : 0)
+                        }
+                    }
+                }
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.leading, IKPadding.medium + TimelineBackgroundView.Constants.leadingInset)
+                .visualEffect { content, proxy in
+                    content.offset(y: geometry.yPosition(for: timeline.date, calendar: calendar) - proxy.size.height / 2)
+                }
+            }
         }
         .onChange(of: scrollOffset) { _, newValue in
             UserDefaults.shared.dayViewScrollPosition = newValue
@@ -94,8 +107,7 @@ struct MultipleDaysContentView: View {
 
     private func scrollToCorrectPosition(_ geometry: TimelineGeometry) {
         if layout.isSelectingToday(selectedDate, calendar: calendar) {
-            let timeOfDay = Date.now.timeIntervalSince(calendar.startOfDay(for: .now))
-            scrollPosition.scrollTo(y: geometry.centeredScrollOffset(for: geometry.startOfDay.addingTimeInterval(timeOfDay)))
+            scrollPosition.scrollTo(y: geometry.centeredScrollOffset(for: .now, calendar: calendar))
         } else {
             scrollPosition.scrollTo(y: UserDefaults.shared.dayViewScrollPosition)
         }

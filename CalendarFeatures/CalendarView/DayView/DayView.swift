@@ -65,41 +65,41 @@ struct DayContentView: View {
     }
 
     var body: some View {
-        TimelineView(.everyMinute) { timeline in
-            TimelineContentView(scrollPosition: $scrollPosition, scrollOffset: $scrollOffset, date: date) { geometry in
-                EventuallyLayout(
-                    startOfDay: geometry.startOfDay,
-                    hourSlotHeight: geometry.pointsPerHour,
-                    horizontalHourSlotHeight: horizontalLayoutPointsPerHour(for: geometry.pointsPerHour),
-                    config: .init(hSpacing: Constants.layoutHorizontalSpacing, vSpacing: Constants.layoutVerticalSpacing),
-                    onCoveredIndicesChange: onCoveredIndicesChange
-                ) {
-                    ForEach(Array(events.filter { !$0.isAllDay }.enumerated()), id: \.element.id) { index, event in
-                        EventDetailsPopoverButton(event: event) {
-                            DayEventView(
-                                event: event,
-                                pointsPerHour: geometry.pointsPerHour,
-                                maxVisibleHeight: coveredTextHeights[index]
-                            )
-                        }
-                        .eventuallyDateIntervalLayout(DateInterval(start: event.startDate, end: event.endDate))
+        TimelineContentView(scrollPosition: $scrollPosition, scrollOffset: $scrollOffset, date: date) { geometry in
+            EventuallyLayout(
+                startOfDay: geometry.startOfDay,
+                hourSlotHeight: geometry.pointsPerHour,
+                horizontalHourSlotHeight: horizontalLayoutPointsPerHour(for: geometry.pointsPerHour),
+                config: .init(hSpacing: Constants.layoutHorizontalSpacing, vSpacing: Constants.layoutVerticalSpacing),
+                onCoveredIndicesChange: onCoveredIndicesChange
+            ) {
+                ForEach(Array(events.filter { !$0.isAllDay }.enumerated()), id: \.element.id) { index, event in
+                    EventDetailsPopoverButton(event: event) {
+                        DayEventView(
+                            event: event,
+                            pointsPerHour: geometry.pointsPerHour,
+                            maxVisibleHeight: coveredTextHeights[index]
+                        )
                     }
+                    .eventuallyDateIntervalLayout(DateInterval(start: event.startDate, end: event.endDate))
                 }
-                .onAppear {
-                    scrollToCorrectPosition(geometry)
-                }
-                .onChange(of: mainViewState.selectedDate) { oldSelectedDate, selectedDate in
-                    guard calendar.isDate(date, inSameDayAs: selectedDate),
-                          !calendar.isDate(date, inSameDayAs: oldSelectedDate) else { return }
-                    scrollToCorrectPosition(geometry)
-                }
-            } overlay: { geometry in
+            }
+            .onAppear {
+                scrollToCorrectPosition(geometry)
+            }
+            .onChange(of: mainViewState.selectedDate) { oldSelectedDate, selectedDate in
+                guard calendar.isDate(date, inSameDayAs: selectedDate),
+                      !calendar.isDate(date, inSameDayAs: oldSelectedDate) else { return }
+                scrollToCorrectPosition(geometry)
+            }
+        } overlay: { geometry in
+            TimelineView(.everyMinute) { timeline in
                 timelineIndicator(date: timeline.date, geometry: geometry)
             }
-            .onChange(of: scrollOffset) { _, newValue in
-                guard isSelected else { return }
-                UserDefaults.shared.dayViewScrollPosition = newValue
-            }
+        }
+        .onChange(of: scrollOffset) { _, newValue in
+            guard isSelected else { return }
+            UserDefaults.shared.dayViewScrollPosition = newValue
         }
         .additionalSafeAreaBarView(id: date, version: allDayEvents, isActive: isSelected) {
             DayHeaderView(events: allDayEvents, date: date)
@@ -114,7 +114,7 @@ struct DayContentView: View {
                 .padding(.leading, value: .medium)
                 .visualEffect { content, proxy in
                     content
-                        .offset(y: -proxy.size.height / 2 + geometry.yPosition(for: date))
+                        .offset(y: -proxy.size.height / 2 + geometry.yPosition(for: date, calendar: calendar))
                 }
         }
     }
@@ -128,7 +128,7 @@ struct DayContentView: View {
         guard geometry.visibleHeight > 0 else { return }
 
         if calendar.isDate(date, inSameDayAs: .now) {
-            scrollPosition.scrollTo(y: geometry.centeredScrollOffset(for: .now))
+            scrollPosition.scrollTo(y: geometry.centeredScrollOffset(for: .now, calendar: calendar))
         } else {
             scrollPosition.scrollTo(y: UserDefaults.shared.dayViewScrollPosition)
         }
