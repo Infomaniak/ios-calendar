@@ -39,7 +39,7 @@ public struct UpdateEventUseCase: Sendable {
             throw CalendarError.eventOccurrenceNotFound
         }
 
-        let target = occurrence.targetedAs(scope: scope)
+        let target = occurrence.targetFor(scope: scope)
         try await calendarSDK.calendarManager.updateEvent(
             target: target,
             data: draft.toEventEditData(preserving: originalData)
