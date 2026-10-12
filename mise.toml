@@ -1,5 +1,5 @@
 [tools]
-tuist = { version = '4.200.4', os = ["macos"] }
+tuist = { version = '4.212.0', os = ["macos"] }
 "github:Infomaniak/periphery" = { version = "3.8.1", asset_pattern = "periphery-{{ version }}.zip", os = ["macos"] }
 swiftformat = { version = '0.60.1', os = ["macos", "linux"] }
 swiftlint = { version = '0.63.2', os = ["macos", "linux"] }
