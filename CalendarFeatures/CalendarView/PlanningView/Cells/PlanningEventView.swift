@@ -21,7 +21,7 @@ import CalendarResources
 import DesignSystem
 import SwiftUI
 
-public extension CalendarCoreUI.UIEvent {
+public extension UIEventSummary {
     var additionalDurationHeight: CGFloat {
         let duration = endDate.timeIntervalSince(startDate)
         let durationInMinutes = duration / 60
@@ -36,7 +36,7 @@ public extension CalendarCoreUI.UIEvent {
 }
 
 struct PlanningEventView: View {
-    let event: CalendarCoreUI.UIEvent
+    let event: UIEventSummary
 
     enum UIConstants {
         static let minDuration: CGFloat = 15

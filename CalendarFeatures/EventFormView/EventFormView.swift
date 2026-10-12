@@ -28,7 +28,7 @@ import SwiftUI
 
 public enum EditionMode {
     case new
-    case editDraft(draft: EventDraft, editingEvent: CalendarCoreUI.UIEvent)
+    case editDraft(draft: EventDraft, editingEvent: UIEventDetails)
 
     var navigationTitle: String {
         switch self {

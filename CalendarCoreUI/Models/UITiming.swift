@@ -35,8 +35,14 @@ public struct UITiming: Sendable, Hashable, Equatable {
     public init(eventTiming: MultiplatformCalendar.EventTiming) {
         start = eventTiming.startInstantLocal().toNSDate()
         end = eventTiming.endInstantLocal().toNSDate()
-        startTimeZone = eventTiming.startTimeZone.flatMap { TimeZone(identifier: $0.id) }
-        endTimeZone = eventTiming.endTimeZone.flatMap { TimeZone(identifier: $0.id) }
+        switch onEnum(of: eventTiming.bounds) {
+        case .unanchored:
+            startTimeZone = nil
+            endTimeZone = nil
+        case .zoned(let bounds):
+            startTimeZone = TimeZone(identifier: bounds.start.timeZone.id)
+            endTimeZone = TimeZone(identifier: bounds.end.timeZone.id)
+        }
     }
 }
 

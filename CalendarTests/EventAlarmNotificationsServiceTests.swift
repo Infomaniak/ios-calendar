@@ -286,11 +286,10 @@ private enum EventAlarmTestFixtures {
             nanosecond: 0
         )
         let timing = EventTiming(
-            start: startDate,
-            end: endDate,
-            startTimeZone: nil,
-            endTimeZone: nil,
-            isAllDay: false
+            bounds: EventBoundsFloating(start: startDate, end: endDate),
+            recurrenceRule: nil,
+            rDates: [],
+            exDates: []
         )
         let themedColor = ThemedColor(light: 0, dark: 0)
         let colors = EventColors(
@@ -302,28 +301,15 @@ private enum EventAlarmTestFixtures {
             onContainerVariantColor: themedColor
         )
         let eventId = eventId ?? id
-        let event = MultiplatformCalendar.Event(
-            masterEventId: eventId,
+        let event = EventSummary(
             occurrenceId: OccurrenceId.Master(masterId: eventId),
-            calendarId: "calendar-id",
-            accountId: 0,
             title: title ?? eventId,
-            description: nil,
             location: location,
             status: .confirmed,
-            timeBlocking: nil,
-            classification: nil,
-            categories: [],
-            meetRoomUrl: nil,
-            bookableUuid: nil,
-            attachments: [],
-            timing: timing,
-            lastModified: nil,
-            attendees: [],
-            organizer: nil,
             colors: colors,
-            canEdit: true,
-            alarms: [alarm]
+            timing: timing,
+            hasAttendees: false,
+            myStatus: nil
         )
         let firesAtInstant = KotlinInstant.companion.fromEpochMilliseconds(
             epochMilliseconds: Int64(firesAt.timeIntervalSince1970 * 1000)

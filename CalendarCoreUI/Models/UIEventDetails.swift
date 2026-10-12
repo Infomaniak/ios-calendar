@@ -21,55 +21,7 @@ import Foundation
 import MultiplatformCalendar
 import SwiftUI
 
-public extension UIEvent {
-    struct Colors: Sendable, Equatable, Hashable {
-        public let calendarSourceColor: Color
-        public let sourceColor: Color
-        public let containerColor: Color
-        public let onContainerColor: Color
-        public let containerVariantColor: Color
-        public let onContainerVariantColor: Color
-
-        public let sourceColorArgb: Int32
-
-        public init(
-            calendarSourceColor: Color,
-            sourceColor: Color,
-            containerColor: Color,
-            onContainerColor: Color,
-            containerVariantColor: Color,
-            onContainerVariantColor: Color
-        ) {
-            self.sourceColor = sourceColor
-            self.calendarSourceColor = calendarSourceColor
-            self.containerColor = containerColor
-            self.onContainerColor = onContainerColor
-            self.containerVariantColor = containerVariantColor
-            self.onContainerVariantColor = onContainerVariantColor
-            sourceColorArgb = sourceColor.cgColor?.argb ?? 0
-        }
-
-        public init(eventColors: EventColors) {
-            sourceColor = Color(argb: eventColors.sourceColor)
-            calendarSourceColor = Color(argb: eventColors.calendarSourceColor)
-            containerColor = Color(argb: eventColors.containerColor)
-            onContainerColor = Color(eventColor: eventColors.onContainerColor)
-            containerVariantColor = Color(argb: eventColors.containerVariantColor)
-            onContainerVariantColor = Color(eventColor: eventColors.onContainerVariantColor)
-            sourceColorArgb = eventColors.sourceColor
-        }
-
-        public static func == (lhs: UIEvent.Colors, rhs: UIEvent.Colors) -> Bool {
-            lhs.sourceColorArgb == rhs.sourceColorArgb
-        }
-
-        public func hash(into hasher: inout Hasher) {
-            hasher.combine(sourceColorArgb)
-        }
-    }
-}
-
-public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
+public struct UIEventDetails: Identifiable, Equatable, Hashable, Sendable {
     public let id: String
     public let occurrenceId: String
     public let calendarId: String
@@ -78,8 +30,8 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
     public let description: String?
     public let status: EventStatus?
     public let location: String?
-    public let kMeetLink: URL? = nil // TODO: Get it from Event
-    public let colors: UIEvent.Colors
+    public let kMeetLink: URL?
+    public let colors: UIEventColor
     public let classification: UIClassification?
     public let canEdit: Bool
     public let isOccurrence: Bool
@@ -93,6 +45,7 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
 
     public let user: UIAttendee?
     public let attendees: [UIAttendee]
+    public let organizer: UIOrganizer?
 
     public var displayTitle: AttributedString {
         guard title.isEmpty else {
@@ -114,11 +67,13 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
         isAllDay: Bool = false,
         status: EventStatus?,
         location: String? = nil,
+        kMeetLink: URL? = nil,
         calendarId: String,
         alarms: [UIEventAlarm] = [],
         user: UIAttendee? = nil,
         attendees: [UIAttendee],
-        colors: UIEvent.Colors,
+        organizer: UIOrganizer? = nil,
+        colors: UIEventColor,
         classification: UIClassification? = .public,
         timing: UITiming,
         canEdit: Bool,
@@ -133,10 +88,12 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
         self.isAllDay = isAllDay
         self.status = status
         self.location = location
+        self.kMeetLink = kMeetLink
         self.calendarId = calendarId
         self.alarms = alarms
         self.user = user
         self.attendees = attendees
+        self.organizer = organizer
         self.colors = colors
         self.classification = classification
         self.timing = timing
@@ -145,17 +102,16 @@ public struct UIEvent: Identifiable, Equatable, Hashable, Sendable {
     }
 }
 
-public extension UIEvent {
-    init?(eventDaySlice: MultiplatformCalendar.EventDaySlice, userEmail: String?) {
-        let event = eventDaySlice.event
-
-        id = "\(eventDaySlice.position.index)-\(event.occurrenceIdValue)"
+public extension UIEventDetails {
+    init(event: MultiplatformCalendar.Event, userEmail: String?) {
+        id = event.occurrenceIdValue
         occurrenceId = event.occurrenceIdValue
         calendarId = event.calendarIdValue
 
         title = event.title.trimmingCharacters(in: .whitespacesAndNewlines)
         description = event.description_
         status = event.status
+        kMeetLink = event.meetRoomUrl.flatMap { URL(string: $0) }
 
         if let location = event.location, !location.isEmpty {
             self.location = location
@@ -163,9 +119,9 @@ public extension UIEvent {
             location = nil
         }
 
-        startDate = eventDaySlice.displayStartInstant().toNSDate()
-        endDate = eventDaySlice.displayEndInstant().toNSDate()
-        isAllDay = eventDaySlice.isAllDay
+        startDate = event.timing.startInstantLocal().toNSDate()
+        endDate = event.timing.endInstantLocal().toNSDate()
+        isAllDay = event.timing.isAllDay
         timing = UITiming(eventTiming: event.timing)
 
         alarms = event.alarms.map {
@@ -175,12 +131,13 @@ public extension UIEvent {
         var user: UIAttendee?
         attendees = event.attendees.map {
             let uiAttendee = UIAttendee(attendee: $0)
-            if uiAttendee.email == userEmail {
+            if uiAttendee.email == userEmail?.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() {
                 user = uiAttendee
             }
             return uiAttendee
         }
         self.user = user
+        organizer = event.organizer.map { UIOrganizer(organizer: $0) }
 
         colors = .init(eventColors: event.colors)
 
@@ -193,8 +150,8 @@ public extension UIEvent {
 
 // MARK: - Previews
 
-public extension UIEvent {
-    static let alarmsPreview = UIEvent(
+public extension UIEventDetails {
+    static let alarmsPreview = UIEventDetails(
         id: "0",
         occurrenceId: "0",
         title: "Event Title",
@@ -210,7 +167,7 @@ public extension UIEvent {
         canEdit: true
     )
 
-    static let preview = UIEvent(
+    static let preview = UIEventDetails(
         id: "0",
         occurrenceId: "1",
         title: "Event Title",
@@ -225,7 +182,7 @@ public extension UIEvent {
         canEdit: true
     )
 
-    static let shortPreview = UIEvent(
+    static let shortPreview = UIEventDetails(
         id: "1",
         occurrenceId: "1",
         title: "Short Title With A Very Long Title But It's Okay Because We Want To Test The UI And See How It Looks With A Long Title",
@@ -239,7 +196,7 @@ public extension UIEvent {
         timing: .preview,
         canEdit: true
     )
-    static let mediumPreview = UIEvent(
+    static let mediumPreview = UIEventDetails(
         id: "2",
         occurrenceId: "2",
         title: "Medium Title With A Very Long Title But It's Okay Because We Want To Test The UI And See How It Looks With A Long Title",
@@ -253,7 +210,7 @@ public extension UIEvent {
         timing: .preview,
         canEdit: true
     )
-    static let longPreview = UIEvent(
+    static let longPreview = UIEventDetails(
         id: "3",
         occurrenceId: "3",
         title: "Long Title With A Very Long Title But It's Okay Because We Want To Test The UI And See How It Looks With A Long Title",
@@ -268,11 +225,11 @@ public extension UIEvent {
         canEdit: true
     )
 
-    static let random100Events: [UIEvent] = (0 ..< 100).map { index in
+    static let random100Events: [UIEventDetails] = (0 ..< 100).map { index in
         let dayRangeInSeconds = 30 * 24 * 3600
         let randomStartDate = Date().addingTimeInterval(TimeInterval(Int.random(in: -dayRangeInSeconds ... dayRangeInSeconds)))
         let randomEndDate = randomStartDate.addingTimeInterval(Double.random(in: 3600 ... 7200))
-        return UIEvent(
+        return UIEventDetails(
             id: "\(index)",
             occurrenceId: "\(index)",
             title: "Event \(index)",
@@ -286,15 +243,4 @@ public extension UIEvent {
             canEdit: true
         )
     }
-}
-
-public extension UIEvent.Colors {
-    static let preview = UIEvent.Colors(
-        calendarSourceColor: Color.green,
-        sourceColor: Color.orange,
-        containerColor: Color.orange.opacity(0.2),
-        onContainerColor: Color(red: 1, green: 0.2, blue: 0),
-        containerVariantColor: Color.orange.opacity(0.1),
-        onContainerVariantColor: Color(red: 1, green: 0.2, blue: 0)
-    )
 }

@@ -23,10 +23,10 @@ import SwiftUI
 struct EventDetailsPopoverButton<Label: View>: View {
     @Environment(MainViewState.self) private var mainViewState
 
-    let event: CalendarCoreUI.UIEvent
+    let event: UIEventSummary
     @ViewBuilder let label: Label
 
-    private var presentedEvent: Binding<CalendarCoreUI.UIEvent?> {
+    private var presentedEvent: Binding<UIEventSummary?> {
         return Binding(
             get: {
                 mainViewState.presentedEvent?.id == event.id ? event : nil
@@ -43,7 +43,7 @@ struct EventDetailsPopoverButton<Label: View>: View {
         Button { mainViewState.presentedEvent = event } label: { label }
             .buttonStyle(.plain)
             .popover(item: presentedEvent) { event in
-                EventDetailsView(event: event)
+                OpenEventDetailsIntentView(occurrenceId: event.occurrenceId)
                     .selfSizingPopover(idealWidth: 400)
             }
     }

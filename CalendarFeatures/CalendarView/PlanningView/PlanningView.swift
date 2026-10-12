@@ -32,7 +32,7 @@ public struct PlanningView: View {
 
     public init(calendarAccounts: [CalendarAccount.ID: CalendarAccount]) {
         self.calendarAccounts = calendarAccounts
-        _planningViewModel = State(wrappedValue: PlanningViewModel(calendarAccounts: calendarAccounts))
+        _planningViewModel = State(wrappedValue: PlanningViewModel())
     }
 
     public var body: some View {

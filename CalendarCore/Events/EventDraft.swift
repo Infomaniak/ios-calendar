@@ -80,7 +80,7 @@ public extension EventDraft {
 
         return try EventEditData(
             title: title,
-            timing: sdkTiming(recurrenceRule: originalData?.timing.recurrenceRule),
+            timing: sdkTiming(preserving: originalData?.timing),
             location: originalData?.location,
             description: description,
             timeBlocking: originalData.map {
@@ -88,20 +88,33 @@ public extension EventDraft {
             } ?? (isOccupied ? .blocks : .doesNotBlock),
             calendarId: calendarId,
             eventColor: originalData?.eventColor,
-            alarms: originalData?.alarms ?? AlarmListEditReplace(alarms: [])
+            alarms: originalData?.alarms ?? AlarmListEditReplace(alarms: []),
+            attendees: originalData?.attendees ?? [],
+            organizer: originalData?.organizer
         )
     }
 
-    private func sdkTiming(recurrenceRule: RecurrenceRule?) throws -> EventTiming {
+    private func sdkTiming(preserving originalTiming: EventTiming?) throws -> EventTiming {
         let startZone = (startTimeZone ?? .current).toKotlinTimeZone()
         let endZone = (endTimeZone ?? .current).toKotlinTimeZone()
-        return try EventTiming(
-            start: localDateTime(startDate, in: startZone),
-            end: localDateTime(endDate, in: endZone),
-            startTimeZone: allDay || startTimeZone == nil ? nil : startZone,
-            endTimeZone: allDay || endTimeZone == nil ? nil : endZone,
-            isAllDay: allDay,
-            recurrenceRule: recurrenceRule
+        let start = try localDateTime(startDate, in: startZone)
+        let end = try localDateTime(endDate, in: endZone)
+        let bounds: any EventBounds
+        if allDay {
+            bounds = EventBoundsAllDay(start: start.date, end: end.date)
+        } else if startTimeZone == nil && endTimeZone == nil {
+            bounds = EventBoundsFloating(start: start, end: end)
+        } else {
+            bounds = EventBoundsZoned(
+                start: ZonedWallClock(wallClock: start, timeZone: startZone),
+                end: ZonedWallClock(wallClock: end, timeZone: endZone)
+            )
+        }
+        return EventTiming(
+            bounds: bounds,
+            recurrenceRule: originalTiming?.recurrenceRule,
+            rDates: originalTiming?.rDates ?? [],
+            exDates: originalTiming?.exDates ?? []
         )
     }
 

@@ -23,15 +23,15 @@ import MultiplatformCalendar
 enum PlanningItem: Hashable {
     case weekHeader(Date)
     case empty(Date)
-    case event(CalendarCoreUI.UIEvent)
+    case event(UIEventSummary)
 }
 
 struct PlanningDay: Identifiable, Hashable {
     let date: Date
-    let events: [CalendarCoreUI.UIEvent]
+    let events: [UIEventSummary]
     let isWeekStart: Bool
 
-    init(date: Date, events: [CalendarCoreUI.UIEvent]) {
+    init(date: Date, events: [UIEventSummary]) {
         self.date = date
         self.events = events
         isWeekStart = Calendar.current.component(.weekday, from: date) == Calendar.current.firstWeekday
@@ -61,7 +61,7 @@ extension PlanningDay {
     static func makeWindow(
         startDate: Date,
         dayCount: Int,
-        eventsByDay: [Date: [CalendarCoreUI.UIEvent]],
+        eventsByDay: [Date: [UIEventSummary]],
         calendar: Foundation.Calendar
     ) -> [PlanningDay] {
         var days: [PlanningDay] = []
