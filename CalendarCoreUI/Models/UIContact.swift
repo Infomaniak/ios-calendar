@@ -19,39 +19,20 @@
 import Foundation
 import MultiplatformCalendar
 
-public enum UIContactAvatar: Sendable, Equatable, Hashable {
-    case remote(url: String, accountId: Int64)
-
-    public init(avatar: any ContactAvatar) {
-        switch onEnum(of: avatar) {
-        case .remote(let remote):
-            self = .remote(url: remote.url, accountId: remote.accountIdValue)
-        }
-    }
-}
-
 public struct UIContact: Sendable, Equatable, Hashable {
     public let email: String
     public let name: String
-    public let avatar: UIContactAvatar?
-    public let comesFromApi: Bool
-
-    public init(contact: Contact) {
-        email = contact.email
-        name = contact.name
-        avatar = contact.avatar.map { UIContactAvatar(avatar: $0) }
-        comesFromApi = contact.comesFromApi
-    }
+    public let avatar: UIAvatarType?
 }
 
-public struct UIOrganizer: Sendable, Equatable, Hashable {
-    public let email: String
-    public let displayName: String?
-    public let contact: UIContact?
-
-    public init(organizer: Organizer) {
-        email = organizer.email
-        displayName = organizer.displayName
-        contact = organizer.contact.map { UIContact(contact: $0) }
+public extension UIContact {
+    init(contact: Contact) {
+        email = contact.email
+        name = contact.name
+        if let avatar = contact.avatar {
+            self.avatar = UIAvatarType(avatar: avatar)
+        } else {
+            avatar = nil
+        }
     }
 }
