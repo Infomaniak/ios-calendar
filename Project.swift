@@ -270,6 +270,8 @@ let project = Project(
                 .target(name: "\(Constants.projectName)CoreUI"),
                 calendarView.asDependency,
                 eventFormView.asDependency,
+                .external(name: "InfomaniakCore"),
+                .external(name: "InfomaniakLogin"),
                 .external(name: "MultiplatformCalendar")
             ]
         ),

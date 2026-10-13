@@ -41,7 +41,7 @@ struct AttendeesListView: View {
         List {
             ForEach(visibleAttendees.sortedForDisplay()) { attendee in
                 ParticipantCellView(
-                    rawAvatarURL: nil,
+                    avatar: attendee.contact?.avatar,
                     displayName: attendee.displayName ?? attendee.email,
                     email: attendee.email,
                     isOrganizer: attendee.isOrganizer,

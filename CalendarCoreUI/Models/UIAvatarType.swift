@@ -16,18 +16,43 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarCore
 import Foundation
 import MultiplatformCalendar
+import Nuke
 
 public enum UIAvatarType: Sendable, Equatable, Hashable {
-    case remote(url: String, accountId: Int64)
+    case remote(rawURL: String, accountId: Int64)
+    case user(rawURL: String?)
+
+    func imageRequest(accounts: [CalendarAccount.ID: CalendarAccount]) -> ImageRequest? {
+        switch self {
+        case .remote(let rawURL, let accountId):
+            guard let url = URL(string: rawURL),
+                  let accessToken = accounts[Int(accountId)]?.token.accessToken,
+                  !accessToken.isEmpty else { return nil }
+
+            var authenticatedUrlRequest = URLRequest(url: url)
+            authenticatedUrlRequest.addValue(
+                "Bearer \(accessToken)",
+                forHTTPHeaderField: "Authorization"
+            )
+
+            return ImageRequest(urlRequest: authenticatedUrlRequest)
+        case .user(let rawURL):
+            guard let rawURL,
+                  let url = URL(string: rawURL) else { return nil }
+
+            return ImageRequest(url: url)
+        }
+    }
 }
 
 public extension UIAvatarType {
     init(avatar: any ContactAvatar) {
         switch onEnum(of: avatar) {
         case .remote(let remote):
-            self = .remote(url: remote.url, accountId: remote.accountIdValue)
+            self = .remote(rawURL: remote.url, accountId: remote.accountIdValue)
         }
     }
 }

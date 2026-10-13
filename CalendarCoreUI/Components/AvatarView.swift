@@ -16,28 +16,30 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarCore
 import InfomaniakCore
 import InfomaniakCoreSwiftUI
 import NukeUI
 import SwiftUI
 
 public struct AvatarView: View {
-    let rawAvatarURL: String?
+    @Environment(\.calendarAccounts) private var calendarAccounts: [CalendarAccount.ID: CalendarAccount]
+
+    let avatar: UIAvatarType?
     let displayName: String
     let email: String
     let size: CGFloat
 
-    public init(rawAvatarURL: String?, displayName: String, email: String, size: CGFloat) {
-        self.rawAvatarURL = rawAvatarURL
+    public init(avatar: UIAvatarType?, displayName: String, email: String, size: CGFloat) {
+        self.avatar = avatar
         self.displayName = displayName
         self.email = email
         self.size = size
     }
 
     public var body: some View {
-        if let rawAvatarURL,
-           let avatarURL = URL(string: rawAvatarURL) {
-            LazyImage(request: ImageRequest(url: avatarURL)) { state in
+        if let avatarRequest = avatar?.imageRequest(accounts: calendarAccounts) {
+            LazyImage(request: avatarRequest) { state in
                 if let image = state.image {
                     AvatarImage(image: image, size: size)
                 } else {

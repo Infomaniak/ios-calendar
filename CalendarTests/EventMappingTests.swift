@@ -16,12 +16,60 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import CalendarCoreUI
+import CalendarCore
+@testable import CalendarCoreUI
 import Foundation
+import InfomaniakCore
+import InfomaniakLogin
 import MultiplatformCalendar
 import Testing
 
 struct EventMappingTests {
+    @Test(arguments: [7, 42])
+    func remoteAvatarAuthenticatesWithMatchingAccount(accountId: Int) throws {
+        let accounts = [
+            7: makeAccount(id: 7, accessToken: "account-7-token"),
+            42: makeAccount(id: 42, accessToken: "account-42-token")
+        ]
+        let avatar = UIAvatarType.remote(rawURL: "https://example.com/avatar", accountId: Int64(accountId))
+        let request = try #require(avatar.imageRequest(accounts: accounts)?.urlRequest)
+
+        #expect(request.url?.absoluteString == "https://example.com/avatar")
+        #expect(request.value(forHTTPHeaderField: "Authorization") == "Bearer account-\(accountId)-token")
+    }
+
+    @Test func remoteAvatarWithoutMatchingAccountReturnsNil() {
+        let avatar = UIAvatarType.remote(rawURL: "https://example.com/avatar", accountId: 42)
+
+        #expect(avatar.imageRequest(accounts: [:]) == nil)
+        #expect(avatar.imageRequest(accounts: [7: makeAccount(id: 7, accessToken: "other-account-token")]) == nil)
+    }
+
+    @Test func remoteAvatarWithoutAccessTokenReturnsNil() {
+        let avatar = UIAvatarType.remote(rawURL: "https://example.com/avatar", accountId: 42)
+        let accounts = [
+            7: makeAccount(id: 7, accessToken: "other-account-token"),
+            42: makeAccount(id: 42, accessToken: "")
+        ]
+
+        #expect(avatar.imageRequest(accounts: accounts) == nil)
+    }
+
+    @Test func userAvatarRemainsUnauthenticated() throws {
+        let avatar = UIAvatarType.user(rawURL: "https://example.com/avatar")
+        let accounts = [42: makeAccount(id: 42, accessToken: "account-42-token")]
+        let request = try #require(avatar.imageRequest(accounts: accounts)?.urlRequest)
+        let requestWithoutAccounts = try #require(avatar.imageRequest(accounts: [:])?.urlRequest)
+
+        #expect(request.url?.absoluteString == "https://example.com/avatar")
+        #expect(request.value(forHTTPHeaderField: "Authorization") == nil)
+        #expect(requestWithoutAccounts == request)
+    }
+
+    @Test func userAvatarWithoutURLReturnsNil() {
+        #expect(UIAvatarType.user(rawURL: nil).imageRequest(accounts: [:]) == nil)
+    }
+
     @Test func mapsSummaryParticipationAndSliceBounds() {
         let summary = makeSummary()
         let slice = EventDaySlice(
@@ -96,7 +144,7 @@ struct EventMappingTests {
         #expect(mapped.user?.status == .accepted)
         let mappedContact = try #require(mapped.attendees.first?.contact)
         #expect(mappedContact.name == "Guest")
-        #expect(mappedContact.avatar == .remote(url: "https://example.com/avatar", accountId: 42))
+        #expect(mappedContact.avatar == .remote(rawURL: "https://example.com/avatar", accountId: 42))
         #expect(mapped.organizer?.contact == mappedContact)
     }
 
@@ -152,6 +200,22 @@ struct EventMappingTests {
         #expect(mapped.endTimeZone?.identifier == "Europe/London")
         #expect(mapped.start == timing.startInstantLocal().toNSDate())
         #expect(mapped.end == timing.endInstantLocal().toNSDate())
+    }
+
+    private func makeAccount(id: Int, accessToken: String) -> CalendarAccount {
+        CalendarAccount(
+            token: ApiToken(
+                accessToken: accessToken,
+                expiresIn: 3600,
+                refreshToken: nil,
+                scope: "",
+                tokenType: "Bearer",
+                userId: id,
+                expirationDate: nil
+            ),
+            user: UserProfile(id: id, displayName: "User", firstName: "Test", lastName: "User", email: "user@example.com"),
+            davCredentials: DavCredentials(username: "user", password: "password")
+        )
     }
 
     private func makeSummary() -> EventSummary {

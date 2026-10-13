@@ -26,7 +26,7 @@ import SwiftUI
 public struct ParticipantCellView: View {
     @Environment(\.esdsTheme) private var theme
 
-    let rawAvatarURL: String?
+    let avatar: UIAvatarType?
     let displayName: String
     let email: String
     let avatarSize: CGFloat
@@ -34,14 +34,14 @@ public struct ParticipantCellView: View {
     let status: UIParticipationStatus
 
     public init(
-        rawAvatarURL: String?,
+        avatar: UIAvatarType?,
         displayName: String,
         email: String,
         avatarSize: CGFloat = 40,
         isOrganizer: Bool,
         status: UIParticipationStatus
     ) {
-        self.rawAvatarURL = rawAvatarURL
+        self.avatar = avatar
         self.displayName = displayName
         self.email = email
         self.avatarSize = avatarSize
@@ -51,7 +51,7 @@ public struct ParticipantCellView: View {
 
     public var body: some View {
         PersonCellView(
-            rawAvatarURL: rawAvatarURL,
+            avatar: avatar,
             displayName: displayName,
             email: email,
             avatarSize: avatarSize
@@ -91,7 +91,7 @@ public struct AccountCellView: View {
 
     public var body: some View {
         PersonCellView<EmptyView>(
-            rawAvatarURL: rawAvatarURL,
+            avatar: .user(rawURL: rawAvatarURL),
             displayName: displayName,
             email: email,
             avatarSize: avatarSize
@@ -102,7 +102,7 @@ public struct AccountCellView: View {
 private struct PersonCellView<AdditionalContent: View>: View {
     @Environment(\.esdsTheme) private var theme
 
-    let rawAvatarURL: String?
+    let avatar: UIAvatarType?
     let displayName: String
     let email: String
     let avatarSize: CGFloat
@@ -110,13 +110,13 @@ private struct PersonCellView<AdditionalContent: View>: View {
     private let additionalContent: AdditionalContent?
 
     init(
-        rawAvatarURL: String?,
+        avatar: UIAvatarType?,
         displayName: String,
         email: String,
         avatarSize: CGFloat = 40,
         @ViewBuilder additionalContent: () -> AdditionalContent
     ) {
-        self.rawAvatarURL = rawAvatarURL
+        self.avatar = avatar
         self.displayName = displayName
         self.email = email
         self.avatarSize = avatarSize
@@ -124,12 +124,12 @@ private struct PersonCellView<AdditionalContent: View>: View {
     }
 
     init(
-        rawAvatarURL: String?,
+        avatar: UIAvatarType?,
         displayName: String,
         email: String,
         avatarSize: CGFloat = 40
     ) {
-        self.rawAvatarURL = rawAvatarURL
+        self.avatar = avatar
         self.displayName = displayName
         self.email = email
         self.avatarSize = avatarSize
@@ -138,7 +138,7 @@ private struct PersonCellView<AdditionalContent: View>: View {
 
     var body: some View {
         HStack {
-            AvatarView(rawAvatarURL: rawAvatarURL, displayName: displayName, email: email, size: avatarSize)
+            AvatarView(avatar: avatar, displayName: displayName, email: email, size: avatarSize)
 
             VStack(alignment: .leading, spacing: 0) {
                 Text(displayName)

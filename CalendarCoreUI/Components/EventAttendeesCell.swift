@@ -87,7 +87,7 @@ public struct EventAttendeesCell: View {
         HStack(spacing: -IKPadding.mini) {
             ForEach(attendeesListForStack) { attendee in
                 AvatarView(
-                    rawAvatarURL: nil,
+                    avatar: attendee.contact?.avatar,
                     displayName: attendee.displayName ?? attendee.email,
                     email: attendee.email,
                     size: IKIconSize.large.rawValue
