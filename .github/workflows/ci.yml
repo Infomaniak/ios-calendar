@@ -26,7 +26,7 @@ jobs:
       - name: Generate
         run: tuist install && tuist generate
       - name: Check implicit imports
-        run: tuist inspect implicit-imports
+        run: tuist inspect dependencies --only implicit
       - name: Build
         run: tuist build --clean --derived-data-path "$DERIVED_DATA_PATH" "Calendar"
       - name: SonarQube Scan
