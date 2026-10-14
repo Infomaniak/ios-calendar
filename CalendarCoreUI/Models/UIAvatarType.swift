@@ -18,6 +18,7 @@
 
 import CalendarCore
 import Foundation
+@preconcurrency import InfomaniakCore
 import MultiplatformCalendar
 import Nuke
 
@@ -25,10 +26,14 @@ public enum UIAvatarType: Sendable, Equatable, Hashable {
     case remote(rawURL: String, accountId: Int64)
     case user(rawURL: String?)
 
+    private static let trustedHosts = Set(["mail.\(ApiEnvironment.current.host)"])
+
     func imageRequest(accounts: [CalendarAccount.ID: CalendarAccount]) -> ImageRequest? {
         switch self {
         case .remote(let rawURL, let accountId):
             guard let url = URL(string: rawURL),
+                  let host = url.host(percentEncoded: false),
+                  Self.trustedHosts.contains(host),
                   let accessToken = accounts[Int(accountId)]?.token.accessToken,
                   !accessToken.isEmpty else { return nil }
 
