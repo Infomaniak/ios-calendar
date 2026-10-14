@@ -24,7 +24,7 @@ import SwiftUI
 extension AvatarView {
     init(attendee: UIAttendee, size: CGFloat) {
         self.init(
-            rawAvatarURL: nil,
+            avatar: attendee.contact?.avatar,
             displayName: attendee.displayName ?? attendee.email,
             email: attendee.email,
             size: size

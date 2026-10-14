@@ -22,7 +22,7 @@ import Foundation
 @Observable
 public final class MainViewState {
     public var selectedDate: Date
-    public var presentedEvent: UIEvent?
+    public var presentedEvent: UIEventSummary?
 
     public var isShowingEventCreation = false
 

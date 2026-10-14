@@ -68,7 +68,7 @@ public struct AccountSettingsView: View {
                 .frame(maxWidth: .infinity, alignment: .center)
             } header: {
                 HStack(spacing: IKPadding.medium) {
-                    AvatarView(rawAvatarURL: user.avatar,
+                    AvatarView(avatar: .user(rawURL: user.avatar),
                                displayName: user.displayName,
                                email: user.email,
                                size: iconSize)

@@ -98,8 +98,8 @@ struct PlanningCollectionView: UIViewRepresentable {
 
         private let dayHeaderRegistration: UICollectionView.SupplementaryRegistration<PlanningDayHeaderView>
         private let weekHeaderCellRegistration: UICollectionView.CellRegistration<UICollectionViewListCell, Date>
-        private let allDayCellRegistration: UICollectionView.CellRegistration<UICollectionViewListCell, CalendarCoreUI.UIEvent>
-        private let eventCellRegistration: UICollectionView.CellRegistration<UICollectionViewListCell, CalendarCoreUI.UIEvent>
+        private let allDayCellRegistration: UICollectionView.CellRegistration<UICollectionViewListCell, UIEventSummary>
+        private let eventCellRegistration: UICollectionView.CellRegistration<UICollectionViewListCell, UIEventSummary>
         private let emptyEventCellRegistration: UICollectionView.CellRegistration<UICollectionViewListCell, Date>
 
         private var gestureStartOffsetY = CGFloat.zero
@@ -507,7 +507,7 @@ struct PlanningCollectionView: UIViewRepresentable {
 
 #Preview {
     PlanningCollectionView(
-        planningViewModel: PlanningViewModel(calendarAccounts: [:]),
+        planningViewModel: PlanningViewModel(),
         nextEventCardViewModel: NextEventCardViewModel(),
         mainViewState: MainViewState()
     )

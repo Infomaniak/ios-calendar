@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarCore
 import CalendarCoreUI
 import CalendarResources
 import DesignSystem
@@ -23,6 +24,7 @@ import ESDSFoundation
 import ESDSSymbols
 import InfomaniakDI
 import MultiplatformCalendar
+import OSLog
 import SwiftUI
 
 enum AnimationHelper {
@@ -35,7 +37,7 @@ enum AnimationHelper {
 final class NextEventCardViewModel {
     var scrollProgress = 1.0
     var size: CGSize = .zero
-    var nextEvent: CalendarCoreUI.UIEvent?
+    var nextEvent: UIEventDetails?
 
     init() {
         Task {
@@ -80,8 +82,8 @@ final class NextEventCardViewModel {
         for await daySlices in calendarSDK.calendarManager
             .observeDaySlices(start: start.instant, end: end.instant) {
             let uiEvents = daySlices.values.flatMap { eventDaySlices in
-                eventDaySlices.compactMap {
-                    CalendarCoreUI.UIEvent(eventDaySlice: $0, userEmail: "")
+                eventDaySlices.map {
+                    UIEventSummary(eventDaySlice: $0)
                 }
             }
             await updateNextEvent(from: uiEvents)
@@ -89,26 +91,38 @@ final class NextEventCardViewModel {
     }
 
     @concurrent
-    private func updateNextEvent(from uiEvents: [CalendarCoreUI.UIEvent]) async {
+    private func updateNextEvent(from uiEvents: [UIEventSummary]) async {
         let now = Date()
         let nextTimedEvents = uiEvents
             .filter { !$0.isAllDay && $0.endDate > now }
             .sorted { $0.startDate < $1.startDate }
-
-        if let nextTimedEvent = nextTimedEvents.first {
-            await MainActor.run {
-                self.nextEvent = nextTimedEvent
-            }
-            return
-        }
 
         let nextAllDayEvent = uiEvents
             .filter(\.isAllDay)
             .sorted { $0.startDate < $1.startDate }
             .first
 
-        await MainActor.run {
-            self.nextEvent = nextAllDayEvent
+        guard let summary = nextTimedEvents.first ?? nextAllDayEvent else {
+            await MainActor.run { self.nextEvent = nil }
+            return
+        }
+
+        do {
+            @InjectService var calendarSDK: CalendarCoreGraph
+            @InjectService var accountManager: CalendarCore.AccountManager
+            let id = OccurrenceId.companion.parse(value: summary.occurrenceId)
+            guard let occurrence = try await calendarSDK.calendarManager.getOccurrence(occurrenceId: id) else {
+                throw CalendarError.eventOccurrenceNotFound
+            }
+            try Task.checkCancellation()
+            let email = await accountManager.calendarAccounts[Int(occurrence.accountIdValue)]?.user.email
+            let details = UIEventDetails(event: occurrence, userEmail: email)
+            await MainActor.run { self.nextEvent = details }
+        } catch is CancellationError {
+            return
+        } catch {
+            Logger.view.error("Failed to load next event details: \(error.localizedDescription)")
+            await MainActor.run { self.nextEvent = nil }
         }
     }
 }
@@ -134,7 +148,7 @@ struct NextEventContentCardView: View {
 
     @State private var buttonSize = CGSize.zero
 
-    let event: CalendarCoreUI.UIEvent
+    let event: UIEventDetails
     let progress: Double
 
     enum Constants {

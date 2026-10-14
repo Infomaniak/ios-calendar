@@ -25,7 +25,7 @@ public extension EventDraft {
         return isPrivate ? .private : .public
     }
 
-    static func fromEvent(_ event: UIEvent, editData: EventEditData) -> EventDraft {
+    static func fromEvent(_ event: UIEventDetails, editData: EventEditData) -> EventDraft {
         let timing = UITiming(eventTiming: editData.timing)
         return EventDraft(
             calendarId: event.calendarId,

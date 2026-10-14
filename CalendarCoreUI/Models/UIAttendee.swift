@@ -41,6 +41,8 @@ public extension UIParticipationStatus {
             self = .tentative
         case .needsAction:
             self = .needsAction
+        case .delegated:
+            self = .declined // Currently delegated is not handled we fallback to declined.
         }
     }
 
@@ -84,21 +86,29 @@ public extension UIParticipationStatus {
     }
 }
 
-public struct UIAttendee: Sendable, Equatable, Hashable, Identifiable {
+public struct UIAttendee: UICalendarUser, Sendable, Equatable, Hashable, Identifiable {
     public var id: String {
         return email
     }
 
-    public let displayName: String?
     public let email: String
+    public let displayName: String?
+    public let contact: UIContact?
     public let status: UIParticipationStatus
     public let isOrganizer: Bool
 
-    public init(displayName: String?, email: String, status: UIParticipationStatus, isOrganizer: Bool = false) {
+    public init(
+        displayName: String?,
+        email: String,
+        status: UIParticipationStatus,
+        isOrganizer: Bool = false,
+        contact: UIContact? = nil
+    ) {
         self.displayName = displayName
         self.email = email
         self.status = status
         self.isOrganizer = isOrganizer
+        self.contact = contact
     }
 }
 
@@ -108,6 +118,7 @@ public extension UIAttendee {
         email = attendee.email.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
         status = UIParticipationStatus(participationStatus: attendee.status)
         isOrganizer = attendee.isOrganizer
+        contact = attendee.contact.map { UIContact(contact: $0) }
     }
 }
 
