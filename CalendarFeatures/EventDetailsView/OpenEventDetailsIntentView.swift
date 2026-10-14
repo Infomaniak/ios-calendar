@@ -26,14 +26,10 @@ import OSLog
 import SwiftUI
 
 public struct OpenEventDetailsIntentView: View {
-    private struct ResolvedIntent {
-        let event: UIEventDetails
-    }
-
     @Environment(\.dismiss) private var dismiss
     @Environment(\.calendarAccounts) private var calendarAccounts
 
-    @State private var resolvedIntent: ResolvedIntent?
+    @State private var resolvedEvent: UIEventDetails?
     @State private var errorMessage: String?
 
     private let occurrenceId: String
@@ -44,8 +40,8 @@ public struct OpenEventDetailsIntentView: View {
 
     public var body: some View {
         Group {
-            if let resolvedIntent {
-                EventDetailsView(event: resolvedIntent.event)
+            if let resolvedEvent {
+                EventDetailsView(event: resolvedEvent)
             } else {
                 NavigationStack {
                     Group {
@@ -60,13 +56,13 @@ public struct OpenEventDetailsIntentView: View {
                 }
             }
         }
-        .task {
+        .task(id: occurrenceId) {
             await initFromIntent()
         }
     }
 
     private func initFromIntent() async {
-        resolvedIntent = nil
+        resolvedEvent = nil
         errorMessage = nil
         do {
             @InjectService var calendarSDK: CalendarCoreGraph
@@ -76,7 +72,7 @@ public struct OpenEventDetailsIntentView: View {
             }
             try Task.checkCancellation()
             let email = calendarAccounts[Int(occurrence.accountIdValue)]?.user.email
-            resolvedIntent = ResolvedIntent(event: UIEventDetails(event: occurrence, userEmail: email))
+            resolvedEvent = UIEventDetails(event: occurrence, userEmail: email)
         } catch is CancellationError {
             return
         } catch {
