@@ -77,7 +77,9 @@ public final class CrashReportService: CrashReport, Sendable {
     ) {
         let breadcrumb = Breadcrumb(level: level.sentryLevel, category: category)
         breadcrumb.message = message
-        breadcrumb.data = data
+        for (key, value) in data ?? [:] {
+            breadcrumb.setData(value: value, key: key)
+        }
         breadcrumb.type = type.value
         SentrySDK.addBreadcrumb(breadcrumb)
     }
