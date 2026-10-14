@@ -86,16 +86,16 @@ public extension UIParticipationStatus {
     }
 }
 
-public struct UIAttendee: Sendable, Equatable, Hashable, Identifiable {
+public struct UIAttendee: UICalendarUser, Sendable, Equatable, Hashable, Identifiable {
     public var id: String {
         return email
     }
 
-    public let displayName: String?
     public let email: String
+    public let displayName: String?
+    public let contact: UIContact?
     public let status: UIParticipationStatus
     public let isOrganizer: Bool
-    public let contact: UIContact?
 
     public init(
         displayName: String?,

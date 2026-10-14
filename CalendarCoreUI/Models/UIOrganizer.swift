@@ -19,7 +19,7 @@
 import Foundation
 import MultiplatformCalendar
 
-public struct UIOrganizer: Sendable, Equatable, Hashable {
+public struct UIOrganizer: UICalendarUser, Sendable, Equatable, Hashable {
     public let email: String
     public let displayName: String?
     public let contact: UIContact?
