@@ -32,17 +32,24 @@ struct MultipleDaysView: View {
     @State private var events = [Date: [CalendarCoreUI.UIEvent]]()
 
     let layout: MultipleDaysLayout
+    let pagerScrollSync: CalendarPeriodPagerScrollSync
 
     var body: some View {
         @Bindable var mainViewState = mainViewState
 
-        MultipleDaysContentView(layout: layout, events: events, selectedDate: $mainViewState.selectedDate)
-            .task(id: layout.preloadedInterval(for: mainViewState.selectedDate, calendar: calendar)) {
-                guard let interval = layout.preloadedInterval(for: mainViewState.selectedDate, calendar: calendar) else {
-                    return
-                }
-                await observeEvents(in: interval, calendar: calendar)
+        MultipleDaysContentView(
+            layout: layout,
+            events: events,
+            pagerScrollSync: pagerScrollSync,
+            selectedDate: $mainViewState.selectedDate
+        )
+        .id(layout)
+        .task(id: layout.preloadedInterval(for: mainViewState.selectedDate, calendar: calendar)) {
+            guard let interval = layout.preloadedInterval(for: mainViewState.selectedDate, calendar: calendar) else {
+                return
             }
+            await observeEvents(in: interval, calendar: calendar)
+        }
     }
 
     @concurrent
@@ -74,13 +81,15 @@ struct MultipleDaysView: View {
 }
 
 #Preview("Week") {
-    MultipleDaysView(layout: .week)
+    @Previewable @State var pagerScrollSync = CalendarPeriodPagerScrollSync()
+    MultipleDaysView(layout: .week, pagerScrollSync: pagerScrollSync)
         .environment(MainViewState())
         .environment(\.calendarAccounts, [:])
 }
 
 #Preview("Three days") {
-    MultipleDaysView(layout: .threeDays)
+    @Previewable @State var pagerScrollSync = CalendarPeriodPagerScrollSync()
+    MultipleDaysView(layout: .threeDays, pagerScrollSync: pagerScrollSync)
         .environment(MainViewState())
         .environment(\.calendarAccounts, [:])
 }

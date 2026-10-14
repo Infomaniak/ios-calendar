@@ -25,3 +25,18 @@ public enum CalendarViewMode: String, CaseIterable, Sendable {
     case week
     case month
 }
+
+extension CalendarViewMode {
+    var miniCalendarHeaderConfiguration: MiniCalendarHeaderConfiguration {
+        switch self {
+        case .planning, .day:
+            return MiniCalendarHeaderConfiguration(collapsed: .week, expanded: .miniCalendarAndMonthPicker)
+        case .week:
+            return MiniCalendarHeaderConfiguration(collapsed: .multipleDays(.week), expanded: .miniCalendarAndMonthPicker)
+        case .threeDays:
+            return MiniCalendarHeaderConfiguration(collapsed: .multipleDays(.threeDays), expanded: .miniCalendarAndMonthPicker)
+        case .month:
+            return MiniCalendarHeaderConfiguration(collapsed: .none, expanded: .monthPicker)
+        }
+    }
+}

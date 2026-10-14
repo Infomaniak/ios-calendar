@@ -27,10 +27,10 @@ struct MultipleDaysContentView: View {
 
     @State private var scrollPosition = ScrollPosition()
     @State private var scrollOffset = CGFloat.zero
-    @State private var pagerScrollSync = CalendarPeriodPagerScrollSync()
 
     let layout: MultipleDaysLayout
     let events: [Date: [CalendarCoreUI.UIEvent]]
+    let pagerScrollSync: CalendarPeriodPagerScrollSync
 
     @Binding var selectedDate: Date
 
@@ -95,9 +95,6 @@ struct MultipleDaysContentView: View {
         .onChange(of: scrollOffset) { _, newValue in
             UserDefaults.shared.dayViewScrollPosition = newValue
         }
-        .additionalSafeAreaBarView(id: layout, version: calendar.component(.weekOfYear, from: selectedDate)) {
-            MultipleDaysHeaderView(layout: layout, date: selectedDate, pagerScrollSync: pagerScrollSync)
-        }
     }
 
     private func events(for date: Date) -> [CalendarCoreUI.UIEvent] {
@@ -116,5 +113,6 @@ struct MultipleDaysContentView: View {
 
 #Preview {
     @Previewable @State var selectedDate = Date.now
-    MultipleDaysContentView(layout: .week, events: [:], selectedDate: $selectedDate)
+    @Previewable @State var pagerScrollSync = CalendarPeriodPagerScrollSync()
+    MultipleDaysContentView(layout: .week, events: [:], pagerScrollSync: pagerScrollSync, selectedDate: $selectedDate)
 }
