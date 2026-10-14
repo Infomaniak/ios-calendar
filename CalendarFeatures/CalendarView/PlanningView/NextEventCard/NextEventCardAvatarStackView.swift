@@ -19,6 +19,7 @@
 import CalendarCoreUI
 import CalendarResources
 import DesignSystem
+import ESDSFoundation
 import SwiftUI
 
 extension AvatarView {
