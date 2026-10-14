@@ -52,16 +52,6 @@ public struct UIEventSummary: Identifiable, Equatable, Hashable, Sendable {
         )
     }
 
-    public init(event: EventSummary) {
-        self.init(
-            event: event,
-            id: event.occurrenceIdValue,
-            startDate: event.timing.startInstantLocal().toNSDate(),
-            endDate: event.timing.endInstantLocal().toNSDate(),
-            isAllDay: event.timing.isAllDay
-        )
-    }
-
     private init(event: EventSummary, id: String, startDate: Date, endDate: Date, isAllDay: Bool) {
         self.id = id
         occurrenceId = event.occurrenceIdValue
@@ -81,7 +71,9 @@ public struct UIEventSummary: Identifiable, Equatable, Hashable, Sendable {
             myStatus = nil
         }
     }
+}
 
+public extension UIEventSummary {
     private init(details: UIEventDetails) {
         id = details.id
         occurrenceId = details.occurrenceId
@@ -96,9 +88,7 @@ public struct UIEventSummary: Identifiable, Equatable, Hashable, Sendable {
         hasMeetRoom = details.kMeetLink != nil
         myStatus = details.user?.status
     }
-}
 
-public extension UIEventSummary {
     static let preview = UIEventSummary(details: .preview)
     static let shortPreview = UIEventSummary(details: .shortPreview)
     static let mediumPreview = UIEventSummary(details: .mediumPreview)

@@ -44,16 +44,6 @@ struct EventMappingTests {
         #expect(mapped.isAllDay == slice.isAllDay)
     }
 
-    @Test func mapsSummaryWithoutDaySlice() {
-        let summary = makeSummary()
-        let mapped = UIEventSummary(event: summary)
-
-        #expect(mapped.id == summary.occurrenceIdValue)
-        #expect(mapped.startDate == summary.timing.startInstantLocal().toNSDate())
-        #expect(mapped.endDate == summary.timing.endInstantLocal().toNSDate())
-        #expect(mapped.location == "Meeting room")
-    }
-
     @Test func mapsFullEventAndResolvedContacts() throws {
         let contact = Contact(
             email: "guest@example.com",
