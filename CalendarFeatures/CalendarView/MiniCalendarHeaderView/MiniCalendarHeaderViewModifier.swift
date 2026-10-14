@@ -20,19 +20,18 @@ import DesignSystem
 import SwiftUI
 
 struct MiniCalendarHeaderViewModifier: ViewModifier {
-    @State private var displayMode: MiniCalendarView.DisplayMode
+    @State private var isExpanded = false
     @State private var barItems = [SafeAreaBarItem]()
     @State private var miniCalendarHeight: CGFloat = 0
     @State private var barItemsHeight: CGFloat = 0
 
     @Binding var selectedDate: Date
 
-    init(
-        selectedDate: Binding<Date>,
-        initialDisplayMode: MiniCalendarView.DisplayMode = .week
-    ) {
-        _displayMode = State(initialValue: initialDisplayMode)
-        _selectedDate = selectedDate
+    let configuration: MiniCalendarHeaderConfiguration
+    let pagerScrollSync: CalendarPeriodPagerScrollSync
+
+    private var headerContent: MiniCalendarHeaderConfiguration.Content {
+        return configuration.content(isExpanded: isExpanded)
     }
 
     func body(content: Content) -> some View {
@@ -41,10 +40,12 @@ struct MiniCalendarHeaderViewModifier: ViewModifier {
                 content
                     .safeAreaBar(edge: .top, spacing: 0) {
                         VStack(spacing: 0) {
-                            MiniCalendarView(
-                                displayMode: $displayMode,
-                                selectedDate: $selectedDate
+                            MiniCalendarHeaderContentView(
+                                selectedDate: $selectedDate,
+                                content: headerContent,
+                                pagerScrollSync: pagerScrollSync
                             )
+                            .scrollEdgeEffectHidden()
                             .onGeometryChange(for: CGFloat.self) { proxy in
                                 proxy.size.height
                             } action: { newHeight in
@@ -73,9 +74,10 @@ struct MiniCalendarHeaderViewModifier: ViewModifier {
                 content
                     .safeAreaInset(edge: .top, spacing: 0) {
                         VStack(spacing: 0) {
-                            MiniCalendarView(
-                                displayMode: $displayMode,
-                                selectedDate: $selectedDate
+                            MiniCalendarHeaderContentView(
+                                selectedDate: $selectedDate,
+                                content: headerContent,
+                                pagerScrollSync: pagerScrollSync
                             )
 
                             barItemsView
@@ -93,7 +95,7 @@ struct MiniCalendarHeaderViewModifier: ViewModifier {
         .toolbar {
             if #available(iOS 26.0, *) {
                 ToolbarItem(placement: .principal) {
-                    Button(action: switchDisplayMode) {
+                    Button(action: toggleExpansion) {
                         AnimatedTitleView(date: selectedDate)
                     }
                 }
@@ -106,7 +108,10 @@ struct MiniCalendarHeaderViewModifier: ViewModifier {
                 .sharedBackgroundVisibility(.hidden)
             } else {
                 ToolbarItem(placement: .topBarLeading) {
-                    AnimatedTitleView(date: selectedDate)
+                    Button(action: toggleExpansion) {
+                        AnimatedTitleView(date: selectedDate)
+                    }
+                    .buttonStyle(.plain)
                 }
             }
 
@@ -128,9 +133,35 @@ struct MiniCalendarHeaderViewModifier: ViewModifier {
         }
     }
 
-    private func switchDisplayMode() {
+    private func toggleExpansion() {
         withAnimation {
-            displayMode = displayMode == .month ? .week : .month
+            isExpanded.toggle()
+        }
+    }
+}
+
+struct MiniCalendarHeaderContentView: View {
+    @Binding var selectedDate: Date
+
+    let content: MiniCalendarHeaderConfiguration.Content
+    let pagerScrollSync: CalendarPeriodPagerScrollSync
+
+    var body: some View {
+        VStack(spacing: 0) {
+            switch content {
+            case .none:
+                EmptyView()
+            case .week, .miniCalendarAndMonthPicker:
+                MiniCalendarView(
+                    selectedDate: $selectedDate,
+                    displayMode: content == .week ? .week : .month
+                )
+            case .multipleDays(let layout):
+                MultipleDaysHeaderView(layout: layout, date: selectedDate, pagerScrollSync: pagerScrollSync)
+                    .id(layout)
+            case .monthPicker:
+                MonthPickerView(selectedDate: $selectedDate)
+            }
         }
     }
 }

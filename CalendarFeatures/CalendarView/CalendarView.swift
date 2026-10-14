@@ -61,6 +61,8 @@ public struct CalendarView: View {
 
     @SceneStorage("SelectedMode") private var selectedMode: CalendarViewMode = .day
 
+    @State private var multipleDaysPagerScrollSync = CalendarPeriodPagerScrollSync()
+
     public init() {}
 
     public var body: some View {
@@ -72,14 +74,18 @@ public struct CalendarView: View {
             case .day:
                 DaysView()
             case .week:
-                MultipleDaysView(layout: .week)
+                MultipleDaysView(layout: .week, pagerScrollSync: multipleDaysPagerScrollSync)
             case .threeDays:
-                MultipleDaysView(layout: .threeDays)
+                MultipleDaysView(layout: .threeDays, pagerScrollSync: multipleDaysPagerScrollSync)
             case .month:
                 MonthView()
             }
         }
-        .modifier(MiniCalendarHeaderViewModifier(selectedDate: $mainViewState.selectedDate))
+        .modifier(MiniCalendarHeaderViewModifier(
+            selectedDate: $mainViewState.selectedDate,
+            configuration: selectedMode.miniCalendarHeaderConfiguration,
+            pagerScrollSync: multipleDaysPagerScrollSync
+        ))
         .sheet(isPresented: $mainViewState.isShowingEventCreation) {
             NavigationStack {
                 EventFormView(editionMode: .new)
