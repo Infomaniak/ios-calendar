@@ -16,7 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import CalendarResources
 import Foundation
 import MultiplatformCalendar
 
@@ -35,10 +34,7 @@ public struct UIEventSummary: Identifiable, Equatable, Hashable, Sendable {
     public let myStatus: UIParticipationStatus?
 
     public var displayTitle: AttributedString {
-        guard title.isEmpty else { return AttributedString(title) }
-        var label = AttributedString(CalendarResourcesStrings.eventUntitledLabel)
-        label.inlinePresentationIntent = .emphasized
-        return label
+        title.formatted(.eventDisplayTitle.attributed)
     }
 
     public init(eventDaySlice: EventDaySlice) {

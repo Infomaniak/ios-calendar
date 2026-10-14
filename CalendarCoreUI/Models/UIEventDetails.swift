@@ -16,7 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import CalendarResources
 import Foundation
 import MultiplatformCalendar
 import SwiftUI
@@ -48,13 +47,7 @@ public struct UIEventDetails: Identifiable, Equatable, Hashable, Sendable {
     public let organizer: UIOrganizer?
 
     public var displayTitle: AttributedString {
-        guard title.isEmpty else {
-            return AttributedString(title)
-        }
-
-        var untitledLabel = AttributedString(CalendarResourcesStrings.eventUntitledLabel)
-        untitledLabel.inlinePresentationIntent = .emphasized
-        return untitledLabel
+        title.formatted(.eventDisplayTitle.attributed)
     }
 
     public init(
