@@ -37,16 +37,12 @@ struct DayPager: View {
     @Binding var selectedDate: Date
 
     var body: some View {
-        GeometryReader { proxy in
-            CalendarPeriodPager(
-                component: .day,
-                periodOffsets: -36525 ..< 36526,
-                date: $selectedDate
-            ) { date in
-                DayView(date: date)
-                    .safeAreaPadding(.bottom, proxy.safeAreaInsets.bottom)
-            }
-            .ignoresSafeArea(.all, edges: [.top, .bottom])
+        CalendarPeriodPager(
+            component: .day,
+            periodOffsets: -36525 ..< 36526,
+            date: $selectedDate
+        ) { date in
+            DayView(date: date)
         }
     }
 }

@@ -55,10 +55,11 @@ struct MiniCalendarView: View {
 
     @Environment(\.calendar) private var calendar
 
-    @Binding var displayMode: DisplayMode
     @Binding var selectedDate: Date
 
     @State private var viewModel = MiniCalendarViewModel()
+
+    let displayMode: DisplayMode
 
     var body: some View {
         VStack(spacing: 0) {
@@ -120,7 +121,6 @@ struct MiniCalendarView: View {
 }
 
 #Preview {
-    @Previewable @State var displayMode: MiniCalendarView.DisplayMode = .week
     @Previewable @State var selectedDate = Date()
-    MiniCalendarView(displayMode: $displayMode, selectedDate: $selectedDate)
+    MiniCalendarView(selectedDate: $selectedDate, displayMode: .week)
 }
