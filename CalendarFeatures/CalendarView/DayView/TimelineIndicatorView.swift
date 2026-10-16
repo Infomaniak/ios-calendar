@@ -20,9 +20,13 @@ import ESDSFoundation
 import SwiftUI
 
 struct TimelineIndicatorView: View {
+    enum Constants {
+        static let dotSize: CGFloat = 8
+    }
+
     @Environment(\.esdsTheme) private var theme
 
-    let date: Date
+    var date: Date?
 
     private var tint: Color {
         theme.color.backgroundDatavizPinkDim1
@@ -30,17 +34,19 @@ struct TimelineIndicatorView: View {
 
     var body: some View {
         HStack(spacing: theme.spacing.twoXs) {
-            Text(date.formatted(DayTimelineView.Constants.dateFormater))
-                .font(DayTimelineView.Constants.labelFont)
-                .padding(.horizontal, theme.spacing.xs)
-                .padding(.vertical, theme.spacing.twoXs)
-                .foregroundStyle(theme.color.contentInverse)
-                .background(tint, in: .capsule)
+            if let date {
+                Text(date.formatted(TimelineBackgroundView.Constants.dateFormater))
+                    .font(TimelineBackgroundView.Constants.labelFont)
+                    .padding(.horizontal, theme.spacing.xs)
+                    .padding(.vertical, theme.spacing.twoXs)
+                    .foregroundStyle(theme.color.contentInverse)
+                    .background(tint, in: .capsule)
+            }
 
             HStack(spacing: 0) {
                 Circle()
                     .fill(tint)
-                    .frame(width: 8, height: 8)
+                    .frame(width: Constants.dotSize, height: Constants.dotSize)
 
                 Divider()
                     .frame(height: 1)
@@ -54,4 +60,8 @@ struct TimelineIndicatorView: View {
 
 #Preview {
     TimelineIndicatorView(date: .now)
+}
+
+#Preview("Without time") {
+    TimelineIndicatorView()
 }

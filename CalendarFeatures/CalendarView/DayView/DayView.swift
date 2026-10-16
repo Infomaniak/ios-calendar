@@ -31,7 +31,8 @@ struct DayView: View {
     var body: some View {
         DayContentView(
             date: date,
-            events: daysViewModel.events(for: date, calendar: calendar)
+            events: daysViewModel.events(for: date, calendar: calendar),
+            allDayEvents: daysViewModel.allDayEvents(for: date, calendar: calendar)
         )
     }
 }
@@ -40,210 +41,101 @@ struct DayContentView: View {
     enum Constants {
         static let layoutHorizontalSpacing = IKPadding.micro
         static let layoutVerticalSpacing: CGFloat = 1.5
-
-        static let verticalInset = DayTimelineView.Constants.labelFontSize / 2
-
-        static let leadingInset: CGFloat = {
-            let font = UIFont.systemFont(
-                ofSize: DayTimelineView.Constants.labelFontSize,
-                weight: .semibold
-            )
-
-            let fakeDate = Calendar.current.date(from: DateComponents(hour: 12, minute: 0)) ?? .now
-            let labelWidth = fakeDate.formatted(DayTimelineView.Constants.dateFormater)
-                .size(withAttributes: [.font: font]).width + 2 * IKPadding.mini
-
-            return labelWidth.rounded(.up) + DayTimelineView.Constants.labelSpacing
-        }()
-
-        // swiftlint:disable:next nesting
-        enum PointsPerHour {
-            static let minimum: CGFloat = 48
-            static let `default`: CGFloat = 64
-            static let maximum: CGFloat = 112
-
-            static let horizontalRelayoutStep: CGFloat = 8
-
-            static func clamped(_ value: CGFloat) -> CGFloat {
-                return min(max(value, PointsPerHour.minimum), PointsPerHour.maximum)
-            }
-        }
     }
 
     @Environment(\.calendar) private var calendar
     @Environment(MainViewState.self) private var mainViewState
 
     @SceneStorage("DayViewScrollPosition") private var storedScrollPosition = 0.0
-    @State private var scrollPosition = ScrollPosition()
-    @State private var scrollOffset: CGFloat = 0
 
-    @State private var pointsPerHour = Constants.PointsPerHour.default
-    @State private var currentMagnification: CGFloat = 1.0
+    @State private var scrollPosition = ScrollPosition()
+    @State private var scrollOffset = CGFloat.zero
+
     @State private var coveredTextHeights: [Int: CGFloat] = [:]
 
     let date: Date
     let events: [UIEventSummary]
+    let allDayEvents: [UIEventSummary]
 
-    private var hourMarks: [Date] {
-        let startOfDay = Calendar.current.startOfDay(for: date)
-        guard let startOfNextDay = Calendar.current.date(byAdding: .day, value: 1, to: startOfDay) else {
-            return []
-        }
-
-        var marks = [Date]()
-        var currentMark = startOfDay
-        while currentMark < startOfNextDay {
-            marks.append(currentMark)
-            guard let nextMark = Calendar.current.date(byAdding: .hour, value: 1, to: currentMark) else { break }
-            currentMark = nextMark
-        }
-
-        marks.append(startOfNextDay)
-
-        return marks
-    }
-
-    private var allDayEvents: [UIEventSummary] {
-        return events.filter(\.isAllDay)
-    }
-
-    private var effectivePointsPerHour: CGFloat {
-        return Constants.PointsPerHour.clamped(pointsPerHour * currentMagnification)
-    }
-
-    private var viewHeight: CGFloat {
-        return CGFloat(hourMarks.count - 1) * effectivePointsPerHour + Self.Constants.verticalInset * 2
+    private var isSelected: Bool {
+        return calendar.isDate(date, inSameDayAs: mainViewState.selectedDate)
     }
 
     var body: some View {
-        GeometryReader { proxy in
-            TimelineView(.everyMinute) { timeline in
-                let horizontalPointsPerHour = horizontalLayoutPointsPerHour(
-                    for: effectivePointsPerHour
-                )
-
-                ScrollView {
-                    ZStack(alignment: .top) {
-                        DayTimelineView(
-                            date: date,
-                            pointsPerHour: effectivePointsPerHour,
-                            leadingOffset: Self.Constants.leadingInset
+        TimelineContentView(scrollPosition: $scrollPosition, scrollOffset: $scrollOffset, date: date) { geometry in
+            EventuallyLayout(
+                startOfDay: geometry.startOfDay,
+                hourSlotHeight: geometry.pointsPerHour,
+                horizontalHourSlotHeight: geometry.horizontalLayoutPointsPerHour,
+                config: .init(hSpacing: Constants.layoutHorizontalSpacing, vSpacing: Constants.layoutVerticalSpacing),
+                onCoveredIndicesChange: onCoveredIndicesChange
+            ) {
+                ForEach(Array(events.enumerated()), id: \.element.id) { index, event in
+                    EventDetailsPopoverButton(event: event) {
+                        DayEventView(
+                            event: event,
+                            pointsPerHour: geometry.pointsPerHour,
+                            maxVisibleHeight: coveredTextHeights[index]
                         )
-                        .padding(.horizontal, value: .medium)
-
-                        EventuallyLayout(
-                            startOfDay: calendar.startOfDay(for: date),
-                            hourSlotHeight: effectivePointsPerHour,
-                            horizontalHourSlotHeight: horizontalPointsPerHour,
-                            config: .init(
-                                hSpacing: Constants.layoutHorizontalSpacing,
-                                vSpacing: Constants.layoutVerticalSpacing
-                            )
-                        ) { textHeights in
-                            guard coveredTextHeights != textHeights else { return }
-                            coveredTextHeights = textHeights
-                        } {
-                            ForEach(Array(events.filter { !$0.isAllDay }.enumerated()), id: \.element.id) { index, event in
-                                EventDetailsPopoverButton(event: event) {
-                                    DayEventView(
-                                        event: event,
-                                        pointsPerHour: effectivePointsPerHour,
-                                        maxVisibleHeight: coveredTextHeights[index]
-                                    )
-                                }
-                                .eventuallyDateIntervalLayout(DateInterval(start: event.startDate, end: event.endDate))
-                            }
-                        }
-                        .padding(.leading, Self.Constants.leadingInset + IKPadding.medium)
-                        .padding(.trailing, value: .medium)
-                        .padding(.vertical, Self.Constants.verticalInset - DayTimelineView.Constants.indexHeight / 2)
-
-                        if calendar.isDate(date, inSameDayAs: timeline.date) {
-                            let timeIndicatorPosition = timeIndicatorPosition(at: timeline.date)
-                            TimelineIndicatorView(date: timeline.date)
-                                .padding(.leading, value: .medium)
-                                .visualEffect { content, proxy in
-                                    content
-                                        .offset(y: -proxy.size.height / 2 + timeIndicatorPosition)
-                                }
-                        }
                     }
-                    .frame(height: viewHeight)
+                    .eventuallyDateIntervalLayout(DateInterval(start: event.startDate, end: event.endDate))
                 }
-                .contentMargins(.vertical, IKPadding.medium, for: .scrollContent)
-                .scrollPosition($scrollPosition)
-                .onScrollGeometryChange(for: CGFloat.self) { scrollProxy in
-                    return scrollProxy.contentOffset.y + scrollProxy.contentInsets.top
-                } action: { _, newValue in
-                    scrollOffset = newValue
-
-                    guard mainViewState.selectedDate == date else { return }
-                    storedScrollPosition = Double(newValue)
-                }
-                .onAppear {
-                    scrollToCorrectPosition(proxy)
-                }
-                .onChange(of: mainViewState.selectedDate) { oldSelectedDate, selectedDate in
-                    guard calendar.isDate(date, inSameDayAs: selectedDate),
-                          !calendar.isDate(date, inSameDayAs: oldSelectedDate) else { return }
-                    scrollToCorrectPosition(proxy)
-                }
-                .dayViewZoom(
-                    pointsPerHour: $pointsPerHour,
-                    currentMagnification: $currentMagnification,
-                    scrollPosition: $scrollPosition,
-                    date: date,
-                    scrollOffset: scrollOffset,
-                    maximumElapsedHours: CGFloat(hourMarks.count - 1)
-                )
+            }
+            .onAppear {
+                scrollToCorrectPosition(geometry)
+            }
+            .onChange(of: geometry.visibleHeight) { oldHeight, newHeight in
+                guard oldHeight == 0, newHeight > 0 else { return }
+                scrollToCorrectPosition(geometry)
+            }
+            .onChange(of: mainViewState.selectedDate) { oldSelectedDate, selectedDate in
+                guard calendar.isDate(date, inSameDayAs: selectedDate),
+                      !calendar.isDate(date, inSameDayAs: oldSelectedDate) else { return }
+                scrollToCorrectPosition(geometry)
+            }
+        } overlay: { geometry in
+            TimelineView(.everyMinute) { timeline in
+                timelineIndicator(date: timeline.date, geometry: geometry)
             }
         }
-        .additionalSafeAreaBarView(
-            id: date,
-            version: allDayEvents,
-            isActive: calendar.isDate(date, inSameDayAs: mainViewState.selectedDate)
-        ) {
+        .onChange(of: scrollOffset) { _, newValue in
+            guard isSelected else { return }
+            storedScrollPosition = Double(newValue)
+        }
+        .additionalSafeAreaBarView(id: date, version: allDayEvents, isActive: isSelected) {
             DayHeaderView(events: allDayEvents, date: date)
                 .padding(.horizontal, value: .medium)
         }
     }
 
-    private func timeIndicatorPosition(at date: Date) -> CGFloat {
-        let elapsedTime = date.timeIntervalSince(calendar.startOfDay(for: date)) / 3600
-        return elapsedTime * effectivePointsPerHour + Self.Constants.verticalInset
+    @ViewBuilder
+    private func timelineIndicator(date: Date, geometry: TimelineGeometry) -> some View {
+        if calendar.isDate(self.date, inSameDayAs: date) {
+            TimelineIndicatorView(date: date)
+                .padding(.leading, value: .medium)
+                .visualEffect { content, proxy in
+                    content
+                        .offset(y: -proxy.size.height / 2 + geometry.yPosition(for: date, calendar: calendar))
+                }
+        }
     }
 
-    private func scrollToCorrectPosition(_ proxy: GeometryProxy) {
+    private func onCoveredIndicesChange(textHeights: [Int: CGFloat]) {
+        guard coveredTextHeights != textHeights else { return }
+        coveredTextHeights = textHeights
+    }
+
+    private func scrollToCorrectPosition(_ geometry: TimelineGeometry) {
         if calendar.isDate(date, inSameDayAs: .now) {
-            let currentTimePosition = timeIndicatorPosition(at: .now)
-            scrollPosition.scrollTo(y: currentTimePosition - proxy.size.height / 2)
+            guard geometry.visibleHeight > 0 else { return }
+            scrollPosition.scrollTo(y: geometry.centeredScrollOffset(for: .now, calendar: calendar))
         } else {
             scrollPosition.scrollTo(y: storedScrollPosition)
         }
     }
-
-    private func horizontalLayoutPointsPerHour(
-        for livePointsPerHour: CGFloat
-    ) -> CGFloat {
-        guard Self.Constants.PointsPerHour.horizontalRelayoutStep > 0 else {
-            return livePointsPerHour
-        }
-
-        let stepIndex = ((livePointsPerHour - Self.Constants.PointsPerHour.minimum) /
-            Self.Constants.PointsPerHour.horizontalRelayoutStep)
-            .rounded(.toNearestOrAwayFromZero)
-        let snappedValue = Self.Constants.PointsPerHour.minimum + stepIndex *
-            Self.Constants.PointsPerHour.horizontalRelayoutStep
-
-        return min(max(snappedValue, Self.Constants.PointsPerHour.minimum),
-                   Self.Constants.PointsPerHour.maximum)
-    }
 }
 
 #Preview {
-    DayContentView(
-        date: .now,
-        events: [.preview, .preview]
-    )
-    .environment(MainViewState())
+    DayContentView(date: .now, events: [.preview, .preview], allDayEvents: [])
+        .environment(MainViewState())
 }
