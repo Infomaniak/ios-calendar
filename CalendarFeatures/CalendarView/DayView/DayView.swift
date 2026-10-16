@@ -16,7 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import CalendarCore
 import CalendarCoreUI
 import DesignSystem
 import ESDSFoundation
@@ -46,6 +45,8 @@ struct DayContentView: View {
 
     @Environment(\.calendar) private var calendar
     @Environment(MainViewState.self) private var mainViewState
+
+    @SceneStorage("DayViewScrollPosition") private var storedScrollPosition = 0.0
 
     @State private var scrollPosition = ScrollPosition()
     @State private var scrollOffset = CGFloat.zero
@@ -99,7 +100,7 @@ struct DayContentView: View {
         }
         .onChange(of: scrollOffset) { _, newValue in
             guard isSelected else { return }
-            UserDefaults.shared.dayViewScrollPosition = newValue
+            storedScrollPosition = Double(newValue)
         }
         .additionalSafeAreaBarView(id: date, version: allDayEvents, isActive: isSelected) {
             DayHeaderView(events: allDayEvents, date: date)
@@ -129,7 +130,7 @@ struct DayContentView: View {
             guard geometry.visibleHeight > 0 else { return }
             scrollPosition.scrollTo(y: geometry.centeredScrollOffset(for: .now, calendar: calendar))
         } else {
-            scrollPosition.scrollTo(y: UserDefaults.shared.dayViewScrollPosition)
+            scrollPosition.scrollTo(y: storedScrollPosition)
         }
     }
 }

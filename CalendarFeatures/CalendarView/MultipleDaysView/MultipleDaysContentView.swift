@@ -16,7 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import CalendarCore
 import CalendarCoreUI
 import DesignSystem
 import ESDSFoundation
@@ -24,6 +23,8 @@ import SwiftUI
 
 struct MultipleDaysContentView: View {
     @Environment(\.calendar) private var calendar
+
+    @SceneStorage("DayViewScrollPosition") private var storedScrollPosition = 0.0
 
     @State private var scrollPosition = ScrollPosition()
     @State private var scrollOffset = CGFloat.zero
@@ -98,7 +99,7 @@ struct MultipleDaysContentView: View {
             }
         }
         .onChange(of: scrollOffset) { _, newValue in
-            UserDefaults.shared.dayViewScrollPosition = newValue
+            storedScrollPosition = Double(newValue)
         }
     }
 
@@ -113,7 +114,7 @@ struct MultipleDaysContentView: View {
             guard geometry.visibleHeight > 0 else { return }
             scrollPosition.scrollTo(y: geometry.centeredScrollOffset(for: .now, calendar: calendar))
         } else {
-            scrollPosition.scrollTo(y: UserDefaults.shared.dayViewScrollPosition)
+            scrollPosition.scrollTo(y: storedScrollPosition)
         }
         hasPerformedInitialScroll = true
     }
