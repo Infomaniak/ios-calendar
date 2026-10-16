@@ -29,7 +29,7 @@ struct MultipleDaysContentView: View {
     @State private var scrollOffset = CGFloat.zero
 
     let layout: MultipleDaysLayout
-    let events: [Date: [CalendarCoreUI.UIEvent]]
+    let events: [Date: [UIEventSummary]]
     let pagerScrollSync: CalendarPeriodPagerScrollSync
 
     @Binding var selectedDate: Date
@@ -97,7 +97,7 @@ struct MultipleDaysContentView: View {
         }
     }
 
-    private func events(for date: Date) -> [CalendarCoreUI.UIEvent] {
+    private func events(for date: Date) -> [UIEventSummary] {
         guard let events = events[calendar.startOfDay(for: date)] else { return [] }
         return events.filter { !$0.isAllDay }
     }
