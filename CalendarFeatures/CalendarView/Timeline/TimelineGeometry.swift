@@ -35,6 +35,15 @@ struct TimelineGeometry {
         )
     }
 
+    var horizontalLayoutPointsPerHour: CGFloat {
+        let step = TimelineViewConstants.PointsPerHour.horizontalRelayoutStep
+        let minimum = TimelineViewConstants.PointsPerHour.minimum
+        guard step > 0 else { return pointsPerHour }
+
+        let stepIndex = ((pointsPerHour - minimum) / step).rounded(.toNearestOrAwayFromZero)
+        return TimelineViewConstants.PointsPerHour.clamped(minimum + stepIndex * step)
+    }
+
     func yPosition(for date: Date, calendar: Calendar) -> CGFloat {
         let elapsedHours = date.timeIntervalSince(calendar.startOfDay(for: date)) / 3600
         return elapsedHours * pointsPerHour + TimelineBackgroundView.Constants.verticalInset
