@@ -28,7 +28,7 @@ public struct DeleteEventUseCase: Sendable {
         guard let occurrence = try await calendarSDK.calendarManager.getOccurrence(occurrenceId: id) else {
             throw CalendarError.eventOccurrenceNotFound
         }
-        let target = occurrence.targetedAs(scope: scope)
+        let target = occurrence.targetFor(scope: scope)
         try await calendarSDK.calendarManager.deleteEvent(target: target)
     }
 }
