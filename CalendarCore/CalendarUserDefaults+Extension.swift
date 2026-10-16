@@ -30,8 +30,6 @@ public extension UserDefaults.Keys {
     static let matomoAuthorized = UserDefaults.Keys(rawValue: "matomoAuthorized")
     static let sentryAuthorized = UserDefaults.Keys(rawValue: "sentryAuthorized")
 
-    static let dayViewScrollPosition = UserDefaults.Keys(rawValue: "dayViewScrollPosition")
-
     static let theme = UserDefaults.Keys(rawValue: "theme")
     static let firstWeekday = UserDefaults.Keys(rawValue: "firstWeekday")
     static let defaultEventDuration = UserDefaults.Keys(rawValue: "defaultEventDuration")
@@ -63,18 +61,6 @@ public extension UserDefaults {
         }
         set {
             set(newValue, forKey: key(.sentryAuthorized))
-        }
-    }
-
-    var dayViewScrollPosition: CGFloat {
-        get {
-            if object(forKey: key(.dayViewScrollPosition)) == nil {
-                set(DefaultPreferences.dayViewScrollPosition, forKey: key(.dayViewScrollPosition))
-            }
-            return CGFloat(double(forKey: key(.dayViewScrollPosition)))
-        }
-        set {
-            set(Double(newValue), forKey: key(.dayViewScrollPosition))
         }
     }
 
