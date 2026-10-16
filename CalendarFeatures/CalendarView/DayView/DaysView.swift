@@ -27,9 +27,14 @@ import SwiftUI
 @Observable
 final class DaysViewModel {
     var events = [Date: [UIEventSummary]]()
+    var allDayEvents = [Date: [UIEventSummary]]()
 
     func events(for date: Date, calendar: Foundation.Calendar) -> [UIEventSummary] {
         return events[date.startOfDay(calendar)] ?? []
+    }
+
+    func allDayEvents(for date: Date, calendar: Foundation.Calendar) -> [UIEventSummary] {
+        return allDayEvents[date.startOfDay(calendar)] ?? []
     }
 }
 
@@ -87,11 +92,21 @@ struct DaysView: View {
             }
 
             guard !Task.isCancelled else { return }
-            let groupedEvents = Dictionary(grouping: uiEvents) { $0.startDate.startOfDay(calendar) }
+            var groupedEvents = [Date: [UIEventSummary]]()
+            var groupedAllDayEvents = [Date: [UIEventSummary]]()
+            for event in uiEvents {
+                let day = event.startDate.startOfDay(calendar)
+                if event.isAllDay {
+                    groupedAllDayEvents[day, default: []].append(event)
+                } else {
+                    groupedEvents[day, default: []].append(event)
+                }
+            }
 
             guard !Task.isCancelled else { return }
             await MainActor.run {
                 viewModel.events = groupedEvents
+                viewModel.allDayEvents = groupedAllDayEvents
             }
         }
     }

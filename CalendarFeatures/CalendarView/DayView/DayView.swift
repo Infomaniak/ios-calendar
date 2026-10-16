@@ -32,7 +32,8 @@ struct DayView: View {
     var body: some View {
         DayContentView(
             date: date,
-            events: daysViewModel.events(for: date, calendar: calendar)
+            events: daysViewModel.events(for: date, calendar: calendar),
+            allDayEvents: daysViewModel.allDayEvents(for: date, calendar: calendar)
         )
     }
 }
@@ -55,10 +56,7 @@ struct DayContentView: View {
 
     let date: Date
     let events: [UIEventSummary]
-
-    private var allDayEvents: [UIEventSummary] {
-        return events.filter(\.isAllDay)
-    }
+    let allDayEvents: [UIEventSummary]
 
     private var isSelected: Bool {
         return calendar.isDate(date, inSameDayAs: mainViewState.selectedDate)
@@ -73,7 +71,7 @@ struct DayContentView: View {
                 config: .init(hSpacing: Constants.layoutHorizontalSpacing, vSpacing: Constants.layoutVerticalSpacing),
                 onCoveredIndicesChange: onCoveredIndicesChange
             ) {
-                ForEach(Array(events.filter { !$0.isAllDay }.enumerated()), id: \.element.id) { index, event in
+                ForEach(Array(events.enumerated()), id: \.element.id) { index, event in
                     EventDetailsPopoverButton(event: event) {
                         DayEventView(
                             event: event,
@@ -149,6 +147,6 @@ struct DayContentView: View {
 }
 
 #Preview {
-    DayContentView(date: .now, events: [.preview, .preview])
+    DayContentView(date: .now, events: [.preview, .preview], allDayEvents: [])
         .environment(MainViewState())
 }
