@@ -98,6 +98,13 @@ enum MultipleDaysLayout: Hashable {
         return DateInterval(start: start, end: end)
     }
 
+    func maxEventCount<Event>(in events: [Date: [Event]], selectedDate: Date, calendar: Calendar) -> Int {
+        guard let visibleInterval = visibleInterval(for: selectedDate, calendar: calendar) else { return 0 }
+        return calendar.days(from: visibleInterval.start, to: visibleInterval.end)
+            .map { events[$0]?.count ?? 0 }
+            .max() ?? 0
+    }
+
     private func visibleInterval(for selectedDate: Date, calendar: Calendar) -> DateInterval? {
         switch self {
         case .paged(let component):

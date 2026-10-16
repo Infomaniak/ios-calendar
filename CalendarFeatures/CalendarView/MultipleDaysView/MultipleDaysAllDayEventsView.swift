@@ -27,18 +27,15 @@ struct MultipleDaysAllDayEventsView: View {
 
     let layout: MultipleDaysLayout
     let events: [Date: [UIEventSummary]]
+    let visibleRowCount: Int
     let pagerScrollSync: CalendarPeriodPagerScrollSync
-
-    private var maxEventCount: Int {
-        events.values.map(\.count).max() ?? 0
-    }
 
     private var allDayListMetrics: AllDayEventsListMetrics {
         AllDayEventsListMetrics(eventTitleLineHeight: eventTitleLineHeight)
     }
 
     var body: some View {
-        if maxEventCount > 0 {
+        if visibleRowCount > 0 {
             HStack(alignment: .top, spacing: 0) {
                 AllDayLabelView()
 
@@ -49,7 +46,7 @@ struct MultipleDaysAllDayEventsView: View {
                         }
                     }
                 }
-                .frame(height: allDayListMetrics.listHeight(rowCount: maxEventCount))
+                .frame(height: allDayListMetrics.listHeight(rowCount: visibleRowCount))
             }
             .padding(.leading, value: .medium)
             .padding(.bottom, IKPadding.micro)
@@ -67,7 +64,7 @@ struct MultipleDaysAllDayEventsView: View {
         .scrollDisabled(!allDayListMetrics.isScrollable(rowCount: events.count))
         .scrollIndicators(.hidden)
         .padding(.horizontal, MultipleDaysColumnView.Constants.eventsSpacing)
-        .frame(maxWidth: .infinity, maxHeight: allDayListMetrics.listHeight(rowCount: maxEventCount), alignment: .top)
+        .frame(maxWidth: .infinity, maxHeight: allDayListMetrics.listHeight(rowCount: visibleRowCount), alignment: .top)
     }
 }
 
@@ -76,6 +73,7 @@ struct MultipleDaysAllDayEventsView: View {
     MultipleDaysAllDayEventsView(
         layout: .week,
         events: [Calendar.current.startOfDay(for: .now): [.preview, .shortPreview]],
+        visibleRowCount: 2,
         pagerScrollSync: pagerScrollSync
     )
 }
