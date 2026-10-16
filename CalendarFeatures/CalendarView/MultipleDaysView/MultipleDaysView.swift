@@ -20,6 +20,11 @@ import CalendarCore
 import CalendarCoreUI
 import SwiftUI
 
+private struct AllDayBarVersion: Hashable {
+    let events: [Date: [UIEventSummary]]
+    let visibleRowCount: Int
+}
+
 struct MultipleDaysView: View {
     @Environment(\.calendar) private var calendar
     @Environment(MainViewState.self) private var mainViewState
@@ -29,6 +34,10 @@ struct MultipleDaysView: View {
 
     let layout: MultipleDaysLayout
     let pagerScrollSync: CalendarPeriodPagerScrollSync
+
+    private var visibleAllDayRowCount: Int {
+        layout.maxEventCount(in: allDayEvents, selectedDate: mainViewState.selectedDate, calendar: calendar)
+    }
 
     var body: some View {
         @Bindable var mainViewState = mainViewState
@@ -45,8 +54,16 @@ struct MultipleDaysView: View {
             }
             await observeEvents(in: interval, calendar: calendar)
         }
-        .additionalSafeAreaBarView(id: layout, version: allDayEvents) {
-            MultipleDaysAllDayEventsView(layout: layout, events: allDayEvents, pagerScrollSync: pagerScrollSync)
+        .additionalSafeAreaBarView(
+            id: layout,
+            version: AllDayBarVersion(events: allDayEvents, visibleRowCount: visibleAllDayRowCount)
+        ) {
+            MultipleDaysAllDayEventsView(
+                layout: layout,
+                events: allDayEvents,
+                visibleRowCount: visibleAllDayRowCount,
+                pagerScrollSync: pagerScrollSync
+            )
         }
     }
 
