@@ -69,12 +69,12 @@ public extension UserDefaults {
     var dayViewScrollPosition: CGFloat {
         get {
             if object(forKey: key(.dayViewScrollPosition)) == nil {
-                set(DefaultPreferences.dayViewScrollPosition, forKey: key(.firstWeekday))
+                set(DefaultPreferences.dayViewScrollPosition, forKey: key(.dayViewScrollPosition))
             }
-            return CGFloat(float(forKey: key(.dayViewScrollPosition)))
+            return CGFloat(double(forKey: key(.dayViewScrollPosition)))
         }
         set {
-            setValue(newValue, forKey: key(.dayViewScrollPosition))
+            set(Double(newValue), forKey: key(.dayViewScrollPosition))
         }
     }
 
