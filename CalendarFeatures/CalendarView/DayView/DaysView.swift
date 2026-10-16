@@ -16,11 +16,8 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import AsyncAlgorithms
 import CalendarCore
 import CalendarCoreUI
-import InfomaniakDI
-import MultiplatformCalendar
 import Observation
 import SwiftUI
 
@@ -73,42 +70,16 @@ struct DaysView: View {
             }
     }
 
-    @concurrent
     private func observeEventsAt(date: Date, in calendar: Foundation.Calendar) async {
         let centerDate = date.startOfDay(calendar)
         let startDate = calendar.date(byAdding: .day, value: -3, to: centerDate) ?? centerDate
         let endDate = calendar.date(byAdding: .day, value: 3, to: centerDate) ?? centerDate
 
-        @InjectService var calendarSDK: CalendarCoreGraph
-        for await daySlices in calendarSDK.calendarManager.observeDaySlices(
-            start: startDate.instant,
-            end: endDate.instant
-        )._throttle(for: .milliseconds(500)) {
-            guard !Task.isCancelled else { return }
-            let uiEvents = daySlices.values.flatMap { eventDaySlices in
-                eventDaySlices.map {
-                    UIEventSummary(eventDaySlice: $0)
-                }
+        await DayEventsObserver
+            .observe(in: DateInterval(start: startDate, end: endDate), calendar: calendar) { [viewModel] groupedEvents in
+                viewModel.events = groupedEvents.events
+                viewModel.allDayEvents = groupedEvents.allDayEvents
             }
-
-            guard !Task.isCancelled else { return }
-            var groupedEvents = [Date: [UIEventSummary]]()
-            var groupedAllDayEvents = [Date: [UIEventSummary]]()
-            for event in uiEvents {
-                let day = event.startDate.startOfDay(calendar)
-                if event.isAllDay {
-                    groupedAllDayEvents[day, default: []].append(event)
-                } else {
-                    groupedEvents[day, default: []].append(event)
-                }
-            }
-
-            guard !Task.isCancelled else { return }
-            await MainActor.run {
-                viewModel.events = groupedEvents
-                viewModel.allDayEvents = groupedAllDayEvents
-            }
-        }
     }
 }
 

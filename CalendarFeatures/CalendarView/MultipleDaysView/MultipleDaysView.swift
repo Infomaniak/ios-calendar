@@ -16,17 +16,12 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import AsyncAlgorithms
 import CalendarCore
 import CalendarCoreUI
-import InfomaniakDI
-import MultiplatformCalendar
 import SwiftUI
 
 struct MultipleDaysView: View {
     @Environment(\.calendar) private var calendar
-
-    @Environment(\.calendarAccounts) private var calendarAccounts
     @Environment(MainViewState.self) private var mainViewState
 
     @State private var events = [Date: [UIEventSummary]]()
@@ -44,7 +39,6 @@ struct MultipleDaysView: View {
             pagerScrollSync: pagerScrollSync,
             selectedDate: $mainViewState.selectedDate
         )
-        .id(layout)
         .task(id: layout.preloadedInterval(for: mainViewState.selectedDate, calendar: calendar)) {
             guard let interval = layout.preloadedInterval(for: mainViewState.selectedDate, calendar: calendar) else {
                 return
@@ -56,35 +50,10 @@ struct MultipleDaysView: View {
         }
     }
 
-    @concurrent
     private func observeEvents(in interval: DateInterval, calendar: Foundation.Calendar) async {
-        @InjectService var calendarSDK: CalendarCoreGraph
-        for await daySlices in calendarSDK.calendarManager.observeDaySlices(
-            start: interval.start.instant,
-            end: interval.end.instant
-        )._throttle(for: .milliseconds(500)) {
-            guard !Task.isCancelled else { return }
-            let uiEvents = daySlices.values.flatMap { eventDaySlices in
-                eventDaySlices.compactMap { UIEventSummary(eventDaySlice: $0) }
-            }
-
-            guard !Task.isCancelled else { return }
-            var groupedEvents = [Date: [UIEventSummary]]()
-            var groupedAllDayEvents = [Date: [UIEventSummary]]()
-            for event in uiEvents {
-                let day = event.startDate.startOfDay(calendar)
-                if event.isAllDay {
-                    groupedAllDayEvents[day, default: []].append(event)
-                } else {
-                    groupedEvents[day, default: []].append(event)
-                }
-            }
-
-            guard !Task.isCancelled else { return }
-            await MainActor.run {
-                events = groupedEvents
-                allDayEvents = groupedAllDayEvents
-            }
+        await DayEventsObserver.observe(in: interval, calendar: calendar) { groupedEvents in
+            events = groupedEvents.events
+            allDayEvents = groupedEvents.allDayEvents
         }
     }
 }
@@ -93,12 +62,10 @@ struct MultipleDaysView: View {
     @Previewable @State var pagerScrollSync = CalendarPeriodPagerScrollSync()
     MultipleDaysView(layout: .week, pagerScrollSync: pagerScrollSync)
         .environment(MainViewState())
-        .environment(\.calendarAccounts, [:])
 }
 
 #Preview("Three days") {
     @Previewable @State var pagerScrollSync = CalendarPeriodPagerScrollSync()
     MultipleDaysView(layout: .threeDays, pagerScrollSync: pagerScrollSync)
         .environment(MainViewState())
-        .environment(\.calendarAccounts, [:])
 }
