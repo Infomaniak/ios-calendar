@@ -37,8 +37,6 @@ struct CalendarPeriodPagerMirror<Content: View>: View {
 }
 
 private struct CalendarPeriodMirrorScrollView<Content: View>: View {
-    @State private var scrollPosition = ScrollPosition(x: 0)
-
     let periods: CalendarPeriodCollection
     let scrollSync: CalendarPeriodPagerScrollSync
     let viewCount: Int
@@ -55,15 +53,26 @@ private struct CalendarPeriodMirrorScrollView<Content: View>: View {
         }
         .scrollIndicators(.hidden, axes: .horizontal)
         .scrollDisabled(true)
-        .scrollPosition($scrollPosition)
-        // Restored headers must apply the pixel offset after their viewport has been laid out.
-        .onScrollGeometryChange(for: CGSize.self) { geometry in
-            geometry.containerSize
-        } action: { _, _ in
-            scrollPosition.scrollTo(x: scrollSync.contentOffset)
-        }
-        .onChange(of: scrollSync.contentOffset) { _, contentOffset in
-            scrollPosition.scrollTo(x: contentOffset)
-        }
+        .modifier(MirrorScrollOffsetModifier(scrollSync: scrollSync))
+    }
+}
+
+private struct MirrorScrollOffsetModifier: ViewModifier {
+    @State private var scrollPosition = ScrollPosition(x: 0)
+
+    let scrollSync: CalendarPeriodPagerScrollSync
+
+    func body(content: Content) -> some View {
+        content
+            .scrollPosition($scrollPosition)
+            // Restored headers must apply the pixel offset after their viewport has been laid out.
+            .onScrollGeometryChange(for: CGSize.self) { geometry in
+                geometry.containerSize
+            } action: { _, _ in
+                scrollPosition.scrollTo(x: scrollSync.contentOffset)
+            }
+            .onChange(of: scrollSync.contentOffset) { _, contentOffset in
+                scrollPosition.scrollTo(x: contentOffset)
+            }
     }
 }
