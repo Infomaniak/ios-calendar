@@ -21,7 +21,9 @@ import CalendarCoreUI
 import SwiftUI
 
 private struct AllDayBarVersion: Hashable {
+    // periphery:ignore - Read by the synthesized Hashable conformance.
     let events: [Date: [UIEventSummary]]
+    // periphery:ignore - Read by the synthesized Hashable conformance.
     let visibleRowCount: Int
 }
 
