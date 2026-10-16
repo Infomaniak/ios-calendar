@@ -20,6 +20,10 @@ import ESDSFoundation
 import SwiftUI
 
 struct TimelineIndicatorView: View {
+    enum Constants {
+        static let dotSize: CGFloat = 8
+    }
+
     @Environment(\.esdsTheme) private var theme
 
     var date: Date?
@@ -42,7 +46,7 @@ struct TimelineIndicatorView: View {
             HStack(spacing: 0) {
                 Circle()
                     .fill(tint)
-                    .frame(width: 8, height: 8)
+                    .frame(width: Constants.dotSize, height: Constants.dotSize)
 
                 Divider()
                     .frame(height: 1)
