@@ -44,11 +44,13 @@ struct MultipleDaysColumnView: View {
     let date: Date
     let events: [UIEventSummary]
     let pointsPerHour: CGFloat
+    let horizontalLayoutPointsPerHour: CGFloat
 
     var body: some View {
         EventuallyLayout(
             startOfDay: calendar.startOfDay(for: date),
             hourSlotHeight: pointsPerHour,
+            horizontalHourSlotHeight: horizontalLayoutPointsPerHour,
             config: .init(
                 hSpacing: Constants.eventsSpacing,
                 vSpacing: DayContentView.Constants.layoutVerticalSpacing
@@ -80,5 +82,10 @@ struct MultipleDaysColumnView: View {
 }
 
 #Preview {
-    MultipleDaysColumnView(date: .now, events: [.preview, .shortPreview], pointsPerHour: 64)
+    MultipleDaysColumnView(
+        date: .now,
+        events: [.preview, .shortPreview],
+        pointsPerHour: 64,
+        horizontalLayoutPointsPerHour: 64
+    )
 }
