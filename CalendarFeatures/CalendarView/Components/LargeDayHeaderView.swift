@@ -21,18 +21,10 @@ import ESDSFoundation
 import SwiftUI
 
 struct LargeDayHeaderView: View {
-    @Environment(\.calendar) private var calendar
     @Environment(\.esdsTheme) private var theme
 
     let date: Date
-
-    private var foreground: Color {
-        if calendar.isDate(date, inSameDayAs: .now) {
-            return theme.color.contentBrand
-        } else {
-            return theme.color.contentPrimary
-        }
-    }
+    let isToday: Bool
 
     var body: some View {
         VStack(spacing: 0) {
@@ -43,12 +35,15 @@ struct LargeDayHeaderView: View {
             Text(date, format: .dateTime.day())
                 .font(.title3.weight(.emphasized))
         }
-        .foregroundStyle(foreground)
+        .foregroundStyle(isToday ? theme.color.contentBrand : theme.color.contentPrimary)
         .frame(maxWidth: .infinity)
         .padding(.vertical, value: .mini)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(Text(date, format: .dateTime.weekday(.wide).day().month(.wide)))
+        .accessibilityAddTraits(.isHeader)
     }
 }
 
 #Preview {
-    LargeDayHeaderView(date: .now)
+    LargeDayHeaderView(date: .now, isToday: true)
 }

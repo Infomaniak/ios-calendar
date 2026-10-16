@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarCoreUI
 import CalendarResources
 import DesignSystem
 import ESDSFoundation
@@ -37,14 +38,16 @@ struct MultipleDaysHeaderView: View {
                 .padding(.trailing, value: .small)
                 .frame(width: TimelineBackgroundView.Constants.leadingInset, alignment: .trailing)
 
-            CalendarPeriodPagerMirror(scrollSync: pagerScrollSync, viewCount: layout.pagerViewCount) { pagerDate in
-                HStack(spacing: 0) {
-                    ForEach(layout.pageDates(for: pagerDate, calendar: calendar), id: \.self) { day in
-                        LargeDayHeaderView(date: day)
+            TimelineView(EveryDayTimelineSchedule(calendar: calendar)) { timeline in
+                CalendarPeriodPagerMirror(scrollSync: pagerScrollSync, viewCount: layout.pagerViewCount) { pagerDate in
+                    HStack(spacing: 0) {
+                        ForEach(layout.pageDates(for: pagerDate, calendar: calendar), id: \.self) { day in
+                            LargeDayHeaderView(date: day, isToday: calendar.isDate(day, inSameDayAs: timeline.date))
+                        }
                     }
                 }
+                .fixedSize(horizontal: false, vertical: true)
             }
-            .fixedSize(horizontal: false, vertical: true)
         }
         .padding(.leading, value: .medium)
     }
