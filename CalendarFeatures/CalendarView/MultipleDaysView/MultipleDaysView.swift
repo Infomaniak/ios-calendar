@@ -30,6 +30,7 @@ struct MultipleDaysView: View {
     @Environment(MainViewState.self) private var mainViewState
 
     @State private var events = [Date: [UIEventSummary]]()
+    @State private var allDayEvents = [Date: [UIEventSummary]]()
 
     let layout: MultipleDaysLayout
     let pagerScrollSync: CalendarPeriodPagerScrollSync
@@ -50,6 +51,9 @@ struct MultipleDaysView: View {
             }
             await observeEvents(in: interval, calendar: calendar)
         }
+        .additionalSafeAreaBarView(id: layout, version: allDayEvents) {
+            MultipleDaysAllDayEventsView(layout: layout, events: allDayEvents, pagerScrollSync: pagerScrollSync)
+        }
     }
 
     @concurrent
@@ -65,11 +69,21 @@ struct MultipleDaysView: View {
             }
 
             guard !Task.isCancelled else { return }
-            let groupedEvents = Dictionary(grouping: uiEvents) { $0.startDate.startOfDay(calendar) }
+            var groupedEvents = [Date: [UIEventSummary]]()
+            var groupedAllDayEvents = [Date: [UIEventSummary]]()
+            for event in uiEvents {
+                let day = event.startDate.startOfDay(calendar)
+                if event.isAllDay {
+                    groupedAllDayEvents[day, default: []].append(event)
+                } else {
+                    groupedEvents[day, default: []].append(event)
+                }
+            }
 
             guard !Task.isCancelled else { return }
             await MainActor.run {
                 events = groupedEvents
+                allDayEvents = groupedAllDayEvents
             }
         }
     }

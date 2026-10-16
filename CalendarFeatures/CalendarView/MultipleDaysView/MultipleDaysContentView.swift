@@ -98,8 +98,7 @@ struct MultipleDaysContentView: View {
     }
 
     private func events(for date: Date) -> [UIEventSummary] {
-        guard let events = events[calendar.startOfDay(for: date)] else { return [] }
-        return events.filter { !$0.isAllDay }
+        return events[calendar.startOfDay(for: date)] ?? []
     }
 
     private func scrollToCorrectPosition(_ geometry: TimelineGeometry) {
