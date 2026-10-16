@@ -59,7 +59,6 @@ struct DayCellView: View {
             EventDotsView(eventDots: displayedEventDots)
         }
         .padding(value: .micro)
-        .monospacedDigit()
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .init(horizontal: .center, vertical: .textCenter))
         .frame(height: Self.maxHeight)
         .font(.body.weight(.semibold))
