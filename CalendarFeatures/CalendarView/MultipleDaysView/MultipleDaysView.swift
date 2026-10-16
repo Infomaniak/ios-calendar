@@ -29,7 +29,7 @@ struct MultipleDaysView: View {
     @Environment(\.calendarAccounts) private var calendarAccounts
     @Environment(MainViewState.self) private var mainViewState
 
-    @State private var events = [Date: [CalendarCoreUI.UIEvent]]()
+    @State private var events = [Date: [UIEventSummary]]()
 
     let layout: MultipleDaysLayout
     let pagerScrollSync: CalendarPeriodPagerScrollSync
@@ -60,13 +60,8 @@ struct MultipleDaysView: View {
             end: interval.end.instant
         )._throttle(for: .milliseconds(500)) {
             guard !Task.isCancelled else { return }
-            let accounts = await calendarAccounts
-
             let uiEvents = daySlices.values.flatMap { eventDaySlices in
-                eventDaySlices.compactMap {
-                    let account = accounts[Int($0.event.accountIdValue)]
-                    return CalendarCoreUI.UIEvent(eventDaySlice: $0, userEmail: account?.user.email ?? "")
-                }
+                eventDaySlices.compactMap { UIEventSummary(eventDaySlice: $0) }
             }
 
             guard !Task.isCancelled else { return }

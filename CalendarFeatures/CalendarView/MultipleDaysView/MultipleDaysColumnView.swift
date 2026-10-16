@@ -42,7 +42,7 @@ struct MultipleDaysColumnView: View {
     @State private var coveredTextHeights: [Int: CGFloat] = [:]
 
     let date: Date
-    let events: [CalendarCoreUI.UIEvent]
+    let events: [UIEventSummary]
     let pointsPerHour: CGFloat
 
     var body: some View {
