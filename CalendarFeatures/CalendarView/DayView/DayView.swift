@@ -42,8 +42,6 @@ struct DayContentView: View {
     enum Constants {
         static let layoutHorizontalSpacing = IKPadding.micro
         static let layoutVerticalSpacing: CGFloat = 1.5
-
-        static let horizontalRelayoutStep: CGFloat = 8
     }
 
     @Environment(\.calendar) private var calendar
@@ -67,7 +65,7 @@ struct DayContentView: View {
             EventuallyLayout(
                 startOfDay: geometry.startOfDay,
                 hourSlotHeight: geometry.pointsPerHour,
-                horizontalHourSlotHeight: horizontalLayoutPointsPerHour(for: geometry.pointsPerHour),
+                horizontalHourSlotHeight: geometry.horizontalLayoutPointsPerHour,
                 config: .init(hSpacing: Constants.layoutHorizontalSpacing, vSpacing: Constants.layoutVerticalSpacing),
                 onCoveredIndicesChange: onCoveredIndicesChange
             ) {
@@ -132,18 +130,6 @@ struct DayContentView: View {
         }
     }
 
-    private func horizontalLayoutPointsPerHour(for livePointsPerHour: CGFloat) -> CGFloat {
-        guard Self.Constants.horizontalRelayoutStep > 0 else {
-            return livePointsPerHour
-        }
-
-        let stepIndex = ((livePointsPerHour - TimelineViewConstants.PointsPerHour.minimum) /
-            Self.Constants.horizontalRelayoutStep)
-            .rounded(.toNearestOrAwayFromZero)
-        let snappedValue = TimelineViewConstants.PointsPerHour.minimum + stepIndex * Self.Constants.horizontalRelayoutStep
-
-        return min(max(snappedValue, TimelineViewConstants.PointsPerHour.minimum), TimelineViewConstants.PointsPerHour.maximum)
-    }
 }
 
 #Preview {

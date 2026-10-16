@@ -60,7 +60,12 @@ struct MultipleDaysContentView: View {
             ) { date in
                 HStack(spacing: 0) {
                     ForEach(layout.pageDates(for: date, calendar: calendar), id: \.self) { day in
-                        MultipleDaysColumnView(date: day, events: events(for: day), pointsPerHour: geometry.pointsPerHour)
+                        MultipleDaysColumnView(
+                            date: day,
+                            events: events(for: day),
+                            pointsPerHour: geometry.pointsPerHour,
+                            horizontalLayoutPointsPerHour: geometry.horizontalLayoutPointsPerHour
+                        )
                     }
                 }
             }

@@ -25,6 +25,8 @@ enum TimelineViewConstants {
         static let `default`: CGFloat = 64
         static let maximum: CGFloat = 112
 
+        static let horizontalRelayoutStep: CGFloat = 8
+
         static func clamped(_ value: CGFloat) -> CGFloat {
             return min(max(value, minimum), maximum)
         }
