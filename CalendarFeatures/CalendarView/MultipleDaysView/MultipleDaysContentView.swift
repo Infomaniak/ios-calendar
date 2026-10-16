@@ -27,6 +27,7 @@ struct MultipleDaysContentView: View {
 
     @State private var scrollPosition = ScrollPosition()
     @State private var scrollOffset = CGFloat.zero
+    @State private var hasPerformedInitialScroll = false
 
     let layout: MultipleDaysLayout
     let events: [Date: [UIEventSummary]]
@@ -73,12 +74,11 @@ struct MultipleDaysContentView: View {
                 MultipleDaysColumnView.Separator()
             }
             .onAppear {
-                scrollToCorrectPosition(geometry)
+                scrollToInitialPosition(geometry)
             }
-            .onChange(of: selectedDate) { oldSelectedDate, newSelectedDate in
-                guard layout.isSelectingToday(newSelectedDate, calendar: calendar),
-                      !layout.isSelectingToday(oldSelectedDate, calendar: calendar) else { return }
-                scrollToCorrectPosition(geometry)
+            .onChange(of: geometry.visibleHeight) { oldHeight, newHeight in
+                guard oldHeight == 0, newHeight > 0 else { return }
+                scrollToInitialPosition(geometry)
             }
         } overlay: { geometry in
             TimelineView(.everyMinute) { timeline in
@@ -106,12 +106,16 @@ struct MultipleDaysContentView: View {
         return events[calendar.startOfDay(for: date)] ?? []
     }
 
-    private func scrollToCorrectPosition(_ geometry: TimelineGeometry) {
+    private func scrollToInitialPosition(_ geometry: TimelineGeometry) {
+        guard !hasPerformedInitialScroll else { return }
+
         if layout.isSelectingToday(selectedDate, calendar: calendar) {
+            guard geometry.visibleHeight > 0 else { return }
             scrollPosition.scrollTo(y: geometry.centeredScrollOffset(for: .now, calendar: calendar))
         } else {
             scrollPosition.scrollTo(y: UserDefaults.shared.dayViewScrollPosition)
         }
+        hasPerformedInitialScroll = true
     }
 }
 
