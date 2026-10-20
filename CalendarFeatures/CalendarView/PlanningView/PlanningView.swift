@@ -18,7 +18,6 @@
 
 import CalendarCore
 import CalendarCoreUI
-import DesignSystem
 import Foundation
 import SwiftUI
 
@@ -26,7 +25,6 @@ public struct PlanningView: View {
     @Environment(MainViewState.self) private var mainViewState: MainViewState
 
     @State private var planningViewModel: PlanningViewModel
-    @State private var nextEventCardViewModel = NextEventCardViewModel()
 
     let calendarAccounts: [CalendarAccount.ID: CalendarAccount]
 
@@ -38,15 +36,9 @@ public struct PlanningView: View {
     public var body: some View {
         PlanningCollectionView(
             planningViewModel: planningViewModel,
-            nextEventCardViewModel: nextEventCardViewModel,
             mainViewState: mainViewState
         )
         .ignoresSafeArea(edges: [.bottom])
-        .overlay(alignment: .top) {
-            NextEventCardView(model: nextEventCardViewModel)
-                .padding(.horizontal, IKPadding.medium)
-                .padding(.vertical, IKPadding.mini)
-        }
         .onChange(of: mainViewState.selectedDate, initial: true) { _, newValue in
             guard !planningViewModel.suppressScrollTargetSync else {
                 planningViewModel.suppressScrollTargetSync = false
