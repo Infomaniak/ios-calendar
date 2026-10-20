@@ -34,23 +34,39 @@ private extension View {
     }
 }
 
+struct ExpandedAccounts: RawRepresentable {
+    var ids: Set<Int>
+
+    init(ids: Set<Int> = []) {
+        self.ids = ids
+    }
+
+    init?(rawValue: String) {
+        ids = Set(rawValue.split(separator: ",").compactMap { Int($0) })
+    }
+
+    var rawValue: String {
+        ids.sorted().map { String($0) }.joined(separator: ",")
+    }
+}
+
 struct CalendarListContentView: View {
     @Environment(\.esdsTheme) private var theme
     @Environment(\.calendarAccounts) private var calendarAccounts
 
-    @State private var collapsedAccounts: Set<Int> = []
+    @SceneStorage("CalendarListExpandedAccounts") private var expandedAccounts = ExpandedAccounts()
     @State private var visibilityOverrides = [String: Bool]()
 
     let indexedCalendars: [Int: [UICalendar]]
 
     private func isExpandedBinding(for accountId: Int) -> Binding<Bool> {
         Binding(
-            get: { !collapsedAccounts.contains(accountId) },
+            get: { expandedAccounts.ids.contains(accountId) },
             set: { isExpanding in
                 if isExpanding {
-                    collapsedAccounts.remove(accountId)
+                    expandedAccounts.ids.insert(accountId)
                 } else {
-                    collapsedAccounts.insert(accountId)
+                    expandedAccounts.ids.remove(accountId)
                 }
             }
         )
