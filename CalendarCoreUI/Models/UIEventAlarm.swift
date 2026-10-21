@@ -24,26 +24,11 @@ import Foundation
 public struct UIEventAlarm: Sendable, Hashable {
     public let action: UIAlarmAction
     public let trigger: UIAlarmTrigger?
-    public let description: String?
-    public let summary: String?
-    public let attendees: [String]
-    public let attachments: [String]
     public var offset: AlarmOffset
 
-    public init(
-        action: UIAlarmAction,
-        trigger: UIAlarmTrigger,
-        attachments: [String],
-        attendees: [String],
-        description: String?,
-        summary: String?
-    ) {
+    public init(action: UIAlarmAction, trigger: UIAlarmTrigger) {
         self.action = action
         self.trigger = trigger
-        self.attachments = attachments
-        self.attendees = attendees
-        self.description = description
-        self.summary = summary
         offset = AlarmOffset(trigger: trigger)
     }
 }
@@ -52,10 +37,6 @@ public extension UIEventAlarm {
     init(sdk: MultiplatformCalendar.EventAlarm) {
         action = UIAlarmAction(sdk: sdk.action)
         trigger = UIAlarmTrigger(sdk: sdk.trigger)
-        attachments = sdk.attachments
-        attendees = sdk.attendees
-        description = sdk.description_
-        summary = sdk.summary
         offset = AlarmOffset(trigger: trigger)
     }
 }
@@ -200,19 +181,11 @@ extension UITriggerRelation {
 public extension UIEventAlarm {
     static let preview = UIEventAlarm(
         action: .display,
-        trigger: .relative(offset: -300, relatedTo: .start),
-        attachments: [],
-        attendees: ["tim@apple.com"],
-        description: "Reminder: standup meeting",
-        summary: "Daily Standup"
+        trigger: .relative(offset: -300, relatedTo: .start)
     )
 
     static let previews: [UIEventAlarm] = [
-        UIEventAlarm(action: .display, trigger: .relative(offset: -300, relatedTo: .start),
-                     attachments: [], attendees: ["tim@apple.com"],
-                     description: "5 minutes before", summary: "Quick reminder"),
-        UIEventAlarm(action: .email, trigger: .relative(offset: -3600, relatedTo: .end),
-                     attachments: [], attendees: ["john@apple.com"],
-                     description: "1 hour after", summary: "Prepare slides")
+        UIEventAlarm(action: .display, trigger: .relative(offset: -300, relatedTo: .start)),
+        UIEventAlarm(action: .email, trigger: .relative(offset: -3600, relatedTo: .end))
     ]
 }

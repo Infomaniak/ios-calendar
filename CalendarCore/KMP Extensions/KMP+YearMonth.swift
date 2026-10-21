@@ -26,9 +26,7 @@ public extension YearMonth {
 }
 
 public extension CalendarManager {
-    func observeMonthlyDotColors(startMonth: YearMonth,
-                                 endMonth: YearMonth)
-        -> SkieSwiftFlow<[LocalDate: [DotColor]]> {
+    func observeMonthlyDotColors(startMonth: YearMonth, endMonth: YearMonth) -> SkieSwiftFlow<[LocalDate: [DotColor]]> {
         observeMonthlyDotColors(startMonth: startMonth.toKotlinYearMonth(), endMonth: endMonth.toKotlinYearMonth())
     }
 }

@@ -19,12 +19,18 @@
 import CalendarCore
 import Foundation
 @preconcurrency import InfomaniakCore
+import InfomaniakDI
 import MultiplatformCalendar
 import Nuke
+
+enum UIAvatarTypeError: Error {
+    case missingDeviceAvatarData
+}
 
 public enum UIAvatarType: Sendable, Equatable, Hashable {
     case remote(rawURL: String, accountId: Int64)
     case user(rawURL: String?)
+    case device(contactId: String)
 
     private static let trustedHosts = Set(["mail.\(ApiEnvironment.current.host)"])
 
@@ -49,6 +55,15 @@ public enum UIAvatarType: Sendable, Equatable, Hashable {
                   let url = URL(string: rawURL) else { return nil }
 
             return ImageRequest(url: url)
+        case .device(let contactId):
+            return ImageRequest(id: "device-contact-avatar-\(contactId)") {
+                @InjectService var calendarSDK: CalendarCoreGraph
+                guard let data = try await calendarSDK.contactsManager.avatarData(
+                    avatar: ContactAvatarDevice(id: contactId)
+                ) else { throw UIAvatarTypeError.missingDeviceAvatarData }
+
+                return data
+            }
         }
     }
 }
@@ -58,6 +73,8 @@ public extension UIAvatarType {
         switch onEnum(of: avatar) {
         case .remote(let remote):
             self = .remote(rawURL: remote.url, accountId: remote.accountIdValue)
+        case .device(let device):
+            self = .device(contactId: device.id)
         }
     }
 }
