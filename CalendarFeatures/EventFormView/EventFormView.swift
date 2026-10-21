@@ -95,14 +95,16 @@ public struct EventFormView: View {
                 )
 
                 ExpandableDatePicker(
-                    date: $viewModel.draft.endDate,
+                    date: Binding(
+                        get: { viewModel.draft.endDate },
+                        set: { viewModel.updateEndDate($0) }
+                    ),
                     expandedPickerId: $expandedDatePickerId,
                     timeZonePickerId: $timeZonePickerId,
                     timeZone: viewModel.draft.endTimeZone ?? .current,
                     id: .end,
                     label: CalendarResourcesStrings.endLabel,
-                    canSelectHour: !viewModel.draft.allDay,
-                    range: viewModel.draft.startDate ... Date.distantFuture
+                    canSelectHour: !viewModel.draft.allDay
                 )
             }
 

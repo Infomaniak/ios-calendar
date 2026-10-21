@@ -107,17 +107,27 @@ final class EventFormViewModel {
             }
             draft.startTimeZone = timeZone
         case .end:
-            draft.endDate = max(updatedDate, draft.startDate)
+            updateEndDate(updatedDate)
             draft.endTimeZone = timeZone
         }
     }
 
     func updateStartDate(_ date: Date) {
         if date > draft.endDate {
-            let duration = draft.endDate.timeIntervalSince(draft.startDate)
-            draft.endDate = date.addingTimeInterval(duration)
+            draft.endDate = date.addingTimeInterval(currentDuration)
         }
         draft.startDate = date
+    }
+
+    func updateEndDate(_ date: Date) {
+        if date < draft.startDate {
+            draft.startDate = date.addingTimeInterval(-currentDuration)
+        }
+        draft.endDate = date
+    }
+
+    private var currentDuration: TimeInterval {
+        max(draft.endDate.timeIntervalSince(draft.startDate), 0)
     }
 
     func observeCalendars() async {
