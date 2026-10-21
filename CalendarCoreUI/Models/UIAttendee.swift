@@ -46,6 +46,19 @@ public extension UIParticipationStatus {
         }
     }
 
+    var reply: ParticipationReply? {
+        switch self {
+        case .accepted:
+            return .accepted
+        case .tentative:
+            return .tentative
+        case .declined:
+            return .declined
+        case .needsAction:
+            return nil
+        }
+    }
+
     var name: String {
         switch self {
         case .accepted:
