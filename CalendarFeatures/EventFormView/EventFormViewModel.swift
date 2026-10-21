@@ -29,6 +29,20 @@ final class EventFormViewModel {
     enum DatePickerId {
         case start
         case end
+
+        var dateKeyPath: WritableKeyPath<EventDraft, Date> {
+            switch self {
+            case .start: \.startDate
+            case .end: \.endDate
+            }
+        }
+
+        var timeZoneKeyPath: WritableKeyPath<EventDraft, Foundation.TimeZone?> {
+            switch self {
+            case .start: \.startTimeZone
+            case .end: \.endTimeZone
+            }
+        }
     }
 
     enum EditFormAction {
@@ -51,6 +65,10 @@ final class EventFormViewModel {
 
     var isEdited: Bool {
         originalDraft != draft
+    }
+
+    private var currentDuration: TimeInterval {
+        max(draft.endDate.timeIntervalSince(draft.startDate), 0)
     }
 
     init(editionMode: EditionMode, userDefaults: UserDefaults) {
@@ -82,52 +100,40 @@ final class EventFormViewModel {
         userDefaults.lastSelectedCalendarId = draft.calendarId
     }
 
-    func updateTimeZone(_ timeZone: Foundation.TimeZone, for pickerId: DatePickerId, calendar: Foundation.Calendar) {
-        let date = pickerId == .start ? draft.startDate : draft.endDate
-        let oldTimeZone = pickerId == .start ? draft.startTimeZone : draft.endTimeZone
+    func setDate(_ date: Date, for pickerId: DatePickerId) {
+        let duration = currentDuration
+        draft[keyPath: pickerId.dateKeyPath] = date
+        fixInterval(keeping: pickerId, duration: duration)
+    }
 
-        guard oldTimeZone != timeZone else { return }
-
-        var calendar = calendar
-        calendar.timeZone = oldTimeZone ?? .current
-        let components = calendar.dateComponents([.era, .year, .month, .day, .hour, .minute, .second], from: date)
-        calendar.timeZone = timeZone
-        guard let updatedDate = calendar.date(from: components) else {
-            Logger.view.error("Failed to preserve the local date when changing timezone")
-            return
-        }
+    private func fixInterval(keeping pickerId: DatePickerId, duration: TimeInterval) {
+        guard draft.startDate > draft.endDate else { return }
 
         switch pickerId {
         case .start:
-            if draft.startTimeZone == draft.endTimeZone {
-                draft.startDate = updatedDate
-                updateTimeZone(timeZone, for: .end, calendar: calendar)
-            } else {
-                updateStartDate(updatedDate)
-            }
-            draft.startTimeZone = timeZone
+            draft.endDate = draft.startDate.addingTimeInterval(duration)
         case .end:
-            updateEndDate(updatedDate)
-            draft.endTimeZone = timeZone
+            draft.startDate = draft.endDate.addingTimeInterval(-duration)
         }
     }
 
-    func updateStartDate(_ date: Date) {
-        if date > draft.endDate {
-            draft.endDate = date.addingTimeInterval(currentDuration)
-        }
-        draft.startDate = date
-    }
+    func setTimeZone(_ timeZone: Foundation.TimeZone, for pickerId: DatePickerId, calendar: Foundation.Calendar) {
+        let oldTimeZone = draft[keyPath: pickerId.timeZoneKeyPath]
+        guard oldTimeZone != timeZone else { return }
 
-    func updateEndDate(_ date: Date) {
-        if date < draft.startDate {
-            draft.startDate = date.addingTimeInterval(-currentDuration)
-        }
-        draft.endDate = date
-    }
+        let duration = currentDuration
+        let isSharedTimeZone = draft.startTimeZone == draft.endTimeZone
+        let editedPickerIds: [DatePickerId] = pickerId == .start && isSharedTimeZone ? [.start, .end] : [pickerId]
 
-    private var currentDuration: TimeInterval {
-        max(draft.endDate.timeIntervalSince(draft.startDate), 0)
+        for editedPickerId in editedPickerIds {
+            draft[keyPath: editedPickerId.dateKeyPath] = draft[keyPath: editedPickerId.dateKeyPath].keepingLocalTime(
+                from: oldTimeZone ?? .current,
+                to: timeZone,
+                calendar: calendar
+            )
+            draft[keyPath: editedPickerId.timeZoneKeyPath] = timeZone
+        }
+        fixInterval(keeping: pickerId, duration: duration)
     }
 
     func observeCalendars() async {
@@ -148,5 +154,22 @@ final class EventFormViewModel {
             originalDraft.calendarId = calendarId
         }
         draft.calendarId = calendarId
+    }
+}
+
+private extension Date {
+    func keepingLocalTime(
+        from oldTimeZone: Foundation.TimeZone,
+        to newTimeZone: Foundation.TimeZone,
+        calendar: Foundation.Calendar
+    ) -> Date {
+        var calendar = calendar
+        calendar.timeZone = oldTimeZone
+        let components = calendar.dateComponents([.era, .year, .month, .day, .hour, .minute, .second], from: self)
+        calendar.timeZone = newTimeZone
+        guard let date = calendar.date(from: components) else {
+            return self
+        }
+        return date
     }
 }
