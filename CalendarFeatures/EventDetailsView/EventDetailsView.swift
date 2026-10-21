@@ -231,11 +231,11 @@ public struct EventDetailsView: View {
                     HStack(spacing: IKPadding.medium) {
                         ForEach([UIParticipationStatus.accepted, .declined, .tentative], id: \.self) { answer in
                             AnswerButton(
+                                shouldShowDialog: event.isOccurrence,
                                 answer: answer,
                                 isSelected: selectedStatus == answer
-                            ) {
-                                // TODO: Update the event's participation status when the user selects an answer
-                                selectedStatus = answer
+                            ) { scope in
+                                updateParticipationStatus(to: answer, scope: scope)
                             }
                         }
                     }
@@ -261,6 +261,23 @@ public struct EventDetailsView: View {
                 isShowingEditError = true
             }
             isLoadingEdit = false
+        }
+    }
+
+    private func updateParticipationStatus(to status: UIParticipationStatus, scope: RecurrenceScope) {
+        guard let reply = status.reply else { return }
+
+        Task {
+            do {
+                try await UpdateParticipationStatusUseCase().execute(
+                    reply: reply,
+                    occurrenceId: event.occurrenceId,
+                    scope: scope
+                )
+                selectedStatus = status
+            } catch {
+                Logger.view.error("Failed to update participation status: \(error.localizedDescription)")
+            }
         }
     }
 
