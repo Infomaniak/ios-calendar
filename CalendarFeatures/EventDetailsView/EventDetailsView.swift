@@ -195,7 +195,7 @@ public struct EventDetailsView: View {
                                 Button(role: .destructive) {
                                     deleteEvent(scope: .allOccurrences)
                                 } label: {
-                                    Text(CalendarResourcesStrings.buttonDeleteAllEvents)
+                                    Text(CalendarResourcesStrings.buttonAllEvents)
                                 }
                             }
                         }

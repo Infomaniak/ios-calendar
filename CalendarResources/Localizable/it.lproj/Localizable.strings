@@ -33,9 +33,11 @@
 /* loco:6ab387c24e3a9ba3e7049042
  * Destructive toolbar action and confirmation button in event details. Deletes the displayed calendar event. */
 "buttonDeleteEvent" = "Elimina questo evento";
-"buttonEditThisEvent" = "Questo evento";
+/* loco:6ad217df3b24e434ea055745 */
+"buttonThisEvent" = "Questo evento";
 
-"buttonDeleteAllEvents" = "Tutti gli eventi";
+/* loco:6ab531ef90c31f6d6806f3c2 */
+"buttonAllEvents" = "Tutti gli eventi";
 
 "buttonDeleteThisAndFollowingEvents" = "Questo evento e i successivi";
 
