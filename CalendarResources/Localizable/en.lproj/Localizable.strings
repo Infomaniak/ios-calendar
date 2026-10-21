@@ -107,6 +107,8 @@
 
 "editRecurringEventAlertTitle" = "Which events do you want to edit?";
 
+"emptyStateNoTimeZone" = "No time zones found";
+
 /* loco:6a631392189120de490885c4 */
 "endLabel" = "End";
 

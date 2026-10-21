@@ -101,6 +101,8 @@
 "editEventTitle" = "Editar evento";
 "editRecurringEventAlertTitle" = "¿Qué eventos quieres editar?";
 
+"emptyStateNoTimeZone" = "No se han encontrado zonas horarias";
+
 /* loco:6a631392189120de490885c4 */
 "endLabel" = "Fin";
 

@@ -103,6 +103,8 @@
 
 "editRecurringEventAlertTitle" = "Quels évènements souhaitez-vous modifier ?";
 
+"emptyStateNoTimeZone" = "Aucun fuseau horaire trouvé";
+
 /* loco:6a631392189120de490885c4 */
 "endLabel" = "Fin";
 
