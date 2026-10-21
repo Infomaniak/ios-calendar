@@ -64,12 +64,12 @@ struct AnswerButton: View {
             Button {
                 onSelect(.thisOccurrence)
             } label: {
-                Text(CalendarResourcesStrings.buttonEditThisEvent)
+                Text(CalendarResourcesStrings.buttonThisEvent)
             }
             Button {
                 onSelect(.allOccurrences)
             } label: {
-                Text(CalendarResourcesStrings.buttonDeleteAllEvents)
+                Text(CalendarResourcesStrings.buttonAllEvents)
             }
         }
     }

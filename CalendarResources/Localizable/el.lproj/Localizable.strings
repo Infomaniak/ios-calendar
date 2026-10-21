@@ -33,9 +33,11 @@
 /* loco:6ab387c24e3a9ba3e7049042
  * Destructive toolbar action and confirmation button in event details. Deletes the displayed calendar event. */
 "buttonDeleteEvent" = "Διαγραφή αυτής της εκδήλωσης";
-"buttonEditThisEvent" = "Αυτή την εκδήλωση";
+/* loco:6ad217df3b24e434ea055745 */
+"buttonThisEvent" = "Αυτή την εκδήλωση";
 
-"buttonDeleteAllEvents" = "Όλες οι εκδηλώσεις";
+/* loco:6ab531ef90c31f6d6806f3c2 */
+"buttonAllEvents" = "Όλες οι εκδηλώσεις";
 
 "buttonDeleteThisAndFollowingEvents" = "Αυτή και οι επόμενες εκδηλώσεις";
 
