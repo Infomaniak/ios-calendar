@@ -27,7 +27,7 @@ import OSLog
 import SwiftUI
 
 public enum EditionMode {
-    case new
+    case new(selectedDate: Date)
     case editDraft(draft: EventDraft, editingEvent: UIEventDetails)
 
     var navigationTitle: String {
@@ -250,7 +250,7 @@ public struct EventFormView: View {
     VStack {}
         .sheet(isPresented: .constant(true)) {
             NavigationStack {
-                EventFormView(editionMode: .new)
+                EventFormView(editionMode: .new(selectedDate: Date()))
             }
             .interactiveDismissDisabled()
         }

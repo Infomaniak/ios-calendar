@@ -82,7 +82,7 @@ public struct CalendarView: View {
         .modifier(MiniCalendarHeaderViewModifier(selectedDate: $mainViewState.selectedDate))
         .sheet(isPresented: $mainViewState.isShowingEventCreation) {
             NavigationStack {
-                EventFormView(editionMode: .new)
+                EventFormView(editionMode: .new(selectedDate: mainViewState.selectedDate))
             }
         }
         .toolbar {

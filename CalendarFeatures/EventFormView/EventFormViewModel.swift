@@ -58,8 +58,8 @@ final class EventFormViewModel {
         self.userDefaults = userDefaults
         let draft: EventDraft
         switch editionMode {
-        case .new:
-            draft = EventDraft.empty()
+        case .new(let selectedDate):
+            draft = EventDraft.new(selectedDate: selectedDate)
         case .editDraft(let existingDraft, _):
             draft = existingDraft
         }
