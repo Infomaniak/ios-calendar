@@ -182,6 +182,15 @@
 /* loco:6aa8f944797adbda140fe1f6 */
 "occupiedLabel" = "Occupé";
 
+"onboardingFourSubtitle" = "Vous pouvez désormais accéder à vos évènements depuis Calendar.";
+"onboardingFourTitle" = "Tout est prêt";
+"onboardingOneSubtitle" = "Consultez, créez et partagez vos évènements depuis votre téléphone, en toute confidentialité.";
+"onboardingOneTitle" = "Votre agenda, partout avec vous";
+"onboardingThreeSubtitle" = "L’accès à vos contacts facilite le partage de vos calendriers et l’envoi d’invitations.";
+"onboardingThreeTitle" = "Invitez vos participants";
+"onboardingTwoSubtitle" = "Soyez prévenu avant chaque évènement et ne manquez plus un rendez-vous important.";
+"onboardingTwoTitle" = "Autoriser les notifications";
+
 /* loco:6a4dec95c1907081d30570c2 */
 "onlineLabel" = "En ligne";
 

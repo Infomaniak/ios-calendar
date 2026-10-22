@@ -185,6 +185,15 @@
 /* loco:6aa8f944797adbda140fe1f6 */
 "occupiedLabel" = "Occupied";
 
+"onboardingFourSubtitle" = "You can now access your events from Calendar.";
+"onboardingFourTitle" = "You’re all set";
+"onboardingOneSubtitle" = "View, create and share events from your phone, with complete privacy.";
+"onboardingOneTitle" = "Your calendar, wherever you go";
+"onboardingThreeSubtitle" = "Access to your contacts makes it easier to share your calendars and send invitations.";
+"onboardingThreeTitle" = "Invite your attendees";
+"onboardingTwoSubtitle" = "Get notified before every event and never miss an important appointment.";
+"onboardingTwoTitle" = "Allow notifications";
+
 /* loco:6a4dec95c1907081d30570c2 */
 "onlineLabel" = "Online";
 

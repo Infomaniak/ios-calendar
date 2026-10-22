@@ -180,6 +180,15 @@
 /* loco:6aa8f944797adbda140fe1f6 */
 "occupiedLabel" = "Beschäftigt";
 
+"onboardingFourSubtitle" = "Du kannst jetzt über Calendar auf deine Anlässe zugreifen.";
+"onboardingFourTitle" = "Alles bereit";
+"onboardingOneSubtitle" = "Zeige Anlässe von deinem Telefon aus an, erstelle und teile sie – mit vollem Datenschutz.";
+"onboardingOneTitle" = "Dein Kalender, überall dabei";
+"onboardingThreeSubtitle" = "Der Zugriff auf deine Kontakte erleichtert das Teilen deiner Kalender und das Versenden von Einladungen.";
+"onboardingThreeTitle" = "Lade deine Teilnehmer ein";
+"onboardingTwoSubtitle" = "Werde vor jedem Anlass benachrichtigt und verpasse keinen wichtigen Termin mehr.";
+"onboardingTwoTitle" = "Mitteilungen erlauben";
+
 /* loco:6a4dec95c1907081d30570c2 */
 "onlineLabel" = "Online";
 

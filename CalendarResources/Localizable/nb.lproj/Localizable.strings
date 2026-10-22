@@ -180,6 +180,15 @@
 /* loco:6aa8f944797adbda140fe1f6 */
 "occupiedLabel" = "Opptatt";
 
+"onboardingFourSubtitle" = "Du kan nå få tilgang til hendelsene dine fra Calendar.";
+"onboardingFourTitle" = "Alt er klart";
+"onboardingOneSubtitle" = "Se, opprett og del hendelsene dine fra telefonen, med full fortrolighet.";
+"onboardingOneTitle" = "Kalenderen din, alltid med deg";
+"onboardingThreeSubtitle" = "Tilgang til kontaktene dine gjør det enklere å dele kalendere og sende invitasjoner.";
+"onboardingThreeTitle" = "Inviter deltakerne dine";
+"onboardingTwoSubtitle" = "Få beskjed før hver hendelse og gå aldri glipp av en viktig avtale.";
+"onboardingTwoTitle" = "Tillat varsler";
+
 /* loco:6a4dec95c1907081d30570c2 */
 "onlineLabel" = "På nettet";
 

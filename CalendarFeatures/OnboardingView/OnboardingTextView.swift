@@ -30,26 +30,26 @@ enum OnboardingText {
     var title: String {
         switch self {
         case .oneSlide:
-            "onboardingOneTitle"
+            CalendarResourcesStrings.onboardingOneTitle
         case .twoSlide:
-            "onboardingTwoTitle"
+            CalendarResourcesStrings.onboardingTwoTitle
         case .threeSlide:
-            "onboardingThreeTitle"
+            CalendarResourcesStrings.onboardingThreeTitle
         case .fourSlide:
-            "onboardingFourTitle"
+            CalendarResourcesStrings.onboardingFourTitle
         }
     }
 
     var subtitle: String {
         switch self {
         case .oneSlide:
-            "onboardingOneSubtitleArgument"
+            CalendarResourcesStrings.onboardingOneSubtitle
         case .twoSlide:
-            "onboardingTwoSubtitleArgument"
+            CalendarResourcesStrings.onboardingTwoSubtitle
         case .threeSlide:
-            "onboardingThreeSubtitleArgument"
+            CalendarResourcesStrings.onboardingThreeSubtitle
         case .fourSlide:
-            "onboardingFourSubtitleArgument"
+            CalendarResourcesStrings.onboardingFourSubtitle
         }
     }
 }
