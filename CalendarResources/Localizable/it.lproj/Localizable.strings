@@ -261,6 +261,8 @@
 
 "replyEventErrorTitle" = "Impossibile aggiornare lo stato dell’evento";
 
+"replyRecurringEventAlertTitle" = "A quali eventi vuoi rispondere?";
+
 /* loco:6a33b6883afea93d8b078502 */
 "weekHeaderWeekNumber" = "S%d";
 

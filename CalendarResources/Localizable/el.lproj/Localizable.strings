@@ -261,6 +261,8 @@
 
 "replyEventErrorTitle" = "Δεν ήταν δυνατή η ενημέρωση της κατάστασης της εκδήλωσης";
 
+"replyRecurringEventAlertTitle" = "Σε ποιες εκδηλώσεις θέλετε να απαντήσετε;";
+
 /* loco:6a33b6883afea93d8b078502 */
 "weekHeaderWeekNumber" = "Εβδ.%d";
 

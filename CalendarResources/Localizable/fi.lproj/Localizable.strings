@@ -261,6 +261,8 @@
 
 "replyEventErrorTitle" = "Tapahtuman tilaa ei voitu päivittää";
 
+"replyRecurringEventAlertTitle" = "Mihin tapahtumiin haluat vastata?";
+
 /* loco:6a33b6883afea93d8b078502 */
 "weekHeaderWeekNumber" = "V%d";
 

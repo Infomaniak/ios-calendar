@@ -261,6 +261,8 @@
 
 "replyEventErrorTitle" = "De status van het evenement kon niet worden bijgewerkt";
 
+"replyRecurringEventAlertTitle" = "Op welke evenementen wilt u reageren?";
+
 /* loco:6a33b6883afea93d8b078502 */
 "weekHeaderWeekNumber" = "W%d";
 

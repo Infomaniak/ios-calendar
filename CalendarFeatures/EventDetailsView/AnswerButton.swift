@@ -58,7 +58,8 @@ struct AnswerButton: View {
         .buttonStyle(.plain)
         .accessibilityAddTraits(isSelected ? .isSelected : [])
         .confirmationDialog(
-            "", isPresented: $showConfirmationDialog,
+            CalendarResourcesStrings.replyRecurringEventAlertTitle,
+            isPresented: $showConfirmationDialog,
             titleVisibility: .hidden
         ) {
             Button {

@@ -261,6 +261,8 @@
 
 "replyEventErrorTitle" = "Det gick inte att uppdatera evenemangets status";
 
+"replyRecurringEventAlertTitle" = "Vilka evenemang vill du svara på?";
+
 /* loco:6a33b6883afea93d8b078502 */
 "weekHeaderWeekNumber" = "V%d";
 
