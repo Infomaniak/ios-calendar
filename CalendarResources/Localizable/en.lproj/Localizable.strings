@@ -267,6 +267,8 @@
 
 "replyEventErrorTitle" = "Could not update the event status";
 
+"replyRecurringEventAlertTitle" = "Which events do you want to respond to?";
+
 /* loco:6a33b6883afea93d8b078502 */
 "weekHeaderWeekNumber" = "W%d";
 

@@ -261,6 +261,8 @@
 
 "replyEventErrorTitle" = "Kunne ikke oppdatere hendelsens status";
 
+"replyRecurringEventAlertTitle" = "Hvilke hendelser vil du svare på?";
+
 /* loco:6a33b6883afea93d8b078502 */
 "weekHeaderWeekNumber" = "U%d";
 
