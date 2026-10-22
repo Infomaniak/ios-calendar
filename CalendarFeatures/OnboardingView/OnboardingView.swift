@@ -19,6 +19,7 @@
 import CalendarResources
 import InfomaniakOnboarding
 import SwiftUI
+import ESDSFoundation
 
 extension Slide {
     static var onboardingSlides: [Slide] {
@@ -26,25 +27,25 @@ extension Slide {
             Slide(
                 backgroundImage: UIImage(),
                 backgroundImageTintColor: nil,
-                content: .illustration(UIImage(systemName: "1.calendar") ?? UIImage(systemName: "calendar")!),
+                content: .illustration(CalendarResourcesAsset.Images.onboardingStart.image),
                 bottomView: OnboardingTextView(text: .oneSlide)
             ),
             Slide(
                 backgroundImage: UIImage(),
                 backgroundImageTintColor: nil,
-                content: .illustration(UIImage(systemName: "2.calendar") ?? UIImage(systemName: "calendar")!),
+                content: .illustration(CalendarResourcesAsset.Images.onboardingNotifications.image),
                 bottomView: OnboardingTextView(text: .twoSlide)
             ),
             Slide(
                 backgroundImage: UIImage(),
                 backgroundImageTintColor: nil,
-                content: .illustration(UIImage(systemName: "3.calendar") ?? UIImage(systemName: "calendar")!),
+                content: .illustration(CalendarResourcesAsset.Images.onboardingContact.image),
                 bottomView: OnboardingTextView(text: .threeSlide)
             ),
             Slide(
                 backgroundImage: UIImage(),
                 backgroundImageTintColor: nil,
-                content: .illustration(UIImage(systemName: "4.calendar") ?? UIImage(systemName: "calendar")!),
+                content: .illustration(CalendarResourcesAsset.Images.onboardingEnd.image),
                 bottomView: OnboardingTextView(text: .fourSlide)
             )
         ]
@@ -52,6 +53,7 @@ extension Slide {
 }
 
 public struct OnboardingView: View {
+    @Environment(\.esdsTheme) private var theme
     @StateObject private var loginHandler = LoginHandler()
     @State private var selection = 0
 
@@ -67,6 +69,7 @@ public struct OnboardingView: View {
         }
         .ignoresSafeArea()
         .loginErrorAlert(loginHandler: loginHandler)
+        .background(theme.color.backgroundElevationSunken)
     }
 }
 

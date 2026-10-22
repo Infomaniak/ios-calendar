@@ -18,6 +18,7 @@
 
 import CalendarResources
 import DesignSystem
+import ESDSFoundation
 import InfomaniakCoreSwiftUI
 import SwiftUI
 
@@ -55,13 +56,17 @@ enum OnboardingText {
 }
 
 struct OnboardingTextView: View {
+    @Environment(\.esdsTheme) private var theme
     let text: OnboardingText
 
     var body: some View {
         VStack(spacing: IKPadding.mini) {
             Text(text.title)
+                .font(.title2.weight(.bold))
+                .foregroundStyle(theme.color.contentPrimary)
 
             Text(text.subtitle)
+                .foregroundStyle(theme.color.contentSecondary)
         }
         .multilineTextAlignment(.center)
     }

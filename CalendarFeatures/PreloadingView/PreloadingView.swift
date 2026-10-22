@@ -18,6 +18,7 @@
 
 import CalendarCore
 import CalendarCoreUI
+import DesignSystem
 import InfomaniakCore
 import InfomaniakDI
 import SwiftUI
@@ -25,13 +26,33 @@ import SwiftUI
 public struct PreloadingView: View {
     @EnvironmentObject private var rootViewState: RootViewState
 
+    private let backgroundImage = Image("splashscreen-background", bundle: .main)
+    private let logoImage = Image("splashscreen-calendar", bundle: .main)
+    private let infomaniakLogoImage = Image("splashscreen-infomaniak", bundle: .main)
+
     public init() {}
 
     public var body: some View {
-        ProgressView()
-            .ignoresSafeArea()
-            .progressViewStyle(.circular)
-            .task { await preloadAndTransitionToRootView() }
+        ZStack(alignment: .center) {
+            backgroundImage
+                .resizable()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .ignoresSafeArea()
+
+            VStack(spacing: IKPadding.large) {
+                logoImage
+                    .frame(maxHeight: .infinity)
+
+                ProgressView()
+                    .progressViewStyle(.circular)
+                    .tint(.white)
+            }
+        }
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            infomaniakLogoImage
+                .padding(.bottom, value: .medium)
+        }
+        .task { await preloadAndTransitionToRootView() }
     }
 
     func preloadAndTransitionToRootView() async {
