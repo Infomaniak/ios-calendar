@@ -24,8 +24,6 @@ import MultiplatformCalendar
 public enum UIClassification: String, Sendable, CaseIterable {
     case `public`
     case `private`
-    case confidential
-    case custom
 
     public var text: String? {
         switch self {
@@ -33,8 +31,6 @@ public enum UIClassification: String, Sendable, CaseIterable {
             return CalendarResourcesStrings.publicLabel
         case .private:
             return CalendarResourcesStrings.privateLabel
-        default:
-            return nil
         }
     }
 
@@ -44,8 +40,6 @@ public enum UIClassification: String, Sendable, CaseIterable {
             return .lockOpen
         case .private:
             return .lock
-        default:
-            return nil
         }
     }
 }
@@ -57,15 +51,11 @@ public extension UIClassification {
             return nil
         }
 
-        switch onEnum(of: classification) {
+        switch classification {
         case .public:
             self = .public
         case .private:
             self = .private
-        case .confidential:
-            self = .confidential
-        case .custom:
-            self = .custom
         }
     }
 }
