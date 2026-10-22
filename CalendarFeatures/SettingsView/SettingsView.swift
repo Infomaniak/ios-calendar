@@ -29,6 +29,8 @@ public struct SettingsView: View {
     private var appTheme = DefaultPreferences.theme
     @AppStorage(UserDefaults.shared.key(.firstWeekday), store: .shared)
     private var firstWeekday = DefaultPreferences.firstWeekday
+    @AppStorage(UserDefaults.shared.key(.showWeekNumbers), store: .shared)
+    private var showWeekNumbers = DefaultPreferences.showWeekNumbers
     @AppStorage(UserDefaults.shared.key(.defaultEventDuration), store: .shared)
     private var defaultEventDuration = DefaultPreferences.defaultEventDuration
     @AppStorage(UserDefaults.shared.key(.customTimeZoneIdentifier), store: .shared)
@@ -84,6 +86,9 @@ public struct SettingsView: View {
                     }
                 }
                 .pickerStyle(.navigationLink)
+
+                Toggle("!Show week numbers", isOn: $showWeekNumbers)
+                    .toggleStyle(.switch)
             } header: {
                 Text(CalendarResourcesStrings.generalSettingsDisplayLabel)
             }
