@@ -90,7 +90,8 @@ public extension EventDraft {
             eventColor: originalData?.eventColor,
             alarms: originalData?.alarms ?? AlarmListEditReplace(alarms: []),
             attendees: originalData?.attendees ?? [],
-            organizer: originalData?.organizer
+            organizer: originalData?.organizer,
+            meetRoom: originalData?.meetRoom
         )
     }
 

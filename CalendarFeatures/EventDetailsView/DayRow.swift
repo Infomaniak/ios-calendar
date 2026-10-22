@@ -20,6 +20,8 @@ import CalendarCoreUI
 import CalendarResources
 import DesignSystem
 import ESDSFoundation
+import InfomaniakDI
+import MultiplatformCalendar
 import SwiftUI
 
 struct DayRow: View {
@@ -27,6 +29,8 @@ struct DayRow: View {
 
     @Environment(\.esdsTheme) private var theme
     @Environment(\.calendar) private var calendar
+
+    @State private var occurrenceDescription: String?
 
     let event: UIEventDetails
 
@@ -86,11 +90,28 @@ struct DayRow: View {
                     .foregroundStyle(theme.color.contentSecondary)
             }
 
-            // TODO: Show event recurrence information when available
+            if let occurrenceDescription {
+                Text(occurrenceDescription)
+                    .font(.subheadline)
+                    .foregroundStyle(theme.color.contentBrand)
+            }
+        }
+        .multilineTextAlignment(.leading)
+        .task {
+            guard event.isOccurrence else { return }
+
+            @InjectService var calendarSDK: CalendarCoreGraph
+            let id = OccurrenceId.companion.parse(value: event.occurrenceId)
+            guard let occurrence = try? await calendarSDK.calendarManager.getOccurrence(occurrenceId: id) else {
+                return
+            }
+
+            guard !Task.isCancelled else { return }
+            occurrenceDescription = try? await occurrence.toLocalizedRecurrenceString()
         }
     }
 
-    private func dateTimeRange(in timeZone: TimeZone) -> String {
+    private func dateTimeRange(in timeZone: Foundation.TimeZone) -> String {
         var style = Date.IntervalFormatStyle()
             .weekday(.wide)
             .month(.wide)
@@ -104,7 +125,7 @@ struct DayRow: View {
     }
 
     private func formattedRange(
-        in timeZone: TimeZone,
+        in timeZone: Foundation.TimeZone,
         includesDate: Bool
     ) -> String {
         let style = Date.IntervalFormatStyle(
@@ -120,7 +141,7 @@ struct DayRow: View {
 
     private func formattedDateTime(
         _ date: Date,
-        in timeZone: TimeZone,
+        in timeZone: Foundation.TimeZone,
         includesDate: Bool
     ) -> String {
         let dateTime =
@@ -140,7 +161,7 @@ struct DayRow: View {
 
     private func formattedTimeZone(
         for date: Date,
-        in timeZone: TimeZone
+        in timeZone: Foundation.TimeZone
     ) -> String {
         date.formatted(
             Date.FormatStyle(
