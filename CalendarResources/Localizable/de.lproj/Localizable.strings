@@ -259,6 +259,8 @@
 /* loco:6aa9363b3f16c92f7e024b92 */
 "timeZoneLabel" = "Zeitzone";
 
+"replyEventErrorTitle" = "Der Status des Anlasses konnte nicht aktualisiert werden";
+
 /* loco:6a33b6883afea93d8b078502 */
 "weekHeaderWeekNumber" = "KW%d";
 
