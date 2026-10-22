@@ -180,6 +180,15 @@
 /* loco:6aa8f944797adbda140fe1f6 */
 "occupiedLabel" = "Zajęty";
 
+"onboardingFourSubtitle" = "Możesz teraz uzyskać dostęp do swoich wydarzeń z poziomu Calendar.";
+"onboardingFourTitle" = "Wszystko gotowe";
+"onboardingOneSubtitle" = "Przeglądaj, twórz i udostępniaj wydarzenia z telefonu, z pełną poufnością.";
+"onboardingOneTitle" = "Twój kalendarz, zawsze przy Tobie";
+"onboardingThreeSubtitle" = "Dostęp do kontaktów ułatwia udostępnianie kalendarzy i wysyłanie zaproszeń.";
+"onboardingThreeTitle" = "Zaproś uczestników";
+"onboardingTwoSubtitle" = "Otrzymuj przypomnienie przed każdym wydarzeniem i nie przegap już żadnego ważnego spotkania.";
+"onboardingTwoTitle" = "Zezwól na powiadomienia";
+
 /* loco:6a4dec95c1907081d30570c2 */
 "onlineLabel" = "Online";
 

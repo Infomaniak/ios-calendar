@@ -180,6 +180,15 @@
 /* loco:6aa8f944797adbda140fe1f6 */
 "occupiedLabel" = "Upptagen";
 
+"onboardingFourSubtitle" = "Du kan nu komma åt dina händelser från Calendar.";
+"onboardingFourTitle" = "Allt är klart";
+"onboardingOneSubtitle" = "Visa, skapa och dela dina händelser från din telefon, med full sekretess.";
+"onboardingOneTitle" = "Din kalender, överallt med dig";
+"onboardingThreeSubtitle" = "Åtkomst till dina kontakter gör det enklare att dela dina kalendrar och skicka inbjudningar.";
+"onboardingThreeTitle" = "Bjud in dina deltagare";
+"onboardingTwoSubtitle" = "Bli påmind före varje händelse och missa aldrig ett viktigt möte.";
+"onboardingTwoTitle" = "Tillåt aviseringar";
+
 /* loco:6a4dec95c1907081d30570c2 */
 "onlineLabel" = "Online";
 

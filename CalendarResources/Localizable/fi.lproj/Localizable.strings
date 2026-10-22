@@ -180,6 +180,15 @@
 /* loco:6aa8f944797adbda140fe1f6 */
 "occupiedLabel" = "Varattu";
 
+"onboardingFourSubtitle" = "Voit nyt käyttää tapahtumiasi Calendarista.";
+"onboardingFourTitle" = "Kaikki on valmista";
+"onboardingOneSubtitle" = "Katso, luo ja jaa tapahtumasi puhelimestasi täysin luottamuksellisesti.";
+"onboardingOneTitle" = "Kalenterisi, aina mukanasi";
+"onboardingThreeSubtitle" = "Pääsy yhteystietoihisi helpottaa kalenterien jakamista ja kutsujen lähettämistä.";
+"onboardingThreeTitle" = "Kutsu osallistujasi";
+"onboardingTwoSubtitle" = "Saat muistutuksen ennen jokaista tapahtumaa etkä missaa enää tärkeitä tapaamisia.";
+"onboardingTwoTitle" = "Salli ilmoitukset";
+
 /* loco:6a4dec95c1907081d30570c2 */
 "onlineLabel" = "Verkossa";
 
