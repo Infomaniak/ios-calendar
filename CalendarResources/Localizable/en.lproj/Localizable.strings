@@ -265,6 +265,8 @@
 /* loco:6aa9363b3f16c92f7e024b92 */
 "timeZoneLabel" = "Time zone";
 
+"replyEventErrorTitle" = "Could not update the event status";
+
 /* loco:6a33b6883afea93d8b078502 */
 "weekHeaderWeekNumber" = "W%d";
 

@@ -44,6 +44,8 @@ public struct EventDetailsView: View {
     @State private var editData: EventEditData?
     @State private var isShowingEditError = false
     @State private var editErrorMessage = ""
+    @State private var isShowingReplyError = false
+    @State private var replyErrorMessage = ""
 
     private let event: UIEventDetails
 
@@ -221,6 +223,11 @@ public struct EventDetailsView: View {
             } message: {
                 Text(editErrorMessage)
             }
+            .alert(CalendarResourcesStrings.replyEventErrorTitle, isPresented: $isShowingReplyError) {
+                Button(CalendarResourcesStrings.buttonConfirm) {}
+            } message: {
+                Text(replyErrorMessage)
+            }
             .navigationDestination(item: $editData) { editData in
                 EventFormView(
                     editionMode: .editDraft(
@@ -283,6 +290,8 @@ public struct EventDetailsView: View {
                 selectedStatus = status
             } catch {
                 Logger.view.error("Failed to update participation status: \(error.localizedDescription)")
+                replyErrorMessage = error.localizedDescription
+                isShowingReplyError = true
             }
         }
     }
