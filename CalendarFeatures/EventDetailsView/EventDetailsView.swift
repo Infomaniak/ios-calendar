@@ -50,8 +50,17 @@ public struct EventDetailsView: View {
     private var uniqueAttendees: [UIAttendee] {
         var seenEmails = Set<String>()
 
-        return event.attendees.filter { attendee in
-            seenEmails.insert(attendee.email).inserted
+        return event.attendees.compactMap { attendee in
+            guard seenEmails.insert(attendee.email).inserted else { return nil }
+
+            guard let selectedStatus, attendee.email == event.user?.email else { return attendee }
+            return UIAttendee(
+                displayName: attendee.displayName,
+                email: attendee.email,
+                status: selectedStatus,
+                isOrganizer: attendee.isOrganizer,
+                contact: attendee.contact
+            )
         }
     }
 
