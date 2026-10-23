@@ -30,9 +30,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>%d guest</string>
+        <string>%d attendee</string>
         <key>other</key>
-        <string>%d guests</string>
+        <string>%d attendees</string>
       </dict>
     </dict>
     <key>attendeesDeclinedCount</key>
@@ -129,6 +129,54 @@
         <string>%d seat</string>
         <key>other</key>
         <string>%d seats</string>
+      </dict>
+    </dict>
+    <key>unitDays</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>day</string>
+        <key>other</key>
+        <string>days</string>
+      </dict>
+    </dict>
+    <key>unitHours</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>hour</string>
+        <key>other</key>
+        <string>hours</string>
+      </dict>
+    </dict>
+    <key>unitMinutes</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>minute</string>
+        <key>other</key>
+        <string>minutes</string>
       </dict>
     </dict>
   </dict>
