@@ -49,6 +49,9 @@
 /* loco:6a4deb24e064eb69fa065712 */
 "buttonShow" = "Show";
 
+/* loco:6adb64fe1e8de92b3409e5d2 */
+"buttonStart" = "Start";
+
 /* loco:6ab531b433d14113560aa25c */
 "buttonThisAndFollowingEvents" = "This and following events";
 
