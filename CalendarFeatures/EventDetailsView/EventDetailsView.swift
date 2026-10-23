@@ -55,14 +55,11 @@ public struct EventDetailsView: View {
         return event.attendees.compactMap { attendee in
             guard seenEmails.insert(attendee.email).inserted else { return nil }
 
-            guard let selectedStatus, attendee.email == event.user?.email else { return attendee }
-            return UIAttendee(
-                displayName: attendee.displayName,
-                email: attendee.email,
-                status: selectedStatus,
-                isOrganizer: attendee.isOrganizer,
-                contact: attendee.contact
-            )
+            if let selectedStatus, attendee.email == event.user?.email {
+                return UIAttendee(attendee: attendee, status: selectedStatus)
+            }
+
+            return attendee
         }
     }
 
@@ -283,6 +280,9 @@ public struct EventDetailsView: View {
     private func updateParticipationStatus(to status: UIParticipationStatus, scope: RecurrenceScope) {
         guard let reply = status.reply else { return }
 
+        let previousStatus = selectedStatus
+        selectedStatus = status
+
         Task {
             do {
                 try await UpdateParticipationStatusUseCase().execute(
@@ -290,11 +290,11 @@ public struct EventDetailsView: View {
                     occurrenceId: event.occurrenceId,
                     scope: scope
                 )
-                selectedStatus = status
             } catch {
                 Logger.view.error("Failed to update participation status: \(error.localizedDescription)")
                 replyErrorMessage = error.localizedDescription
                 isShowingReplyError = true
+                selectedStatus = previousStatus
             }
         }
     }
