@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import ESDSFoundation
 import SwiftUI
 
 struct MonthPageView: View {
@@ -24,6 +25,7 @@ struct MonthPageView: View {
     let metrics: MonthGridMetrics
     let today: Date
     let showWeekNumbers: Bool
+    let bottomSafeAreaInset: CGFloat
 
     private var rowHeight: CGFloat {
         metrics.rowHeight(weekCount: grid.weeks.count)
@@ -32,10 +34,18 @@ struct MonthPageView: View {
     var body: some View {
         switch metrics.sizing {
         case .fill:
-            weekRows
+            VStack(spacing: 0) {
+                weekRows
+                MonthColumnSeparatorsView(metrics: metrics, showWeekNumbers: showWeekNumbers)
+                    .frame(height: bottomSafeAreaInset)
+            }
         case .square:
             ScrollView(.vertical) {
-                weekRows
+                VStack(spacing: 0) {
+                    weekRows
+                    MonthColumnSeparatorsView(metrics: metrics, showWeekNumbers: showWeekNumbers)
+                        .frame(height: bottomSafeAreaInset)
+                }
             }
         }
     }
@@ -54,5 +64,36 @@ struct MonthPageView: View {
                 )
             }
         }
+    }
+}
+
+struct MonthColumnSeparatorsView: View {
+    @Environment(\.esdsTheme) private var theme
+
+    let metrics: MonthGridMetrics
+    let showWeekNumbers: Bool
+
+    var body: some View {
+        HStack(spacing: 0) {
+            if showWeekNumbers {
+                separatorColumn
+                    .frame(width: metrics.weekNumberWidth)
+            }
+
+            ForEach(0 ..< MonthGridMetrics.columnCount, id: \.self) { _ in
+                separatorColumn
+            }
+        }
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
+    }
+
+    private var separatorColumn: some View {
+        Color.clear
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .overlay(alignment: .trailing) {
+                theme.color.borderDim2
+                    .frame(width: MonthGridMetrics.separatorThickness)
+            }
     }
 }

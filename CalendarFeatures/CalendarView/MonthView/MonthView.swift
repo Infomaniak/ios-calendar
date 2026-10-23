@@ -42,6 +42,7 @@ struct MonthView: View {
     @State private var weekLayouts = [MonthGrid: [MonthWeekLayout]]()
     @State private var contentWidth = CGFloat.zero
     @State private var pagerHeight = CGFloat.zero
+    @State private var bottomSafeAreaInset = CGFloat.zero
 
     private var displayedWeekNumberWidth: CGFloat? {
         showWeekNumbers ? weekNumberWidth : nil
@@ -85,16 +86,18 @@ struct MonthView: View {
                             weekLayouts: weekLayouts[grid],
                             metrics: metrics,
                             today: timeline.date,
-                            showWeekNumbers: showWeekNumbers
+                            showWeekNumbers: showWeekNumbers,
+                            bottomSafeAreaInset: bottomSafeAreaInset
                         )
                     }
                 }
                 .ignoresSafeArea(.container, edges: .bottom)
             }
-            .onGeometryChange(for: CGFloat.self) { proxy in
-                proxy.size.height + proxy.safeAreaInsets.bottom
-            } action: { newHeight in
-                pagerHeight = newHeight
+            .onGeometryChange(for: CGSize.self) { proxy in
+                CGSize(width: proxy.size.height, height: proxy.safeAreaInsets.bottom)
+            } action: { newValue in
+                pagerHeight = newValue.width
+                bottomSafeAreaInset = newValue.height
             }
         }
         .onGeometryChange(for: CGFloat.self) { proxy in
