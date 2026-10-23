@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarCore
 import CalendarCoreUI
 import DesignSystem
 import ESDSFoundation
@@ -46,7 +47,8 @@ struct DayContentView: View {
     @Environment(\.calendar) private var calendar
     @Environment(MainViewState.self) private var mainViewState
 
-    @SceneStorage("DayViewScrollPosition") private var storedScrollPosition = 0.0
+    @SceneStorage(SceneStorageKeys.dayViewScrollPosition.rawValue)
+    private var storedScrollPosition = DefaultSceneValues.dayViewScrollPosition
 
     @State private var scrollPosition = ScrollPosition()
     @State private var scrollOffset = CGFloat.zero
