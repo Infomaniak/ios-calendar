@@ -19,6 +19,12 @@
 import Foundation
 import SwiftUI
 
+public extension TimelineSchedule where Self == EveryDayTimelineSchedule {
+    static func everyDay(_ calendar: Calendar) -> EveryDayTimelineSchedule {
+        EveryDayTimelineSchedule(calendar: calendar)
+    }
+}
+
 public struct EveryDayTimelineSchedule: TimelineSchedule, Sendable {
     private let calendar: Calendar
 
@@ -50,11 +56,5 @@ public struct EveryDayTimelineSchedule: TimelineSchedule, Sendable {
             )
             return currentDate
         }
-    }
-}
-
-public extension TimelineSchedule where Self == EveryDayTimelineSchedule {
-    static var everyDay: EveryDayTimelineSchedule {
-        EveryDayTimelineSchedule()
     }
 }
