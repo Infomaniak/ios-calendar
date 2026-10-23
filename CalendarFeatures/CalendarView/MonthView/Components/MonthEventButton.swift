@@ -16,16 +16,20 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarCoreUI
 import SwiftUI
 
-public struct MonthView: View {
-    public init() {}
+struct MonthEventButton: View {
+    let event: UIEventSummary
 
-    public var body: some View {
-        Text("MonthView")
+    var body: some View {
+        EventDetailsPopoverButton(event: event) {
+            Text(event.displayTitle)
+                .font(.caption.bold())
+                .lineLimit(1)
+                .padding(.leading, value: .micro)
+                .frame(maxHeight: .infinity)
+                .eventCellStyle(event: event, padding: 0)
+        }
     }
-}
-
-#Preview {
-    MonthView()
 }
