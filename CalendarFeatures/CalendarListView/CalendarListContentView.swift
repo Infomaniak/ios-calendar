@@ -38,7 +38,8 @@ struct CalendarListContentView: View {
     @Environment(\.esdsTheme) private var theme
     @Environment(\.calendarAccounts) private var calendarAccounts
 
-    @SceneStorage("CalendarListExpandedAccounts") private var expandedAccounts = ExpandedAccounts()
+    @SceneStorage(SceneStorageKeys.calendarListExpandedAccounts.rawValue)
+    private var expandedAccounts = DefaultSceneValues.calendarListExpandedAccounts
     @State private var visibilityOverrides = [String: Bool]()
 
     let indexedCalendars: [Int: [UICalendar]]
