@@ -31,6 +31,7 @@ enum MonthGridSizing: Equatable {
 struct MonthGridMetrics: Equatable {
     static let columnCount = 7
     static let laneSpacing = IKPadding.micro / 2
+    static let separatorThickness: CGFloat = 1
 
     let containerSize: CGSize
     let weekNumberWidth: CGFloat
@@ -45,6 +46,10 @@ struct MonthGridMetrics: Equatable {
         max(containerSize.width - weekNumberWidth, 0) / CGFloat(Self.columnCount)
     }
 
+    var totalDayNumberHeight: CGFloat {
+        return dayNumberHeight + 8 * 2 + 4 * 2
+    }
+
     func rowHeight(weekCount: Int) -> CGFloat {
         switch sizing {
         case .fill:
@@ -55,7 +60,7 @@ struct MonthGridMetrics: Equatable {
     }
 
     func maxEventsCount(rowHeight: CGFloat) -> Int {
-        let availableHeight = rowHeight - dayNumberHeight - Self.laneSpacing
+        let availableHeight = rowHeight - totalDayNumberHeight - Self.laneSpacing
         guard availableHeight > 0 else { return 0 }
         return Int((availableHeight + Self.laneSpacing) / (laneHeight + Self.laneSpacing))
     }

@@ -44,20 +44,32 @@ struct MonthWeekRowView: View {
                     .lineLimit(1)
                     .font(.caption2)
                     .foregroundStyle(theme.color.contentTertiary)
-                    .frame(width: metrics.weekNumberWidth, height: metrics.dayNumberHeight)
-                    .padding(.top, value: .mini)
+                    .frame(width: metrics.weekNumberWidth, height: metrics.totalDayNumberHeight)
+                    .frame(maxHeight: .infinity, alignment: .top)
+                    .overlay(alignment: .trailing) {
+                        separator
+                            .frame(width: MonthGridMetrics.separatorThickness)
+                    }
             }
 
             ZStack(alignment: .top) {
                 HStack(spacing: 0) {
-                    ForEach(days, id: \.self) { day in
+                    ForEach(days.indices, id: \.self) { column in
+                        let day = days[column]
                         MonthDayCellView(
                             day: day,
                             isInMonth: day >= monthInterval.start && day < monthInterval.end,
-                            isToday: calendar.isDate(day, inSameDayAs: today),
-                            dayNumberHeight: metrics.dayNumberHeight
+                            isToday: calendar.isDate(day, inSameDayAs: today)
                         )
+                        .overlay(alignment: .trailing) {
+                            separator
+                                .frame(width: MonthGridMetrics.separatorThickness)
+                        }
                     }
+                }
+                .overlay(alignment: .top) {
+                    separator
+                        .frame(height: MonthGridMetrics.separatorThickness)
                 }
 
                 if let layout, laneCount > 0 {
@@ -65,7 +77,7 @@ struct MonthWeekRowView: View {
                         columnCount: days.count,
                         laneHeight: metrics.laneHeight,
                         laneSpacing: MonthGridMetrics.laneSpacing,
-                        horizontalInset: IKPadding.micro / 2
+                        horizontalInset: 4
                     ) {
                         ForEach(layout.visibleSegments(laneCount: laneCount)) { segment in
                             MonthEventButton(event: segment.event)
@@ -75,19 +87,20 @@ struct MonthWeekRowView: View {
                         let hiddenEventCounts = layout.hiddenEventCounts(laneCount: laneCount)
                         ForEach(hiddenEventCounts.indices, id: \.self) { column in
                             if hiddenEventCounts[column] > 0 {
-                                MonthDayEventsPopoverButton(
-                                    day: days[column],
-                                    hiddenEventCount: hiddenEventCounts[column],
-                                    events: layout.dayEvents[column]
-                                )
-                                .monthEventPlacement(column: column, lane: laneCount - 1)
+                                MonthDayHiddenEventsView(count: hiddenEventCounts[column])
+                                    .monthEventPlacement(column: column, lane: laneCount - 1)
                             }
                         }
                     }
-                    .padding(.top, metrics.dayNumberHeight + MonthGridMetrics.laneSpacing)
+                    .padding(.top, metrics.totalDayNumberHeight)
                 }
             }
         }
         .frame(height: rowHeight)
+    }
+
+    private var separator: some View {
+        theme.color.borderDim2
+            .allowsHitTesting(false)
     }
 }

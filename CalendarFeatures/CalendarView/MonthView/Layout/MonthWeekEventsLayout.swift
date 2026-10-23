@@ -32,7 +32,6 @@ extension View {
     }
 }
 
-/// Places each subview on its columns and lane of a week row.
 struct MonthWeekEventsLayout: Layout {
     let columnCount: Int
     let laneHeight: CGFloat
