@@ -17,21 +17,32 @@
  */
 
 import CalendarCoreUI
+import CalendarResources
 import DesignSystem
 import ESDSFoundation
 import ESDSSymbols
 import InfomaniakCoreUIResources
+import MultiplatformCalendar
 import SwiftUI
 
 struct AnswerButton: View {
     @Environment(\.esdsTheme) private var theme
 
+    @State private var showConfirmationDialog = false
+
+    let shouldShowDialog: Bool
     let answer: UIParticipationStatus
     let isSelected: Bool
-    let action: () -> Void
+    let onSelect: (RecurrenceScope) -> Void
 
     var body: some View {
-        Button(action: action) {
+        Button {
+            if shouldShowDialog {
+                showConfirmationDialog = true
+            } else {
+                onSelect(.thisOccurrence)
+            }
+        } label: {
             HStack(spacing: IKPadding.micro) {
                 answer.icon.image
                     .font(.system(size: 20))
@@ -46,6 +57,22 @@ struct AnswerButton: View {
         }
         .buttonStyle(.plain)
         .accessibilityAddTraits(isSelected ? .isSelected : [])
+        .confirmationDialog(
+            CalendarResourcesStrings.replyRecurringEventAlertTitle,
+            isPresented: $showConfirmationDialog,
+            titleVisibility: .hidden
+        ) {
+            Button {
+                onSelect(.thisOccurrence)
+            } label: {
+                Text(CalendarResourcesStrings.buttonThisEvent)
+            }
+            Button {
+                onSelect(.allOccurrences)
+            } label: {
+                Text(CalendarResourcesStrings.buttonAllEvents)
+            }
+        }
     }
 
     private var foregroundColor: Color {
