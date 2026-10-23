@@ -120,16 +120,3 @@ enum MultipleDaysLayout: Hashable {
         return calendar.isDate(selectedDate, equalTo: .now, toGranularity: pagerComponent)
     }
 }
-
-private extension Calendar {
-    func days(from start: Date, to end: Date) -> [Date] {
-        var days = [Date]()
-        var currentDay = startOfDay(for: start)
-        while currentDay < end {
-            days.append(currentDay)
-            guard let nextDay = date(byAdding: .day, value: 1, to: currentDay) else { break }
-            currentDay = nextDay
-        }
-        return days
-    }
-}

@@ -20,10 +20,12 @@ import DesignSystem
 import SwiftUI
 
 public struct TodayIconView: View {
+    @Environment(\.calendar) private var calendar
+
     public init() {}
 
     public var body: some View {
-        TimelineView(.everyDay) { timeline in
+        TimelineView(.everyDay(calendar)) { timeline in
             DayIconView(date: timeline.date)
         }
     }
