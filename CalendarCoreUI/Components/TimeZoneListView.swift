@@ -18,36 +18,75 @@
 
 import CalendarCore
 import CalendarResources
+import ESDSSymbols
 import Foundation
 import SwiftUI
+
+private struct TimeZoneItem: Identifiable {
+    var id: String {
+        timeZone.identifier
+    }
+
+    let timeZone: TimeZone
+
+    let displayName: String
+    let genericName: String?
+    let utcOffset: String
+
+    init(timeZone: TimeZone, referenceDate: Date) {
+        self.timeZone = timeZone
+        displayName = timeZone.formatted(.timeZone(.displayName))
+        genericName = timeZone.localizedName(for: .generic, locale: .current)
+        utcOffset = timeZone.formatted(.timeZone(.utcOffset(at: referenceDate)))
+    }
+
+    func matches(_ query: String) -> Bool {
+        return timeZone.identifier.localizedStandardContains(query)
+            || displayName.localizedStandardContains(query)
+            || genericName?.localizedStandardContains(query) == true
+            || utcOffset.localizedStandardContains(query)
+    }
+}
+
+private struct TimeZoneRow: View {
+    let item: TimeZoneItem
+
+    var body: some View {
+        HStack {
+            VStack(alignment: .leading) {
+                Text(item.displayName)
+                if let genericName = item.genericName {
+                    Text(genericName)
+                        .font(.caption)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+
+            Text(item.utcOffset)
+                .foregroundStyle(.secondary)
+                .font(.caption)
+        }
+    }
+}
 
 public struct TimeZoneListView: View {
     @Environment(\.dismiss) private var dismiss
 
+    @State private var items: [TimeZoneItem]?
     @State private var search = ""
 
     @Binding private var timeZone: TimeZone
 
     private let referenceDate: Date
 
-    private var visibleTimeZones: [TimeZone] {
-        guard !search.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
-            return Self.timeZones
-        }
+    private var visibleItems: [TimeZoneItem] {
+        guard let items else { return [] }
 
-        return Self.timeZones
-            .filter {
-                $0.identifier.localizedCaseInsensitiveContains(search)
-                    || $0.formatted(.timeZone(.displayName)).localizedCaseInsensitiveContains(search)
-                    || $0.localizedName(for: .generic, locale: .current)?.localizedCaseInsensitiveContains(search) == true
-                    || $0.formatted(.timeZone(.utcOffset(at: referenceDate))).localizedCaseInsensitiveContains(search)
-            }
-            .sorted { $0.formatted(.timeZone(.displayName)) < $1.formatted(.timeZone(.displayName)) }
+        let query = search.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !query.isEmpty else { return items }
+
+        return items.filter { $0.matches(query) }
     }
-
-    private static let timeZones = TimeZone.knownTimeZoneIdentifiers
-        .compactMap(TimeZone.init(identifier:))
-        .sorted { $0.formatted(.timeZone(.displayName)) < $1.formatted(.timeZone(.displayName)) }
 
     public init(timeZone: Binding<TimeZone>, referenceDate: Date) {
         _timeZone = timeZone
@@ -55,24 +94,20 @@ public struct TimeZoneListView: View {
     }
 
     public var body: some View {
-        List(visibleTimeZones, id: \.identifier) { timeZone in
+        List(visibleItems) { item in
             Button {
-                self.timeZone = timeZone
+                timeZone = item.timeZone
                 dismiss()
             } label: {
-                HStack {
-                    VStack(alignment: .leading) {
-                        Text(timeZone, format: .timeZone(.displayName))
-                        if let localizedName = timeZone.localizedName(for: .generic, locale: .current) {
-                            Text(localizedName)
-                                .font(.caption)
-                        }
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-
-                    Text(timeZone, format: .timeZone(.utcOffset(at: referenceDate)))
-                        .foregroundStyle(.secondary)
-                        .font(.caption)
+                TimeZoneRow(item: item)
+            }
+        }
+        .overlay {
+            if items == nil {
+                ProgressView()
+            } else if visibleItems.isEmpty && !search.isEmpty {
+                ContentUnavailableView {
+                    Label(CalendarResourcesStrings.emptyStateNoTimeZone, symbol: ESDSSymbols.listMagnifyingGlass)
                 }
             }
         }
@@ -80,6 +115,17 @@ public struct TimeZoneListView: View {
         .navigationTitle(CalendarResourcesStrings.timeZoneLabel)
         .toolbarTitleDisplayMode(.inline)
         .foregroundStyle(.primary)
+        .task {
+            items = await Self.loadItems(referenceDate: referenceDate)
+        }
+    }
+
+    @concurrent
+    private static func loadItems(referenceDate: Date) async -> [TimeZoneItem] {
+        TimeZone.knownTimeZoneIdentifiers
+            .compactMap { TimeZone(identifier: $0) }
+            .map { TimeZoneItem(timeZone: $0, referenceDate: referenceDate) }
+            .sorted { $0.displayName.localizedStandardCompare($1.displayName) == .orderedAscending }
     }
 }
 

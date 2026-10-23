@@ -33,7 +33,7 @@ struct EventFormViewModelTests {
         defer { userDefaults.removePersistentDomain(forName: suiteName) }
         userDefaults.lastSelectedCalendarId = "saved"
 
-        let viewModel = EventFormViewModel(editionMode: .new, userDefaults: userDefaults)
+        let viewModel = EventFormViewModel(editionMode: .new(selectedDate: Date()), userDefaults: userDefaults)
         let first = makeCalendar(id: "first")
         let saved = makeCalendar(id: "saved")
         viewModel.updateAvailableCalendars(isSavedCalendarAvailable ? [first, saved] : [first])
@@ -96,20 +96,38 @@ struct EventFormViewModelTests {
     }
 
     @Test(arguments: [
-        ("2026-09-22T09:10:00Z", "2026-09-22T11:10:00Z"),
-        ("2026-09-22T10:40:00Z", "2026-09-22T11:10:00Z"),
-        ("2026-09-22T11:10:00Z", "2026-09-22T11:10:00Z"),
-        ("2026-09-22T12:10:00Z", "2026-09-22T13:10:00Z")
+        (EventFormViewModel.DatePickerId.start, "2026-09-22T09:10:00Z", "2026-09-22T09:10:00Z", "2026-09-22T11:10:00Z"),
+        (.start, "2026-09-22T10:40:00Z", "2026-09-22T10:40:00Z", "2026-09-22T11:10:00Z"),
+        (.start, "2026-09-22T11:10:00Z", "2026-09-22T11:10:00Z", "2026-09-22T11:10:00Z"),
+        (.start, "2026-09-22T12:10:00Z", "2026-09-22T12:10:00Z", "2026-09-22T13:10:00Z"),
+        (.end, "2026-09-22T09:10:00Z", "2026-09-22T08:10:00Z", "2026-09-22T09:10:00Z"),
+        (.end, "2026-09-22T10:40:00Z", "2026-09-22T10:10:00Z", "2026-09-22T10:40:00Z"),
+        (.end, "2026-09-22T10:10:00Z", "2026-09-22T10:10:00Z", "2026-09-22T10:10:00Z")
     ])
-    func updatingStartDateShiftsEndOnlyWhenNecessary(start: String, expectedEnd: String) throws {
+    func settingDateShiftsOtherBoundOnlyWhenNecessary(
+        pickerId: EventFormViewModel.DatePickerId,
+        newDate: String,
+        expectedStart: String,
+        expectedEnd: String
+    ) throws {
         let viewModel = try makeViewModel()
-        let newStart = try date(start)
 
-        viewModel.updateStartDate(newStart)
+        try viewModel.setDate(date(newDate), for: pickerId)
 
-        #expect(viewModel.draft.startDate == newStart)
+        #expect(try viewModel.draft.startDate == date(expectedStart))
         #expect(try viewModel.draft.endDate == date(expectedEnd))
         #expect(viewModel.validationErrors.isEmpty)
+    }
+
+    @Test(arguments: [EventFormViewModel.DatePickerId.start, .end])
+    func settingDateOnInvalidDraftUsesZeroDuration(pickerId: EventFormViewModel.DatePickerId) throws {
+        let viewModel = try makeViewModel(start: "2026-09-22T12:10:00Z", end: "2026-09-22T11:10:00Z")
+        let newDate = try date(pickerId == .start ? "2026-09-22T13:10:00Z" : "2026-09-22T09:10:00Z")
+
+        viewModel.setDate(newDate, for: pickerId)
+
+        #expect(viewModel.draft.startDate == newDate)
+        #expect(viewModel.draft.endDate == newDate)
     }
 
     @Test(arguments: [
@@ -126,7 +144,7 @@ struct EventFormViewModelTests {
         let viewModel = try makeViewModel()
         let newTimeZone = try timeZone(identifier)
 
-        viewModel.updateTimeZone(newTimeZone, for: .start, calendar: calendar)
+        viewModel.setTimeZone(newTimeZone, for: .start, calendar: calendar)
 
         #expect(try viewModel.draft.startDate == date(expectedStart))
         #expect(try viewModel.draft.endDate == date(expectedEnd))
@@ -136,23 +154,26 @@ struct EventFormViewModelTests {
     }
 
     @Test(arguments: [
-        ("2026-09-22T10:00:00Z", "2026-09-22T09:30:00Z"),
-        ("2026-09-22T10:30:00Z", "2026-09-22T09:30:00Z"),
-        ("2026-09-22T12:00:00Z", "2026-09-22T11:00:00Z")
+        ("2026-09-22T10:00:00Z", "2026-09-22T08:30:00Z", "2026-09-22T09:00:00Z"),
+        ("2026-09-22T10:30:00Z", "2026-09-22T09:30:00Z", "2026-09-22T09:30:00Z"),
+        ("2026-09-22T12:00:00Z", "2026-09-22T09:30:00Z", "2026-09-22T11:00:00Z")
     ])
-    func endTimeZoneChangePreservesLocalTimeUnlessBeforeStart(end: String, expectedEnd: String) throws {
+    func endTimeZoneChangePreservesLocalTimeAndKeepsIntervalValid(
+        end: String,
+        expectedStart: String,
+        expectedEnd: String
+    ) throws {
         let viewModel = try makeViewModel(
             start: "2026-09-22T09:30:00Z",
             end: end,
             startTimeZone: "Europe/Zurich",
             endTimeZone: "Europe/Zurich"
         )
-        let originalStart = viewModel.draft.startDate
         let newTimeZone = try timeZone("Etc/GMT-3")
 
-        viewModel.updateTimeZone(newTimeZone, for: .end, calendar: calendar)
+        viewModel.setTimeZone(newTimeZone, for: .end, calendar: calendar)
 
-        #expect(viewModel.draft.startDate == originalStart)
+        #expect(try viewModel.draft.startDate == date(expectedStart))
         #expect(try viewModel.draft.startTimeZone == timeZone("Europe/Zurich"))
         #expect(try viewModel.draft.endDate == date(expectedEnd))
         #expect(viewModel.draft.endTimeZone == newTimeZone)
@@ -171,7 +192,7 @@ struct EventFormViewModelTests {
         let viewModel = try makeViewModel(endTimeZone: "Europe/Zurich")
         let newTimeZone = try timeZone(identifier)
 
-        viewModel.updateTimeZone(newTimeZone, for: .start, calendar: calendar)
+        viewModel.setTimeZone(newTimeZone, for: .start, calendar: calendar)
 
         #expect(try viewModel.draft.startDate == date(expectedStart))
         #expect(viewModel.draft.startTimeZone == newTimeZone)
@@ -193,7 +214,7 @@ struct EventFormViewModelTests {
     ) throws {
         let viewModel = try makeViewModel(start: start, end: end)
 
-        try viewModel.updateTimeZone(timeZone("Europe/Zurich"), for: .start, calendar: calendar)
+        try viewModel.setTimeZone(timeZone("Europe/Zurich"), for: .start, calendar: calendar)
 
         #expect(try viewModel.draft.startDate == date(expectedStart))
         #expect(try viewModel.draft.endDate == date(expectedEnd))
@@ -204,7 +225,7 @@ struct EventFormViewModelTests {
     func changingSharedTimeZoneKeepsZeroDuration() throws {
         let viewModel = try makeViewModel(end: "2026-09-22T10:10:00Z")
 
-        try viewModel.updateTimeZone(timeZone("America/New_York"), for: .start, calendar: calendar)
+        try viewModel.setTimeZone(timeZone("America/New_York"), for: .start, calendar: calendar)
 
         #expect(try viewModel.draft.startDate == date("2026-09-22T14:10:00Z"))
         #expect(viewModel.draft.endDate == viewModel.draft.startDate)
@@ -218,7 +239,7 @@ struct EventFormViewModelTests {
         viewModel.draft.endDate += 0.125
         let originalDraft = viewModel.draft
 
-        try viewModel.updateTimeZone(timeZone("Etc/UTC"), for: pickerId, calendar: calendar)
+        try viewModel.setTimeZone(timeZone("Etc/UTC"), for: pickerId, calendar: calendar)
 
         #expect(viewModel.draft == originalDraft)
     }

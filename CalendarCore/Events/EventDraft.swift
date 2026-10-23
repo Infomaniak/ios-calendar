@@ -73,6 +73,22 @@ public extension EventDraft {
         )
     }
 
+    static func new(selectedDate: Date, calendar: Foundation.Calendar = .current) -> EventDraft {
+        let startDate: Date
+        if calendar.isDateInToday(selectedDate) {
+            let currentHour = calendar.dateInterval(of: .hour, for: .now)?.start ?? .now
+            startDate = calendar.date(byAdding: .hour, value: 1, to: currentHour) ?? .now
+        } else {
+            let startOfDay = calendar.startOfDay(for: selectedDate)
+            startDate = calendar.date(bySettingHour: 8, minute: 0, second: 0, of: startOfDay) ?? startOfDay
+        }
+
+        return EventDraft(
+            startDate: startDate,
+            endDate: startDate.addingTimeInterval(UserDefaults.shared.defaultEventDuration.timeInterval)
+        )
+    }
+
     func toEventEditData(preserving originalData: EventEditData? = nil) throws -> EventEditData {
         guard let calendarId, !calendarId.isEmpty else {
             throw EventDraftValidator.ValidationError.missingCalendar

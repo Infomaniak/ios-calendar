@@ -59,8 +59,8 @@ struct DayRow: View {
             !event.isAllDay,
             let startTimeZone = event.timing.startTimeZone,
             let endTimeZone = event.timing.endTimeZone,
-            startTimeZone.secondsFromGMT() != calendar.timeZone.secondsFromGMT() ||
-            endTimeZone.secondsFromGMT() != calendar.timeZone.secondsFromGMT()
+            startTimeZone.secondsFromGMT(for: event.startDate) != calendar.timeZone.secondsFromGMT(for: event.startDate) ||
+            endTimeZone.secondsFromGMT(for: event.endDate) != calendar.timeZone.secondsFromGMT(for: event.endDate)
         else {
             return nil
         }

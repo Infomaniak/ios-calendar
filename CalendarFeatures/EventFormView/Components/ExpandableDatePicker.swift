@@ -41,7 +41,6 @@ struct ExpandableDatePicker<ID: Hashable>: View {
     let id: ID
     let label: String
     let canSelectHour: Bool
-    var range: ClosedRange<Date> = Date.distantPast ... Date.distantFuture
 
     private var dateFormatStyle: Date.FormatStyle {
         Date.FormatStyle(timeZone: timeZone).year().month().day()
@@ -91,20 +90,15 @@ struct ExpandableDatePicker<ID: Hashable>: View {
             }
 
             if expandedPickerId == id, expandedComponent == .date {
-                DatePicker(CalendarResourcesStrings.selectDateLabel, selection: $date, in: range, displayedComponents: .date)
+                DatePicker(CalendarResourcesStrings.selectDateLabel, selection: $date, displayedComponents: .date)
                     .datePickerStyle(.graphical)
                     .labelsHidden()
             }
 
             if expandedPickerId == id, expandedComponent == .hour {
-                DatePicker(
-                    CalendarResourcesStrings.selectTimeLabel,
-                    selection: $date,
-                    in: range,
-                    displayedComponents: .hourAndMinute
-                )
-                .datePickerStyle(.wheel)
-                .labelsHidden()
+                DatePicker(CalendarResourcesStrings.selectTimeLabel, selection: $date, displayedComponents: .hourAndMinute)
+                    .datePickerStyle(.wheel)
+                    .labelsHidden()
 
                 Button {
                     timeZonePickerId = id

@@ -101,6 +101,8 @@
 "editEventTitle" = "Επεξεργασία εκδήλωσης";
 "editRecurringEventAlertTitle" = "Ποιες εκδηλώσεις θέλετε να επεξεργαστείτε;";
 
+"emptyStateNoTimeZone" = "Δεν βρέθηκαν ζώνες ώρας";
+
 /* loco:6a631392189120de490885c4 */
 "endLabel" = "Τέλος";
 

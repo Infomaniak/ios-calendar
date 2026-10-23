@@ -27,7 +27,7 @@ import OSLog
 import SwiftUI
 
 public enum EditionMode {
-    case new
+    case new(selectedDate: Date)
     case editDraft(draft: EventDraft, editingEvent: UIEventDetails)
 
     var navigationTitle: String {
@@ -82,10 +82,7 @@ public struct EventFormView: View {
                 Toggle(CalendarResourcesStrings.allDayLabel, isOn: $viewModel.draft.allDay)
 
                 ExpandableDatePicker(
-                    date: Binding(
-                        get: { viewModel.draft.startDate },
-                        set: { viewModel.updateStartDate($0) }
-                    ),
+                    date: dateBinding(for: .start),
                     expandedPickerId: $expandedDatePickerId,
                     timeZonePickerId: $timeZonePickerId,
                     timeZone: viewModel.draft.startTimeZone ?? .current,
@@ -95,14 +92,13 @@ public struct EventFormView: View {
                 )
 
                 ExpandableDatePicker(
-                    date: $viewModel.draft.endDate,
+                    date: dateBinding(for: .end),
                     expandedPickerId: $expandedDatePickerId,
                     timeZonePickerId: $timeZonePickerId,
                     timeZone: viewModel.draft.endTimeZone ?? .current,
                     id: .end,
                     label: CalendarResourcesStrings.endLabel,
-                    canSelectHour: !viewModel.draft.allDay,
-                    range: viewModel.draft.startDate ... Date.distantFuture
+                    canSelectHour: !viewModel.draft.allDay
                 )
             }
 
@@ -146,24 +142,10 @@ public struct EventFormView: View {
             }
         }
         .navigationDestination(item: $timeZonePickerId) { pickerId in
-            switch pickerId {
-            case .start:
-                TimeZoneListView(
-                    timeZone: Binding(
-                        get: { viewModel.draft.startTimeZone ?? .current },
-                        set: { viewModel.updateTimeZone($0, for: .start, calendar: calendar) }
-                    ),
-                    referenceDate: viewModel.draft.startDate
-                )
-            case .end:
-                TimeZoneListView(
-                    timeZone: Binding(
-                        get: { viewModel.draft.endTimeZone ?? .current },
-                        set: { viewModel.updateTimeZone($0, for: .end, calendar: calendar) }
-                    ),
-                    referenceDate: viewModel.draft.endDate
-                )
-            }
+            TimeZoneListView(
+                timeZone: timeZoneBinding(for: pickerId),
+                referenceDate: viewModel.draft[keyPath: pickerId.dateKeyPath]
+            )
         }
         .disabled(isSaving)
         .onAppear {
@@ -202,6 +184,20 @@ public struct EventFormView: View {
         }
         .alert(error: $saveErrorMessage) {}
         .interactiveDismissDisabled(viewModel.isEdited)
+    }
+
+    private func dateBinding(for pickerId: EventFormViewModel.DatePickerId) -> Binding<Date> {
+        Binding(
+            get: { viewModel.draft[keyPath: pickerId.dateKeyPath] },
+            set: { viewModel.setDate($0, for: pickerId) }
+        )
+    }
+
+    private func timeZoneBinding(for pickerId: EventFormViewModel.DatePickerId) -> Binding<Foundation.TimeZone> {
+        Binding(
+            get: { viewModel.draft[keyPath: pickerId.timeZoneKeyPath] ?? .current },
+            set: { viewModel.setTimeZone($0, for: pickerId, calendar: calendar) }
+        )
     }
 
     private func didTapSave() {
@@ -250,7 +246,7 @@ public struct EventFormView: View {
     VStack {}
         .sheet(isPresented: .constant(true)) {
             NavigationStack {
-                EventFormView(editionMode: .new)
+                EventFormView(editionMode: .new(selectedDate: Date()))
             }
             .interactiveDismissDisabled()
         }
