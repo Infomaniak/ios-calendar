@@ -92,7 +92,7 @@ public struct GeneralSettingsView: View {
                 Toggle(CalendarResourcesStrings.generalSettingsShowWeekendsLabel, isOn: $displayWeekends)
                     .toggleStyle(.switch)
 
-                Toggle("!Show week numbers", isOn: $showWeekNumbers)
+                Toggle(CalendarResourcesStrings.generalSettingsShowWeekNumbersLabel, isOn: $showWeekNumbers)
                     .toggleStyle(.switch)
             } header: {
                 Text(CalendarResourcesStrings.generalSettingsDisplayLabel)
