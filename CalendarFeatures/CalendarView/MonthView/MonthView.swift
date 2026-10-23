@@ -36,7 +36,7 @@ struct MonthView: View {
     private var showWeekNumbers = DefaultPreferences.showWeekNumbers
 
     @ScaledMetric(relativeTo: .caption2) private var weekNumberWidth: CGFloat = 24
-    @ScaledMetric(relativeTo: .subheadline) private var dayNumberHeight: CGFloat = 24
+    @ScaledMetric(relativeTo: .caption) private var dayNumberHeight: CGFloat = 12
     @ScaledMetric(relativeTo: .caption) private var eventTitleLineHeight: CGFloat = 16
 
     @State private var weekLayouts = [MonthGrid: [MonthWeekLayout]]()
