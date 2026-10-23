@@ -33,13 +33,12 @@ struct MonthDayCellView: View {
     let day: Date
     let isInMonth: Bool
     let isToday: Bool
-    let dayNumberHeight: CGFloat
 
     private var dayNumberColor: Color {
-        if isToday {
+        if isToday && isInMonth {
             return theme.color.contentInverse
         }
-        return isInMonth ? theme.color.contentPrimary : theme.color.contentTertiary
+        return theme.color.contentPrimary
     }
 
     var body: some View {
@@ -47,6 +46,7 @@ struct MonthDayCellView: View {
             Text(day, format: .dateTime.day())
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(dayNumberColor)
+                .opacity(isInMonth ? 1 : 0.45)
                 .padding(value: .micro)
                 .background {
                     if isToday {
@@ -54,7 +54,7 @@ struct MonthDayCellView: View {
                             .fill(theme.color.backgroundBrand)
                     }
                 }
-                .padding(value: .micro)
+                .padding(value: .mini)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                 .background(isToday ? theme.color.backgroundBrand.opacity(0.1) : .clear)
                 .contentShape(.rect)
