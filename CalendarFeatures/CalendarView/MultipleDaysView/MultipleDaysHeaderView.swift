@@ -38,7 +38,7 @@ struct MultipleDaysHeaderView: View {
                 .padding(.trailing, value: .small)
                 .frame(width: TimelineBackgroundView.Constants.leadingInset, alignment: .trailing)
 
-            TimelineView(EveryDayTimelineSchedule(calendar: calendar)) { timeline in
+            TimelineView(.everyDay(calendar)) { timeline in
                 CalendarPeriodPagerMirror(scrollSync: pagerScrollSync, viewCount: layout.pagerViewCount) { pagerDate in
                     HStack(spacing: 0) {
                         ForEach(layout.pageDates(for: pagerDate, calendar: calendar), id: \.self) { day in
