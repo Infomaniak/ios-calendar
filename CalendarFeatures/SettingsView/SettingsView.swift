@@ -87,7 +87,7 @@ public struct SettingsView: View {
                 }
                 .pickerStyle(.navigationLink)
 
-                Toggle("!Show week numbers", isOn: $showWeekNumbers)
+                Toggle(CalendarResourcesStrings.generalSettingsShowWeekNumbersLabel, isOn: $showWeekNumbers)
                     .toggleStyle(.switch)
             } header: {
                 Text(CalendarResourcesStrings.generalSettingsDisplayLabel)
