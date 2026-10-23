@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarCore
 import CalendarCoreUI
 import DesignSystem
 import ESDSFoundation
@@ -26,7 +27,8 @@ struct MonthDayCellView: View {
 
     @Environment(MainViewState.self) private var mainViewState
 
-    @SceneStorage("SelectedMode") private var selectedMode: CalendarViewMode = .day
+    @SceneStorage(SceneStorageKeys.selectedMode.rawValue)
+    private var selectedMode = DefaultSceneValues.selectedMode
 
     let day: Date
     let isInMonth: Bool
