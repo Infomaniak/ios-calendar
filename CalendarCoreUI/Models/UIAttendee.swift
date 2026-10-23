@@ -123,6 +123,14 @@ public struct UIAttendee: UICalendarUser, Sendable, Equatable, Hashable, Identif
         self.isOrganizer = isOrganizer
         self.contact = contact
     }
+
+    public init(attendee: UIAttendee, status: UIParticipationStatus) {
+        displayName = attendee.displayName
+        email = attendee.email
+        self.status = status
+        isOrganizer = attendee.isOrganizer
+        contact = attendee.contact
+    }
 }
 
 public extension UIAttendee {
