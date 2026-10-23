@@ -34,22 +34,6 @@ private extension View {
     }
 }
 
-struct ExpandedAccounts: RawRepresentable {
-    var ids: Set<Int>
-
-    init(ids: Set<Int> = []) {
-        self.ids = ids
-    }
-
-    init?(rawValue: String) {
-        ids = Set(rawValue.split(separator: ",").compactMap { Int($0) })
-    }
-
-    var rawValue: String {
-        ids.sorted().map { String($0) }.joined(separator: ",")
-    }
-}
-
 struct CalendarListContentView: View {
     @Environment(\.esdsTheme) private var theme
     @Environment(\.calendarAccounts) private var calendarAccounts

@@ -16,15 +16,8 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarCore
 import Foundation
-
-public enum CalendarViewMode: String, CaseIterable, Sendable {
-    case planning
-    case day
-    case threeDays
-    case week
-    case month
-}
 
 extension CalendarViewMode {
     var miniCalendarHeaderConfiguration: MiniCalendarHeaderConfiguration {
