@@ -203,7 +203,7 @@ public struct EventDetailsView: View {
                                 Button(role: .destructive) {
                                     deleteEvent(scope: .thisAndFollowing)
                                 } label: {
-                                    Text(CalendarResourcesStrings.buttonDeleteThisAndFollowingEvents)
+                                    Text(CalendarResourcesStrings.buttonThisAndFollowingEvents)
                                 }
 
                                 Button(role: .destructive) {

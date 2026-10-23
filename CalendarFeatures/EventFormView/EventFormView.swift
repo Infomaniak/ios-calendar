@@ -173,7 +173,7 @@ public struct EventFormView: View {
                         Button(CalendarResourcesStrings.buttonThisEvent) {
                             saveEvent(scope: .thisOccurrence)
                         }
-                        Button(CalendarResourcesStrings.buttonDeleteThisAndFollowingEvents) {
+                        Button(CalendarResourcesStrings.buttonThisAndFollowingEvents) {
                             saveEvent(scope: .thisAndFollowing)
                         }
                         Button(CalendarResourcesStrings.buttonAllEvents) {
