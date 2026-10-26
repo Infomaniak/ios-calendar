@@ -35,7 +35,16 @@ public enum RootViewType: Equatable {
 
 @MainActor
 public final class RootViewState: ObservableObject {
-    @Published public var state: RootViewType = .preloading
+    @Published public var state: RootViewType = .preloading {
+        didSet {
+            if state == .onboarding {
+                isOnboardingInProgress = true
+            }
+        }
+    }
+
+    private var isOnboardingInProgress = false
+    private var latestCalendarAccounts: [CalendarAccount] = []
 
     public init() {
         Task {
@@ -56,8 +65,15 @@ public final class RootViewState: ObservableObject {
         }
     }
 
+    public func completeOnboarding() {
+        isOnboardingInProgress = false
+        transitionToMainViewIfPossible(calendarAccounts: latestCalendarAccounts)
+    }
+
     public func transitionToMainViewIfPossible(calendarAccounts: [CalendarAccount]) {
-        if !calendarAccounts.isEmpty {
+        latestCalendarAccounts = calendarAccounts
+
+        if !calendarAccounts.isEmpty, !isOnboardingInProgress {
             let indexedAccounts = Dictionary(uniqueKeysWithValues: calendarAccounts.map { ($0.id, $0) })
             state = .mainView(accounts: indexedAccounts)
         } else {
