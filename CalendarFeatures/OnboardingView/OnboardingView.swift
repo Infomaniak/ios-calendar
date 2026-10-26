@@ -68,6 +68,7 @@ public struct OnboardingView: View {
 
     @StateObject private var loginHandler = LoginHandler()
     @State private var selection = 0
+    @State private var isTransitionInProgress = false
 
     private let steps = OnboardingStep.allCases
 
@@ -100,7 +101,10 @@ public struct OnboardingView: View {
     }
 
     private func nextPressed(step: OnboardingStep) {
+        guard !isTransitionInProgress else { return }
+        isTransitionInProgress = true
         Task {
+            defer { isTransitionInProgress = false }
             switch step {
             case .notifications:
                 await requestNotificationsIfNeeded()
