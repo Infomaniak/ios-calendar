@@ -49,10 +49,11 @@ struct WaveView<BottomView: View>: UIViewControllerRepresentable {
             pageIndicatorColor: UIColor.tintColor,
             isScrollEnabled: false,
             dismissHandler: dismissHandler,
-            isPageIndicatorHidden: true
+            isPageIndicatorHidden: false
         )
 
         let controller = OnboardingViewController(configuration: configuration)
+        controller.pageIndicator.isHidden = true
         controller.delegate = context.coordinator
 
         return controller

@@ -66,9 +66,10 @@ public struct OnboardingView: View {
     @Environment(\.esdsTheme) private var theme
     @EnvironmentObject private var rootViewState: RootViewState
 
-    @StateObject private var loginHandler = LoginHandler()
     @State private var selection = 0
     @State private var isTransitionInProgress = false
+
+    @StateObject private var loginHandler = LoginHandler()
 
     private let steps = OnboardingStep.allCases
 
