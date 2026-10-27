@@ -31,22 +31,23 @@ struct EventMappingTests {
             7: makeAccount(id: 7, accessToken: "account-7-token"),
             42: makeAccount(id: 42, accessToken: "account-42-token")
         ]
-        let avatar = UIAvatarType.remote(rawURL: "https://example.com/avatar", accountId: Int64(accountId))
+        let url = "https://mail.\(ApiEnvironment.current.host)/avatar"
+        let avatar = UIAvatarType.remote(rawURL: url, accountId: Int64(accountId))
         let request = try #require(avatar.imageRequest(accounts: accounts)?.urlRequest)
 
-        #expect(request.url?.absoluteString == "https://example.com/avatar")
+        #expect(request.url?.absoluteString == url)
         #expect(request.value(forHTTPHeaderField: "Authorization") == "Bearer account-\(accountId)-token")
     }
 
     @Test func remoteAvatarWithoutMatchingAccountReturnsNil() {
-        let avatar = UIAvatarType.remote(rawURL: "https://example.com/avatar", accountId: 42)
+        let avatar = UIAvatarType.remote(rawURL: "https://mail.\(ApiEnvironment.current.host)/avatar", accountId: 42)
 
         #expect(avatar.imageRequest(accounts: [:]) == nil)
         #expect(avatar.imageRequest(accounts: [7: makeAccount(id: 7, accessToken: "other-account-token")]) == nil)
     }
 
     @Test func remoteAvatarWithoutAccessTokenReturnsNil() {
-        let avatar = UIAvatarType.remote(rawURL: "https://example.com/avatar", accountId: 42)
+        let avatar = UIAvatarType.remote(rawURL: "https://mail.\(ApiEnvironment.current.host)/avatar", accountId: 42)
         let accounts = [
             7: makeAccount(id: 7, accessToken: "other-account-token"),
             42: makeAccount(id: 42, accessToken: "")
@@ -119,7 +120,7 @@ struct EventMappingTests {
             location: "Meeting room",
             status: .confirmed,
             timeBlocking: .blocks,
-            classification: ClassificationPrivate(),
+            classification: .private,
             categories: [],
             meetRoomUrl: "https://kmeet.infomaniak.com/meeting",
             bookableUuid: nil,
@@ -130,7 +131,8 @@ struct EventMappingTests {
             organizer: Organizer(email: attendee.email, displayName: "Guest", contact: contact),
             colors: colors,
             canEdit: true,
-            alarms: []
+            alarms: [],
+            recurrenceMasterBounds: nil
         )
         let mapped = UIEventDetails(event: event, userEmail: " GUEST@EXAMPLE.COM ")
 
@@ -227,6 +229,9 @@ struct EventMappingTests {
             colors: colors,
             timing: floatingTiming,
             hasAttendees: true,
+            hasMeetRoom: false,
+            isBookable: false,
+            isRecurring: false,
             myStatus: .delegated
         )
     }

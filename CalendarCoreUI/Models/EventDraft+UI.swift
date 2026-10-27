@@ -21,7 +21,7 @@ import Foundation
 import MultiplatformCalendar
 
 public extension EventDraft {
-    var classification: UIClassification {
+    var classification: Classification {
         return isPrivate ? .private : .public
     }
 
