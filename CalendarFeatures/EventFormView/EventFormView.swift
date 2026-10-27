@@ -64,6 +64,7 @@ public struct EventFormView: View {
         Form {
             Section {
                 TextField(CalendarResourcesStrings.eventTitle, text: $viewModel.draft.title)
+                    .fontWeight(.bold)
                     .focused($isTitleFocused)
             } footer: {
                 if viewModel.validationErrors.contains(.titleTooLong) {
