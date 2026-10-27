@@ -34,7 +34,7 @@ struct AttendeesListView: View {
             }
         }
 
-        return filteredAttendees.sortedForDisplay()
+        return filteredAttendees
     }
 
     var body: some View {
