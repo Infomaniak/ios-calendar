@@ -75,6 +75,7 @@ public struct EventAttendeesCell: View {
                     .foregroundStyle(theme.color.contentSecondary)
             } else {
                 attendeesAvatarStack
+                    .accessibilityHidden(true)
             }
 
             ESDSSymbols.chevronRight.image
@@ -97,8 +98,8 @@ public struct EventAttendeesCell: View {
             if attendees.count > 4 {
                 InitialsView(
                     initials: "+\(attendees.count - 4)",
-                    backgroundColor: theme.color.backgroundDatavizGrayDim2,
-                    foregroundColor: theme.color.contentOnDatavizGrayDim1,
+                    backgroundColor: theme.color.backgroundElevationSunken,
+                    foregroundColor: theme.color.contentBrand,
                     size: IKIconSize.large.rawValue
                 )
             }
