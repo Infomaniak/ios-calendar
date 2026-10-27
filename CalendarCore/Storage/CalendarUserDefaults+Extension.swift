@@ -33,6 +33,7 @@ public extension UserDefaults.Keys {
     static let theme = UserDefaults.Keys(rawValue: "theme")
     static let firstWeekday = UserDefaults.Keys(rawValue: "firstWeekday")
     static let displayWeekends = UserDefaults.Keys(rawValue: "displayWeekends")
+    static let showWeekNumbers = UserDefaults.Keys(rawValue: "showWeekNumbers")
     static let defaultEventDuration = UserDefaults.Keys(rawValue: "defaultEventDuration")
     static let customTimeZoneIdentifier = UserDefaults.Keys(rawValue: "customTimeZoneIdentifier")
     static let lastSelectedCalendarId = UserDefaults.Keys(rawValue: "lastSelectedCalendarId")
@@ -98,6 +99,18 @@ public extension UserDefaults {
         }
         set {
             set(newValue, forKey: key(.displayWeekends))
+        }
+    }
+
+    var showWeekNumbers: Bool {
+        get {
+            if object(forKey: key(.showWeekNumbers)) == nil {
+                set(DefaultPreferences.showWeekNumbers, forKey: key(.showWeekNumbers))
+            }
+            return bool(forKey: key(.showWeekNumbers))
+        }
+        set {
+            set(newValue, forKey: key(.showWeekNumbers))
         }
     }
 

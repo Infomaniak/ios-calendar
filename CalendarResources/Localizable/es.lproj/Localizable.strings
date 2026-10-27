@@ -140,6 +140,9 @@
 /* loco:6aa804867b7998a59003a9fc */
 "generalSettingsDisplayLabel" = "Pantalla";
 
+/* loco:6adb5844fc0bad425c0b1494 */
+"generalSettingsShowWeekNumbersLabel" = "Mostrar números de semana";
+
 /* loco:6aa9363ad1458d183b0de9e2 */
 "generalSettingsShowWeekendsLabel" = "Mostrar fines de semana";
 

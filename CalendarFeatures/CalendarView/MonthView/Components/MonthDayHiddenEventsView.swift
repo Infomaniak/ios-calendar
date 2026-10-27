@@ -16,14 +16,25 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Foundation
+import CalendarCoreUI
+import DesignSystem
+import ESDSFoundation
 import SwiftUI
 
-public enum DefaultPreferences {
-    public static let matomoAuthorized = true
-    public static let sentryAuthorized = true
-    public static let theme: Theme = .system
-    public static let firstWeekday = Calendar.autoupdatingCurrent.firstWeekday
-    public static let displayWeekends = true
-    public static let defaultEventDuration = DefaultEventDuration.thirtyMinutes
+struct MonthDayHiddenEventsView: View {
+    @Environment(\.esdsTheme) private var theme
+
+    let count: Int
+
+    var body: some View {
+        Text(verbatim: "+\(count)")
+            .font(.caption2.bold())
+            .foregroundStyle(theme.color.contentTertiary)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .allowsHitTesting(false)
+    }
+}
+
+#Preview {
+    MonthDayHiddenEventsView(count: 42)
 }
