@@ -23,6 +23,16 @@ import InfomaniakCore
 import InfomaniakDI
 import SwiftUI
 
+extension VerticalAlignment {
+    enum SplashScreenIconAlignment: AlignmentID {
+        static func defaultValue(in context: ViewDimensions) -> CGFloat {
+            return context[VerticalAlignment.center]
+        }
+    }
+
+    static let splashScreenIconAlignment = VerticalAlignment(SplashScreenIconAlignment.self)
+}
+
 public struct PreloadingView: View {
     @EnvironmentObject private var rootViewState: RootViewState
 
@@ -33,7 +43,7 @@ public struct PreloadingView: View {
     public init() {}
 
     public var body: some View {
-        ZStack(alignment: .center) {
+        ZStack(alignment: Alignment(horizontal: .center, vertical: .splashScreenIconAlignment)) {
             backgroundImage
                 .resizable()
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -41,7 +51,7 @@ public struct PreloadingView: View {
 
             VStack(spacing: IKPadding.large) {
                 logoImage
-                    .frame(maxHeight: .infinity)
+                    .alignmentGuide(.splashScreenIconAlignment) { d in d[VerticalAlignment.center] }
 
                 ProgressView()
                     .progressViewStyle(.circular)
