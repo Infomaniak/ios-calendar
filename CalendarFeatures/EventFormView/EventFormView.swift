@@ -170,13 +170,13 @@ public struct EventFormView: View {
                         isPresented: $isShowingRecurrenceScope,
                         titleVisibility: .visible
                     ) {
-                        Button(CalendarResourcesStrings.buttonEditThisEvent) {
+                        Button(CalendarResourcesStrings.buttonThisEvent) {
                             saveEvent(scope: .thisOccurrence)
                         }
-                        Button(CalendarResourcesStrings.buttonDeleteThisAndFollowingEvents) {
+                        Button(CalendarResourcesStrings.buttonThisAndFollowingEvents) {
                             saveEvent(scope: .thisAndFollowing)
                         }
-                        Button(CalendarResourcesStrings.buttonDeleteAllEvents) {
+                        Button(CalendarResourcesStrings.buttonAllEvents) {
                             saveEvent(scope: .allOccurrences)
                         }
                     }

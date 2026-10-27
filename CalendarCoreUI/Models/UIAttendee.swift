@@ -46,6 +46,19 @@ public extension UIParticipationStatus {
         }
     }
 
+    var reply: ParticipationReply? {
+        switch self {
+        case .accepted:
+            return .accepted
+        case .tentative:
+            return .tentative
+        case .declined:
+            return .declined
+        case .needsAction:
+            return nil
+        }
+    }
+
     var name: String {
         switch self {
         case .accepted:
@@ -109,6 +122,14 @@ public struct UIAttendee: UICalendarUser, Sendable, Equatable, Hashable, Identif
         self.status = status
         self.isOrganizer = isOrganizer
         self.contact = contact
+    }
+
+    public init(attendee: UIAttendee, status: UIParticipationStatus) {
+        displayName = attendee.displayName
+        email = attendee.email
+        self.status = status
+        isOrganizer = attendee.isOrganizer
+        contact = attendee.contact
     }
 }
 

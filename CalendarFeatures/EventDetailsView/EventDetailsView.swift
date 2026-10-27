@@ -44,14 +44,22 @@ public struct EventDetailsView: View {
     @State private var editData: EventEditData?
     @State private var isShowingEditError = false
     @State private var editErrorMessage = ""
+    @State private var isShowingReplyError = false
+    @State private var replyErrorMessage = ""
 
     private let event: UIEventDetails
 
     private var uniqueAttendees: [UIAttendee] {
         var seenEmails = Set<String>()
 
-        return event.attendees.filter { attendee in
-            seenEmails.insert(attendee.email).inserted
+        return event.attendees.compactMap { attendee in
+            guard seenEmails.insert(attendee.email).inserted else { return nil }
+
+            if let selectedStatus, attendee.email == event.user?.email {
+                return UIAttendee(attendee: attendee, status: selectedStatus)
+            }
+
+            return attendee
         }
     }
 
@@ -189,13 +197,13 @@ public struct EventDetailsView: View {
                                 Button(role: .destructive) {
                                     deleteEvent(scope: .thisAndFollowing)
                                 } label: {
-                                    Text(CalendarResourcesStrings.buttonDeleteThisAndFollowingEvents)
+                                    Text(CalendarResourcesStrings.buttonThisAndFollowingEvents)
                                 }
 
                                 Button(role: .destructive) {
                                     deleteEvent(scope: .allOccurrences)
                                 } label: {
-                                    Text(CalendarResourcesStrings.buttonDeleteAllEvents)
+                                    Text(CalendarResourcesStrings.buttonAllEvents)
                                 }
                             }
                         }
@@ -211,6 +219,11 @@ public struct EventDetailsView: View {
                 Button(CalendarResourcesStrings.buttonConfirm) {}
             } message: {
                 Text(editErrorMessage)
+            }
+            .alert(CalendarResourcesStrings.replyEventErrorTitle, isPresented: $isShowingReplyError) {
+                Button(CalendarResourcesStrings.buttonConfirm) {}
+            } message: {
+                Text(replyErrorMessage)
             }
             .navigationDestination(item: $editData) { editData in
                 EventFormView(
@@ -228,11 +241,11 @@ public struct EventDetailsView: View {
                     HStack(spacing: IKPadding.medium) {
                         ForEach([UIParticipationStatus.accepted, .declined, .tentative], id: \.self) { answer in
                             AnswerButton(
+                                shouldShowDialog: event.isOccurrence,
                                 answer: answer,
                                 isSelected: selectedStatus == answer
-                            ) {
-                                // TODO: Update the event's participation status when the user selects an answer
-                                selectedStatus = answer
+                            ) { scope in
+                                updateParticipationStatus(to: answer, scope: scope)
                             }
                         }
                     }
@@ -258,6 +271,28 @@ public struct EventDetailsView: View {
                 isShowingEditError = true
             }
             isLoadingEdit = false
+        }
+    }
+
+    private func updateParticipationStatus(to status: UIParticipationStatus, scope: RecurrenceScope) {
+        guard let reply = status.reply else { return }
+
+        let previousStatus = selectedStatus
+        selectedStatus = status
+
+        Task {
+            do {
+                try await UpdateParticipationStatusUseCase().execute(
+                    reply: reply,
+                    occurrenceId: event.occurrenceId,
+                    scope: scope
+                )
+            } catch {
+                Logger.view.error("Failed to update participation status: \(error.localizedDescription)")
+                replyErrorMessage = error.localizedDescription
+                isShowingReplyError = true
+                selectedStatus = previousStatus
+            }
         }
     }
 
