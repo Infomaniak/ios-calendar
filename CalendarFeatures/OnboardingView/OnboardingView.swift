@@ -30,7 +30,7 @@ extension Slide {
             Slide(
                 backgroundImage: UIImage(),
                 backgroundImageTintColor: nil,
-                content: .illustration(CalendarResourcesAsset.Images.onboardingStart.image),
+                content: .illustration(CalendarResourcesAsset.Images.onboardingLogin.image),
                 bottomView: OnboardingTextView(text: .oneSlide)
             ),
             Slide(
@@ -48,7 +48,7 @@ extension Slide {
             Slide(
                 backgroundImage: UIImage(),
                 backgroundImageTintColor: nil,
-                content: .illustration(CalendarResourcesAsset.Images.onboardingEnd.image),
+                content: .illustration(CalendarResourcesAsset.Images.onboardingReady.image),
                 bottomView: OnboardingTextView(text: .fourSlide)
             )
         ]

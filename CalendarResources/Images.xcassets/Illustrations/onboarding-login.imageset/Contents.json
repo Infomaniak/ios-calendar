@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "end-light.svg",
+      "filename" : "login-light.svg",
       "idiom" : "universal"
     },
     {
@@ -11,7 +11,7 @@
           "value" : "dark"
         }
       ],
-      "filename" : "end-dark.svg",
+      "filename" : "login-dark.svg",
       "idiom" : "universal"
     }
   ],
