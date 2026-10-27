@@ -110,7 +110,7 @@ public struct EventFormView: View {
                     EventAttendeesCell(attendees: viewModel.draft.attendees.map { UIAttendee(attendee: $0) })
                 }
                 .navigationDestination(isPresented: $isNavigatingToAttendeesList) {
-                    Text(CalendarResourcesStrings.attendeesNotEditableMessage)
+                    EditableAttendeesList(attendees: viewModel.draft.attendees.map { UIAttendee(attendee: $0) })
                 }
             }
 
