@@ -29,6 +29,8 @@ jobs:
         run: tuist inspect dependencies --only implicit
       - name: Build
         run: tuist build --clean --derived-data-path "$DERIVED_DATA_PATH" "Calendar"
+      - name: Test
+        run: tuist test Calendar-Workspace --no-selective-testing -- -derivedDataPath "$DERIVED_DATA_PATH"
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@fd88b7d7ccbaefd23d8f36f73b59db7a3d246602 #6.0.0
         env:
