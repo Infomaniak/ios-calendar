@@ -21,51 +21,22 @@ import ESDSSymbols
 import Foundation
 import MultiplatformCalendar
 
-public enum UIClassification: String, Sendable, CaseIterable {
-    case `public`
-    case `private`
-    case confidential
-    case custom
-
-    public var text: String? {
+public extension MultiplatformCalendar.Classification {
+    var text: String {
         switch self {
         case .public:
             return CalendarResourcesStrings.publicLabel
         case .private:
             return CalendarResourcesStrings.privateLabel
-        default:
-            return nil
         }
     }
 
-    public var icon: ESDSSymbols? {
+    var icon: ESDSSymbols {
         switch self {
         case .public:
             return .lockOpen
         case .private:
             return .lock
-        default:
-            return nil
-        }
-    }
-}
-
-public extension UIClassification {
-    init?(classification: MultiplatformCalendar.Classification?) {
-        guard let classification else {
-            self = .public
-            return nil
-        }
-
-        switch onEnum(of: classification) {
-        case .public:
-            self = .public
-        case .private:
-            self = .private
-        case .confidential:
-            self = .confidential
-        case .custom:
-            self = .custom
         }
     }
 }

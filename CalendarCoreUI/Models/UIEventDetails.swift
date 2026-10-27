@@ -31,7 +31,7 @@ public struct UIEventDetails: Identifiable, Equatable, Hashable, Sendable {
     public let location: String?
     public let kMeetLink: URL?
     public let colors: UIEventColor
-    public let classification: UIClassification?
+    public let classification: Classification
     public let canEdit: Bool
     public let isOccurrence: Bool
 
@@ -67,7 +67,7 @@ public struct UIEventDetails: Identifiable, Equatable, Hashable, Sendable {
         attendees: [UIAttendee],
         organizer: UIOrganizer? = nil,
         colors: UIEventColor,
-        classification: UIClassification? = .public,
+        classification: Classification = .public,
         timing: UITiming,
         canEdit: Bool,
         isOccurrence: Bool = false
@@ -134,7 +134,7 @@ public extension UIEventDetails {
 
         colors = .init(eventColors: event.colors)
 
-        classification = .init(classification: event.classification)
+        classification = event.classification
 
         canEdit = event.canEdit
         isOccurrence = event.isOccurrence
