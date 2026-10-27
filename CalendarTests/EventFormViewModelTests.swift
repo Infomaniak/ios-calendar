@@ -401,7 +401,7 @@ struct EventFormViewModelTests {
             location: editData.location,
             status: .confirmed,
             timeBlocking: editData.timeBlocking,
-            classification: ClassificationPublic(),
+            classification: .public,
             categories: [],
             meetRoomUrl: nil,
             bookableUuid: nil,

@@ -69,14 +69,6 @@ public struct EventDraft: Hashable, Equatable, Sendable {
 
 public extension EventDraft {
     init(event: Event, editData: EventEditData) {
-        let isPrivate: Bool
-        switch onEnum(of: event.classification) {
-        case .private:
-            isPrivate = true
-        default:
-            isPrivate = false
-        }
-
         self = EventDraft(
             calendarId: event.calendarIdValue,
             title: editData.title,
@@ -89,7 +81,7 @@ public extension EventDraft {
             attendees: event.attendees,
             alarms: event.alarms.map { EventAlarmDraft(eventAlarm: $0) },
             isOccupied: editData.timeBlocking != .doesNotBlock,
-            isPrivate: isPrivate
+            isPrivate: event.classification == .private
         )
     }
 
