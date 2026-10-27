@@ -156,8 +156,8 @@ public enum UIAlarmAction: Identifiable, Sendable, Hashable, Comparable {
 
     private var sortOrder: Int {
         switch self {
-        case .email: 0
-        case .display: 1
+        case .display: 0
+        case .email: 1
         case .audio: 2
         case .unknown: 3
         }

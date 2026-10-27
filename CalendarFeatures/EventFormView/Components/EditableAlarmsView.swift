@@ -28,7 +28,7 @@ struct EditableAlarmsView: View {
     }
 
     var body: some View {
-        ForEach([UIAlarmAction.email, .display]) { action in
+        ForEach([UIAlarmAction.display, UIAlarmAction.email]) { action in
             EventAlarmTypeRowsView(alarms: $alarms, action: action)
         }
 
