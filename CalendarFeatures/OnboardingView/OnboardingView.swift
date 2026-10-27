@@ -64,6 +64,7 @@ enum OnboardingStep: CaseIterable {
 
 public struct OnboardingView: View {
     @Environment(\.esdsTheme) private var theme
+
     @EnvironmentObject private var rootViewState: RootViewState
 
     @State private var selection = 0
@@ -94,15 +95,16 @@ public struct OnboardingView: View {
         }
         .ignoresSafeArea()
         .loginErrorAlert(loginHandler: loginHandler)
-        .onChange(of: loginHandler.isLoggedIn) { _, isLoggedIn in
-            guard isLoggedIn, steps[selection] == .login else { return }
-            Task { await goToNextStep() }
+        .task(id: loginHandler.isLoggedIn) {
+            guard loginHandler.isLoggedIn, steps[selection] == .login else { return }
+            await goToNextStep()
         }
         .background(theme.color.backgroundElevationSunken)
     }
 
     private func nextPressed(step: OnboardingStep) {
         guard !isTransitionInProgress else { return }
+
         isTransitionInProgress = true
         Task {
             defer { isTransitionInProgress = false }
@@ -112,11 +114,11 @@ public struct OnboardingView: View {
             case .contacts:
                 await requestContactsIfNeeded()
             case .everythingReady:
-                rootViewState.completeOnboarding()
-                return
+                break
             case .login:
                 break
             }
+
             await goToNextStep()
         }
     }
@@ -159,7 +161,7 @@ public struct OnboardingView: View {
         }
 
         guard nextIndex < steps.count else {
-            rootViewState.completeOnboarding()
+            await rootViewState.completeOnboarding()
             return
         }
 

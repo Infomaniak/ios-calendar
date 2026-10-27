@@ -35,16 +35,7 @@ public enum RootViewType: Equatable {
 
 @MainActor
 public final class RootViewState: ObservableObject {
-    @Published public var state: RootViewType = .preloading {
-        didSet {
-            if state == .onboarding {
-                isOnboardingInProgress = true
-            }
-        }
-    }
-
-    private var isOnboardingInProgress = false
-    private var latestCalendarAccounts: [CalendarAccount] = []
+    @Published public var state: RootViewType = .preloading
 
     public init() {
         Task {
@@ -65,20 +56,29 @@ public final class RootViewState: ObservableObject {
         }
     }
 
-    public func completeOnboarding() {
-        isOnboardingInProgress = false
-        transitionToMainViewIfPossible(calendarAccounts: latestCalendarAccounts)
+    public func completeOnboarding() async {
+        @InjectService var accountManager: AccountManager
+        let accounts = await accountManager.calendarAccounts.values
+
+        transitionToMainView(calendarAccounts: Array(accounts))
     }
 
     public func transitionToMainViewIfPossible(calendarAccounts: [CalendarAccount]) {
-        latestCalendarAccounts = calendarAccounts
-
-        if !calendarAccounts.isEmpty, !isOnboardingInProgress {
-            let indexedAccounts = Dictionary(uniqueKeysWithValues: calendarAccounts.map { ($0.id, $0) })
-            state = .mainView(accounts: indexedAccounts)
-        } else {
-            state = .onboarding
+        guard state != .onboarding else {
+            return
         }
+
+        transitionToMainView(calendarAccounts: calendarAccounts)
+    }
+
+    private func transitionToMainView(calendarAccounts: [CalendarAccount]) {
+        guard !calendarAccounts.isEmpty else {
+            state = .onboarding
+            return
+        }
+
+        let indexedAccounts = Dictionary(uniqueKeysWithValues: calendarAccounts.map { ($0.id, $0) })
+        state = .mainView(accounts: indexedAccounts)
     }
 }
 
