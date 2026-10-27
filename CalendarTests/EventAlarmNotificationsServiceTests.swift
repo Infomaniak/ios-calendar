@@ -132,12 +132,11 @@ struct EventAlarmNotificationsServiceTests {
         #expect(request.content.userInfo[NotificationsHelper.UserInfoKeys.eventId] as? String == "event-id")
     }
 
-    @Test func usesEventTitleAsBodyRegardlessOfAlarmDescriptionAndLocation() async throws {
+    @Test func usesEventTitleAsBodyRegardlessOfLocation() async throws {
         let upcomingAlarm = EventAlarmTestFixtures.upcomingAlarm(
             id: "alarm-id",
             title: "Team meeting",
-            location: "Meeting room",
-            alarmDescription: "Join the meeting"
+            location: "Meeting room"
         )
         let notificationCenter = EventAlarmTestNotificationCenter()
         let eventsProvider = EventAlarmTestEventsProvider(upcomingAlarms: [upcomingAlarm])
@@ -256,16 +255,11 @@ private enum EventAlarmTestFixtures {
         eventId: String? = nil,
         firesAt: Date = Date(timeIntervalSince1970: 1_800_000_000),
         title: String? = nil,
-        location: String? = nil,
-        alarmDescription: String? = nil
+        location: String? = nil
     ) -> UpcomingAlarm {
         let alarm = EventAlarm(
             action: AlarmActionDisplay(),
-            trigger: AlarmTriggerRelative(offset: -300, relatedTo: .start),
-            description: alarmDescription,
-            summary: nil,
-            attendees: [],
-            attachments: []
+            trigger: AlarmTriggerRelative(offset: -300, relatedTo: .start)
         )
         let startDate = LocalDateTime(
             year: 2027,
@@ -309,6 +303,9 @@ private enum EventAlarmTestFixtures {
             colors: colors,
             timing: timing,
             hasAttendees: false,
+            hasMeetRoom: false,
+            isBookable: false,
+            isRecurring: false,
             myStatus: nil
         )
         let firesAtInstant = KotlinInstant.companion.fromEpochMilliseconds(
