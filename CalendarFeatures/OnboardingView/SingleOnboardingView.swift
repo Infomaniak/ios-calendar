@@ -24,7 +24,7 @@ public struct SingleOnboardingView: View {
 
     @StateObject private var loginHandler = LoginHandler()
 
-    private let slides = [Slide.onboardingSlides.last!]
+    private let slides = [Slide.onboardingSlides.first!]
 
     public init() {}
 
@@ -36,11 +36,7 @@ public struct SingleOnboardingView: View {
                 Task { @MainActor in dismiss() }
             },
             bottomView: { _ in
-                OnboardingBottomButtonsView(
-                    loginHandler: loginHandler,
-                    selection: .constant(0),
-                    slideCount: 1
-                ) {
+                OnboardingBottomButtonsView(loginHandler: loginHandler) {
                     dismiss.callAsFunction()
                 }
             }

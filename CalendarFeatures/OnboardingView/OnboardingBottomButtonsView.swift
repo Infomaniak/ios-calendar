@@ -28,15 +28,7 @@ struct OnboardingBottomButtonsView: View {
 
     @ObservedObject var loginHandler: LoginHandler
 
-    @Binding var selection: Int
-
-    let slideCount: Int
-
     var dismissHandler: (() -> Void)?
-
-    private var isLastSlide: Bool {
-        selection == slideCount - 1
-    }
 
     private var shouldDisplayInterAppLogin: Bool {
         #if DEBUG
@@ -48,36 +40,21 @@ struct OnboardingBottomButtonsView: View {
     }
 
     var body: some View {
-        ZStack {
-            if isLastSlide {
-                VStack(spacing: IKPadding.mini) {
-                    ContinueWithAccountView(
-                        isLoading: loginHandler.isLoading,
-                        excludingUserIds: [],
-                        allowsMultipleSelection: false,
-                        shouldDisplayInterAppLogin: shouldDisplayInterAppLogin
-                    ) {
-                        loginPressed()
-                    } onLoginWithAccountsPressed: { accounts in
-                        loginWithAccountsPressed(accounts: accounts)
-                    } onCreateAccountPressed: {
-                        isPresentingCreateAccount = true
-                    }
-                }
-                .ikButtonFullWidth(true)
-                .controlSize(.large)
-            } else {
-                Button {
-                    withAnimation {
-                        selection = min(slideCount - 1, selection + 1)
-                    }
-                } label: {
-                    Text("Next")
-                }
-                .buttonStyle(.ikSquare)
-            }
+        ContinueWithAccountView(
+            isLoading: loginHandler.isLoading,
+            excludingUserIds: [],
+            allowsMultipleSelection: false,
+            shouldDisplayInterAppLogin: shouldDisplayInterAppLogin
+        ) {
+            loginPressed()
+        } onLoginWithAccountsPressed: { accounts in
+            loginWithAccountsPressed(accounts: accounts)
+        } onCreateAccountPressed: {
+            isPresentingCreateAccount = true
         }
-        .padding(.horizontal, value: .medium)
+        .ikButtonFullWidth(true)
+        .controlSize(.large)
+        .padding(.horizontal, value: .large)
         .sheet(isPresented: $isPresentingCreateAccount) {
             CreateAccountView(loginHandler: loginHandler)
         }
@@ -97,5 +74,5 @@ struct OnboardingBottomButtonsView: View {
 }
 
 #Preview {
-    OnboardingBottomButtonsView(loginHandler: LoginHandler(), selection: .constant(0), slideCount: 4)
+    OnboardingBottomButtonsView(loginHandler: LoginHandler())
 }

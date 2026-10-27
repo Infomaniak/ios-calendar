@@ -49,6 +49,9 @@
 /* loco:6a4deb24e064eb69fa065712 */
 "buttonShow" = "Näytä";
 
+/* loco:6adb64fe1e8de92b3409e5d2 */
+"buttonStart" = "Aloita";
+
 /* loco:6ab531b433d14113560aa25c */
 "buttonThisAndFollowingEvents" = "Tämä ja seuraavat tapahtumat";
 /* loco:6ad217df3b24e434ea055745 */
@@ -179,6 +182,30 @@
 
 /* loco:6aa8f944797adbda140fe1f6 */
 "occupiedLabel" = "Varattu";
+
+/* loco:6ad9b8a9372b223eef0c6584 */
+"onboardingFourSubtitle" = "Voit nyt käyttää tapahtumiasi Calendarista.";
+
+/* loco:6ad9b8a916272dbf0d09bf52 */
+"onboardingFourTitle" = "Kaikki on valmista";
+
+/* loco:6ad9b8a8fd305146bd0e7fb2 */
+"onboardingOneSubtitle" = "Katso, luo ja jaa tapahtumasi puhelimestasi täysin luottamuksellisesti.";
+
+/* loco:6ad9b8a8372b223eef0c6582 */
+"onboardingOneTitle" = "Kalenterisi, aina mukanasi";
+
+/* loco:6ad9b8a89259b1d05d090173 */
+"onboardingThreeSubtitle" = "Pääsy yhteystietoihisi helpottaa kalenterien jakamista ja kutsujen lähettämistä.";
+
+/* loco:6ad9b8a8678bd9f7e908e095 */
+"onboardingThreeTitle" = "Kutsu osallistujasi";
+
+/* loco:6ad9b8a99259b1d05d090175 */
+"onboardingTwoSubtitle" = "Saat muistutuksen ennen jokaista tapahtumaa etkä missaa enää tärkeitä tapaamisia.";
+
+/* loco:6ad9b8a8678bd9f7e908e093 */
+"onboardingTwoTitle" = "Salli ilmoitukset";
 
 /* loco:6a4dec95c1907081d30570c2 */
 "onlineLabel" = "Verkossa";

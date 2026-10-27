@@ -47,12 +47,13 @@ struct WaveView<BottomView: View>: UIViewControllerRepresentable {
             headerImage: nil,
             slides: slides,
             pageIndicatorColor: UIColor.tintColor,
-            isScrollEnabled: true,
+            isScrollEnabled: false,
             dismissHandler: dismissHandler,
             isPageIndicatorHidden: false
         )
 
         let controller = OnboardingViewController(configuration: configuration)
+        controller.pageIndicator.isHidden = true
         controller.delegate = context.coordinator
 
         return controller

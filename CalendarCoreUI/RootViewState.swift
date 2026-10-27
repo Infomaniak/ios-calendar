@@ -56,13 +56,29 @@ public final class RootViewState: ObservableObject {
         }
     }
 
+    public func completeOnboarding() async {
+        @InjectService var accountManager: AccountManager
+        let accounts = await accountManager.calendarAccounts.values
+
+        transitionToMainView(calendarAccounts: Array(accounts))
+    }
+
     public func transitionToMainViewIfPossible(calendarAccounts: [CalendarAccount]) {
-        if !calendarAccounts.isEmpty {
-            let indexedAccounts = Dictionary(uniqueKeysWithValues: calendarAccounts.map { ($0.id, $0) })
-            state = .mainView(accounts: indexedAccounts)
-        } else {
-            state = .onboarding
+        guard state != .onboarding else {
+            return
         }
+
+        transitionToMainView(calendarAccounts: calendarAccounts)
+    }
+
+    private func transitionToMainView(calendarAccounts: [CalendarAccount]) {
+        guard !calendarAccounts.isEmpty else {
+            state = .onboarding
+            return
+        }
+
+        let indexedAccounts = Dictionary(uniqueKeysWithValues: calendarAccounts.map { ($0.id, $0) })
+        state = .mainView(accounts: indexedAccounts)
     }
 }
 

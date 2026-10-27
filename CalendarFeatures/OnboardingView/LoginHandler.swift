@@ -33,6 +33,7 @@ public final class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
 
     @Published public var isLoading = false
     @Published public var error: LoginError?
+    @Published public private(set) var isLoggedIn = false
 
     public init() {}
 
@@ -59,6 +60,7 @@ public final class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
                 hideCreateAccountButton: false
             )
             try await accountManager.createAndSetCurrentAccount(code: result.code, codeVerifier: result.verifier)
+            isLoggedIn = true
 
             dimissHandler?()
         } catch {
@@ -97,6 +99,7 @@ public final class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
                 userInfo: [NSLocalizedDescriptionKey: "!Failed to login with all accounts"]
             ))
         } else {
+            isLoggedIn = true
             dimissHandler?()
         }
     }
@@ -128,6 +131,7 @@ public final class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
         defer { isLoading = false }
         do {
             try await accountManager.createAndSetCurrentAccount(code: code, codeVerifier: codeVerifier)
+            isLoggedIn = true
         } catch {
             loginFailed(error: error)
         }

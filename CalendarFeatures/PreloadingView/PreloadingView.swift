@@ -18,20 +18,51 @@
 
 import CalendarCore
 import CalendarCoreUI
+import DesignSystem
 import InfomaniakCore
 import InfomaniakDI
 import SwiftUI
 
+extension VerticalAlignment {
+    enum SplashScreenIconAlignment: AlignmentID {
+        static func defaultValue(in context: ViewDimensions) -> CGFloat {
+            return context[VerticalAlignment.center]
+        }
+    }
+
+    static let splashScreenIconAlignment = VerticalAlignment(SplashScreenIconAlignment.self)
+}
+
 public struct PreloadingView: View {
     @EnvironmentObject private var rootViewState: RootViewState
+
+    private let backgroundImage = Image("splashscreen-background", bundle: .main)
+    private let logoImage = Image("splashscreen-calendar", bundle: .main)
+    private let infomaniakLogoImage = Image("splashscreen-infomaniak", bundle: .main)
 
     public init() {}
 
     public var body: some View {
-        ProgressView()
-            .ignoresSafeArea()
-            .progressViewStyle(.circular)
-            .task { await preloadAndTransitionToRootView() }
+        ZStack(alignment: Alignment(horizontal: .center, vertical: .splashScreenIconAlignment)) {
+            backgroundImage
+                .resizable()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .ignoresSafeArea()
+
+            VStack(spacing: IKPadding.large) {
+                logoImage
+                    .alignmentGuide(.splashScreenIconAlignment) { d in d[VerticalAlignment.center] }
+
+                ProgressView()
+                    .progressViewStyle(.circular)
+                    .tint(.white)
+            }
+        }
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            infomaniakLogoImage
+                .padding(.bottom, value: .medium)
+        }
+        .task { await preloadAndTransitionToRootView() }
     }
 
     func preloadAndTransitionToRootView() async {
