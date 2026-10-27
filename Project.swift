@@ -24,6 +24,7 @@ let onboardingView = Feature(
     name: "OnboardingView",
     additionalDependencies: [
         TargetDependency.target(name: "\(Constants.projectName)Resources"),
+        TargetDependency.external(name: "ESDSFoundation"),
         TargetDependency.external(name: "InfomaniakCoreCommonUI"),
         TargetDependency.external(name: "InfomaniakCoreSwiftUI"),
         TargetDependency.external(name: "InfomaniakCore"),
