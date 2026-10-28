@@ -49,6 +49,15 @@ public struct ParticipantCellView: View {
         self.status = status
     }
 
+    public init(attendee: UIAttendee, avatarSize: CGFloat = 40) {
+        avatar = attendee.contact?.avatar
+        self.avatarSize = avatarSize
+        displayName = attendee.displayName ?? attendee.email
+        email = attendee.email
+        isOrganizer = attendee.isOrganizer
+        status = attendee.status
+    }
+
     public var body: some View {
         PersonCellView(
             avatar: avatar,

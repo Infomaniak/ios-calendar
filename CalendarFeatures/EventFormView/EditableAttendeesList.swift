@@ -21,27 +21,35 @@ import CalendarResources
 import MultiplatformCalendar
 import SwiftUI
 
+fileprivate extension View {
+    @ViewBuilder
+    func searchableIfWritable(_ isWritable: Bool, text: Binding<String>, prompt: String) -> some View {
+        if isWritable {
+            searchable(text: text, prompt: prompt)
+        } else {
+            self
+        }
+    }
+}
+
 struct EditableAttendeesList: View {
     @State private var search = ""
 
     @Binding var attendees: [Attendee]
 
+    let isWritable: Bool
+
     var body: some View {
         List {
             ForEach(attendees.map { UIAttendee(attendee: $0) }) { attendee in
-                ParticipantCellView(
-                    avatar: attendee.contact?.avatar,
-                    displayName: attendee.displayName ?? attendee.email,
-                    email: attendee.email,
-                    isOrganizer: attendee.isOrganizer,
-                    status: attendee.status
-                )
+                ParticipantCellView(attendee: attendee)
             }
             .onDelete { indexSet in
                 attendees.remove(atOffsets: indexSet)
             }
+            .deleteDisabled(!isWritable)
         }
-        .searchable(text: $search, prompt: "!Add an attendee")
+        .searchableIfWritable(isWritable, text: $search, prompt: "!Add an attendee")
         .navigationTitle(CalendarResourcesStrings.attendeesTitle)
         .toolbarTitleDisplayMode(.inline)
     }
@@ -49,6 +57,6 @@ struct EditableAttendeesList: View {
 
 #Preview {
     NavigationStack {
-        EditableAttendeesList(attendees: .constant([]))
+        EditableAttendeesList(attendees: .constant([]), isWritable: true)
     }
 }
