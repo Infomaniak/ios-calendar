@@ -74,7 +74,7 @@ struct EventFormViewModelTests {
         let original = try EventDraft(
             calendarId: "0",
             title: "Stored title",
-            description: "Stored description",
+            description: "Stored description\nwith multiple lines",
             startDate: date("2026-09-22T10:10:00Z"),
             startTimeZone: timeZone("Europe/Zurich"),
             endDate: date("2026-09-22T11:10:00Z"),
