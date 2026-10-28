@@ -31,7 +31,7 @@ public struct ParticipantCellView: View {
     let email: String
     let avatarSize: CGFloat
     let isOrganizer: Bool
-    let status: UIParticipationStatus
+    let status: UIParticipationStatus?
 
     public init(
         avatar: UIAvatarType?,
@@ -39,7 +39,7 @@ public struct ParticipantCellView: View {
         email: String,
         avatarSize: CGFloat = 40,
         isOrganizer: Bool,
-        status: UIParticipationStatus
+        status: UIParticipationStatus?
     ) {
         self.avatar = avatar
         self.displayName = displayName
@@ -65,15 +65,21 @@ public struct ParticipantCellView: View {
             email: email,
             avatarSize: avatarSize
         ) {
-            HStack(spacing: 0) {
-                Text(status.name)
-                    .font(.footnote.weight(.semibold))
-                    .foregroundStyle(status.color(theme: theme))
+            if status != nil || isOrganizer {
+                HStack(spacing: 0) {
+                    if let status {
+                        Text(status.name)
+                            .font(.footnote.weight(.semibold))
+                            .foregroundStyle(status.color(theme: theme))
+                    }
 
-                if isOrganizer {
-                    Text(" • \(CalendarResourcesStrings.sectionOrganizerHeader)")
-                        .font(.footnote)
-                        .foregroundStyle(theme.color.contentPrimary)
+                    if isOrganizer {
+                        Text(status == nil
+                            ? CalendarResourcesStrings.sectionOrganizerHeader
+                            : " • \(CalendarResourcesStrings.sectionOrganizerHeader)")
+                            .font(.footnote)
+                            .foregroundStyle(theme.color.contentPrimary)
+                    }
                 }
             }
         }
@@ -146,7 +152,7 @@ private struct PersonCellView<AdditionalContent: View>: View {
     }
 
     var body: some View {
-        HStack {
+        HStack(spacing: 8) {
             AvatarView(avatar: avatar, displayName: displayName, email: email, size: avatarSize)
 
             VStack(alignment: .leading, spacing: 0) {
