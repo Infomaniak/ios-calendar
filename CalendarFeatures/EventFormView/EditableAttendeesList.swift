@@ -18,16 +18,17 @@
 
 import CalendarCoreUI
 import CalendarResources
+import MultiplatformCalendar
 import SwiftUI
 
 struct EditableAttendeesList: View {
     @State private var search = ""
 
-    let attendees: [UIAttendee]
+    @Binding var attendees: [Attendee]
 
     var body: some View {
         List {
-            ForEach(attendees) { attendee in
+            ForEach(attendees.map { UIAttendee(attendee: $0) }) { attendee in
                 ParticipantCellView(
                     avatar: attendee.contact?.avatar,
                     displayName: attendee.displayName ?? attendee.email,
@@ -36,18 +37,18 @@ struct EditableAttendeesList: View {
                     status: attendee.status
                 )
             }
-            .onDelete { _ in
-                // TODO: Delete attendees
+            .onDelete { indexSet in
+                attendees.remove(atOffsets: indexSet)
             }
         }
         .searchable(text: $search, prompt: "!Add an attendee")
-        .navigationTitle("!Attendees")
+        .navigationTitle(CalendarResourcesStrings.attendeesTitle)
         .toolbarTitleDisplayMode(.inline)
     }
 }
 
 #Preview {
     NavigationStack {
-        EditableAttendeesList(attendees: UIAttendee.previews)
+        EditableAttendeesList(attendees: .constant([]))
     }
 }
