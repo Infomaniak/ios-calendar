@@ -18,6 +18,7 @@
 
 import CalendarCore
 import CalendarCoreUI
+import CalendarEditableAttendees
 import CalendarResources
 import DesignSystem
 import ESDSFoundation
