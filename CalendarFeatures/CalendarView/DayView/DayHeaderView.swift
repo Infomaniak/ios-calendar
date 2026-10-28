@@ -23,14 +23,13 @@ import ESDSFoundation
 import SwiftUI
 
 struct DayHeaderView: View {
+    @Environment(\.calendar) private var calendar
     @Environment(\.esdsTheme) private var theme
 
     @ScaledMetric(relativeTo: .caption) private var eventTitleLineHeight: CGFloat = 16
 
     let events: [UIEventSummary]
     let date: Date
-
-    private static let maxVisibleRows = 2
 
     private var eventPairs: [(UIEventSummary, UIEventSummary?)] {
         stride(from: 0, to: events.count, by: 2).map { index in
@@ -39,29 +38,22 @@ struct DayHeaderView: View {
         }
     }
 
-    private var isAllDayListScrollable: Bool {
-        eventPairs.count > Self.maxVisibleRows
+    private var allDayListMetrics: AllDayEventsListMetrics {
+        AllDayEventsListMetrics(eventTitleLineHeight: eventTitleLineHeight)
     }
 
-    /// Fixed height of the all-day list: the visible rows plus, when scrollable, a peek of the next row.
-    private var allDayListHeight: CGFloat {
-        let rowHeight = eventTitleLineHeight + IKPadding.mini * 2
-        let visibleRowCount = CGFloat(min(eventPairs.count, Self.maxVisibleRows))
-        let rowsHeight = visibleRowCount * rowHeight + (visibleRowCount - 1) * IKPadding.micro
-        let peekHeight = isAllDayListScrollable ? IKPadding.micro + IKPadding.mini : 0
-        return rowsHeight + peekHeight
+    private var isAllDayListScrollable: Bool {
+        allDayListMetrics.isScrollable(rowCount: eventPairs.count)
     }
 
     var body: some View {
         VStack {
             HStack(spacing: 0) {
-                Text(CalendarResourcesStrings.weekHeaderWeekNumber(
-                    Calendar.current.component(.weekOfYear, from: date)
-                ))
-                .font(.caption2)
-                .foregroundStyle(theme.color.contentTertiary)
-                .padding(.trailing, value: .small)
-                .frame(width: DayContentView.Constants.leadingInset, alignment: .trailing)
+                Text(CalendarResourcesStrings.weekHeaderWeekNumber(calendar.component(.weekOfYear, from: date)))
+                    .font(.caption2)
+                    .foregroundStyle(theme.color.contentTertiary)
+                    .padding(.trailing, value: .small)
+                    .frame(width: TimelineBackgroundView.Constants.leadingInset, alignment: .trailing)
 
                 HStack(spacing: 2) {
                     Text(date, format: .dateTime.weekday(.wide))
@@ -77,27 +69,16 @@ struct DayHeaderView: View {
 
             if !events.isEmpty {
                 HStack(alignment: .top, spacing: 0) {
-                    Text(CalendarResourcesStrings.allDayLabel)
-                        .font(.caption2)
-                        .foregroundStyle(theme.color.contentTertiary)
-                        .padding(.trailing, value: .small)
-                        .frame(width: DayContentView.Constants.leadingInset, alignment: .trailing)
-                        .multilineTextAlignment(.trailing)
+                    AllDayLabelView()
 
                     ScrollView {
                         LazyVStack(spacing: IKPadding.micro) {
                             ForEach(eventPairs, id: \.0.id) { firstEvent, secondEvent in
                                 HStack(spacing: IKPadding.micro) {
-                                    EventDetailsPopoverButton(event: firstEvent) {
-                                        Text(firstEvent.displayTitle)
-                                            .allDayEventStyle(for: firstEvent)
-                                    }
+                                    AllDayEventButton(event: firstEvent)
 
                                     if let secondEvent {
-                                        EventDetailsPopoverButton(event: secondEvent) {
-                                            Text(secondEvent.displayTitle)
-                                                .allDayEventStyle(for: secondEvent)
-                                        }
+                                        AllDayEventButton(event: secondEvent)
                                     }
                                 }
                             }
@@ -105,21 +86,12 @@ struct DayHeaderView: View {
                     }
                     .scrollDisabled(!isAllDayListScrollable)
                     .scrollIndicators(isAllDayListScrollable ? .automatic : .hidden)
-                    .frame(height: allDayListHeight)
+                    .frame(height: allDayListMetrics.listHeight(rowCount: eventPairs.count))
                 }
                 .padding(.bottom, IKPadding.micro)
             }
         }
         .padding(.top, IKPadding.medium)
         .padding(.bottom, events.isEmpty ? IKPadding.mini : 0)
-    }
-}
-
-private extension View {
-    func allDayEventStyle(for event: UIEventSummary) -> some View {
-        font(.caption.bold())
-            .lineLimit(1)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .eventCellStyle(event: event)
     }
 }

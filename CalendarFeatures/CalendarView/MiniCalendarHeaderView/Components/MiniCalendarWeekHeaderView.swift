@@ -20,7 +20,7 @@ import DesignSystem
 import ESDSFoundation
 import SwiftUI
 
-struct WeekHeaderView: View {
+struct MiniCalendarWeekHeaderView: View {
     @Environment(\.calendar) private var calendar
     @Environment(MiniCalendarViewModel.self) private var viewModel
 
@@ -54,7 +54,7 @@ struct WeekHeaderView: View {
 
 #Preview {
     @Previewable @State var selectedDate = Date()
-    WeekHeaderView(
+    MiniCalendarWeekHeaderView(
         referenceDate: Calendar.current.weekStart(for: .now),
         selectedDate: $selectedDate
     )

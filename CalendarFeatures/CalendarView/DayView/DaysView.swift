@@ -16,20 +16,22 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import AsyncAlgorithms
 import CalendarCore
 import CalendarCoreUI
-import InfomaniakDI
-import MultiplatformCalendar
 import Observation
 import SwiftUI
 
 @Observable
 final class DaysViewModel {
     var events = [Date: [UIEventSummary]]()
+    var allDayEvents = [Date: [UIEventSummary]]()
 
     func events(for date: Date, calendar: Foundation.Calendar) -> [UIEventSummary] {
         return events[date.startOfDay(calendar)] ?? []
+    }
+
+    func allDayEvents(for date: Date, calendar: Foundation.Calendar) -> [UIEventSummary] {
+        return allDayEvents[date.startOfDay(calendar)] ?? []
     }
 }
 
@@ -37,16 +39,12 @@ struct DayPager: View {
     @Binding var selectedDate: Date
 
     var body: some View {
-        GeometryReader { proxy in
-            CalendarPeriodPager(
-                component: .day,
-                periodOffsets: -36525 ..< 36526,
-                date: $selectedDate
-            ) { date in
-                DayView(date: date)
-                    .safeAreaPadding(.bottom, proxy.safeAreaInsets.bottom)
-            }
-            .ignoresSafeArea(.all, edges: [.top, .bottom])
+        CalendarPeriodPager(
+            component: .day,
+            periodOffsets: -36525 ..< 36526,
+            date: $selectedDate
+        ) { date in
+            DayView(date: date)
         }
     }
 }
@@ -72,32 +70,16 @@ struct DaysView: View {
             }
     }
 
-    @concurrent
     private func observeEventsAt(date: Date, in calendar: Foundation.Calendar) async {
         let centerDate = date.startOfDay(calendar)
         let startDate = calendar.date(byAdding: .day, value: -3, to: centerDate) ?? centerDate
         let endDate = calendar.date(byAdding: .day, value: 3, to: centerDate) ?? centerDate
 
-        @InjectService var calendarSDK: CalendarCoreGraph
-        for await daySlices in calendarSDK.calendarManager.observeDaySlices(
-            start: startDate.instant,
-            end: endDate.instant
-        )._throttle(for: .milliseconds(500)) {
-            guard !Task.isCancelled else { return }
-            let uiEvents = daySlices.values.flatMap { eventDaySlices in
-                eventDaySlices.map {
-                    UIEventSummary(eventDaySlice: $0)
-                }
+        await DayEventsObserver
+            .observe(in: DateInterval(start: startDate, end: endDate), calendar: calendar) { [viewModel] groupedEvents in
+                viewModel.events = groupedEvents.events
+                viewModel.allDayEvents = groupedEvents.allDayEvents
             }
-
-            guard !Task.isCancelled else { return }
-            let groupedEvents = Dictionary(grouping: uiEvents) { $0.startDate.startOfDay(calendar) }
-
-            guard !Task.isCancelled else { return }
-            await MainActor.run {
-                viewModel.events = groupedEvents
-            }
-        }
     }
 }
 

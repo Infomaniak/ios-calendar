@@ -16,16 +16,23 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import SwiftUI
+import DesignSystem
+import Foundation
 
-public struct WeekView: View {
-    public init() {}
+struct AllDayEventsListMetrics {
+    static let maxVisibleRows = 2
 
-    public var body: some View {
-        Text("WeekView")
+    let eventTitleLineHeight: CGFloat
+
+    func isScrollable(rowCount: Int) -> Bool {
+        return rowCount > Self.maxVisibleRows
     }
-}
 
-#Preview {
-    WeekView()
+    func listHeight(rowCount: Int) -> CGFloat {
+        let rowHeight = eventTitleLineHeight + IKPadding.mini * 2
+        let visibleRowCount = CGFloat(min(rowCount, Self.maxVisibleRows))
+        let rowsHeight = visibleRowCount * rowHeight + (visibleRowCount - 1) * IKPadding.micro
+        let peekHeight = isScrollable(rowCount: rowCount) ? IKPadding.micro + IKPadding.mini : 0
+        return rowsHeight + peekHeight
+    }
 }
