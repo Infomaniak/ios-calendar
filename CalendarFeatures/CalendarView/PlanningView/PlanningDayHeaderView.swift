@@ -17,69 +17,36 @@
  */
 
 import DesignSystem
-import UIKit
+import SwiftUI
 
-final class PlanningDayHeaderView: UICollectionReusableView {
-    private static let weekdayFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.setLocalizedDateFormatFromTemplate("EEE")
-        return formatter
-    }()
+struct PlanningDayHeaderView: View {
+    @Environment(\.calendar) private var calendar
 
-    private static let dayFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.setLocalizedDateFormatFromTemplate("d")
-        return formatter
-    }()
+    let date: Date
 
-    private let weekdayLabel = UILabel()
-    private let dayLabel = UILabel()
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setUpView()
+    private var isToday: Bool {
+        calendar.isDateInToday(date)
     }
 
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+    var body: some View {
+        VStack(spacing: IKPadding.micro) {
+            Text(date, format: .dateTime.weekday(.abbreviated))
+                .textCase(.uppercase)
+                .font(.caption)
 
-    func configure(date: Date) {
-        weekdayLabel.text = Self.weekdayFormatter.string(from: date).uppercased()
-        dayLabel.text = Self.dayFormatter.string(from: date)
-
-        if Calendar.current.isDateInToday(date) {
-            weekdayLabel.font = .preferredFont(forTextStyle: .caption1)
-            weekdayLabel.textColor = .tintColor
-
-            let preferredFont = UIFont.preferredFont(forTextStyle: .title3)
-            dayLabel.font = .systemFont(ofSize: preferredFont.pointSize, weight: .semibold)
-            dayLabel.textColor = .tintColor
-        } else {
-            weekdayLabel.font = .preferredFont(forTextStyle: .caption1)
-            weekdayLabel.textColor = .label
-
-            dayLabel.font = .preferredFont(forTextStyle: .title3)
-            dayLabel.textColor = .label
+            Text(date, format: .dateTime.day())
+                .font(.title3)
+                .fontWeight(isToday ? .semibold : .regular)
         }
+        .foregroundStyle(isToday ? AnyShapeStyle(.tint) : AnyShapeStyle(.primary))
+        .padding(.top, value: .mini)
+        .padding(.leading, value: .medium)
     }
+}
 
-    private func setUpView() {
-        weekdayLabel.adjustsFontForContentSizeCategory = true
-        dayLabel.adjustsFontForContentSizeCategory = true
-
-        let stack = UIStackView(arrangedSubviews: [weekdayLabel, dayLabel])
-        stack.axis = .vertical
-        stack.alignment = .center
-        stack.spacing = IKPadding.micro
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(stack)
-
-        NSLayoutConstraint.activate([
-            stack.topAnchor.constraint(equalTo: topAnchor, constant: IKPadding.mini),
-            stack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: IKPadding.medium),
-            stack.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor)
-        ])
+#Preview {
+    VStack {
+        PlanningDayHeaderView(date: Date())
+        PlanningDayHeaderView(date: Date().addingTimeInterval(86400))
     }
 }

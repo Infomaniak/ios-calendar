@@ -18,7 +18,7 @@
 
 import Foundation
 
-struct CalendarPeriodCollection: RandomAccessCollection {
+struct CalendarPeriodCollection: RandomAccessCollection, Equatable {
     struct Period: Identifiable {
         let id: Int
         fileprivate let origin: Date
