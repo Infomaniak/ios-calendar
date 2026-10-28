@@ -19,7 +19,11 @@
 import Foundation
 import MultiplatformCalendar
 
-public struct UIContact: Sendable, Equatable, Hashable {
+public struct UIContact: Sendable, Equatable, Hashable, Identifiable {
+    public var id: String {
+        return "\(email)-\(name)"
+    }
+
     public let email: String
     public let name: String
     public let avatar: UIAvatarType?
