@@ -114,6 +114,17 @@ public struct EventFormView: View {
             }
 
             Section {
+                HStack(alignment: .iconAndMultilineTextAlignment, spacing: IKPadding.small) {
+                    ESDSSymbols.listLeft.image
+                        .font(.system(size: IKIconSize.large.rawValue))
+                        .foregroundStyle(theme.color.contentSecondary)
+                        .accessibilityHidden(true)
+
+                    TextField(CalendarResourcesStrings.descriptionTitle, text: $viewModel.draft.description, axis: .vertical)
+                }
+            }
+
+            Section {
                 Toggle(isOn: $viewModel.draft.isOccupied) {
                     Label {
                         Text(CalendarResourcesStrings.occupiedLabel)
