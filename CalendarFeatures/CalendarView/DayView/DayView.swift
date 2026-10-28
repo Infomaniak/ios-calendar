@@ -110,12 +110,14 @@ struct DayContentView: View {
 
     @ViewBuilder
     private func timelineIndicator(date: Date, geometry: TimelineGeometry) -> some View {
+        let localCalendar = calendar
+
         if calendar.isDate(self.date, inSameDayAs: date) {
             TimelineIndicatorView(date: date)
                 .padding(.leading, value: .medium)
                 .visualEffect { content, proxy in
                     content
-                        .offset(y: -proxy.size.height / 2 + geometry.yPosition(for: date, calendar: calendar))
+                        .offset(y: -proxy.size.height / 2 + geometry.yPosition(for: date, calendar: localCalendar))
                 }
         }
     }

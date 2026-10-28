@@ -83,6 +83,9 @@ struct MultipleDaysContentView: View {
             }
         } overlay: { geometry in
             TimelineView(.everyMinute) { timeline in
+                let date = timeline.date
+                let localCalendar = calendar
+
                 CalendarPeriodPagerMirror(scrollSync: pagerScrollSync, viewCount: layout.pagerViewCount) { date in
                     HStack(spacing: 0) {
                         ForEach(layout.pageDates(for: date, calendar: calendar), id: \.self) { day in
@@ -94,7 +97,7 @@ struct MultipleDaysContentView: View {
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.leading, IKPadding.medium + TimelineBackgroundView.Constants.leadingInset)
                 .visualEffect { content, proxy in
-                    content.offset(y: geometry.yPosition(for: timeline.date, calendar: calendar) - proxy.size.height / 2)
+                    content.offset(y: geometry.yPosition(for: date, calendar: localCalendar) - proxy.size.height / 2)
                 }
             }
         }
