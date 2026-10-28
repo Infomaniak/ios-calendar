@@ -109,12 +109,6 @@ struct MiniCalendarHeaderViewModifier: ViewModifier {
                     AnimatedTitleView(date: selectedDate)
                 }
             }
-
-            ToolbarItem(placement: .topBarTrailing) {
-                Button {} label: {
-                    Image(systemName: "magnifyingglass")
-                }
-            }
         }
         .navigationBarTitleDisplayMode(.inline)
         .onPreferenceChange(SafeAreaBarItemsKey.self) { items in
