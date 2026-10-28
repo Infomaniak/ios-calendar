@@ -1,11 +1,5 @@
-/* loco:6a7dc5b0149a9f50750c3c52 */
-" addExternalCalendarDescription" = "Subscribe via URL";
-
 /* loco:6a742debc579c73504099d24 */
 "accountsTitle" = "Accounts";
-
-/* loco:6a7dc536ea258dafd7031a62 */
-"addExternalCalendarTitle" = "Add an external calendar";
 
 /* loco:6a3d35f26bb2f27bf40b0052 */
 "allDayLabel" = "All Day";
@@ -147,9 +141,6 @@
 
 /* loco:6aa804867b7998a59003a9fc */
 "generalSettingsDisplayLabel" = "Display";
-
-/* loco:6aa9363ad1458d183b0de9e2 */
-"generalSettingsShowWeekendsLabel" = "Show weekends";
 
 /* loco:6aa9363a0ccb57137202b232 */
 "generalSettingsStartOfWeekLabel" = "Start of the week";

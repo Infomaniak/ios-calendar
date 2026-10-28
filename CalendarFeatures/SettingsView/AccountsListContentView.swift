@@ -21,13 +21,11 @@ import CalendarCoreUI
 import CalendarOnboardingView
 import CalendarResources
 import DesignSystem
-import ESDSFoundation
 import InfomaniakCoreCommonUI
 import InfomaniakDI
 import SwiftUI
 
 public struct AccountsListContentView: View {
-    @Environment(\.esdsTheme) private var theme
     @Environment(\.calendarAccounts) private var calendarAccounts
 
     @State private var isShowingNewAccountView = false
@@ -58,24 +56,6 @@ public struct AccountsListContentView: View {
                     isShowingNewAccountView = true
                 }
                 .frame(maxWidth: .infinity, alignment: .center)
-            }
-
-            Section {
-                NavigationLink {
-                    EmptyView()
-                } label: {
-                    VStack(alignment: .leading, spacing: 0) {
-                        Text(CalendarResourcesStrings.addExternalCalendarTitle)
-                            .font(.body.weight(.medium))
-                            .foregroundStyle(theme.color.contentPrimary)
-
-                        Text(CalendarResourcesStrings.addExternalCalendarDescription)
-                            .font(.body)
-                            .foregroundStyle(theme.color.contentSecondary)
-                    }
-                    .lineLimit(1)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                }
             }
         }
         .fullScreenCover(isPresented: $isShowingNewAccountView, onDismiss: {

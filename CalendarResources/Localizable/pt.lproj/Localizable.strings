@@ -1,11 +1,5 @@
-/* loco:6a7dc5b0149a9f50750c3c52 */
-" addExternalCalendarDescription" = "Subscrever através do URL";
-
 /* loco:6a742debc579c73504099d24 */
 "accountsTitle" = "Contas";
-
-/* loco:6a7dc536ea258dafd7031a62 */
-"addExternalCalendarTitle" = "Adicionar um calendário externo";
 
 /* loco:6a3d35f26bb2f27bf40b0052 */
 "allDayLabel" = "O dia todo";
@@ -142,9 +136,6 @@
 
 /* loco:6aa804867b7998a59003a9fc */
 "generalSettingsDisplayLabel" = "Ecrã";
-
-/* loco:6aa9363ad1458d183b0de9e2 */
-"generalSettingsShowWeekendsLabel" = "Mostrar fins de semana";
 
 /* loco:6aa9363a0ccb57137202b232 */
 "generalSettingsStartOfWeekLabel" = "Início da semana";

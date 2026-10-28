@@ -1,11 +1,5 @@
-/* loco:6a7dc5b0149a9f50750c3c52 */
-" addExternalCalendarDescription" = "Abonneren via URL";
-
 /* loco:6a742debc579c73504099d24 */
 "accountsTitle" = "Accounts";
-
-/* loco:6a7dc536ea258dafd7031a62 */
-"addExternalCalendarTitle" = "Een externe agenda toevoegen";
 
 /* loco:6a3d35f26bb2f27bf40b0052 */
 "allDayLabel" = "De hele dag";
@@ -142,9 +136,6 @@
 
 /* loco:6aa804867b7998a59003a9fc */
 "generalSettingsDisplayLabel" = "Weergave";
-
-/* loco:6aa9363ad1458d183b0de9e2 */
-"generalSettingsShowWeekendsLabel" = "Weekenden weergeven";
 
 /* loco:6aa9363a0ccb57137202b232 */
 "generalSettingsStartOfWeekLabel" = "Begin van de week";
