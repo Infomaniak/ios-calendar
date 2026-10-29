@@ -27,8 +27,9 @@ import SwiftUI
 
 private extension View {
     @ViewBuilder
-    func searchableIfWritable(_ isWritable: Bool, text: Binding<String>, isPresented: Binding<Bool>,
-                              prompt: String) -> some View {
+    func searchableIfWritable(
+        _ isWritable: Bool, text: Binding<String>, isPresented: Binding<Bool>, prompt: String
+    ) -> some View {
         if isWritable {
             searchable(text: text, isPresented: isPresented, prompt: prompt)
         } else {
@@ -51,6 +52,10 @@ public struct EditableAttendeesList: View {
         attendees.map { UIAttendee(attendee: $0) }
     }
 
+    private var isShowingSearchResults: Bool {
+        searchedAttendees != nil
+    }
+
     private var trimmedSearch: String {
         search.trimmingCharacters(in: .whitespacesAndNewlines)
     }
@@ -61,25 +66,23 @@ public struct EditableAttendeesList: View {
     }
 
     public var body: some View {
-        List {
-            if !trimmedSearch.isEmpty, let searchedAttendees {
-                ForEach(searchedAttendees, id: \.self) { attendee in
-                    SearchResultRow(attendee: attendee, alreadyExist: false, equalAttendeeAlreadyExist: false) {
-                        addAttendee(attendee)
-                    }
-                }
+        let addedAttendees = uiAttendees
 
+        List {
+            ForEach(searchedAttendees ?? addedAttendees) { attendee in
+                EditableAttendeeRow(
+                    attendee: attendee,
+                    addedState: addedState(of: attendee, in: addedAttendees),
+                    action: isShowingSearchResults ? { addAttendee(attendee) } : nil
+                )
+            }
+            .onDelete { attendees.remove(atOffsets: $0) }
+            .deleteDisabled(!isWritable || isShowingSearchResults)
+
+            if isShowingSearchResults && !trimmedSearch.isEmpty {
                 CustomAttendeeRow(text: trimmedSearch) {
                     addAttendee(UIAttendee(displayName: nil, email: trimmedSearch.lowercased(), status: .needsAction))
                 }
-            } else {
-                ForEach(uiAttendees) { attendee in
-                    ParticipantCellView(attendee: attendee)
-                }
-                .onDelete { indexSet in
-                    attendees.remove(atOffsets: indexSet)
-                }
-                .deleteDisabled(!isWritable)
             }
         }
         .overlay {
@@ -99,9 +102,18 @@ public struct EditableAttendeesList: View {
         .navigationTitle(CalendarResourcesStrings.participantsLabel(attendees.count))
     }
 
+    private func addedState(of attendee: UIAttendee, in addedAttendees: [UIAttendee]) -> AttendeeAddedState {
+        if addedAttendees.contains(where: { $0.id == attendee.id }) {
+            return .sameAttendee
+        } else if addedAttendees.contains(where: { $0.email == attendee.email }) {
+            return .sameEmail
+        }
+        return .notAdded
+    }
+
     private func searchContacts(query: String) async {
         guard !query.isEmpty else {
-            searchedAttendees = nil
+            withAnimation { searchedAttendees = nil }
             return
         }
 
@@ -113,17 +125,19 @@ public struct EditableAttendeesList: View {
             guard !Task.isCancelled else { return }
 
             let currentAttendees = uiAttendees
-            searchedAttendees = results.map { result in
+            var seenIds = Set<String>()
+            let newSearchedAttendees = results.compactMap { result -> UIAttendee? in
                 let contact = UIContact(contact: result)
                 let email = contact.email.lowercased()
-                if let existingAttendee = currentAttendees.first(where: { $0.email == email && $0.displayName == contact.name }) {
-                    return existingAttendee
-                }
-                return UIAttendee(displayName: contact.name, email: email, status: .needsAction, contact: contact)
+                let attendee = currentAttendees.first { $0.email == email && $0.displayName == contact.name }
+                    ?? UIAttendee(displayName: contact.name, email: email, status: .needsAction, contact: contact)
+                return seenIds.insert(attendee.id).inserted ? attendee : nil
             }
+
+            withAnimation { searchedAttendees = newSearchedAttendees }
         } catch {
             guard !Task.isCancelled else { return }
-            searchedAttendees = nil
+            withAnimation { searchedAttendees = nil }
         }
     }
 
@@ -145,6 +159,7 @@ public struct EditableAttendeesList: View {
             attendees.append(attendee)
 
             search = ""
+            searchedAttendees = nil
             isSearching = false
         }
     }

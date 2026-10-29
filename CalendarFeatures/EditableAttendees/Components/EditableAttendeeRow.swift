@@ -18,41 +18,64 @@
 
 import CalendarCoreUI
 import DesignSystem
+import ESDSFoundation
 import ESDSSymbols
 import SwiftUI
 
-struct SearchResultRow: View {
+enum AttendeeAddedState {
+    case notAdded
+    case sameEmail
+    case sameAttendee
+}
+
+struct EditableAttendeeRow: View {
+    @Environment(\.esdsTheme) private var theme
+
     let attendee: UIAttendee
-    let alreadyExist: Bool
-    let equalAttendeeAlreadyExist: Bool
-    let action: () -> Void
+
+    let addedState: AttendeeAddedState
+    let action: (() -> Void)?
+
+    private var isSelectable: Bool {
+        action != nil && addedState == .notAdded
+    }
+
+    private var isSameAttendee: Bool {
+        addedState == .sameAttendee
+    }
 
     var body: some View {
-        Button(action: action) {
+        Button {
+            action?()
+        } label: {
             HStack(spacing: IKPadding.micro) {
                 ParticipantCellView(
                     avatar: attendee.contact?.avatar,
                     displayName: attendee.displayName ?? attendee.email,
                     email: attendee.email,
-                    isOrganizer: equalAttendeeAlreadyExist && attendee.isOrganizer,
-                    status: equalAttendeeAlreadyExist ? attendee.status : nil
+                    isOrganizer: isSameAttendee && attendee.isOrganizer,
+                    status: isSameAttendee ? attendee.status : nil
                 )
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-                if alreadyExist {
+                if addedState != .notAdded && action != nil {
                     ESDSSymbols.check.image
                         .font(.system(size: 16))
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(theme.color.contentSecondary)
+                        .accessibilityHidden(true)
                 }
             }
         }
-        .disabled(alreadyExist)
-        .accessibilityAddTraits(.isSelected)
+        .allowsHitTesting(isSelectable)
+        .accessibilityAddTraits(addedState != .notAdded ? .isSelected : [])
     }
 }
 
 #Preview {
-    SearchResultRow(attendee: .preview, alreadyExist: false, equalAttendeeAlreadyExist: false) {}
-    SearchResultRow(attendee: .preview, alreadyExist: true, equalAttendeeAlreadyExist: false) {}
-    SearchResultRow(attendee: .preview, alreadyExist: true, equalAttendeeAlreadyExist: true) {}
+    List {
+        EditableAttendeeRow(attendee: .preview, addedState: .notAdded) {}
+        EditableAttendeeRow(attendee: .preview, addedState: .sameEmail) {}
+        EditableAttendeeRow(attendee: .preview, addedState: .sameAttendee) {}
+        EditableAttendeeRow(attendee: .preview, addedState: .sameAttendee, action: nil)
+    }
 }
