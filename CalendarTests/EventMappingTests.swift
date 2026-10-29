@@ -162,6 +162,44 @@ struct EventMappingTests {
         #expect(UIAttendee(attendee: attendee).contact == nil)
     }
 
+    @Test(arguments: [true, false])
+    func contactRoundTripPreservesRemoteAvatar(comesFromApi: Bool) throws {
+        let contact = Contact(
+            email: "guest@example.com",
+            name: "Guest",
+            avatar: ContactAvatarRemote(url: "https://example.com/avatar", accountId: 42),
+            comesFromApi: comesFromApi
+        )
+        let mapped = UIContact(contact: contact).sdkValue
+
+        #expect(mapped.email == contact.email)
+        #expect(mapped.name == contact.name)
+        #expect(mapped.comesFromApi == comesFromApi)
+        let avatar = try #require(mapped.avatar as? ContactAvatarRemote)
+        #expect(avatar.url == "https://example.com/avatar")
+        #expect(avatar.accountIdValue == 42)
+    }
+
+    @Test func contactRoundTripPreservesDeviceAvatar() throws {
+        let contact = Contact(
+            email: "guest@example.com",
+            name: "Guest",
+            avatar: ContactAvatarDevice(id: "device-contact"),
+            comesFromApi: false
+        )
+        let mapped = UIContact(contact: contact).sdkValue
+
+        let avatar = try #require(mapped.avatar as? ContactAvatarDevice)
+        #expect(avatar.id == "device-contact")
+        #expect(!mapped.comesFromApi)
+    }
+
+    @Test func contactRoundTripPreservesMissingAvatar() {
+        let contact = Contact(email: "guest@example.com", name: "Guest", avatar: nil, comesFromApi: false)
+
+        #expect(UIContact(contact: contact).sdkValue.avatar == nil)
+    }
+
     @Test func mapsUnanchoredTimingWithoutTimeZones() {
         let floating = UITiming(eventTiming: floatingTiming)
         #expect(floating.startTimeZone == nil)

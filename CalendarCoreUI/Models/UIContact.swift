@@ -27,16 +27,32 @@ public struct UIContact: Sendable, Equatable, Hashable, Identifiable {
     public let email: String
     public let name: String
     public let avatar: UIAvatarType?
+    public let comesFromApi: Bool
 }
 
 public extension UIContact {
     init(contact: Contact) {
         email = contact.email
         name = contact.name
+        comesFromApi = contact.comesFromApi
         if let avatar = contact.avatar {
             self.avatar = UIAvatarType(avatar: avatar)
         } else {
             avatar = nil
         }
+    }
+
+    var sdkValue: Contact {
+        let sdkAvatar: (any ContactAvatar)?
+        switch avatar {
+        case .remote(let rawURL, let accountId):
+            sdkAvatar = ContactAvatarRemote(url: rawURL, accountId: accountId)
+        case .device(let contactId):
+            sdkAvatar = ContactAvatarDevice(id: contactId)
+        case .user, nil:
+            sdkAvatar = nil
+        }
+
+        return Contact(email: email, name: name, avatar: sdkAvatar, comesFromApi: comesFromApi)
     }
 }

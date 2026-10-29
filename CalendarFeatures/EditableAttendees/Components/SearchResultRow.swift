@@ -16,10 +16,10 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import SwiftUI
 import CalendarCoreUI
-import ESDSSymbols
 import DesignSystem
+import ESDSSymbols
+import SwiftUI
 
 struct SearchResultRow: View {
     let attendee: UIAttendee
