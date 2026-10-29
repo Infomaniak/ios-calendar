@@ -96,6 +96,7 @@ public struct EditableAttendeesList: View {
             await searchContacts(query: trimmedSearch)
         }
         .toolbarTitleDisplayMode(.inline)
+        .navigationTitle(CalendarResourcesStrings.participantsLabel(attendees.count))
     }
 
     private func searchContacts(query: String) async {
