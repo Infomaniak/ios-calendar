@@ -101,7 +101,7 @@ public extension UIParticipationStatus {
 
 public struct UIAttendee: UICalendarUser, Sendable, Equatable, Hashable, Identifiable {
     public var id: String {
-        return email
+        return "\(email)-\(displayName ?? "")"
     }
 
     public let email: String
