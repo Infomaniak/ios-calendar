@@ -138,7 +138,7 @@ public struct EditableAttendeesList: View {
             isOrganizer: false,
             responseNeeded: true,
             type: .individual,
-            contact: nil // fix
+            contact: uiAttendee.contact.map { $0.sdkValue }
         )
 
         withAnimation {
