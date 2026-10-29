@@ -60,7 +60,7 @@ struct EditableAttendeeRow: View {
 
                 if addedState != .notAdded && action != nil {
                     ESDSSymbols.check.image
-                        .font(.system(size: 16))
+                        .font(.system(size: 24))
                         .foregroundStyle(theme.color.contentSecondary)
                         .accessibilityHidden(true)
                 }
