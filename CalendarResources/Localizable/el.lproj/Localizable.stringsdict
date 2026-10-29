@@ -131,5 +131,53 @@
         <string>%d θέσεις</string>
       </dict>
     </dict>
+    <key>unitDays</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>ημέρα</string>
+        <key>other</key>
+        <string>ημέρες</string>
+      </dict>
+    </dict>
+    <key>unitHours</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>ώρα</string>
+        <key>other</key>
+        <string>ώρες</string>
+      </dict>
+    </dict>
+    <key>unitMinutes</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>λεπτό</string>
+        <key>other</key>
+        <string>λεπτά</string>
+      </dict>
+    </dict>
   </dict>
 </plist>

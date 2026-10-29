@@ -1,6 +1,26 @@
 /* loco:6a742debc579c73504099d24 */
 "accountsTitle" = "Contas";
 
+/* loco:6ad212588dcfe8aeb202d4e7
+ * Use concise wording for the alarm offset preset at the event start. */
+"alarmOffsetAtTimeOfEvent" = "À hora do evento";
+
+/* loco:6ad212589c12c20df00cfb84
+ * The %s placeholder is a localized duration string. Preserve the placeholder; use Android-compatible %s formatting. */
+"alarmOffsetCustomAfter" = "%@ depois";
+
+/* loco:6ad2125808e8622507027d16
+ * The %s placeholder is a localized duration string. Preserve the placeholder; use Android-compatible %s formatting. */
+"alarmOffsetCustomBefore" = "%@ antes";
+
+/* loco:6ad2125883ca17287b0d8244
+ * Short option label in the alarm offset picker. */
+"alarmOffsetNone" = "Nenhum";
+
+/* loco:6adf00bb6db21f733003e0c3
+ * Use the grammatical gender of notification. French must be Aucune (not Aucun). */
+"alarmOffsetNoneNotification" = "Nenhuma";
+
 /* loco:6a3d35f26bb2f27bf40b0052 */
 "allDayLabel" = "O dia todo";
 
@@ -81,6 +101,10 @@
 /* loco:6aacf103f37fcb4e270bf7f2
  * Title case in languages where appropriate. */
 "createEventTitle" = "Criar evento";
+
+/* loco:6ad21259d4b4cace400ff463
+ * Short option label. */
+"customAlarmLabel" = "Personalizado";
 
 /* loco:6a203e6bc6a8e2e3c9024e12 */
 "dayTitle" = "Dia";
@@ -163,10 +187,14 @@
 "noAttendeesLabel" = "Nenhum";
 
 /* loco:6a8db088bdcf38c11d0c8a94 */
-"notificationDefaultDescription" = "Alarme de evento";
+"notificationDefaultDescription" = "Lembrete de evento";
 
 /* loco:6a8ed23a8523fc2ec50554a2 */
 "notificationTypeEmail" = "Email";
+
+/* loco:6ad0ba8a429f3fc71606ac94
+ * Label for audio or unrecognized calendar alarm notification types. Plain text; no format arguments. */
+"notificationTypeOther" = "Outro";
 
 /* loco:6a8ed665614bffbffe09a5d2 */
 "notificationTypePush" = "Notificação";
@@ -207,6 +235,18 @@
 /* loco:6a858ecb52e69982a407cb02 */
 "openTitle" = "Abrir";
 
+/* loco:6ad212598dcfe8aeb202d4e9
+ * Short form label. */
+"otherReminderAlarmKindLabel" = "Tipo de lembrete";
+
+/* loco:6ad2125a410170059a09ae53
+ * Short form label. */
+"otherReminderNumberLabel" = "Quantidade";
+
+/* loco:6ad212599c12c20df00cfb86
+ * Short form label. */
+"otherReminderPeriodLabel" = "Período";
+
 /* loco:6a858ffd1be4d033d804961f */
 "participateKMeetTitle" = "Participar no kMeet";
 
@@ -228,6 +268,10 @@
 
 /* loco:6ada25ea87f472dc8807d392 */
 "replyRecurringEventAlertTitle" = "A que eventos pretende responder?";
+
+/* loco:6ad212688003500aa70e3c4a
+ * Short screen title. */
+"reminderTitle" = "Lembrete";
 
 /* loco:6a7c237bd92250395c0ccfd2 */
 "roomFloorLabel" = "Piso %@";

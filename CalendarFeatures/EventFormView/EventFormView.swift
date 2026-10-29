@@ -144,10 +144,17 @@ public struct EventFormView: View {
                 }
             }
 
+            Section {
+                EditableAlarmsView(alarms: $viewModel.draft.alarms)
+            }
+
             if !viewModel.availableCalendars.isEmpty {
                 Section {
-                    LabeledContent(CalendarResourcesStrings.calendarsMenuSectionTitle) {
+                    LabeledContent {
                         CalendarPicker(calendarId: $viewModel.draft.calendarId, calendars: viewModel.availableCalendars)
+                    } label: {
+                        Label(CalendarResourcesStrings.sectionCalendarHeader, symbol: .productCalendar)
+                            .labelStyle(.formLabel)
                     }
                 }
             }
@@ -259,6 +266,5 @@ public struct EventFormView: View {
             NavigationStack {
                 EventFormView(editionMode: .new(selectedDate: Date()))
             }
-            .interactiveDismissDisabled()
         }
 }

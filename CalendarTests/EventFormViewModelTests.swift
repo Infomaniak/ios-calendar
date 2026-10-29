@@ -16,15 +16,17 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import CalendarCore
+@testable import CalendarCore
 import CalendarCoreUI
 @testable import CalendarEventFormView
 import Foundation
+import MultiplatformCalendar
+import SwiftUI
 import Testing
 
 @MainActor
 struct EventFormViewModelTests {
-    private let calendar = Calendar(identifier: .gregorian)
+    private let calendar = Foundation.Calendar(identifier: .gregorian)
 
     @Test(arguments: [true, false])
     func newEventSelectsLastSavedWritableCalendarOrFallsBackToFirst(isSavedCalendarAvailable: Bool) throws {
@@ -82,7 +84,8 @@ struct EventFormViewModelTests {
             isOccupied: false
         )
         let editData = try original.toEventEditData()
-        let draft = EventDraft.fromEvent(.preview, editData: editData)
+        let event = makeEvent(editData: editData)
+        let draft = EventDraft(event: event, editData: editData)
         let viewModel = EventFormViewModel(editionMode: .editDraft(draft: draft, editingEvent: .preview), userDefaults: .shared)
 
         #expect(viewModel.draft.title == original.title)
@@ -244,6 +247,190 @@ struct EventFormViewModelTests {
         #expect(viewModel.draft == originalDraft)
     }
 
+    @Test
+    func editingAlarmsMarksFormChanged() throws {
+        let viewModel = try makeViewModel()
+
+        viewModel.draft.alarms.append(EventAlarmDraft(offset: .oneHourBefore))
+
+        #expect(viewModel.isEdited)
+    }
+
+    @Test
+    func addingThenRemovingAlarmRestoresUnchangedForm() throws {
+        let viewModel = try makeViewModel()
+        let originalDraft = viewModel.draft
+        let alarm = EventAlarmDraft(action: .email, offset: .oneHourBefore)
+
+        viewModel.draft.alarms.append(alarm)
+        #expect(viewModel.isEdited)
+
+        viewModel.draft.alarms.removeAll { $0.id == alarm.id }
+
+        #expect(viewModel.draft == originalDraft)
+        #expect(!viewModel.isEdited)
+    }
+
+    @Test
+    func emptyAlarmRowAddsAlarmsAndStaysEmpty() throws {
+        let viewModel = try makeViewModel()
+        let rows = makeAlarmRows(viewModel: viewModel)
+        let binding = rows.newAlarmBinding
+        let first = EventAlarmDraft(action: .email, offset: .oneHourBefore)
+        let second = EventAlarmDraft(action: .email, offset: .fiveMinutesBefore)
+
+        #expect(binding.wrappedValue == nil)
+        binding.wrappedValue = nil
+        #expect(viewModel.draft.alarms.isEmpty)
+        #expect(!viewModel.isEdited)
+
+        binding.wrappedValue = first
+        #expect(binding.wrappedValue == nil)
+        binding.wrappedValue = second
+        binding.wrappedValue = nil
+
+        #expect(viewModel.draft.alarms == [first, second])
+        #expect(binding.wrappedValue == nil)
+    }
+
+    @Test
+    func settingAlarmToNoneRemovesOnlyThatRow() throws {
+        let viewModel = try makeViewModel()
+        let first = EventAlarmDraft(action: .email, offset: .oneDayBefore)
+        let middle = EventAlarmDraft(action: .email, offset: .oneHourBefore)
+        let last = EventAlarmDraft(action: .email, offset: .fiveMinutesBefore)
+        let notification = EventAlarmDraft(offset: .atTimeOfEvent)
+        viewModel.draft.alarms = [notification, first, middle, last]
+        let rows = makeAlarmRows(viewModel: viewModel)
+
+        let middleBinding = rows.alarmBinding(for: middle)
+        middleBinding.wrappedValue = nil
+        #expect(viewModel.draft.alarms.map(\.id) == [notification.id, first.id, last.id])
+        #expect(middleBinding.wrappedValue == nil)
+
+        rows.alarmBinding(for: first).wrappedValue = nil
+        #expect(viewModel.draft.alarms.map(\.id) == [notification.id, last.id])
+
+        rows.alarmBinding(for: last).wrappedValue = nil
+        #expect(viewModel.draft.alarms == [notification])
+
+        let editData = try viewModel.draft.toEventEditData()
+        let alarms = try #require(editData.alarms as? AlarmListEditReplace)
+        #expect(alarms.alarms.count == 1)
+        #expect(UIAlarmTrigger(alarmTrigger: alarms.alarms[0].trigger) == notification.trigger)
+    }
+
+    @Test
+    func alarmBindingsFollowIdentityAfterOtherRowsAreRemoved() throws {
+        let viewModel = try makeViewModel()
+        let first = EventAlarmDraft(action: .email, offset: .oneHourBefore)
+        let second = EventAlarmDraft(action: .email, offset: .fiveMinutesBefore)
+        viewModel.draft.alarms = [first, second]
+        let rows = makeAlarmRows(viewModel: viewModel)
+        let firstBinding = rows.alarmBinding(for: first)
+        let secondBinding = rows.alarmBinding(for: second)
+
+        firstBinding.wrappedValue = nil
+        secondBinding.wrappedValue = second.newWith(offset: .oneDayBefore)
+
+        #expect(viewModel.draft.alarms == [second.newWith(offset: .oneDayBefore)])
+        firstBinding.wrappedValue = first.newWith(offset: .oneHourBefore)
+        #expect(viewModel.draft.alarms == [second.newWith(offset: .oneDayBefore)])
+    }
+
+    @Test
+    func changingAlarmTypeUpdatesSameAlarmWithoutDuplicatingIt() throws {
+        let viewModel = try makeViewModel()
+        let alarm = EventAlarmDraft(action: .email, offset: .oneHourBefore)
+        viewModel.draft.alarms = [alarm]
+        let rows = makeAlarmRows(viewModel: viewModel)
+        let updated = EventAlarmDraft(id: alarm.id, action: .display, trigger: .relative(offset: -600, relatedTo: .start))
+
+        rows.alarmBinding(for: alarm).wrappedValue = updated
+
+        #expect(viewModel.draft.alarms == [updated])
+        #expect(viewModel.draft.alarms[0].id == alarm.id)
+    }
+
+    @Test
+    func prefilledAlarmsDoNotMarkFormChanged() throws {
+        let original = try EventDraft(
+            calendarId: "0",
+            startDate: date("2026-09-22T10:10:00Z"),
+            startTimeZone: timeZone("Europe/Zurich"),
+            endDate: date("2026-09-22T11:10:00Z"),
+            endTimeZone: timeZone("Europe/Zurich")
+        )
+        let editData = try original.toEventEditData()
+        let event = makeEvent(editData: editData, alarms: [
+            EventAlarm(
+                action: AlarmActionEmail(),
+                trigger: AlarmTriggerRelative(offset: KotlinDuration.rawValue(fromTimeInterval: -3600), relatedTo: .start),
+                id: nil
+            ),
+            EventAlarm(
+                action: AlarmActionDisplay(),
+                trigger: AlarmTriggerRelative(offset: KotlinDuration.rawValue(fromTimeInterval: -300), relatedTo: .start),
+                id: nil
+            )
+        ])
+        let draft = EventDraft(event: event, editData: editData)
+        let viewModel = EventFormViewModel(
+            editionMode: .editDraft(draft: draft, editingEvent: UIEventDetails(event: event, userEmail: nil)),
+            userDefaults: .shared
+        )
+
+        #expect(viewModel.draft.alarms.count == 2)
+        #expect(viewModel.draft.alarms.map(\.action) == [.email, .display])
+        #expect(viewModel.draft.alarms.map(\.trigger) == [
+            AlarmOffset.oneHourBefore.trigger,
+            .relative(offset: -300, relatedTo: .start)
+        ])
+        #expect(viewModel.isEdited == false)
+    }
+
+    private func makeEvent(editData: EventEditData, alarms: [EventAlarm] = []) -> MultiplatformCalendar.Event {
+        let themedColor = ThemedColor(light: 0, dark: 0)
+        return MultiplatformCalendar.Event(
+            masterEventId: "event",
+            occurrenceId: OccurrenceId.Master(masterId: "event"),
+            calendarId: editData.calendarId,
+            accountId: 1,
+            title: editData.title,
+            description: editData.description_,
+            location: editData.location,
+            status: .confirmed,
+            timeBlocking: editData.timeBlocking,
+            classification: .public,
+            categories: [],
+            meetRoomUrl: nil,
+            bookableUuid: nil,
+            attachments: [],
+            timing: editData.timing,
+            lastModified: nil,
+            attendees: [],
+            organizer: nil,
+            colors: EventColors(
+                calendarSourceColor: 0,
+                sourceColor: 0,
+                containerColor: 0,
+                onContainerColor: themedColor,
+                containerVariantColor: 0,
+                onContainerVariantColor: themedColor
+            ),
+            canEdit: true,
+            alarms: alarms,
+            recurrenceMasterBounds: nil
+        )
+    }
+
+    private func makeAlarmRows(viewModel: EventFormViewModel) -> EventAlarmTypeRowsView {
+        EventAlarmTypeRowsView(
+            alarms: Binding(get: { viewModel.draft.alarms }, set: { viewModel.draft.alarms = $0 }),
+            action: .email
+        )
+    }
+
     private func makeViewModel(
         start: String = "2026-09-22T10:10:00Z",
         end: String = "2026-09-22T11:10:00Z",
@@ -275,7 +462,8 @@ struct EventFormViewModelTests {
         try #require(ISO8601DateFormatter().date(from: value))
     }
 
-    private func timeZone(_ identifier: String) throws -> TimeZone {
-        try #require(TimeZone(identifier: identifier))
+    private func timeZone(_ identifier: String) throws -> Foundation.TimeZone {
+        let timeZone = Foundation.TimeZone(identifier: identifier)
+        return try #require(timeZone)
     }
 }

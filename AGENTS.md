@@ -58,6 +58,9 @@ tuist test # Or via Xcode Test Navigator
 - **KMP events (0.14.0):** Map `EventSummary` to `UIEventSummary` for day slices and lists; fetch `Event` with `getOccurrence` and map it to `UIEventDetails` for details. Upcoming alarms also contain an `EventSummary`.
 - **Optional mapping:** Prefer `if let` over `Optional.map` for assigning optional values in initializers. When `.map` is used, write a closure (`.map { UIContact(contact: $0) }`), not an init reference (`.map(UIContact.init)`).
 - **Formatting:** SwiftFormat excludes `DerivedData`, `Derived`, `Tuist`, `Project.swift`.
+- **Model presentation:** Keep shared model data and SDK mapping in Core, with presentation extensions in a matching `Type+UI.swift` file in CoreUI (as with `EventDraft+UI` and `EventAlarmDraft+UI`). Alarm drafts store Swift values rather than KMP alarm objects; do not map unused alarm description, summary, attendees, or attachments.
+- **Model extensions:** Group SDK initializers and `sdkValue` conversions in the same `public extension` of the model, and preview fixtures in a separate `public extension`.
+- **Alarm terminology:** Use `Alarm` in code identifiers to match KMP; localized user-facing wording may use "reminder".
 
 
 ### PR Checklist

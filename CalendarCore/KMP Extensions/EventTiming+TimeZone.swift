@@ -16,31 +16,25 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import CalendarCoreUI
-import DesignSystem
-import ESDSFoundation
-import ESDSSymbols
-import InfomaniakCoreSwiftUI
-import SwiftUI
+import Foundation
+import MultiplatformCalendar
 
-struct AlertsSectionView: View {
-    @Environment(\.esdsTheme) private var theme
-
-    @Binding var alarms: [UIEventAlarm]
-
-    var body: some View {
-        ForEach(alarms.indices, id: \.self) { index in
-            LabeledContent {
-                Text(alarms[index].offset.rawValue)
-                    .foregroundStyle(theme.color.contentSecondary)
-            } label: {
-                Label(alarms[index].action.label, symbol: alarms[index].action.icon)
-                    .labelStyle(.formLabel)
-            }
+public extension EventTiming {
+    var startTimeZone: TimeZone? {
+        switch onEnum(of: bounds) {
+        case .unanchored:
+            return nil
+        case .zoned(let bounds):
+            return bounds.start.timeZone.toNSTimeZone()
         }
     }
-}
 
-#Preview {
-    AlertsSectionView(alarms: .constant([.preview]))
+    var endTimeZone: TimeZone? {
+        switch onEnum(of: bounds) {
+        case .unanchored:
+            return nil
+        case .zoned(let bounds):
+            return bounds.end.timeZone.toNSTimeZone()
+        }
+    }
 }

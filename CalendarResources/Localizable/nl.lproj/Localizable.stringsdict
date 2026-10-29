@@ -131,5 +131,53 @@
         <string>%d plaatsen</string>
       </dict>
     </dict>
+    <key>unitDays</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>dag</string>
+        <key>other</key>
+        <string>dagen</string>
+      </dict>
+    </dict>
+    <key>unitHours</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>uur</string>
+        <key>other</key>
+        <string>uur</string>
+      </dict>
+    </dict>
+    <key>unitMinutes</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>minuut</string>
+        <key>other</key>
+        <string>minuten</string>
+      </dict>
+    </dict>
   </dict>
 </plist>

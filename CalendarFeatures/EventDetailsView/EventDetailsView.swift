@@ -31,7 +31,6 @@ import SwiftUI
 public struct EventDetailsView: View {
     @Environment(\.dismiss) private var dismiss
 
-    @State private var alarms: [UIEventAlarm]
     @State private var selectedStatus: UIParticipationStatus?
     @State private var showNavigationTitle = false
     @State private var isNavigatingToAttendeesList = false
@@ -41,7 +40,7 @@ public struct EventDetailsView: View {
     @State private var isShowingDeleteError = false
     @State private var deleteErrorMessage = ""
     @State private var isLoadingEdit = false
-    @State private var editData: EventEditData?
+    @State private var editedEventDraft: EventDraft?
     @State private var isShowingEditError = false
     @State private var editErrorMessage = ""
     @State private var isShowingReplyError = false
@@ -69,7 +68,6 @@ public struct EventDetailsView: View {
 
     public init(event: UIEventDetails) {
         self.event = event
-        _alarms = State(initialValue: event.alarms)
         _selectedStatus = State(initialValue: event.user?.status)
     }
 
@@ -138,15 +136,17 @@ public struct EventDetailsView: View {
                     // TODO: Show attachments when available using FileTypeProvider
                 }
 
-                if !alarms.isEmpty {
-                    Section {
-                        AlertsSectionView(alarms: $alarms)
-                    }
-                }
-
                 Section {
                     // TODO: Add another row for free/busy status when available
                     StatusRow(text: event.classification.text, icon: event.classification.icon)
+                }
+
+                if !event.alarms.isEmpty {
+                    Section {
+                        ForEach(event.alarms) { alarm in
+                            AlarmRowView(alarm: alarm)
+                        }
+                    }
                 }
 
                 Section {
@@ -225,13 +225,8 @@ public struct EventDetailsView: View {
             } message: {
                 Text(replyErrorMessage)
             }
-            .navigationDestination(item: $editData) { editData in
-                EventFormView(
-                    editionMode: .editDraft(
-                        draft: EventDraft.fromEvent(event, editData: editData),
-                        editingEvent: event
-                    )
-                )
+            .navigationDestination(item: $editedEventDraft) { editedEventDraft in
+                EventFormView(editionMode: .editDraft(draft: editedEventDraft, editingEvent: event))
             }
             .navigationBarTitleDisplayMode(.inline)
             .listSectionSpacing(IKPadding.large)
@@ -261,10 +256,13 @@ public struct EventDetailsView: View {
             do {
                 @InjectService var calendarSDK: CalendarCoreGraph
                 let id = OccurrenceId.companion.parse(value: event.occurrenceId)
-                guard let data = try await calendarSDK.calendarManager.getEditData(occurrenceId: id) else {
+
+                guard let firstEventOccurence = try await calendarSDK.calendarManager.getOccurrence(occurrenceId: id),
+                      let editData = try await calendarSDK.calendarManager.getEditData(occurrenceId: id) else {
                     throw CalendarError.eventOccurrenceNotFound
                 }
-                editData = data
+
+                editedEventDraft = EventDraft(event: firstEventOccurence, editData: editData)
             } catch {
                 Logger.view.error("Failed to load event edit data: \(error.localizedDescription)")
                 editErrorMessage = error.localizedDescription

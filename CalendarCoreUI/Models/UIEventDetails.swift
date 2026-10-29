@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarCore
 import Foundation
 import MultiplatformCalendar
 import SwiftUI
@@ -117,9 +118,7 @@ public extension UIEventDetails {
         isAllDay = event.timing.isAllDay
         timing = UITiming(eventTiming: event.timing)
 
-        alarms = event.alarms.map {
-            UIEventAlarm(sdk: $0)
-        }
+        alarms = event.alarms.map { UIEventAlarm(eventAlarm: $0) }
 
         var user: UIAttendee?
         attendees = event.attendees.map {
