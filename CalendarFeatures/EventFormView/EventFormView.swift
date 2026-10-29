@@ -150,8 +150,11 @@ public struct EventFormView: View {
 
             if !viewModel.availableCalendars.isEmpty {
                 Section {
-                    LabeledContent(CalendarResourcesStrings.calendarsMenuSectionTitle) {
+                    LabeledContent {
                         CalendarPicker(calendarId: $viewModel.draft.calendarId, calendars: viewModel.availableCalendars)
+                    } label: {
+                        Label(CalendarResourcesStrings.sectionCalendarHeader, symbol: .productCalendar)
+                            .labelStyle(.formLabel)
                     }
                 }
             }
