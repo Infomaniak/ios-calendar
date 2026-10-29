@@ -135,6 +135,17 @@ struct EventDraftValidatorTests {
     func updatingDraftPreservesUneditedEventFields() throws {
         var draft = makeDraft()
         draft.alarms = [EventAlarmDraft(offset: .oneHourBefore)]
+        draft.attendees = [
+            Attendee(
+                email: "guest@example.com",
+                displayName: "Guest",
+                status: .needsAction,
+                role: .requested,
+                isOrganizer: false,
+                responseNeeded: true,
+                type: .individual
+            )
+        ]
         let original = try draft.toEventEditData()
         let attendee = AttendeeEdit(email: "guest@example.com", displayName: "Guest", type: .individual, role: .requested)
         let organizer = Organizer(email: "organizer@example.com", displayName: "Organizer", contact: nil)
@@ -173,6 +184,28 @@ struct EventDraftValidatorTests {
         #expect(updated.organizer == stored.organizer)
         #expect(updated.timing.rDates.first as? IcalDateValueFloating == recurrenceDate)
         #expect(updated.timing.exDates.first as? IcalDateValueFloating == recurrenceDate)
+    }
+
+    @Test
+    func newDraftIncludesAttendeesInEventEditData() throws {
+        var draft = makeDraft()
+        draft.attendees = [
+            Attendee(
+                email: "guest@example.com",
+                displayName: "Guest",
+                status: .needsAction,
+                role: .requested,
+                isOrganizer: false,
+                responseNeeded: true,
+                type: .individual
+            )
+        ]
+
+        let eventEditData = try draft.toEventEditData()
+
+        #expect(eventEditData.attendees == [
+            AttendeeEdit(email: "guest@example.com", displayName: "Guest", type: .individual, role: .requested)
+        ])
     }
 
     @Test

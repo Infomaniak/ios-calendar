@@ -126,7 +126,9 @@ public extension EventDraft {
             calendarId: calendarId,
             eventColor: originalData?.eventColor,
             alarms: AlarmListEditReplace(alarms: alarms.map { $0.sdkValue }),
-            attendees: originalData?.attendees ?? [],
+            attendees: attendees.map {
+                AttendeeEdit(email: $0.email, displayName: $0.displayName, type: $0.type, role: $0.role)
+            },
             organizer: originalData?.organizer,
             meetRoom: originalData?.meetRoom
         )
