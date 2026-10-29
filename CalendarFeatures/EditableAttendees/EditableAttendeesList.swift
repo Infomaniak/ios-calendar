@@ -41,7 +41,7 @@ public struct EditableAttendeesList: View {
     @State private var search = ""
     @State private var isSearching = false
 
-    @State private var searchedContacts: [UIContact]?
+    @State private var searchedAttendees: [UIAttendee]?
 
     @Binding var attendees: [Attendee]
 
@@ -62,20 +62,15 @@ public struct EditableAttendeesList: View {
 
     public var body: some View {
         List {
-            if !trimmedSearch.isEmpty, let searchedContacts {
-                ForEach(searchedContacts) { contact in
-                    AttendeeSearchResultButton(
-                        avatar: contact.avatar,
-                        name: contact.name,
-                        email: contact.email,
-                        attendees: uiAttendees
-                    ) {
-                        addAttendee(email: contact.email, displayName: contact.name, contact: contact)
+            if !trimmedSearch.isEmpty, let searchedAttendees {
+                ForEach(searchedAttendees, id: \.self) { attendee in
+                    SearchResultRow(attendee: attendee, alreadyExist: false, equalAttendeeAlreadyExist: false) {
+                        addAttendee(attendee)
                     }
                 }
 
                 CustomAttendeeRow(text: trimmedSearch) {
-                    addAttendee(email: trimmedSearch, displayName: nil, contact: nil)
+                    addAttendee(UIAttendee(displayName: nil, email: trimmedSearch.lowercased(), status: .needsAction))
                 }
             } else {
                 ForEach(uiAttendees) { attendee in
@@ -87,6 +82,15 @@ public struct EditableAttendeesList: View {
                 .deleteDisabled(!isWritable)
             }
         }
+        .overlay {
+            if trimmedSearch.isEmpty && attendees.isEmpty {
+                ContentUnavailableView {
+                    Label("!No Attendees", symbol: .calendarUser)
+                } description: {
+                    Text("!Search for contatcs to add them to the event.")
+                }
+            }
+        }
         .searchableIfWritable(isWritable, text: $search, isPresented: $isSearching, prompt: "!Add an attendee")
         .task(id: trimmedSearch) {
             await searchContacts(query: trimmedSearch)
@@ -96,7 +100,7 @@ public struct EditableAttendeesList: View {
 
     private func searchContacts(query: String) async {
         guard !query.isEmpty else {
-            searchedContacts = nil
+            searchedAttendees = nil
             return
         }
 
@@ -107,26 +111,33 @@ public struct EditableAttendeesList: View {
             let results = try await calendarSDK.contactsManager.search(query: query)
             guard !Task.isCancelled else { return }
 
-            searchedContacts = results.map { UIContact(contact: $0) }
+            let currentAttendees = uiAttendees
+            searchedAttendees = results.map { result in
+                let contact = UIContact(contact: result)
+                let email = contact.email.lowercased()
+                if let existingAttendee = currentAttendees.first(where: { $0.email == email && $0.displayName == contact.name }) {
+                    return existingAttendee
+                }
+                return UIAttendee(displayName: contact.name, email: email, status: .needsAction, contact: contact)
+            }
         } catch {
             guard !Task.isCancelled else { return }
-            searchedContacts = nil
+            searchedAttendees = nil
         }
     }
 
-    private func addAttendee(email: String, displayName: String?, contact: UIContact?) {
-        let email = email.lowercased()
-        guard !attendees.contains(where: { $0.email.lowercased() == email }) else { return }
+    private func addAttendee(_ uiAttendee: UIAttendee) {
+        guard !attendees.contains(where: { $0.email.lowercased() == uiAttendee.email }) else { return }
 
         let attendee = Attendee(
-            email: email,
-            displayName: displayName,
+            email: uiAttendee.email,
+            displayName: uiAttendee.displayName,
             status: .needsAction,
             role: .requested,
             isOrganizer: false,
             responseNeeded: true,
             type: .individual,
-            contact: nil // fix this
+            contact: nil // fix
         )
 
         withAnimation {
@@ -135,42 +146,6 @@ public struct EditableAttendeesList: View {
             search = ""
             isSearching = false
         }
-    }
-}
-
-private struct AttendeeSearchResultButton: View {
-    let avatar: UIAvatarType?
-    let name: String?
-    let email: String
-    let attendees: [UIAttendee]
-    let action: () -> Void
-
-    private var existingAttendee: UIAttendee? {
-        attendees.first { $0.email == email.lowercased() }
-    }
-
-    private var matchingAttendee: UIAttendee? {
-        guard let existingAttendee, existingAttendee.displayName == name else { return nil }
-        return existingAttendee
-    }
-
-    private var displayName: String {
-        guard let name, !name.isEmpty else { return email }
-        return name
-    }
-
-    var body: some View {
-        Button(action: action) {
-            ParticipantCellView(
-                avatar: avatar ?? matchingAttendee?.contact?.avatar,
-                displayName: displayName,
-                email: email,
-                isOrganizer: matchingAttendee?.isOrganizer ?? false,
-                status: matchingAttendee?.status
-            )
-        }
-        .disabled(existingAttendee != nil)
-        .opacity(existingAttendee != nil ? 0.5 : 1)
     }
 }
 
