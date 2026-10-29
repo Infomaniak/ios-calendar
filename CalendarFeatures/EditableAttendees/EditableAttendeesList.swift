@@ -66,13 +66,11 @@ public struct EditableAttendeesList: View {
     }
 
     public var body: some View {
-        let addedAttendees = uiAttendees
-
         List {
-            ForEach(searchedAttendees ?? addedAttendees) { attendee in
+            ForEach(searchedAttendees ?? uiAttendees) { attendee in
                 EditableAttendeeRow(
                     attendee: attendee,
-                    addedState: addedState(of: attendee, in: addedAttendees),
+                    addedState: addedState(of: attendee, in: uiAttendees),
                     action: isShowingSearchResults ? { addAttendee(attendee) } : nil
                 )
             }
@@ -112,14 +110,12 @@ public struct EditableAttendeesList: View {
     }
 
     private func searchContacts(query: String) async {
-        guard !query.isEmpty else {
+        guard !trimmedSearch.isEmpty else {
             withAnimation { searchedAttendees = nil }
             return
         }
 
         do {
-            try await Task.sleep(for: .milliseconds(300))
-
             @InjectService var calendarSDK: CalendarCoreGraph
             let results = try await calendarSDK.contactsManager.search(query: query)
             guard !Task.isCancelled else { return }
