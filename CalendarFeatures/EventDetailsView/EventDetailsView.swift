@@ -136,17 +136,17 @@ public struct EventDetailsView: View {
                     // TODO: Show attachments when available using FileTypeProvider
                 }
 
+                Section {
+                    // TODO: Add another row for free/busy status when available
+                    StatusRow(text: event.classification.text, icon: event.classification.icon)
+                }
+
                 if !event.alarms.isEmpty {
                     Section {
                         ForEach(event.alarms) { alarm in
                             AlarmRowView(alarm: alarm)
                         }
                     }
-                }
-
-                Section {
-                    // TODO: Add another row for free/busy status when available
-                    StatusRow(text: event.classification.text, icon: event.classification.icon)
                 }
 
                 Section {
