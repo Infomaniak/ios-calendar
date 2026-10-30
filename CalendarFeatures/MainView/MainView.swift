@@ -38,14 +38,14 @@ public struct MainView: View {
             }
         }
         .task(id: calendarAccounts) {
-            syncCalendarsAndContacts()
+            syncAccountData()
             await askForPermissions()
         }
         .sceneLifecycle(willEnterForeground: willEnterForeground)
     }
 
     private func willEnterForeground() {
-        syncCalendarsAndContacts()
+        syncAccountData()
 
         Task {
             await askForPermissions()
@@ -62,7 +62,7 @@ public struct MainView: View {
             do {
                 let contactsPermissionGranted = try await CNContactStore().requestAccess(for: .contacts)
                 if contactsPermissionGranted {
-                    syncCalendarsAndContacts()
+                    syncAccountData()
                 }
             } catch {
                 Logger.general.error("Failed to request contacts permission: \(error.localizedDescription)")
@@ -72,7 +72,7 @@ public struct MainView: View {
         await NotificationsHelper.askForPermissions()
     }
 
-    private func syncCalendarsAndContacts() {
+    private func syncAccountData() {
         Task {
             @InjectService var syncHelper: CalendarSyncHelper
             await syncHelper.sync()
