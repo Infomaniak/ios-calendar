@@ -18,6 +18,7 @@
 
 import CalendarCore
 import CalendarCoreUI
+import CalendarEditableAttendees
 import CalendarResources
 import DesignSystem
 import ESDSFoundation
@@ -42,6 +43,7 @@ public enum EditionMode {
 
 public struct EventFormView: View {
     @Environment(\.calendar) private var calendar
+    @Environment(\.calendarAccounts) private var calendarAccounts
     @Environment(\.esdsTheme) private var theme
     @Environment(\.dismiss) private var dismiss
 
@@ -64,6 +66,7 @@ public struct EventFormView: View {
         Form {
             Section {
                 TextField(CalendarResourcesStrings.eventTitle, text: $viewModel.draft.title)
+                    .fontWeight(.bold)
                     .focused($isTitleFocused)
             } footer: {
                 if viewModel.validationErrors.contains(.titleTooLong) {
@@ -109,7 +112,11 @@ public struct EventFormView: View {
                     EventAttendeesCell(attendees: viewModel.draft.attendees.map { UIAttendee(attendee: $0) })
                 }
                 .navigationDestination(isPresented: $isNavigatingToAttendeesList) {
-                    Text(CalendarResourcesStrings.attendeesNotEditableMessage)
+                    EditableAttendeesList(
+                        attendees: $viewModel.draft.attendees,
+                        organizer: $viewModel.draft.organizer,
+                        currentUser: viewModel.currentUser(in: calendarAccounts)
+                    )
                 }
             }
 
@@ -171,6 +178,9 @@ public struct EventFormView: View {
         }
         .task {
             await viewModel.observeCalendars()
+        }
+        .onChange(of: viewModel.draft.calendarId, initial: true) {
+            viewModel.updateOrganizerForSelectedCalendar(calendarAccounts: calendarAccounts)
         }
         .scrollDismissesKeyboard(.interactively)
         .navigationTitle(Text(viewModel.editionMode.navigationTitle))

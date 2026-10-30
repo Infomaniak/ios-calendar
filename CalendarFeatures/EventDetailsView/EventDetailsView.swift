@@ -103,7 +103,7 @@ public struct EventDetailsView: View {
                             EventAttendeesCell(attendees: uniqueAttendees)
                         }
                         .navigationDestination(isPresented: $isNavigatingToAttendeesList) {
-                            AttendeesListView(attendees: uniqueAttendees)
+                            AttendeesListView(event: event)
                         }
                     }
                 }
@@ -227,6 +227,9 @@ public struct EventDetailsView: View {
             }
             .navigationDestination(item: $editedEventDraft) { editedEventDraft in
                 EventFormView(editionMode: .editDraft(draft: editedEventDraft, editingEvent: event))
+            }
+            .onChange(of: event.user?.status) { _, newStatus in
+                selectedStatus = newStatus
             }
             .navigationBarTitleDisplayMode(.inline)
             .listSectionSpacing(IKPadding.large)

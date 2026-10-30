@@ -50,6 +50,7 @@ let preloadingView = Feature(
 let eventDetailsView = Feature(
     name: "EventDetailsView",
     additionalDependencies: [
+        TargetDependency.target(name: "CalendarEditableAttendees"),
         TargetDependency.target(name: "CalendarEventFormView"),
         TargetDependency.target(name: "\(Constants.projectName)Resources"),
         TargetDependency.external(name: "MultiplatformCalendar"),
@@ -61,9 +62,20 @@ let eventDetailsView = Feature(
     ]
 )
 
+let editableAttendees = Feature(
+    name: "EditableAttendees",
+    additionalDependencies: [
+        TargetDependency.target(name: "CalendarResources"),
+        TargetDependency.external(name: "MultiplatformCalendar"),
+        TargetDependency.external(name: "ESDSSymbols"),
+        TargetDependency.external(name: "InfomaniakDI")
+    ]
+)
+
 let eventFormView = Feature(
     name: "EventFormView",
     additionalDependencies: [
+        editableAttendees,
         TargetDependency.target(name: "CalendarResources"),
         TargetDependency.external(name: "MultiplatformCalendar"),
         TargetDependency.external(name: "DesignSystem"),
@@ -147,6 +159,7 @@ let mainiOSAppFeatures = [
     onboardingView,
     preloadingView,
     calendarView,
+    editableAttendees,
     eventFormView,
     eventDetailsView,
     calendarListView,

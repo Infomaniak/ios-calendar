@@ -46,6 +46,19 @@ public extension UIParticipationStatus {
         }
     }
 
+    var sdkValue: MultiplatformCalendar.ParticipationStatus {
+        switch self {
+        case .accepted:
+            return .accepted
+        case .tentative:
+            return .tentative
+        case .needsAction:
+            return .needsAction
+        case .declined:
+            return .declined
+        }
+    }
+
     var reply: ParticipationReply? {
         switch self {
         case .accepted:
@@ -101,7 +114,7 @@ public extension UIParticipationStatus {
 
 public struct UIAttendee: UICalendarUser, Sendable, Equatable, Hashable, Identifiable {
     public var id: String {
-        return email
+        return "\(email)-\(displayName ?? "")"
     }
 
     public let email: String
@@ -140,6 +153,19 @@ public extension UIAttendee {
         status = UIParticipationStatus(participationStatus: attendee.status)
         isOrganizer = attendee.isOrganizer
         contact = attendee.contact.map { UIContact(contact: $0) }
+    }
+
+    var sdkValue: MultiplatformCalendar.Attendee {
+        MultiplatformCalendar.Attendee(
+            email: email,
+            displayName: displayName,
+            status: status.sdkValue,
+            role: isOrganizer ? .chair : .requested,
+            isOrganizer: isOrganizer,
+            responseNeeded: status == .needsAction,
+            type: .individual,
+            contact: contact?.sdkValue
+        )
     }
 }
 

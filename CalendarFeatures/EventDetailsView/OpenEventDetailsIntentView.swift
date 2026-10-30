@@ -57,27 +57,29 @@ public struct OpenEventDetailsIntentView: View {
             }
         }
         .task(id: occurrenceId) {
-            await initFromIntent()
+            await observeEvent()
         }
     }
 
-    private func initFromIntent() async {
+    private func observeEvent() async {
         resolvedEvent = nil
         errorMessage = nil
-        do {
-            @InjectService var calendarSDK: CalendarCoreGraph
-            let id = OccurrenceId.companion.parse(value: occurrenceId)
-            guard let occurrence = try await calendarSDK.calendarManager.getOccurrence(occurrenceId: id) else {
-                throw CalendarError.eventOccurrenceNotFound
+
+        @InjectService var calendarSDK: CalendarCoreGraph
+        let id = OccurrenceId.companion.parse(value: occurrenceId)
+
+        for await occurrence in calendarSDK.calendarManager.observeOccurrence(occurrenceId: id) {
+            guard let occurrence else {
+                if resolvedEvent == nil {
+                    Logger.view.error("Failed to load event details: occurrence not found")
+                    dismiss()
+                }
+                continue
             }
-            try Task.checkCancellation()
+
             let email = calendarAccounts[Int(occurrence.accountIdValue)]?.user.email
             resolvedEvent = UIEventDetails(event: occurrence, userEmail: email)
-        } catch is CancellationError {
-            return
-        } catch {
-            Logger.view.error("Failed to load event details: \(error.localizedDescription)")
-            errorMessage = error.localizedDescription
+            errorMessage = nil
         }
     }
 }

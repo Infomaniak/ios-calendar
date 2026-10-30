@@ -24,9 +24,21 @@
 /* loco:6a3d35f26bb2f27bf40b0052 */
 "allDayLabel" = "Todo el día";
 
+/* loco:6ae4941037db30439c0fe983 */
+"attendeeIncompleteEmailMessage" = "Completa la dirección de correo electrónico para añadirla";
+
+/* loco:6ae48f8bd29a59c26d0d9612 */
+"attendeesEmptyStateDescription" = "Busca contactos para añadirlos al evento";
+
+/* loco:6ae48e7b3ee48616c404f143 */
+"attendeesEmptyStateTitle" = "Sin invitados";
+
 /* loco:6aacf10357a2cbe67c064fc2
  * Keep the message concise. */
 "attendeesNotEditableMessage" = "Todavía no se puede editar.";
+
+/* loco:6ae494112154520069004bd3 */
+"attendeesSearchPlaceholder" = "Añadir un invitado";
 
 /* loco:6aaaaf0a7756fd68ac03a4a9 */
 "attendeesTitle" = "Invitados";
