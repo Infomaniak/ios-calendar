@@ -19,8 +19,8 @@
 import MultiplatformCalendar
 
 public extension Attendee {
-    static func fromOrganizer(_ organizer: Organizer) -> Attendee {
-        Attendee(
+    convenience init(organizer: Organizer) {
+        self.init(
             email: organizer.email,
             displayName: organizer.displayName,
             status: .accepted,

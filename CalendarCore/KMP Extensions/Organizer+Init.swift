@@ -23,4 +23,8 @@ public extension Organizer {
     convenience init(user: UserProfile) {
         self.init(email: user.email.lowercased(), displayName: user.displayName, contact: nil)
     }
+
+    convenience init(attendee: Attendee) {
+        self.init(email: attendee.email, displayName: attendee.displayName, contact: attendee.contact)
+    }
 }

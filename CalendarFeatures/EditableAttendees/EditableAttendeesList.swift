@@ -164,20 +164,30 @@ public struct EditableAttendeesList: View {
     private func addAttendee(_ uiAttendee: UIAttendee) {
         guard !attendees.contains(where: { $0.email.lowercased() == uiAttendee.email }) else { return }
 
-        withAnimation {
-            addOrganizerIfMissing()
+        let isCurrentUser = uiAttendee.email == currentUser?.email.lowercased()
+        let isOrganizer = organizer.map { uiAttendee.email == $0.email.lowercased() } ?? isCurrentUser
 
-            let isCurrentUser = uiAttendee.email == currentUser?.email.lowercased()
-            attendees.append(Attendee(
-                email: uiAttendee.email,
-                displayName: uiAttendee.displayName,
-                status: isCurrentUser ? .accepted : .needsAction,
-                role: .requested,
-                isOrganizer: uiAttendee.email == organizer?.email.lowercased(),
-                responseNeeded: !isCurrentUser,
-                type: .individual,
-                contact: uiAttendee.contact.map { $0.sdkValue }
-            ))
+        let newAttendee = Attendee(
+            email: uiAttendee.email,
+            displayName: uiAttendee.displayName,
+            status: isCurrentUser ? .accepted : .needsAction,
+            role: isOrganizer ? .chair : .requested,
+            isOrganizer: isOrganizer,
+            responseNeeded: !isCurrentUser,
+            type: .individual,
+            contact: uiAttendee.contact.map { $0.sdkValue }
+        )
+
+        withAnimation {
+            attendees.append(newAttendee)
+
+            if organizer == nil {
+                if isOrganizer {
+                    organizer = Organizer(attendee: newAttendee)
+                } else {
+                    addCurrentUserAsOrganizer()
+                }
+            }
 
             search = ""
             searchedAttendees = nil
@@ -185,14 +195,14 @@ public struct EditableAttendeesList: View {
         }
     }
 
-    private func addOrganizerIfMissing() {
-        guard organizer == nil, let currentUser else { return }
+    private func addCurrentUserAsOrganizer() {
+        guard let currentUser else { return }
 
         let newOrganizer = Organizer(user: currentUser)
         organizer = newOrganizer
 
         if !attendees.contains(where: { $0.email.lowercased() == newOrganizer.email }) {
-            attendees.append(Attendee.fromOrganizer(newOrganizer))
+            attendees.insert(Attendee(organizer: newOrganizer), at: 0)
         }
     }
 }
