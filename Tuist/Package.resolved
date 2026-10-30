@@ -1,5 +1,5 @@
 {
-  "originHash" : "0489adeb05a99840d85d6c20bfe9514845063ff7bdb2a7b314b844fc5f9a0714",
+  "originHash" : "5298f40b3988003cf48f821e5b6d807268b8527cf1230ad875814f9519f48aeb",
   "pins" : [
     {
       "identity" : "alamofire",
@@ -141,8 +141,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/multiplatform-calendar",
       "state" : {
-        "revision" : "2b3cc52d0afb27f8fbb823e6ddb4f51d7c041a9f",
-        "version" : "0.18.0"
+        "branch" : "spm-ios-snapshot-0.20.0-api-environment-202610301400-41065958406-1",
+        "revision" : "dc1e8b7d6e8b8020d3194e1906f20a15dec5ceb4"
       }
     },
     {
