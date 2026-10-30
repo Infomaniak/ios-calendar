@@ -50,6 +50,7 @@ let preloadingView = Feature(
 let eventDetailsView = Feature(
     name: "EventDetailsView",
     additionalDependencies: [
+        TargetDependency.target(name: "CalendarEditableAttendees"),
         TargetDependency.target(name: "CalendarEventFormView"),
         TargetDependency.target(name: "\(Constants.projectName)Resources"),
         TargetDependency.external(name: "MultiplatformCalendar"),

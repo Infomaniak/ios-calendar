@@ -16,56 +16,132 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarCore
 import CalendarCoreUI
+import CalendarEditableAttendees
 import CalendarResources
+import InfomaniakCore
+import InfomaniakDI
+import MultiplatformCalendar
+import OSLog
 import SwiftUI
 
 struct AttendeesListView: View {
-    @State private var search = ""
+    @Environment(\.calendarAccounts) private var calendarAccounts
+    @Environment(\.dismiss) private var dismiss
 
-    let attendees: [UIAttendee]
+    @State private var draft: EventDraft?
+    @State private var originalDraft: EventDraft?
+    @State private var currentUser: UserProfile?
+    @State private var isShowingRecurrenceScope = false
+    @State private var isSaving = false
+    @State private var saveError: CalendarError?
 
-    private var visibleAttendees: [UIAttendee] {
-        var filteredAttendees = attendees
-        if !search.isEmpty {
-            filteredAttendees = attendees.filter {
-                $0.displayName?.localizedCaseInsensitiveContains(search) == true ||
-                    $0.email.localizedCaseInsensitiveContains(search)
-            }
-        }
+    let event: UIEventDetails
 
-        return filteredAttendees
+    private var isEdited: Bool {
+        draft != originalDraft
     }
 
     var body: some View {
-        List {
-            ForEach(visibleAttendees.sortedForDisplay()) { attendee in
-                ParticipantCellView(
-                    avatar: attendee.contact?.avatar,
-                    displayName: attendee.displayName ?? attendee.email,
-                    email: attendee.email,
-                    isOrganizer: attendee.isOrganizer,
-                    status: attendee.status
+        Group {
+            if !event.canEdit {
+                EditableAttendeesList(
+                    attendees: .constant(event.attendees.map { $0.sdkValue }),
+                    organizer: .constant(nil),
+                    currentUser: nil,
+                    isWritable: false
                 )
+            } else if let draftBinding = Binding($draft) {
+                EditableAttendeesList(
+                    attendees: draftBinding.attendees,
+                    organizer: draftBinding.organizer,
+                    currentUser: currentUser
+                )
+                .disabled(isSaving)
+                .toolbar {
+                    ToolbarItem(placement: .confirmationAction) {
+                        ConfirmationButton(action: didTapSave)
+                            .disabled(isSaving || !isEdited)
+                            .confirmationDialog(
+                                CalendarResourcesStrings.editRecurringEventAlertTitle,
+                                isPresented: $isShowingRecurrenceScope,
+                                titleVisibility: .visible
+                            ) {
+                                Button(CalendarResourcesStrings.buttonThisEvent) {
+                                    saveDraft(scope: .thisOccurrence)
+                                }
+                                Button(CalendarResourcesStrings.buttonThisAndFollowingEvents) {
+                                    saveDraft(scope: .thisAndFollowing)
+                                }
+                                Button(CalendarResourcesStrings.buttonAllEvents) {
+                                    saveDraft(scope: .allOccurrences)
+                                }
+                            }
+                    }
+                }
+            } else {
+                ProgressView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .navigationTitle(CalendarResourcesStrings.participantsLabel(event.attendees.count))
+                    .toolbarTitleDisplayMode(.inline)
             }
         }
-        .searchable(text: $search)
-        .navigationTitle(CalendarResourcesStrings.participantsLabel(attendees.count))
-        .toolbarTitleDisplayMode(.inline)
+        .task {
+            await loadDraft()
+        }
+        .alert(error: $saveError) {}
     }
-}
 
-private extension [UIAttendee] {
-    func sortedForDisplay() -> [UIAttendee] {
-        sorted {
-            if $0.isOrganizer != $1.isOrganizer {
-                return $0.isOrganizer
+    private func loadDraft() async {
+        guard event.canEdit, draft == nil else { return }
+
+        do {
+            @InjectService var calendarSDK: CalendarCoreGraph
+            let id = OccurrenceId.companion.parse(value: event.occurrenceId)
+
+            guard let occurrence = try await calendarSDK.calendarManager.getOccurrence(occurrenceId: id),
+                  let editData = try await calendarSDK.calendarManager.getEditData(occurrenceId: id) else {
+                throw CalendarError.eventOccurrenceNotFound
             }
-            return $0.status.sortOrder < $1.status.sortOrder
+
+            let loadedDraft = EventDraft(event: occurrence, editData: editData)
+            currentUser = calendarAccounts[Int(occurrence.accountIdValue)]?.user
+            originalDraft = loadedDraft
+            draft = loadedDraft
+        } catch {
+            Logger.view.error("Failed to load event edit data: \(error.localizedDescription)")
+            saveError = (error as? CalendarError) ?? CalendarError.unknown
+        }
+    }
+
+    private func didTapSave() {
+        if event.isOccurrence {
+            isShowingRecurrenceScope = true
+        } else {
+            saveDraft(scope: .thisOccurrence)
+        }
+    }
+
+    private func saveDraft(scope: RecurrenceScope) {
+        guard let draft else { return }
+
+        isSaving = true
+        Task {
+            do {
+                try await UpdateEventUseCase().execute(occurrenceId: event.occurrenceId, scope: scope, draft: draft)
+                dismiss()
+            } catch {
+                Logger.view.error("Failed to save event attendees: \(error.localizedDescription)")
+                saveError = (error as? CalendarError) ?? CalendarError.unknown
+            }
+            isSaving = false
         }
     }
 }
 
 #Preview {
-    AttendeesListView(attendees: UIAttendee.previews)
+    NavigationStack {
+        AttendeesListView(event: .preview)
+    }
 }
