@@ -67,7 +67,12 @@ public struct EditableAttendeesList: View {
         EmailChecker(email: trimmedSearch).validate()
     }
 
-    public init(attendees: Binding<[Attendee]>, organizer: Binding<Organizer?>, currentUser: UserProfile?, isWritable: Bool = true) {
+    public init(
+        attendees: Binding<[Attendee]>,
+        organizer: Binding<Organizer?>,
+        currentUser: UserProfile?,
+        isWritable: Bool = true
+    ) {
         _attendees = attendees
         _organizer = organizer
         self.currentUser = currentUser
@@ -93,13 +98,18 @@ public struct EditableAttendeesList: View {
         .overlay {
             if trimmedSearch.isEmpty && attendees.isEmpty {
                 ContentUnavailableView {
-                    Label("!No Attendees", symbol: .usersStacked)
+                    Label(CalendarResourcesStrings.attendeesEmptyStateTitle, symbol: .usersStacked)
                 } description: {
-                    Text("!Search for contatcs to add them to the event.")
+                    Text(CalendarResourcesStrings.attendeesEmptyStateDescription)
                 }
             }
         }
-        .searchableIfWritable(isWritable, text: $search, isPresented: $isSearching, prompt: "!Add an attendee")
+        .searchableIfWritable(
+            isWritable,
+            text: $search,
+            isPresented: $isSearching,
+            prompt: CalendarResourcesStrings.attendeesSearchPlaceholder
+        )
         .task(id: trimmedSearch) {
             await searchContacts(query: trimmedSearch)
         }

@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarResources
 import ESDSFoundation
 import ESDSSymbols
 import SwiftUI
@@ -44,7 +45,7 @@ struct CustomAttendeeRow: View {
                     Text(verbatim: text)
                         .font(.body)
                     if !isValid {
-                        Text("!Complétez l’adresse mail pour l’ajouter")
+                        Text(CalendarResourcesStrings.attendeeIncompleteEmailMessage)
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
