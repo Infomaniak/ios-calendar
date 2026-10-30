@@ -171,7 +171,7 @@ final class EventFormViewModel {
         replaceOrganizer(with: Organizer(user: currentUser))
     }
 
-    func replaceOrganizer(with newOrganizer: Organizer) {
+    private func replaceOrganizer(with newOrganizer: Organizer) {
         guard let previousOrganizer = draft.organizer else { return }
 
         let previousEmail = previousOrganizer.email.lowercased()

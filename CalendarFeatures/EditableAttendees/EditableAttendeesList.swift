@@ -93,7 +93,7 @@ public struct EditableAttendeesList: View {
         .overlay {
             if trimmedSearch.isEmpty && attendees.isEmpty {
                 ContentUnavailableView {
-                    Label("!No Attendees", symbol: .calendarUser)
+                    Label("!No Attendees", symbol: .usersStacked)
                 } description: {
                     Text("!Search for contatcs to add them to the event.")
                 }
