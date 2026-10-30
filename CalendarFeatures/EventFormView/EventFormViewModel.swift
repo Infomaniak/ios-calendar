@@ -19,6 +19,7 @@
 import CalendarCore
 import CalendarCoreUI
 import Foundation
+import InfomaniakCore
 import InfomaniakDI
 import MultiplatformCalendar
 import Observation
@@ -154,6 +155,34 @@ final class EventFormViewModel {
             originalDraft.calendarId = calendarId
         }
         draft.calendarId = calendarId
+    }
+
+    func currentUser(in calendarAccounts: [CalendarAccount.ID: CalendarAccount]) -> UserProfile? {
+        guard let calendar = availableCalendars.first(where: { $0.id == draft.calendarId }) else { return nil }
+        return calendarAccounts[calendar.accountId]?.user
+    }
+
+    func updateOrganizerForSelectedCalendar(calendarAccounts: [CalendarAccount.ID: CalendarAccount]) {
+        guard case .new = editionMode,
+              let currentUser = currentUser(in: calendarAccounts),
+              let organizer = draft.organizer,
+              organizer.email != currentUser.email.lowercased() else { return }
+
+        replaceOrganizer(with: Organizer(user: currentUser))
+    }
+
+    func replaceOrganizer(with newOrganizer: Organizer) {
+        guard let previousOrganizer = draft.organizer else { return }
+
+        let previousEmail = previousOrganizer.email.lowercased()
+        let newEmail = newOrganizer.email.lowercased()
+
+        guard previousEmail != newEmail else { return }
+
+        draft.organizer = newOrganizer
+        if let organizerIndex = draft.attendees.firstIndex(where: { $0.email.lowercased() == previousEmail }) {
+            draft.attendees[organizerIndex] = Attendee.fromOrganizer(newOrganizer)
+        }
     }
 }
 

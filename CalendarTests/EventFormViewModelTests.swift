@@ -27,6 +27,9 @@ import Testing
 @MainActor
 struct EventFormViewModelTests {
     private let calendar = Foundation.Calendar(identifier: .gregorian)
+    private let previousUser = Organizer(email: "me@first.com", displayName: "Me", contact: nil)
+    private let newUser = Organizer(email: "me@second.com", displayName: "Me", contact: nil)
+    private let guest = Attendee(email: "guest@example.com", status: .needsAction, role: .requested)
 
     @Test(arguments: [true, false])
     func newEventSelectsLastSavedWritableCalendarOrFallsBackToFirst(isSavedCalendarAvailable: Bool) throws {
@@ -445,6 +448,44 @@ struct EventFormViewModelTests {
             endTimeZone: timeZone(endTimeZone)
         )
         return EventFormViewModel(editionMode: .editDraft(draft: draft, editingEvent: .preview), userDefaults: .shared)
+    }
+
+    @Test
+    func replacingOrganizerWithoutOrganizerDoesNothing() {
+        let viewModel = makeOrganizerViewModel(attendees: [guest], organizer: nil)
+
+        viewModel.replaceOrganizer(with: newUser)
+
+        #expect(viewModel.draft.organizer == nil)
+        #expect(viewModel.draft.attendees.map(\.email) == [guest.email])
+    }
+
+    @Test
+    func replacingOrganizerAlsoReplacesItsAttendee() {
+        let viewModel = makeOrganizerViewModel(attendees: [.fromOrganizer(previousUser), guest], organizer: previousUser)
+
+        viewModel.replaceOrganizer(with: newUser)
+
+        #expect(viewModel.draft.organizer?.email == newUser.email)
+        #expect(viewModel.draft.attendees.map(\.email) == [newUser.email, guest.email])
+        #expect(viewModel.draft.attendees.first?.isOrganizer == true)
+    }
+
+    @Test
+    func replacingOrganizerDoesNotReAddRemovedOrganizerAttendee() {
+        let viewModel = makeOrganizerViewModel(attendees: [guest], organizer: previousUser)
+
+        viewModel.replaceOrganizer(with: newUser)
+
+        #expect(viewModel.draft.organizer?.email == newUser.email)
+        #expect(viewModel.draft.attendees.map(\.email) == [guest.email])
+    }
+
+    private func makeOrganizerViewModel(attendees: [Attendee], organizer: Organizer?) -> EventFormViewModel {
+        let viewModel = EventFormViewModel(editionMode: .new(selectedDate: Date()), userDefaults: .shared)
+        viewModel.draft.attendees = attendees
+        viewModel.draft.organizer = organizer
+        return viewModel
     }
 
     private func makeCalendar(id: String) -> UICalendar {
