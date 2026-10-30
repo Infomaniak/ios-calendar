@@ -24,6 +24,7 @@ struct CustomAttendeeRow: View {
     @Environment(\.esdsTheme) private var theme
 
     let text: String
+    let isValid: Bool
     let action: () -> Void
 
     var body: some View {
@@ -39,14 +40,25 @@ struct CustomAttendeeRow: View {
                     .frame(width: 40, height: 40)
                     .accessibilityHidden(true)
 
-                Text(verbatim: text)
-                    .font(.body)
+                VStack(alignment: .leading) {
+                    Text(verbatim: text)
+                        .font(.body)
+                    if !isValid {
+                        Text("!Complétez l’adresse mail pour l’ajouter")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
             }
         }
         .foregroundStyle(.primary)
+        .allowsHitTesting(isValid)
     }
 }
 
 #Preview {
-    CustomAttendeeRow(text: "Hello, World!") {}
+    VStack {
+        CustomAttendeeRow(text: "Hello, World!", isValid: true) {}
+        CustomAttendeeRow(text: "Hello, World!", isValid: false) {}
+    }
 }
