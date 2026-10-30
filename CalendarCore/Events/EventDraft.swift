@@ -32,6 +32,7 @@ public struct EventDraft: Hashable, Equatable, Sendable {
     public var endTimeZone: TimeZone?
 
     public var attendees: [Attendee]
+    public var organizer: Organizer?
 
     public var alarms: [EventAlarmDraft]
 
@@ -48,6 +49,7 @@ public struct EventDraft: Hashable, Equatable, Sendable {
         endDate: Date,
         endTimeZone: TimeZone? = .current,
         attendees: [Attendee] = [],
+        organizer: Organizer? = nil,
         alarms: [EventAlarmDraft] = [],
         isOccupied: Bool = true,
         isPrivate: Bool = false
@@ -61,6 +63,7 @@ public struct EventDraft: Hashable, Equatable, Sendable {
         self.endDate = endDate
         self.endTimeZone = endTimeZone
         self.attendees = attendees
+        self.organizer = organizer
         self.alarms = alarms
         self.isOccupied = isOccupied
         self.isPrivate = isPrivate
@@ -79,6 +82,7 @@ public extension EventDraft {
             endDate: editData.timing.endInstantLocal().toNSDate(),
             endTimeZone: editData.timing.endTimeZone,
             attendees: event.attendees,
+            organizer: editData.organizer,
             alarms: event.alarms.map { EventAlarmDraft(eventAlarm: $0) },
             isOccupied: editData.timeBlocking != .doesNotBlock,
             isPrivate: event.classification == .private
@@ -129,7 +133,7 @@ public extension EventDraft {
             attendees: attendees.map {
                 AttendeeEdit(email: $0.email, displayName: $0.displayName, type: $0.type, role: $0.role)
             },
-            organizer: originalData?.organizer,
+            organizer: organizer ?? originalData?.organizer,
             meetRoom: originalData?.meetRoom
         )
     }
