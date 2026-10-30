@@ -63,6 +63,10 @@ public struct EditableAttendeesList: View {
         search.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
+    private var isSearchValidEmail: Bool {
+        EmailChecker(email: trimmedSearch).validate()
+    }
+
     public init(attendees: Binding<[Attendee]>, organizer: Binding<Organizer?>, currentUser: UserProfile?, isWritable: Bool = true) {
         _attendees = attendees
         _organizer = organizer
@@ -83,7 +87,7 @@ public struct EditableAttendeesList: View {
             .deleteDisabled(!isWritable || isShowingSearchResults)
 
             if isShowingSearchResults && !trimmedSearch.isEmpty {
-                CustomAttendeeRow(text: trimmedSearch, action: addCustomAttendeeFromSearch)
+                CustomAttendeeRow(text: trimmedSearch, isValid: isSearchValidEmail, action: addCustomAttendeeFromSearch)
             }
         }
         .overlay {
@@ -141,6 +145,8 @@ public struct EditableAttendeesList: View {
     }
 
     private func addCustomAttendeeFromSearch() {
+        guard isSearchValidEmail else { return }
+
         let customAttendee = UIAttendee(displayName: nil, email: trimmedSearch.lowercased(), status: .needsAction)
         addAttendee(customAttendee)
     }
