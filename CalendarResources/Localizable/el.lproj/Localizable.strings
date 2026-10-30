@@ -24,9 +24,21 @@
 /* loco:6a3d35f26bb2f27bf40b0052 */
 "allDayLabel" = "Όλη την ημέρα";
 
+/* loco:6ae4941037db30439c0fe983 */
+"attendeeIncompleteEmailMessage" = "Συμπληρώστε τη διεύθυνση email για να την προσθέσετε";
+
+/* loco:6ae48f8bd29a59c26d0d9612 */
+"attendeesEmptyStateDescription" = "Αναζητήστε επαφές για να τις προσθέσετε στην εκδήλωση";
+
+/* loco:6ae48e7b3ee48616c404f143 */
+"attendeesEmptyStateTitle" = "Δεν υπάρχουν καλεσμένοι";
+
 /* loco:6aacf10357a2cbe67c064fc2
  * Keep the message concise. */
 "attendeesNotEditableMessage" = "Δεν είναι ακόμη δυνατή η επεξεργασία.";
+
+/* loco:6ae494112154520069004bd3 */
+"attendeesSearchPlaceholder" = "Προσθήκη καλεσμένου";
 
 /* loco:6aaaaf0a7756fd68ac03a4a9 */
 "attendeesTitle" = "Επισκέπτες";

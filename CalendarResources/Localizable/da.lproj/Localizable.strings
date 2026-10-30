@@ -24,9 +24,21 @@
 /* loco:6a3d35f26bb2f27bf40b0052 */
 "allDayLabel" = "Hele dagen";
 
+/* loco:6ae4941037db30439c0fe983 */
+"attendeeIncompleteEmailMessage" = "Udfyld e-mailadressen for at tilføje den";
+
+/* loco:6ae48f8bd29a59c26d0d9612 */
+"attendeesEmptyStateDescription" = "Søg efter kontakter for at tilføje dem til begivenheden";
+
+/* loco:6ae48e7b3ee48616c404f143 */
+"attendeesEmptyStateTitle" = "Ingen gæster";
+
 /* loco:6aacf10357a2cbe67c064fc2
  * Keep the message concise. */
 "attendeesNotEditableMessage" = "Kan ikke redigeres endnu.";
+
+/* loco:6ae494112154520069004bd3 */
+"attendeesSearchPlaceholder" = "Tilføj en gæst";
 
 /* loco:6aaaaf0a7756fd68ac03a4a9 */
 "attendeesTitle" = "Gæster";
