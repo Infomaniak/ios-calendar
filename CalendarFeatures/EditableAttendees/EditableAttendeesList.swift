@@ -21,6 +21,7 @@ import CalendarCoreUI
 import CalendarResources
 import ESDSFoundation
 import ESDSSymbols
+import InfomaniakCore
 import InfomaniakDI
 import MultiplatformCalendar
 import SwiftUI
@@ -45,7 +46,9 @@ public struct EditableAttendeesList: View {
     @State private var searchedAttendees: [UIAttendee]?
 
     @Binding var attendees: [Attendee]
+    @Binding var organizer: Organizer?
 
+    let currentUser: UserProfile?
     let isWritable: Bool
 
     private var uiAttendees: [UIAttendee] {
@@ -60,8 +63,10 @@ public struct EditableAttendeesList: View {
         search.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
-    public init(attendees: Binding<[Attendee]>, isWritable: Bool) {
+    public init(attendees: Binding<[Attendee]>, organizer: Binding<Organizer?>, currentUser: UserProfile?, isWritable: Bool = true) {
         _attendees = attendees
+        _organizer = organizer
+        self.currentUser = currentUser
         self.isWritable = isWritable
     }
 
@@ -78,9 +83,7 @@ public struct EditableAttendeesList: View {
             .deleteDisabled(!isWritable || isShowingSearchResults)
 
             if isShowingSearchResults && !trimmedSearch.isEmpty {
-                CustomAttendeeRow(text: trimmedSearch) {
-                    addAttendee(UIAttendee(displayName: nil, email: trimmedSearch.lowercased(), status: .needsAction))
-                }
+                CustomAttendeeRow(text: trimmedSearch, action: addCustomAttendeeFromSearch)
             }
         }
         .overlay {
@@ -98,15 +101,6 @@ public struct EditableAttendeesList: View {
         }
         .toolbarTitleDisplayMode(.inline)
         .navigationTitle(CalendarResourcesStrings.participantsLabel(attendees.count))
-    }
-
-    private func addedState(of attendee: UIAttendee, in addedAttendees: [UIAttendee]) -> AttendeeAddedState {
-        if addedAttendees.contains(where: { $0.id == attendee.id }) {
-            return .sameAttendee
-        } else if addedAttendees.contains(where: { $0.email == attendee.email }) {
-            return .sameEmail
-        }
-        return .notAdded
     }
 
     private func searchContacts(query: String) async {
@@ -137,32 +131,58 @@ public struct EditableAttendeesList: View {
         }
     }
 
+    private func addedState(of attendee: UIAttendee, in addedAttendees: [UIAttendee]) -> AttendeeAddedState {
+        if addedAttendees.contains(where: { $0.id == attendee.id }) {
+            return .sameAttendee
+        } else if addedAttendees.contains(where: { $0.email == attendee.email }) {
+            return .sameEmail
+        }
+        return .notAdded
+    }
+
+    private func addCustomAttendeeFromSearch() {
+        let customAttendee = UIAttendee(displayName: nil, email: trimmedSearch.lowercased(), status: .needsAction)
+        addAttendee(customAttendee)
+    }
+
     private func addAttendee(_ uiAttendee: UIAttendee) {
         guard !attendees.contains(where: { $0.email.lowercased() == uiAttendee.email }) else { return }
 
-        let attendee = Attendee(
-            email: uiAttendee.email,
-            displayName: uiAttendee.displayName,
-            status: .needsAction,
-            role: .requested,
-            isOrganizer: false,
-            responseNeeded: true,
-            type: .individual,
-            contact: uiAttendee.contact.map { $0.sdkValue }
-        )
-
         withAnimation {
-            attendees.append(attendee)
+            addOrganizerIfMissing()
+
+            let isCurrentUser = uiAttendee.email == currentUser?.email.lowercased()
+            attendees.append(Attendee(
+                email: uiAttendee.email,
+                displayName: uiAttendee.displayName,
+                status: isCurrentUser ? .accepted : .needsAction,
+                role: .requested,
+                isOrganizer: uiAttendee.email == organizer?.email.lowercased(),
+                responseNeeded: !isCurrentUser,
+                type: .individual,
+                contact: uiAttendee.contact.map { $0.sdkValue }
+            ))
 
             search = ""
             searchedAttendees = nil
             isSearching = false
         }
     }
+
+    private func addOrganizerIfMissing() {
+        guard organizer == nil, let currentUser else { return }
+
+        let newOrganizer = Organizer(user: currentUser)
+        organizer = newOrganizer
+
+        if !attendees.contains(where: { $0.email.lowercased() == newOrganizer.email }) {
+            attendees.append(Attendee.fromOrganizer(newOrganizer))
+        }
+    }
 }
 
 #Preview {
     NavigationStack {
-        EditableAttendeesList(attendees: .constant([]), isWritable: true)
+        EditableAttendeesList(attendees: .constant([]), organizer: .constant(nil), currentUser: nil, isWritable: true)
     }
 }
