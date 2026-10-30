@@ -103,7 +103,7 @@ public struct EventDetailsView: View {
                             EventAttendeesCell(attendees: uniqueAttendees)
                         }
                         .navigationDestination(isPresented: $isNavigatingToAttendeesList) {
-                            AttendeesListView(attendees: uniqueAttendees)
+                            AttendeesListView(event: event)
                         }
                     }
                 }
