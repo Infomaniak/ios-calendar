@@ -181,7 +181,7 @@ final class EventFormViewModel {
 
         draft.organizer = newOrganizer
         if let organizerIndex = draft.attendees.firstIndex(where: { $0.email.lowercased() == previousEmail }) {
-            draft.attendees[organizerIndex] = Attendee.fromOrganizer(newOrganizer)
+            draft.attendees[organizerIndex] = Attendee(organizer: newOrganizer)
         }
     }
 }

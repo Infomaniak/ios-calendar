@@ -462,7 +462,7 @@ struct EventFormViewModelTests {
 
     @Test
     func replacingOrganizerAlsoReplacesItsAttendee() {
-        let viewModel = makeOrganizerViewModel(attendees: [.fromOrganizer(previousUser), guest], organizer: previousUser)
+        let viewModel = makeOrganizerViewModel(attendees: [Attendee(organizer: previousUser), guest], organizer: previousUser)
 
         viewModel.replaceOrganizer(with: newUser)
 
