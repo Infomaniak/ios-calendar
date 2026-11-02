@@ -94,8 +94,8 @@ struct CalendarListContentView: View {
                             DisclosureGroup(isExpanded: isSectionExpandedBinding(for: section.id)) {
                                 calendarRows(for: section)
                             } label: {
-                                Text(section.organisationName ?? "!Autres calendriers")
-                                    .font(.subheadline)
+                                Text(section.organisationName ?? CalendarResourcesStrings.otherCalendarsSectionTitle)
+                                    .font(.subheadline.weight(.semibold))
                                     .foregroundStyle(theme.color.contentSecondary)
                             }
                         }
