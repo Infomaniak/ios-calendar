@@ -31,7 +31,7 @@ public struct CalendarListView: View {
     @Environment(\.esdsTheme) private var theme
     @Environment(\.calendarAccounts) private var calendarAccounts
 
-    @State private var indexedCalendars = [Int: [UICalendar]]()
+    @State private var sectionsByAccount = [Int: [UICalendarSection]]()
 
     let isCompact: Bool
 
@@ -41,7 +41,7 @@ public struct CalendarListView: View {
 
     public var body: some View {
         List {
-            CalendarListContentView(indexedCalendars: indexedCalendars)
+            CalendarListContentView(sectionsByAccount: sectionsByAccount)
 
             Section {
                 AdaptativeNavigationLink(isCompact: isCompact) {
@@ -89,8 +89,7 @@ public struct CalendarListView: View {
     private func observeCalendars() async {
         @InjectService var calendarSDK: CalendarCoreGraph
         for await sections in calendarSDK.calendarManager.observeCalendars() {
-            let calendars = sections.flatMap { $0.calendars }
-            indexedCalendars = Dictionary(grouping: calendars.map { UICalendar(calendar: $0) }, by: \.accountId)
+            sectionsByAccount = Dictionary(grouping: sections.map { UICalendarSection(section: $0) }, by: \.accountId)
         }
     }
 }

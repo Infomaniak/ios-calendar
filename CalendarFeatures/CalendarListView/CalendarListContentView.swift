@@ -20,29 +20,20 @@ import CalendarCore
 import CalendarCoreUI
 import CalendarResources
 import ESDSFoundation
+import ESDSSymbols
 import InfomaniakDI
 @preconcurrency import MultiplatformCalendar
 import SwiftUI
 
-private extension View {
-    func checkmarkTransition() -> some View {
-        if #available(iOS 26.0, *) {
-            return transition(.symbolEffect(.drawOn))
-        } else {
-            return transition(.opacity)
-        }
-    }
-}
+struct StoredIds<ID: LosslessStringConvertible & Hashable & Comparable>: RawRepresentable {
+    var ids: Set<ID>
 
-struct ExpandedAccounts: RawRepresentable {
-    var ids: Set<Int>
-
-    init(ids: Set<Int> = []) {
+    init(ids: Set<ID> = []) {
         self.ids = ids
     }
 
     init?(rawValue: String) {
-        ids = Set(rawValue.split(separator: ",").compactMap { Int($0) })
+        ids = Set(rawValue.split(separator: ",").compactMap { ID(String($0)) })
     }
 
     var rawValue: String {
@@ -54,10 +45,11 @@ struct CalendarListContentView: View {
     @Environment(\.esdsTheme) private var theme
     @Environment(\.calendarAccounts) private var calendarAccounts
 
-    @SceneStorage("CalendarListExpandedAccounts") private var expandedAccounts = ExpandedAccounts()
+    @SceneStorage("CalendarListExpandedAccounts") private var expandedAccounts = StoredIds<Int>()
+    @SceneStorage("CalendarListCollapsedSections") private var collapsedSections = StoredIds<String>()
     @State private var visibilityOverrides = [String: Bool]()
 
-    let indexedCalendars: [Int: [UICalendar]]
+    let sectionsByAccount: [Int: [UICalendarSection]]
 
     private func isExpandedBinding(for accountId: Int) -> Binding<Bool> {
         Binding(
@@ -72,6 +64,19 @@ struct CalendarListContentView: View {
         )
     }
 
+    private func isSectionExpandedBinding(for sectionId: String) -> Binding<Bool> {
+        Binding(
+            get: { !collapsedSections.ids.contains(sectionId) },
+            set: { isExpanding in
+                if isExpanding {
+                    collapsedSections.ids.remove(sectionId)
+                } else {
+                    collapsedSections.ids.insert(sectionId)
+                }
+            }
+        )
+    }
+
     var body: some View {
         let sortedAccounts = Array(calendarAccounts.values).sorted { $0.id < $1.id }
 
@@ -80,37 +85,21 @@ struct CalendarListContentView: View {
                 DisclosureGroup(
                     isExpanded: isExpandedBinding(for: account.id)
                 ) {
-                    let calendars = indexedCalendars[account.id, default: []]
+                    let sections = sectionsByAccount[account.id, default: []]
 
-                    ForEach(Array(calendars.enumerated()), id: \.element.id) { calendarIndex, calendar in
-                        Button {
-                            toggleCalendar(calendar: calendar)
-                        } label: {
-                            HStack(spacing: 8) {
-                                Circle()
-                                    .strokeBorder(calendar.color, lineWidth: 2)
-                                    .background(Circle().fill(isVisible(calendar) ? calendar.color : .clear))
-                                    .frame(width: 24, height: 24)
-                                    .overlay {
-                                        if isVisible(calendar) {
-                                            Image(systemName: "checkmark")
-                                                .font(.system(size: 12, weight: .semibold))
-                                                .foregroundStyle(.white) // TODO: Use a color that contrasts well with the calendar color
-                                                .checkmarkTransition()
-                                                .animation(.spring(duration: 0.25), value: isVisible(calendar))
-                                        }
-                                    }
-                                    .accessibilityHidden(true)
-
-                                Text(calendar.displayName)
-                                    .lineLimit(1)
-                                    .foregroundStyle(theme.color.contentPrimary)
+                    if sections.count == 1, let section = sections.first {
+                        calendarRows(for: section)
+                    } else {
+                        ForEach(sections) { section in
+                            DisclosureGroup(isExpanded: isSectionExpandedBinding(for: section.id)) {
+                                calendarRows(for: section)
+                            } label: {
+                                Text(section.organisationName ?? "!Autres calendriers")
+                                    .font(.subheadline)
+                                    .foregroundStyle(theme.color.contentSecondary)
                             }
                         }
-                        .listRowSeparator(
-                            calendarIndex == 0 ? .visible : .hidden,
-                            edges: calendarIndex == 0 ? .top : .all
-                        )
+                        .listRowSeparator(.hidden)
                     }
                 } label: {
                     AccountCellView(
@@ -129,6 +118,15 @@ struct CalendarListContentView: View {
                 }
             }
         }
+    }
+
+    private func calendarRows(for section: UICalendarSection) -> some View {
+        ForEach(section.calendars) { calendar in
+            CalendarRowView(calendar: calendar, isVisible: isVisible(calendar)) {
+                toggleCalendar(calendar: calendar)
+            }
+        }
+        .listRowSeparator(.hidden)
     }
 
     private func isVisible(_ calendar: UICalendar) -> Bool {
@@ -156,5 +154,5 @@ struct CalendarListContentView: View {
 }
 
 #Preview {
-    CalendarListContentView(indexedCalendars: [0: [.preview]])
+    CalendarListContentView(sectionsByAccount: [0: [.preview]])
 }
