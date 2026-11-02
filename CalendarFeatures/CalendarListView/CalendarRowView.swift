@@ -16,9 +16,9 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import SwiftUI
 import CalendarCoreUI
 import ESDSFoundation
+import SwiftUI
 
 struct CalendarRowView: View {
     @Environment(\.esdsTheme) private var theme
@@ -48,7 +48,6 @@ struct CalendarRowView: View {
                 Text(calendar.displayName)
                     .lineLimit(1)
                     .foregroundStyle(theme.color.contentPrimary)
-
             }
         }
     }
