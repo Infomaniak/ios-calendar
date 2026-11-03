@@ -53,6 +53,13 @@ struct LocationPickerButton: View {
                             .labelStyle(.formLabel)
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
+
+                    if location == nil {
+                        ESDSSymbols.chevronRight.image
+                            .font(.system(size: IKIconSize.large.rawValue))
+                            .foregroundStyle(theme.color.contentTertiary)
+                            .accessibilityHidden(true)
+                    }
                 }
             }
             .sheet(isPresented: $isShowingLocationPickerView) {
