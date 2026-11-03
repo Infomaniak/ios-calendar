@@ -66,8 +66,12 @@ let editableAttendees = Feature(
     name: "EditableAttendees",
     additionalDependencies: [
         TargetDependency.target(name: "CalendarResources"),
-        TargetDependency.external(name: "MultiplatformCalendar"),
+        TargetDependency.external(name: "DesignSystem"),
         TargetDependency.external(name: "ESDSSymbols"),
+        TargetDependency.external(name: "ESDSFoundation"),
+        TargetDependency.external(name: "MultiplatformCalendar"),
+        TargetDependency.external(name: "OrderedCollections"),
+        TargetDependency.external(name: "InfomaniakCore"),
         TargetDependency.external(name: "InfomaniakDI")
     ]
 )
@@ -81,6 +85,7 @@ let eventFormView = Feature(
         TargetDependency.external(name: "DesignSystem"),
         TargetDependency.external(name: "ESDSFoundation"),
         TargetDependency.external(name: "ESDSSymbols"),
+        TargetDependency.external(name: "InfomaniakCore"),
         TargetDependency.external(name: "InfomaniakDI")
     ]
 )
