@@ -88,7 +88,8 @@ public struct CalendarListView: View {
 
     private func observeCalendars() async {
         @InjectService var calendarSDK: CalendarCoreGraph
-        for await calendars in calendarSDK.calendarManager.observeCalendars() {
+        for await sections in calendarSDK.calendarManager.observeCalendars() {
+            let calendars = sections.flatMap { $0.calendars }
             indexedCalendars = Dictionary(grouping: calendars.map { UICalendar(calendar: $0) }, by: \.accountId)
         }
     }
