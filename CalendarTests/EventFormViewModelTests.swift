@@ -77,6 +77,7 @@ struct EventFormViewModelTests {
             calendarId: "0",
             title: "Stored title",
             description: "Stored description\nwith multiple lines",
+            location: .place(name: "Stored location, 123 Street"),
             startDate: date("2026-09-22T10:10:00Z"),
             startTimeZone: timeZone("Europe/Zurich"),
             endDate: date("2026-09-22T11:10:00Z"),
@@ -90,12 +91,69 @@ struct EventFormViewModelTests {
 
         #expect(viewModel.draft.title == original.title)
         #expect(viewModel.draft.description == original.description)
+        #expect(viewModel.draft.location == original.location)
         #expect(viewModel.draft.startDate == original.startDate)
         #expect(viewModel.draft.endDate == original.endDate)
         #expect(viewModel.draft.startTimeZone == original.startTimeZone)
         #expect(viewModel.draft.calendarId == original.calendarId)
         #expect(viewModel.draft.isOccupied == false)
         #expect(viewModel.isEdited == false)
+
+        viewModel.draft.location = .place(name: "Different location")
+        #expect(viewModel.isEdited)
+        viewModel.draft.location = original.location
+        #expect(viewModel.isEdited == false)
+        viewModel.draft.location = nil
+        #expect(viewModel.isEdited)
+    }
+
+    @Test
+    func emptyStoredLocationIsUnsetWithoutMarkingFormChanged() throws {
+        let draft = EventDraft(
+            calendarId: "0", location: .place(name: ""),
+            startDate: Date(timeIntervalSince1970: 1000),
+            endDate: Date(timeIntervalSince1970: 4600)
+        )
+        let editData = try draft.toEventEditData()
+        let mapped = EventDraft(event: makeEvent(editData: editData), editData: editData)
+        let model = EventFormViewModel(editionMode: .editDraft(draft: mapped, editingEvent: .preview), userDefaults: .shared)
+        #expect(model.draft.location == nil)
+        #expect(!model.isEdited)
+    }
+
+    @Test
+    func storedRoomNameIsLoadedAsAPlaceWithoutGuessingItsIdentity() throws {
+        let draft = EventDraft(
+            calendarId: "0", location: .room(id: "room", name: "Meeting room", accountId: 42),
+            startDate: Date(timeIntervalSince1970: 1000),
+            endDate: Date(timeIntervalSince1970: 4600)
+        )
+        let editData = try draft.toEventEditData()
+        let mapped = EventDraft(event: makeEvent(editData: editData), editData: editData)
+
+        guard case .place(let name) = mapped.location else {
+            Issue.record("Expected a place location")
+            return
+        }
+        #expect(name == "Meeting room")
+    }
+
+    @Test
+    func locationMetadataAloneDoesNotMarkStoredStringAsEdited() {
+        let draft = EventDraft(
+            calendarId: "0", location: .place(name: "Meeting room"),
+            startDate: Date(timeIntervalSince1970: 1000),
+            endDate: Date(timeIntervalSince1970: 4600)
+        )
+        let model = EventFormViewModel(editionMode: .editDraft(draft: draft, editingEvent: .preview), userDefaults: .shared)
+
+        model.draft.location = .room(id: "room", name: "Meeting room", accountId: 42)
+        #expect(!model.isEdited)
+        #expect(Set([draft, model.draft]).count == 1)
+        model.draft.location = .room(id: "other-room", name: "Other room", accountId: 42)
+        #expect(model.isEdited)
+        model.draft.location = .place(name: "Meeting room")
+        #expect(!model.isEdited)
     }
 
     @Test(arguments: [
