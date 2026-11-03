@@ -28,7 +28,16 @@ public struct UICalendarSection: Identifiable, Equatable, Sendable {
     public var organisationName: String?
     public let calendars: [UICalendar]
 
-    public init(section: CalendarSection) {
+    public init(accountId: Int, organisationId: Int?, organisationName: String?, calendars: [UICalendar]) {
+        self.accountId = accountId
+        self.organisationId = organisationId
+        self.organisationName = organisationName
+        self.calendars = calendars
+    }
+}
+
+public extension UICalendarSection {
+    init(section: CalendarSection) {
         accountId = Int(section.accountIdValue)
         if let organisation = section.organisation {
             organisationId = Int(organisation.idValue)
@@ -38,13 +47,6 @@ public struct UICalendarSection: Identifiable, Equatable, Sendable {
             organisationName = nil
         }
         calendars = section.calendars.map { UICalendar(calendar: $0) }
-    }
-
-    public init(accountId: Int, organisationId: Int?, organisationName: String?, calendars: [UICalendar]) {
-        self.accountId = accountId
-        self.organisationId = organisationId
-        self.organisationName = organisationName
-        self.calendars = calendars
     }
 }
 
