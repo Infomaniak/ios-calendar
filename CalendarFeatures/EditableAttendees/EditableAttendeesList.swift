@@ -24,6 +24,7 @@ import ESDSSymbols
 import InfomaniakCore
 import InfomaniakDI
 import MultiplatformCalendar
+import OrderedCollections
 import SwiftUI
 
 private extension View {
@@ -43,7 +44,7 @@ public struct EditableAttendeesList: View {
     @State private var search = ""
     @State private var isSearching = false
 
-    @State private var searchedAttendees: [UIAttendee]?
+    @State private var searchedAttendees: OrderedSet<UIAttendee>?
 
     @Binding var attendees: [Attendee]
     @Binding var organizer: Organizer?
@@ -51,8 +52,8 @@ public struct EditableAttendeesList: View {
     let currentUser: UserProfile?
     let isWritable: Bool
 
-    private var uiAttendees: [UIAttendee] {
-        attendees.map { UIAttendee(attendee: $0) }
+    private var uiAttendees: OrderedSet<UIAttendee> {
+        return OrderedSet(attendees.map { UIAttendee(attendee: $0) })
     }
 
     private var isShowingSearchResults: Bool {
@@ -82,11 +83,9 @@ public struct EditableAttendeesList: View {
     public var body: some View {
         List {
             ForEach(searchedAttendees ?? uiAttendees) { attendee in
-                EditableAttendeeRow(
-                    attendee: attendee,
-                    addedState: addedState(of: attendee, in: uiAttendees),
-                    action: isShowingSearchResults ? { addAttendee(attendee) } : nil
-                )
+                EditableAttendeeRow(attendee: attendee, addedState: addedState(of: attendee, in: uiAttendees)) {
+                    addAttendee(attendee)
+                }
             }
             .onDelete { attendees.remove(atOffsets: $0) }
             .deleteDisabled(!isWritable || isShowingSearchResults)
@@ -138,15 +137,15 @@ public struct EditableAttendeesList: View {
                 return seenIds.insert(attendee.id).inserted ? attendee : nil
             }
 
-            withAnimation { searchedAttendees = newSearchedAttendees }
+            withAnimation { searchedAttendees = OrderedSet(newSearchedAttendees) }
         } catch {
             guard !Task.isCancelled else { return }
             withAnimation { searchedAttendees = nil }
         }
     }
 
-    private func addedState(of attendee: UIAttendee, in addedAttendees: [UIAttendee]) -> AttendeeAddedState {
-        if addedAttendees.contains(where: { $0.id == attendee.id }) {
+    private func addedState(of attendee: UIAttendee, in addedAttendees: OrderedSet<UIAttendee>) -> AttendeeAddedState {
+        if addedAttendees.contains(attendee) {
             return .sameAttendee
         } else if addedAttendees.contains(where: { $0.email == attendee.email }) {
             return .sameEmail
@@ -165,7 +164,12 @@ public struct EditableAttendeesList: View {
         guard !attendees.contains(where: { $0.email.lowercased() == uiAttendee.email }) else { return }
 
         let isCurrentUser = uiAttendee.email == currentUser?.email.lowercased()
-        let isOrganizer = organizer.map { uiAttendee.email == $0.email.lowercased() } ?? isCurrentUser
+        var isOrganizer = false
+        if let organizer {
+            isOrganizer = uiAttendee.email == organizer.email.lowercased()
+        } else {
+            isOrganizer = isCurrentUser
+        }
 
         let newAttendee = Attendee(
             email: uiAttendee.email,

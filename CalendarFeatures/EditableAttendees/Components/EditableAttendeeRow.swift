@@ -32,33 +32,30 @@ struct EditableAttendeeRow: View {
     @Environment(\.esdsTheme) private var theme
 
     let attendee: UIAttendee
-
     let addedState: AttendeeAddedState
-    let action: (() -> Void)?
+    let action: () -> Void
 
-    private var isSelectable: Bool {
-        action != nil && addedState == .notAdded
+    private var isAlreadyAdded: Bool {
+        return addedState != .notAdded
     }
 
-    private var isSameAttendee: Bool {
-        addedState == .sameAttendee
+    private var isExactSameAttendee: Bool {
+        return addedState == .sameAttendee
     }
 
     var body: some View {
-        Button {
-            action?()
-        } label: {
+        Button(action: action) {
             HStack(spacing: IKPadding.micro) {
                 ParticipantCellView(
                     avatar: attendee.contact?.avatar,
                     displayName: attendee.displayName ?? attendee.email,
                     email: attendee.email,
-                    isOrganizer: isSameAttendee && attendee.isOrganizer,
-                    status: isSameAttendee ? attendee.status : nil
+                    isOrganizer: isExactSameAttendee && attendee.isOrganizer,
+                    status: isExactSameAttendee ? attendee.status : nil
                 )
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-                if addedState != .notAdded && action != nil {
+                if isAlreadyAdded {
                     ESDSSymbols.check.image
                         .font(.system(size: 24))
                         .foregroundStyle(theme.color.contentSecondary)
@@ -66,8 +63,8 @@ struct EditableAttendeeRow: View {
                 }
             }
         }
-        .allowsHitTesting(isSelectable)
-        .accessibilityAddTraits(addedState != .notAdded ? .isSelected : [])
+        .allowsHitTesting(!isAlreadyAdded)
+        .accessibilityAddTraits(isAlreadyAdded ? .isSelected : [])
     }
 }
 
@@ -76,6 +73,5 @@ struct EditableAttendeeRow: View {
         EditableAttendeeRow(attendee: .preview, addedState: .notAdded) {}
         EditableAttendeeRow(attendee: .preview, addedState: .sameEmail) {}
         EditableAttendeeRow(attendee: .preview, addedState: .sameAttendee) {}
-        EditableAttendeeRow(attendee: .preview, addedState: .sameAttendee, action: nil)
     }
 }

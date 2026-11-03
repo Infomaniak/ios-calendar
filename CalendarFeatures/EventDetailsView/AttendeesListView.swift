@@ -27,70 +27,76 @@ import OSLog
 import SwiftUI
 
 struct AttendeesListView: View {
-    @Environment(\.calendarAccounts) private var calendarAccounts
     @Environment(\.dismiss) private var dismiss
+
+    @Environment(\.calendarAccounts) private var calendarAccounts
 
     @State private var draft: EventDraft?
     @State private var originalDraft: EventDraft?
+
     @State private var currentUser: UserProfile?
+
     @State private var isShowingRecurrenceScope = false
+
     @State private var isSaving = false
     @State private var saveError: CalendarError?
 
     let event: UIEventDetails
 
     private var isEdited: Bool {
-        draft != originalDraft
+        return draft != originalDraft
     }
 
     var body: some View {
-        Group {
-            if !event.canEdit {
-                EditableAttendeesList(
-                    attendees: .constant(event.attendees.map { $0.sdkValue }),
-                    organizer: .constant(nil),
-                    currentUser: nil,
-                    isWritable: false
-                )
-            } else if let draftBinding = Binding($draft) {
-                EditableAttendeesList(
-                    attendees: draftBinding.attendees,
-                    organizer: draftBinding.organizer,
-                    currentUser: currentUser
-                )
-                .disabled(isSaving)
-                .toolbar {
-                    ToolbarItem(placement: .confirmationAction) {
-                        ConfirmationButton(action: didTapSave)
-                            .disabled(isSaving || !isEdited)
-                            .confirmationDialog(
-                                CalendarResourcesStrings.editRecurringEventAlertTitle,
-                                isPresented: $isShowingRecurrenceScope,
-                                titleVisibility: .visible
-                            ) {
-                                Button(CalendarResourcesStrings.buttonThisEvent) {
-                                    saveDraft(scope: .thisOccurrence)
+        if !event.canEdit {
+            EditableAttendeesList(
+                attendees: .constant(event.attendees.map { $0.sdkValue }),
+                organizer: .constant(nil),
+                currentUser: nil,
+                isWritable: false
+            )
+        } else {
+            Group {
+                if let draftBinding = Binding($draft) {
+                    EditableAttendeesList(
+                        attendees: draftBinding.attendees,
+                        organizer: draftBinding.organizer,
+                        currentUser: currentUser
+                    )
+                    .disabled(isSaving)
+                    .toolbar {
+                        ToolbarItem(placement: .confirmationAction) {
+                            ConfirmationButton(action: didTapSave)
+                                .disabled(isSaving || !isEdited)
+                                .confirmationDialog(
+                                    CalendarResourcesStrings.editRecurringEventAlertTitle,
+                                    isPresented: $isShowingRecurrenceScope,
+                                    titleVisibility: .visible
+                                ) {
+                                    Button(CalendarResourcesStrings.buttonThisEvent) {
+                                        saveDraft(scope: .thisOccurrence)
+                                    }
+                                    Button(CalendarResourcesStrings.buttonThisAndFollowingEvents) {
+                                        saveDraft(scope: .thisAndFollowing)
+                                    }
+                                    Button(CalendarResourcesStrings.buttonAllEvents) {
+                                        saveDraft(scope: .allOccurrences)
+                                    }
                                 }
-                                Button(CalendarResourcesStrings.buttonThisAndFollowingEvents) {
-                                    saveDraft(scope: .thisAndFollowing)
-                                }
-                                Button(CalendarResourcesStrings.buttonAllEvents) {
-                                    saveDraft(scope: .allOccurrences)
-                                }
-                            }
+                        }
                     }
+                } else {
+                    ProgressView()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .navigationTitle(CalendarResourcesStrings.participantsLabel(event.attendees.count))
+                        .toolbarTitleDisplayMode(.inline)
                 }
-            } else {
-                ProgressView()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .navigationTitle(CalendarResourcesStrings.participantsLabel(event.attendees.count))
-                    .toolbarTitleDisplayMode(.inline)
             }
+            .task {
+                await loadDraft()
+            }
+            .alert(error: $saveError) {}
         }
-        .task {
-            await loadDraft()
-        }
-        .alert(error: $saveError) {}
     }
 
     private func loadDraft() async {
@@ -101,7 +107,8 @@ struct AttendeesListView: View {
             let id = OccurrenceId.companion.parse(value: event.occurrenceId)
 
             guard let occurrence = try await calendarSDK.calendarManager.getOccurrence(occurrenceId: id),
-                  let editData = try await calendarSDK.calendarManager.getEditData(occurrenceId: id) else {
+                  let editData = try await calendarSDK.calendarManager.getEditData(occurrenceId: id)
+            else {
                 throw CalendarError.eventOccurrenceNotFound
             }
 

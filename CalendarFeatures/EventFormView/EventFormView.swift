@@ -42,10 +42,11 @@ public enum EditionMode {
 }
 
 public struct EventFormView: View {
+    @Environment(\.dismiss) private var dismiss
     @Environment(\.calendar) private var calendar
+
     @Environment(\.calendarAccounts) private var calendarAccounts
     @Environment(\.esdsTheme) private var theme
-    @Environment(\.dismiss) private var dismiss
 
     @State private var viewModel: EventFormViewModel
     @State private var expandedDatePickerId: EventFormViewModel.DatePickerId?
