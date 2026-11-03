@@ -259,6 +259,9 @@
 /* loco:6a858ffd1be4d033d804961f */
 "participateKMeetTitle" = "Join kMeet";
 
+/* loco:6ae9872e4a31aa8256054302 */
+"placesSectionTitle" = "Places";
+
 /* loco:6a4ba692c3d7c4ef7f0aede2 */
 "planningNothingPlanned" = "Nothing planned";
 
@@ -270,6 +273,9 @@
 
 /* loco:6a7c5a5bac18c7aa4e0a94a2 */
 "publicLabel" = "Public";
+
+/* loco:6ae9872e2ae0ce93170dd772 */
+"removeLocationLabel" = "Remove location";
 
 /* loco:6ada2199dd47d237c40a2a52
  * Alert title shown when changing the participation status of a calendar event fails. */
@@ -284,6 +290,9 @@
 
 /* loco:6a7c237bd92250395c0ccfd2 */
 "roomFloorLabel" = "%@ floor";
+
+/* loco:6ae9872e0a2455e1960c6b72 */
+"roomsSectionTitle" = "Rooms";
 
 /* loco:6a6315c87ee8c4a584018c52 */
 "sectionCalendarHeader" = "Calendar";
@@ -337,6 +346,12 @@
 
 /* loco:6aa9363b3f16c92f7e024b92 */
 "timeZoneLabel" = "Time zone";
+
+/* loco:6ae9872edabaa75a2e010612 */
+"unavailableLabel" = "Unavailable";
+
+/* loco:6ae9872fc89295dc4b0ca172 */
+"useRawLocationLabel" = "Use \"%@\"";
 
 /* loco:6a33b6883afea93d8b078502 */
 "weekHeaderWeekNumber" = "W%d";
