@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarCore
 import CalendarResources
 import DesignSystem
 import ESDSFoundation
@@ -28,7 +29,7 @@ public struct MeetingRoomView: View {
     let roomTitle: String
     let roomFloor: Int?
     let roomCapacity: Int?
-    let isAvailable: Bool?
+    let availability: MeetingRoomAvailability
 
     private static let ordinalFormatter: NumberFormatter = {
         let formatter = NumberFormatter()
@@ -36,11 +37,11 @@ public struct MeetingRoomView: View {
         return formatter
     }()
 
-    public init(roomTitle: String, roomFloor: Int?, roomCapacity: Int?, isAvailable: Bool?) {
+    public init(roomTitle: String, roomFloor: Int?, roomCapacity: Int?, availability: MeetingRoomAvailability) {
         self.roomTitle = roomTitle
         self.roomFloor = roomFloor
         self.roomCapacity = roomCapacity
-        self.isAvailable = isAvailable
+        self.availability = availability
     }
 
     public var body: some View {
@@ -83,22 +84,18 @@ public struct MeetingRoomView: View {
             .labelStyle(.formLabel)
             .frame(maxWidth: .infinity, alignment: .leading)
 
-            if let isAvailable {
-                Circle()
-                    .fill(isAvailable ? theme.color.contentFeedbackSuccess : theme.color.contentFeedbackError)
-                    .frame(width: IKIconSize.small.rawValue, height: IKIconSize.small.rawValue)
-                    .accessibilityLabel(
-                        isAvailable ? CalendarResourcesStrings.availableLabel : CalendarResourcesStrings.unavailableLabel
-                    )
-            }
+            Circle()
+                .fill(availability.color(theme: theme))
+                .frame(width: IKIconSize.small.rawValue, height: IKIconSize.small.rawValue)
+                .accessibilityLabel(availability.accessibilityLabel)
         }
     }
 }
 
 #Preview {
     Form {
-        MeetingRoomView(roomTitle: "Salle Jules Verne", roomFloor: 3, roomCapacity: 20, isAvailable: true)
-        MeetingRoomView(roomTitle: "Salle Jules Verne", roomFloor: 3, roomCapacity: 20, isAvailable: false)
-        MeetingRoomView(roomTitle: "Salle Jules Verne", roomFloor: 3, roomCapacity: 20, isAvailable: nil)
+        MeetingRoomView(roomTitle: "Salle Jules Verne", roomFloor: 3, roomCapacity: 20, availability: .available)
+        MeetingRoomView(roomTitle: "Salle Jules Verne", roomFloor: 3, roomCapacity: 20, availability: .unavailable)
+        MeetingRoomView(roomTitle: "Salle Jules Verne", roomFloor: 3, roomCapacity: 20, availability: .unknown)
     }
 }

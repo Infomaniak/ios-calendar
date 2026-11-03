@@ -125,7 +125,7 @@ private struct LocationRoomsSection: View {
                             roomTitle: room.name,
                             roomFloor: room.floor,
                             roomCapacity: room.capacity,
-                            isAvailable: viewModel.availability[room.id]
+                            availability: viewModel.availability(for: room.id)
                         )
                     }
                 }

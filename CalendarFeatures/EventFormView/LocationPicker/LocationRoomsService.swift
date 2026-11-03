@@ -55,7 +55,7 @@ struct LocationAvailabilityRequest: Hashable {
 
 protocol LocationRoomsProviding: Sendable {
     func observeRooms(accountId: Int64, onUpdate: @MainActor ([LocationRoom]) -> Void) async
-    func availability(for request: LocationAvailabilityRequest) async throws -> [String: Bool]
+    func availability(for request: LocationAvailabilityRequest) async throws -> [String: MeetingRoomAvailability]
 }
 
 struct LocationRoomsService: LocationRoomsProviding {
@@ -75,7 +75,7 @@ struct LocationRoomsService: LocationRoomsProviding {
         }
     }
 
-    func availability(for request: LocationAvailabilityRequest) async throws -> [String: Bool] {
+    func availability(for request: LocationAvailabilityRequest) async throws -> [String: MeetingRoomAvailability] {
         @InjectService var calendarSDK: CalendarCoreGraph
         let values = try await calendarSDK.bookableResourcesManager.availabilityValues(
             accountId: request.accountId,
@@ -84,6 +84,6 @@ struct LocationRoomsService: LocationRoomsProviding {
             timeZone: (request.startTimeZone ?? .current).toKotlinTimeZone(),
             rrule: request.rrule
         )
-        return values.mapValues(\.boolValue)
+        return values.mapValues { MeetingRoomAvailability(isAvailable: $0.boolValue) }
     }
 }

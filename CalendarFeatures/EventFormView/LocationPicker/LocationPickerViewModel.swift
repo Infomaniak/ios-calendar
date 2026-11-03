@@ -26,7 +26,7 @@ final class LocationPickerViewModel {
     private static let logger = Logger(category: "LocationPicker")
 
     private(set) var rooms = [LocationRoom]()
-    private(set) var availability = [String: Bool]()
+    private(set) var availability = [String: MeetingRoomAvailability]()
     private(set) var places = [LocationPlace]()
     private var isSearching = false
     private var isLoadingRooms = false
@@ -51,6 +51,10 @@ final class LocationPickerViewModel {
         self.roomsService = roomsService
         self.placesService = placesService
         self.searchDelay = searchDelay
+    }
+
+    func availability(for roomId: String) -> MeetingRoomAvailability {
+        availability[roomId] ?? .unknown
     }
 
     func visibleRooms(query: String) -> [LocationRoom] {
@@ -122,10 +126,10 @@ final class LocationPickerViewModel {
     }
 
     private func availabilityRank(_ id: String) -> Int {
-        switch availability[id] {
-        case true: 0
-        case nil: 1
-        case false: 2
+        switch availability(for: id) {
+        case .available: 0
+        case .unknown: 1
+        case .unavailable: 2
         }
     }
 }

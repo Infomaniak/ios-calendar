@@ -25,6 +25,11 @@ import Testing
 @MainActor
 @Suite(.timeLimit(.minutes(1)))
 struct LocationPickerViewModelTests {
+    @Test(arguments: [(true, MeetingRoomAvailability.available), (false, .unavailable)])
+    func mapsRoomAvailability(isAvailable: Bool, expected: MeetingRoomAvailability) {
+        #expect(MeetingRoomAvailability(isAvailable: isAvailable) == expected)
+    }
+
     @Test(arguments: [
         ("", "Place"),
         ("Street", "Place, Street"),
@@ -43,10 +48,11 @@ struct LocationPickerViewModelTests {
         service.rooms = [
             room("unavailable", "Alpha"),
             room("unknown", "Beta"),
+            room("unknown-explicit", "Delta"),
             room("available", "Gamma")
         ]
         let started = Gate<Bool>()
-        let response = Gate<[String: Bool]>()
+        let response = Gate<[String: MeetingRoomAvailability]>()
         service.availabilityHandler = { _ in
             started.open(true)
             return await response.wait()
@@ -57,16 +63,21 @@ struct LocationPickerViewModelTests {
         _ = await started.wait()
 
         #expect(service.observedAccountIds == [42])
-        #expect(model.rooms.count == 3)
+        #expect(model.rooms.count == 4)
         #expect(model.availability.isEmpty)
         #expect(model.isLoading)
-        #expect(model.visibleRooms(query: "").map(\.id) == ["unavailable", "unknown", "available"])
+        #expect(model.visibleRooms(query: "").map(\.id) == ["unavailable", "unknown", "unknown-explicit", "available"])
+        #expect(model.availability(for: "available") == .unknown)
 
-        response.open(["available": true, "unavailable": false])
+        response.open(["available": .available, "unavailable": .unavailable, "unknown-explicit": .unknown])
         await task.value
         #expect(!model.isLoading)
-        #expect(model.visibleRooms(query: "").map(\.id) == ["available", "unknown", "unavailable"])
+        #expect(model.visibleRooms(query: "").map(\.id) == ["available", "unknown", "unknown-explicit", "unavailable"])
+        #expect(model.availability(for: "available") == .available)
+        #expect(model.availability(for: "unavailable") == .unavailable)
+        #expect(model.availability(for: "unknown-explicit") == .unknown)
         #expect(model.availability["unknown"] == nil)
+        #expect(model.availability(for: "unknown") == .unknown)
         #expect(model.visibleRooms(query: "  gAmMa ").map(\.id) == ["available"])
     }
 
@@ -74,12 +85,12 @@ struct LocationPickerViewModelTests {
     func availabilityArrivingBeforeRoomObservationIsRetained() async {
         let service = RoomsStub()
         service.rooms = [room("room", "Meeting room")]
-        service.availabilityHandler = { _ in ["room": true] }
+        service.availabilityHandler = { _ in ["room": .available] }
         let model = makeModel(rooms: service)
         await model.loadAvailability(for: request())
         await model.observeRooms(accountId: 42)
 
-        #expect(model.availability == ["room": true])
+        #expect(model.availability == ["room": .available])
         #expect(model.rooms.count == 1)
     }
 
@@ -88,13 +99,13 @@ struct LocationPickerViewModelTests {
         let service = RoomsStub()
         let room = room("room", "Meeting room")
         service.rooms = [room]
-        service.availabilityHandler = { _ in ["room": false] }
+        service.availabilityHandler = { _ in ["room": .unavailable] }
         let model = makeModel(rooms: service)
         await model.observeRooms(accountId: 42)
         await model.loadAvailability(for: request())
         let selected = room.location
         #expect(selected == .room(id: "room", name: "Meeting room", accountId: 42))
-        #expect(model.availability[room.id] == false)
+        #expect(model.availability(for: room.id) == .unavailable)
 
         await model.observeRooms(accountId: nil)
         await model.loadAvailability(for: nil)
@@ -116,6 +127,7 @@ struct LocationPickerViewModelTests {
         #expect(model.rooms.count == 1)
         #expect(model.visibleRooms(query: "") == service.rooms)
         #expect(model.availability.isEmpty)
+        #expect(model.availability(for: "room") == .unknown)
         #expect(!model.isLoading)
         #expect(service.availabilityCalls == 1)
         #expect(service.rooms[0].location == .room(id: "room", name: "Meeting room", accountId: 42))
@@ -125,11 +137,11 @@ struct LocationPickerViewModelTests {
     func failedAvailabilityClearsPreviousStatuses() async {
         let service = RoomsStub()
         service.rooms = [room("room", "Meeting room")]
-        service.availabilityHandler = { _ in ["room": true] }
+        service.availabilityHandler = { _ in ["room": .available] }
         let model = makeModel(rooms: service)
         await model.observeRooms(accountId: 42)
         await model.loadAvailability(for: request())
-        #expect(model.availability["room"] == true)
+        #expect(model.availability(for: "room") == .available)
 
         service.availabilityHandler = { _ in throw StubError.failed }
         let updatedDraft = EventDraft(
@@ -140,6 +152,7 @@ struct LocationPickerViewModelTests {
 
         #expect(model.rooms.count == 1)
         #expect(model.availability.isEmpty)
+        #expect(model.availability(for: "room") == .unknown)
         #expect(!model.isLoading)
         #expect(service.availabilityCalls == 2)
     }
@@ -148,22 +161,22 @@ struct LocationPickerViewModelTests {
     func staleAvailabilityCannotOverwriteNewContext() async {
         let service = RoomsStub()
         let started = Gate<Bool>()
-        let response = Gate<[String: Bool]>()
+        let response = Gate<[String: MeetingRoomAvailability]>()
         service.availabilityHandler = { request in
             if request.accountId == 42 {
                 started.open(true)
                 return await response.wait()
             }
-            return ["new": true]
+            return ["new": .available]
         }
         let model = makeModel(rooms: service)
         let oldTask = Task { await model.loadAvailability(for: request()) }
         _ = await started.wait()
         await model.loadAvailability(for: request(accountId: 84))
-        response.open(["old": false])
+        response.open(["old": .unavailable])
         await oldTask.value
 
-        #expect(model.availability == ["new": true])
+        #expect(model.availability == ["new": .available])
     }
 
     @Test
@@ -364,7 +377,7 @@ private final class RoomsStub: LocationRoomsProviding {
     var availabilityCalls = 0
     var beforeObservation: (() async -> Void)?
     var afterObservation: (() async -> Void)?
-    var availabilityHandler: (LocationAvailabilityRequest) async throws -> [String: Bool] = { _ in [:] }
+    var availabilityHandler: (LocationAvailabilityRequest) async throws -> [String: MeetingRoomAvailability] = { _ in [:] }
 
     func observeRooms(accountId: Int64, onUpdate: @MainActor ([LocationRoom]) -> Void) async {
         observedAccountIds.append(accountId)
@@ -373,7 +386,7 @@ private final class RoomsStub: LocationRoomsProviding {
         await afterObservation?()
     }
 
-    func availability(for request: LocationAvailabilityRequest) async throws -> [String: Bool] {
+    func availability(for request: LocationAvailabilityRequest) async throws -> [String: MeetingRoomAvailability] {
         availabilityCalls += 1
         return try await availabilityHandler(request)
     }

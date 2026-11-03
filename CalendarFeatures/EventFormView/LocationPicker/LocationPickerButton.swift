@@ -46,7 +46,7 @@ struct LocationPickerButton: View {
                             roomTitle: name,
                             roomFloor: room.floor,
                             roomCapacity: room.capacity,
-                            isAvailable: viewModel.availability[room.id]
+                            availability: viewModel.availability(for: room.id)
                         )
                     } else {
                         Label(location?.stringValue ?? CalendarResourcesStrings.locationOrRoomLabel, symbol: ESDSSymbols.mapPin)

@@ -31,6 +31,9 @@
 /* loco:6aaaaf0a7756fd68ac03a4a9 */
 "attendeesTitle" = "Vieraat";
 
+/* loco:6ae9a74af57676c59e02b8b5 */
+"availabilityUnknownLabel" = "Saatavuus tuntematon";
+
 /* loco:6aa8faa176a90afcee024da6 */
 "availableLabel" = "Vapaa";
 
