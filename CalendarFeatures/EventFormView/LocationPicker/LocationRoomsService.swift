@@ -38,7 +38,9 @@ struct LocationAvailabilityRequest: Hashable {
     let start: Date
     let end: Date
     let startTimeZone: Foundation.TimeZone?
+    // periphery:ignore - Used for Hashable
     let endTimeZone: Foundation.TimeZone?
+    // periphery:ignore - Used for Hashable
     let allDay: Bool
     let rrule: String?
 
