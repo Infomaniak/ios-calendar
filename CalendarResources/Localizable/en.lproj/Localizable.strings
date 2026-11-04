@@ -294,6 +294,19 @@
 
 /* loco:6ae9872e2ae0ce93170dd772 */
 "removeLocationLabel" = "Remove location";
+"recurrenceCustom" = "Custom";
+
+"recurrenceEveryDay" = "Every day";
+
+"recurrenceEveryMonth" = "Every month";
+
+"recurrenceEveryWeek" = "Every week";
+
+"recurrenceEveryYear" = "Every year";
+
+"recurrenceLabel" = "Recurrence";
+
+"recurrenceNone" = "None";
 
 /* loco:6ada2199dd47d237c40a2a52
  * Alert title shown when changing the participation status of a calendar event fails. */
