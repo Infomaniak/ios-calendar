@@ -240,6 +240,10 @@
 /* loco:6a858ecb52e69982a407cb02 */
 "openTitle" = "Open";
 
+/* loco:6ae8b1e581cb1c2ef3083812
+ * Header of the group, in the calendar list, containing an account's calendars that don't belong to any organisation. Plain text; no format arguments. */
+"otherCalendarsSectionTitle" = "Other calendars";
+
 /* loco:6ad212598dcfe8aeb202d4e9
  * Short form label. */
 "otherReminderAlarmKindLabel" = "Reminder type";

@@ -55,11 +55,12 @@ struct EventCalendarRow: View {
 
     private func observeCalendars() async {
         @InjectService var calendarSDK: CalendarCoreGraph
-        for await calendars in calendarSDK.calendarManager.observeCalendars() {
-            let availableCalendars = calendars.map { UICalendar(calendar: $0) }
-
+        for await sections in calendarSDK.calendarManager.observeCalendars() {
             if let event {
-                selectedCalendar = availableCalendars.first { $0.id == event.calendarId }
+                let availableCalendars = sections.flatMap { $0.calendars }
+                selectedCalendar = availableCalendars
+                    .first { $0.idValue == event.calendarId }
+                    .map { UICalendar(calendar: $0) }
             }
         }
     }
