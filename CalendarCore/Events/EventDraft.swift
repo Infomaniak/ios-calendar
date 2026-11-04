@@ -33,6 +33,8 @@ public struct EventDraft: Hashable, Equatable, Sendable {
     public var endDate: Date
     public var endTimeZone: TimeZone?
 
+    public var recurrence: EventRecurrence
+
     public var attendees: [Attendee]
 
     public var alarms: [EventAlarmDraft]
@@ -51,6 +53,7 @@ public struct EventDraft: Hashable, Equatable, Sendable {
         startTimeZone: TimeZone? = .current,
         endDate: Date,
         endTimeZone: TimeZone? = .current,
+        recurrence: EventRecurrence = .none,
         attendees: [Attendee] = [],
         alarms: [EventAlarmDraft] = [],
         isOccupied: Bool = true,
@@ -66,6 +69,7 @@ public struct EventDraft: Hashable, Equatable, Sendable {
         self.startTimeZone = startTimeZone
         self.endDate = endDate
         self.endTimeZone = endTimeZone
+        self.recurrence = recurrence
         self.attendees = attendees
         self.alarms = alarms
         self.isOccupied = isOccupied
@@ -92,6 +96,7 @@ public extension EventDraft {
             startTimeZone: editData.timing.startTimeZone,
             endDate: editData.timing.endInstantLocal().toNSDate(),
             endTimeZone: editData.timing.endTimeZone,
+            recurrence: EventRecurrence(timing: editData.timing),
             attendees: event.attendees,
             alarms: event.alarms.map { EventAlarmDraft(eventAlarm: $0) },
             isOccupied: editData.timeBlocking != .doesNotBlock,
@@ -162,11 +167,12 @@ public extension EventDraft {
                 end: ZonedWallClock(wallClock: end, timeZone: endZone)
             )
         }
+        let isRecurring = recurrence != .none
         return EventTiming(
             bounds: bounds,
-            recurrenceRule: originalTiming?.recurrenceRule,
-            rDates: originalTiming?.rDates ?? [],
-            exDates: originalTiming?.exDates ?? []
+            recurrenceRule: recurrence.sdkValue(preserving: originalTiming?.recurrenceRule),
+            rDates: isRecurring ? originalTiming?.rDates ?? [] : [],
+            exDates: isRecurring ? originalTiming?.exDates ?? [] : []
         )
     }
 

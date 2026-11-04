@@ -161,6 +161,7 @@ struct EventDraftValidatorTests {
             meetRoom: nil
         )
         draft.title = "Updated title"
+        draft.recurrence = EventRecurrence(timing: timing)
         let updated = try draft.toEventEditData(preserving: stored)
         let updatedAlarms = try #require(updated.alarms as? AlarmListEditReplace)
 

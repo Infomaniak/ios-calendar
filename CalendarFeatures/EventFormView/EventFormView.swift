@@ -100,6 +100,8 @@ public struct EventFormView: View {
                     label: CalendarResourcesStrings.endLabel,
                     canSelectHour: !viewModel.draft.allDay
                 )
+
+                EventRecurrenceRowView(recurrence: $viewModel.draft.recurrence)
             }
 
             Section {
@@ -195,8 +197,10 @@ public struct EventFormView: View {
                         isPresented: $isShowingRecurrenceScope,
                         titleVisibility: .visible
                     ) {
-                        Button(CalendarResourcesStrings.buttonThisEvent) {
-                            saveEvent(scope: .thisOccurrence)
+                        if !viewModel.isRecurrenceEdited {
+                            Button(CalendarResourcesStrings.buttonThisEvent) {
+                                saveEvent(scope: .thisOccurrence)
+                            }
                         }
                         Button(CalendarResourcesStrings.buttonThisAndFollowingEvents) {
                             saveEvent(scope: .thisAndFollowing)
