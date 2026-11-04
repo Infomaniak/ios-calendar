@@ -289,6 +289,19 @@
 
 /* loco:6ae9872e2ae0ce93170dd772 */
 "removeLocationLabel" = "Fjern sted";
+"recurrenceCustom" = "Tilpasset";
+
+"recurrenceEveryDay" = "Hver dag";
+
+"recurrenceEveryMonth" = "Hver måned";
+
+"recurrenceEveryWeek" = "Hver uke";
+
+"recurrenceEveryYear" = "Hvert år";
+
+"recurrenceLabel" = "Gjentakelse";
+
+"recurrenceNone" = "Ingen";
 
 /* loco:6ada2199dd47d237c40a2a52
  * Alert title shown when changing the participation status of a calendar event fails. */

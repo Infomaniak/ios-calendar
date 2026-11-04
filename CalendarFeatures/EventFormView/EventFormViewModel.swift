@@ -76,6 +76,10 @@ final class EventFormViewModel {
         return LocationAvailabilityRequest(calendarId: calendar.id, draft: draft)
     }
 
+    var isRecurrenceEdited: Bool {
+        originalDraft.recurrence != draft.recurrence
+    }
+
     private var currentDuration: TimeInterval {
         return max(draft.endDate.timeIntervalSince(draft.startDate), 0)
     }

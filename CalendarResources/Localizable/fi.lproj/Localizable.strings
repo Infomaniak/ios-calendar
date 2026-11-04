@@ -289,6 +289,19 @@
 
 /* loco:6ae9872e2ae0ce93170dd772 */
 "removeLocationLabel" = "Poista sijainti";
+"recurrenceCustom" = "Mukautettu";
+
+"recurrenceEveryDay" = "Joka päivä";
+
+"recurrenceEveryMonth" = "Joka kuukausi";
+
+"recurrenceEveryWeek" = "Joka viikko";
+
+"recurrenceEveryYear" = "Joka vuosi";
+
+"recurrenceLabel" = "Toisto";
+
+"recurrenceNone" = "Ei mitään";
 
 /* loco:6ada2199dd47d237c40a2a52
  * Alert title shown when changing the participation status of a calendar event fails. */
