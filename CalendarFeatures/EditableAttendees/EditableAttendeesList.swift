@@ -91,11 +91,7 @@ public struct EditableAttendeesList: View {
             Section {
                 ForEach(searchedAttendees ?? uiAttendees) { attendee in
                     let addedState = addedState(of: attendee, in: uiAttendees)
-                    EditableAttendeeRow(
-                        attendee: attendee,
-                        addedState: addedState,
-                        showCheckmark: !trimmedSearch.isEmpty
-                    ) {
+                    EditableAttendeeRow(attendee: attendee, addedState: addedState, showCheckmark: !trimmedSearch.isEmpty) {
                         addAttendee(attendee)
                     }
                     .disabled(isAttendeeLimitReached && addedState == .notAdded)
@@ -109,7 +105,10 @@ public struct EditableAttendeesList: View {
                 }
             } header: {
                 if isWritable && isAttendeeLimitReached {
-                    InformationBlockView(state: .info, text: EventDraftValidator.ValidationError.tooManyAttendees.errorDescription)
+                    InformationBlockView(
+                        state: .info,
+                        text: EventDraftValidator.ValidationError.tooManyAttendees.errorDescription
+                    )
                 }
             }
         }

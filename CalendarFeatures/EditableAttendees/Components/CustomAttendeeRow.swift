@@ -44,10 +44,12 @@ struct CustomAttendeeRow: View {
                 VStack(alignment: .leading) {
                     Text(verbatim: text)
                         .font(.body)
+                        .foregroundStyle(theme.color.contentPrimary)
+
                     if !isValid {
                         Text(CalendarResourcesStrings.attendeeIncompleteEmailMessage)
                             .font(.caption)
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(theme.color.contentTertiary)
                     }
                 }
             }
