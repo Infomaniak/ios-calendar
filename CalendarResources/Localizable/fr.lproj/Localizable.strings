@@ -295,6 +295,26 @@
 
 /* loco:6ae9872e2ae0ce93170dd772 */
 "removeLocationLabel" = "Supprimer le lieu";
+/* loco:6b06f68d3b268fcdda022df3 */
+"recurrenceCustom" = "Personnalisée";
+
+/* loco:6b06f68fb41fbfad8000c807 */
+"recurrenceEveryDay" = "Tous les jours";
+
+/* loco:6b06f69139fa47adb508bdfb */
+"recurrenceEveryMonth" = "Tous les mois";
+
+/* loco:6b06f692cde9a151580206c5 */
+"recurrenceEveryWeek" = "Toutes les semaines";
+
+/* loco:6b06f69439fa47adb508bdfd */
+"recurrenceEveryYear" = "Tous les ans";
+
+/* loco:6af6d09b6f0286c42e0eaba2 */
+"recurrenceLabel" = "Récurrence";
+
+/* loco:6af6d0b76f0286c42e0eaba8 */
+"recurrenceNone" = "Aucune";
 
 /* loco:6ada2199dd47d237c40a2a52
  * Alert title shown when changing the participation status of a calendar event fails. */
