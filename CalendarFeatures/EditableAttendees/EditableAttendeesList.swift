@@ -83,7 +83,11 @@ public struct EditableAttendeesList: View {
     public var body: some View {
         List {
             ForEach(searchedAttendees ?? uiAttendees) { attendee in
-                EditableAttendeeRow(attendee: attendee, addedState: addedState(of: attendee, in: uiAttendees)) {
+                EditableAttendeeRow(
+                    attendee: attendee,
+                    addedState: addedState(of: attendee, in: uiAttendees),
+                    showCheckmark: !trimmedSearch.isEmpty
+                ) {
                     addAttendee(attendee)
                 }
             }

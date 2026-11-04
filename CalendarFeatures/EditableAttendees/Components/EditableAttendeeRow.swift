@@ -33,6 +33,7 @@ struct EditableAttendeeRow: View {
 
     let attendee: UIAttendee
     let addedState: AttendeeAddedState
+    let showCheckmark: Bool
     let action: () -> Void
 
     private var isAlreadyAdded: Bool {
@@ -55,7 +56,7 @@ struct EditableAttendeeRow: View {
                 )
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-                if isAlreadyAdded {
+                if isAlreadyAdded && showCheckmark {
                     ESDSSymbols.check.image
                         .font(.system(size: 24))
                         .foregroundStyle(theme.color.contentSecondary)
@@ -70,8 +71,8 @@ struct EditableAttendeeRow: View {
 
 #Preview {
     List {
-        EditableAttendeeRow(attendee: .preview, addedState: .notAdded) {}
-        EditableAttendeeRow(attendee: .preview, addedState: .sameEmail) {}
-        EditableAttendeeRow(attendee: .preview, addedState: .sameAttendee) {}
+        EditableAttendeeRow(attendee: .preview, addedState: .notAdded, showCheckmark: false) {}
+        EditableAttendeeRow(attendee: .preview, addedState: .sameEmail, showCheckmark: true) {}
+        EditableAttendeeRow(attendee: .preview, addedState: .sameAttendee, showCheckmark: true) {}
     }
 }
