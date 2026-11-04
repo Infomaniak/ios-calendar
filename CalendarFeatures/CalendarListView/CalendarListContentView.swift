@@ -94,7 +94,7 @@ struct CalendarListContentView: View {
                         ForEach(sections) { section in
                             DisclosureGroup(isExpanded: isSectionExpandedBinding(for: section.id)) {
                                 CalendarRowsView(section: section, isVisible: isVisible, action: toggleCalendar)
-                                    .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: IKPadding.medium))
+                                    .listRowLeadingInset()
                             } label: {
                                 Text(section.organisationName ?? CalendarResourcesStrings.otherCalendarsSectionTitle)
                                     .font(.subheadline.weight(.semibold))
@@ -102,7 +102,7 @@ struct CalendarListContentView: View {
                             }
                         }
                         .listRowSeparator(.hidden)
-                        .listRowInsets(EdgeInsets(top: 0, leading: IKPadding.mini, bottom: 0, trailing: 20))
+                        .listRowLeadingInset(IKPadding.small)
                     }
                 } label: {
                     AccountCellView(
@@ -144,6 +144,24 @@ struct CalendarListContentView: View {
                 visibilityOverrides[calendar.id] = previousValue
             }
         }
+    }
+}
+
+private struct ListRowLeadingInsetModifier: ViewModifier {
+    let leadingInset: CGFloat
+    func body(content: Content) -> some View {
+        if #available(iOS 26.0, *) {
+            content
+                .listRowInsets(.leading, leadingInset)
+        } else {
+            content
+        }
+    }
+}
+
+private extension View {
+    func listRowLeadingInset(_ leadingInset: CGFloat = 0) -> some View {
+        modifier(ListRowLeadingInsetModifier(leadingInset: leadingInset))
     }
 }
 
