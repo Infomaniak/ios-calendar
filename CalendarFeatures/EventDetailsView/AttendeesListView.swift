@@ -47,6 +47,11 @@ struct AttendeesListView: View {
         return draft != originalDraft
     }
 
+    private var hasInvalidAttendees: Bool {
+        guard let draft else { return false }
+        return EventDraftValidator().validateAttendees(draft.attendees) != nil
+    }
+
     var body: some View {
         if !event.canEdit {
             EditableAttendeesList(
@@ -67,7 +72,7 @@ struct AttendeesListView: View {
                     .toolbar {
                         ToolbarItem(placement: .confirmationAction) {
                             ConfirmationButton(action: didTapSave)
-                                .disabled(isSaving || !isEdited)
+                                .disabled(isSaving || !isEdited || hasInvalidAttendees)
                                 .confirmationDialog(
                                     CalendarResourcesStrings.editRecurringEventAlertTitle,
                                     isPresented: $isShowingRecurrenceScope,

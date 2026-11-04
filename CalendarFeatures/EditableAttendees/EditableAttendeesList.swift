@@ -52,6 +52,12 @@ public struct EditableAttendeesList: View {
     let currentUser: UserProfile?
     let isWritable: Bool
 
+    private let validator = EventDraftValidator()
+
+    private var isAttendeeLimitReached: Bool {
+        attendees.count >= EventDraftValidator.maximumAttendeeCount
+    }
+
     private var uiAttendees: OrderedSet<UIAttendee> {
         return OrderedSet(attendees.map { UIAttendee(attendee: $0) })
     }
@@ -82,20 +88,29 @@ public struct EditableAttendeesList: View {
 
     public var body: some View {
         List {
-            ForEach(searchedAttendees ?? uiAttendees) { attendee in
-                EditableAttendeeRow(
-                    attendee: attendee,
-                    addedState: addedState(of: attendee, in: uiAttendees),
-                    showCheckmark: !trimmedSearch.isEmpty
-                ) {
-                    addAttendee(attendee)
+            Section {
+                ForEach(searchedAttendees ?? uiAttendees) { attendee in
+                    let addedState = addedState(of: attendee, in: uiAttendees)
+                    EditableAttendeeRow(
+                        attendee: attendee,
+                        addedState: addedState,
+                        showCheckmark: !trimmedSearch.isEmpty
+                    ) {
+                        addAttendee(attendee)
+                    }
+                    .disabled(isAttendeeLimitReached && addedState == .notAdded)
                 }
-            }
-            .onDelete { attendees.remove(atOffsets: $0) }
-            .deleteDisabled(!isWritable || isShowingSearchResults)
+                .onDelete { attendees.remove(atOffsets: $0) }
+                .deleteDisabled(!isWritable || isShowingSearchResults)
 
-            if isShowingSearchResults && !trimmedSearch.isEmpty {
-                CustomAttendeeRow(text: trimmedSearch, isValid: isSearchValidEmail, action: addCustomAttendeeFromSearch)
+                if isShowingSearchResults && !trimmedSearch.isEmpty {
+                    CustomAttendeeRow(text: trimmedSearch, isValid: isSearchValidEmail, action: addCustomAttendeeFromSearch)
+                        .disabled(isAttendeeLimitReached)
+                }
+            } header: {
+                if isWritable && isAttendeeLimitReached {
+                    Text(EventDraftValidator.ValidationError.tooManyAttendees.errorDescription)
+                }
             }
         }
         .overlay {
@@ -186,16 +201,25 @@ public struct EditableAttendeesList: View {
             contact: uiAttendee.contact.map { $0.sdkValue }
         )
 
-        withAnimation {
-            attendees.append(newAttendee)
+        var newAttendees = attendees
+        newAttendees.append(newAttendee)
 
-            if organizer == nil {
-                if isOrganizer {
-                    organizer = Organizer(attendee: newAttendee)
-                } else {
-                    addCurrentUserAsOrganizer()
-                }
+        var newOrganizer = organizer
+        var isCurrentUserAddedAsOrganizer = false
+        if newOrganizer == nil {
+            if isOrganizer {
+                newOrganizer = Organizer(attendee: newAttendee)
+            } else if let currentUserOrganizer = currentUserOrganizer(addingTo: &newAttendees) {
+                newOrganizer = currentUserOrganizer
+                isCurrentUserAddedAsOrganizer = true
             }
+        }
+
+        guard validator.validateAttendees(newAttendees) == nil else { return }
+
+        withAnimation {
+            attendees = newAttendees
+            organizer = newOrganizer
 
             search = ""
             searchedAttendees = nil
@@ -205,19 +229,20 @@ public struct EditableAttendeesList: View {
         if newAttendee.contact == nil {
             Task { await fillMissingContact(email: newAttendee.email) }
         }
+        if isCurrentUserAddedAsOrganizer, let newOrganizer {
+            Task { await fillMissingContact(email: newOrganizer.email) }
+        }
     }
 
-    private func addCurrentUserAsOrganizer() {
-        guard let currentUser else { return }
+    private func currentUserOrganizer(addingTo attendees: inout [Attendee]) -> Organizer? {
+        guard let currentUser else { return nil }
 
         let newOrganizer = Organizer(user: currentUser)
-        organizer = newOrganizer
-
         if !attendees.contains(where: { $0.email.lowercased() == newOrganizer.email }) {
             attendees.insert(Attendee(organizer: newOrganizer), at: 0)
         }
 
-        Task { await fillMissingContact(email: newOrganizer.email) }
+        return newOrganizer
     }
 
     private func fillMissingContact(email: String) async {
