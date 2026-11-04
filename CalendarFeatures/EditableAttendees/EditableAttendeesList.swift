@@ -109,7 +109,7 @@ public struct EditableAttendeesList: View {
                 }
             } header: {
                 if isWritable && isAttendeeLimitReached {
-                    Text(EventDraftValidator.ValidationError.tooManyAttendees.errorDescription)
+                    InformationBlockView(state: .info, text: EventDraftValidator.ValidationError.tooManyAttendees.errorDescription)
                 }
             }
         }
