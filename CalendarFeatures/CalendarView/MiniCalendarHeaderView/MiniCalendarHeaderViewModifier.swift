@@ -96,7 +96,7 @@ struct MiniCalendarHeaderViewModifier: ViewModifier {
             if #available(iOS 26.0, *) {
                 ToolbarItem(placement: .principal) {
                     Button(action: toggleExpansion) {
-                        AnimatedTitleView(date: selectedDate)
+                        AnimatedTitleView(date: selectedDate, isExpanded: isExpanded)
                     }
                 }
                 .sharedBackgroundVisibility(.hidden)
@@ -109,7 +109,7 @@ struct MiniCalendarHeaderViewModifier: ViewModifier {
             } else {
                 ToolbarItem(placement: .topBarLeading) {
                     Button(action: toggleExpansion) {
-                        AnimatedTitleView(date: selectedDate)
+                        AnimatedTitleView(date: selectedDate, isExpanded: isExpanded)
                     }
                     .buttonStyle(.plain)
                 }

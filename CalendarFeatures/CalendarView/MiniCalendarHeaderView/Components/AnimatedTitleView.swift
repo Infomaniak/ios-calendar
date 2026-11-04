@@ -26,6 +26,7 @@ struct AnimatedTitleView: View {
     @State private var isForward = true
 
     let date: Date
+    let isExpanded: Bool
 
     private var dateFormat: Date.FormatStyle {
         if calendar.isDate(date, equalTo: .now, toGranularity: .year) {
@@ -38,15 +39,16 @@ struct AnimatedTitleView: View {
     var body: some View {
         HStack(spacing: IKPadding.mini) {
             Text(displayedDate, format: dateFormat)
+                .id(displayedDate)
+                .transition(
+                    .push(from: isForward ? .bottom : .top)
+                )
             Image(systemName: "chevron.down")
                 .resizable()
                 .scaledToFit()
                 .frame(width: 12, height: 12)
+                .rotationEffect(.degrees(isExpanded ? 180 : 0))
         }
-        .id(displayedDate)
-        .transition(
-            .push(from: isForward ? .bottom : .top)
-        )
         .onAppear {
             displayedDate = date
         }
@@ -63,7 +65,7 @@ struct AnimatedTitleView: View {
 #Preview {
     @Previewable @State var date = Date.now
     VStack(spacing: 32) {
-        AnimatedTitleView(date: date)
+        AnimatedTitleView(date: date, isExpanded: false)
 
         HStack {
             Button("Previous Month") {
