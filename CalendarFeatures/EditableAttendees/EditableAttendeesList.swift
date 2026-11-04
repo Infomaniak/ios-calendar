@@ -197,6 +197,10 @@ public struct EditableAttendeesList: View {
             searchedAttendees = nil
             isSearching = false
         }
+
+        if newAttendee.contact == nil {
+            Task { await fillMissingContact(email: newAttendee.email) }
+        }
     }
 
     private func addCurrentUserAsOrganizer() {
@@ -207,6 +211,33 @@ public struct EditableAttendeesList: View {
 
         if !attendees.contains(where: { $0.email.lowercased() == newOrganizer.email }) {
             attendees.insert(Attendee(organizer: newOrganizer), at: 0)
+        }
+
+        Task { await fillMissingContact(email: newOrganizer.email) }
+    }
+
+    private func fillMissingContact(email: String) async {
+        @InjectService var calendarSDK: CalendarCoreGraph
+        guard let results = try? await calendarSDK.contactsManager.search(query: email) else { return }
+
+        guard let contact = results.first else { return }
+
+        if let index = attendees.firstIndex(where: { $0.email.lowercased() == email && $0.contact == nil }) {
+            let attendee = attendees[index]
+            attendees[index] = Attendee(
+                email: attendee.email,
+                displayName: attendee.displayName,
+                status: attendee.status,
+                role: attendee.role,
+                isOrganizer: attendee.isOrganizer,
+                responseNeeded: attendee.responseNeeded,
+                type: attendee.type,
+                contact: contact
+            )
+        }
+
+        if let organizer, organizer.email.lowercased() == email, organizer.contact == nil {
+            self.organizer = Organizer(email: organizer.email, displayName: organizer.displayName, contact: contact)
         }
     }
 }
