@@ -19,6 +19,7 @@
 import CalendarCore
 import CalendarCoreUI
 import CalendarResources
+import DesignSystem
 import ESDSFoundation
 import ESDSSymbols
 import InfomaniakDI
@@ -93,6 +94,7 @@ struct CalendarListContentView: View {
                         ForEach(sections) { section in
                             DisclosureGroup(isExpanded: isSectionExpandedBinding(for: section.id)) {
                                 calendarRows(for: section)
+                                    .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: IKPadding.medium))
                             } label: {
                                 Text(section.organisationName ?? CalendarResourcesStrings.otherCalendarsSectionTitle)
                                     .font(.subheadline.weight(.semibold))
@@ -100,6 +102,7 @@ struct CalendarListContentView: View {
                             }
                         }
                         .listRowSeparator(.hidden)
+                        .listRowInsets(EdgeInsets(top: 0, leading: IKPadding.mini, bottom: 0, trailing: 20))
                     }
                 } label: {
                     AccountCellView(
