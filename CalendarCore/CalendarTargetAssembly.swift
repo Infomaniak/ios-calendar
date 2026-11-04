@@ -27,6 +27,23 @@ import InterAppLogin
 import MultiplatformCalendar
 import OSLog
 
+extension InfomaniakCore.ApiEnvironment {
+    var kmpEnvironment: MultiplatformCalendar.AppEnvironment {
+        switch self {
+        case .prod:
+            return .Prod()
+        case .preprod:
+            return .Preprod()
+        case .customHost(let string):
+            Logger.general
+                .warning(
+                    "Using same custom host for both iOS and KMP, but KMP does not support custom ports, so port will be ignored if specified in the string"
+                )
+            return .Custom(domain: string)
+        }
+    }
+}
+
 open class CalendarTargetAssembly: TargetAssembly {
     private static let apiEnvironment: ApiEnvironment = .prod
     private static let dbRootPath = "calendar"
@@ -59,7 +76,8 @@ open class CalendarTargetAssembly: TargetAssembly {
 
                 return CalendarSDKProvider().sdk(
                     calendar: CalendarSettings(
-                        databasePath: appGroupPath.realmRootURL.appending(path: "calendars.db").path()
+                        databasePath: appGroupPath.realmRootURL.appending(path: "calendars.db").path(),
+                        appEnvironment: ApiEnvironment.current.kmpEnvironment
                     ),
                     crashReport: CrashReportService.shared,
                     contacts: ContactsSettings(
