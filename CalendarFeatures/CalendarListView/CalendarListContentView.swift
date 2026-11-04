@@ -89,11 +89,11 @@ struct CalendarListContentView: View {
                     let sections = sectionsByAccount[account.id, default: []]
 
                     if sections.count == 1, let section = sections.first {
-                        calendarRows(for: section)
+                        CalendarRowsView(section: section, isVisible: isVisible, action: toggleCalendar)
                     } else {
                         ForEach(sections) { section in
                             DisclosureGroup(isExpanded: isSectionExpandedBinding(for: section.id)) {
-                                calendarRows(for: section)
+                                CalendarRowsView(section: section, isVisible: isVisible, action: toggleCalendar)
                                     .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: IKPadding.medium))
                             } label: {
                                 Text(section.organisationName ?? CalendarResourcesStrings.otherCalendarsSectionTitle)
@@ -121,15 +121,6 @@ struct CalendarListContentView: View {
                 }
             }
         }
-    }
-
-    private func calendarRows(for section: UICalendarSection) -> some View {
-        ForEach(section.calendars) { calendar in
-            CalendarRowView(calendar: calendar, isVisible: isVisible(calendar)) {
-                toggleCalendar(calendar: calendar)
-            }
-        }
-        .listRowSeparator(.hidden)
     }
 
     private func isVisible(_ calendar: UICalendar) -> Bool {
