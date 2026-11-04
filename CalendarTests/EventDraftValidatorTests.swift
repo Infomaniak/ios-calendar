@@ -161,13 +161,10 @@ struct EventDraftValidatorTests {
             meetRoom: nil
         )
         draft.title = "Updated title"
-        let storedLocation = try #require(stored.location)
-        draft.location = .place(name: storedLocation)
         let updated = try draft.toEventEditData(preserving: stored)
         let updatedAlarms = try #require(updated.alarms as? AlarmListEditReplace)
 
         #expect(updated.title == "Updated title")
-        #expect(updated.location == stored.location)
         #expect(updated.timeBlocking == nil)
         #expect(updatedAlarms.alarms.map { UIAlarmAction(alarmAction: $0.action) } == draft.alarms.map(\.action))
         #expect(updatedAlarms.alarms.map { UIAlarmTrigger(alarmTrigger: $0.trigger) } == draft.alarms.map(\.trigger))

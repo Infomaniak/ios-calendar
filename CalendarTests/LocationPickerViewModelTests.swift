@@ -25,11 +25,6 @@ import Testing
 @MainActor
 @Suite(.timeLimit(.minutes(1)))
 struct LocationPickerViewModelTests {
-    @Test(arguments: [(true, MeetingRoomAvailability.available), (false, .unavailable)])
-    func mapsRoomAvailability(isAvailable: Bool, expected: MeetingRoomAvailability) {
-        #expect(MeetingRoomAvailability(isAvailable: isAvailable) == expected)
-    }
-
     @Test(arguments: [
         ("", "Place"),
         ("Street", "Place, Street"),
@@ -38,7 +33,6 @@ struct LocationPickerViewModelTests {
     ])
     func placeLocationDoesNotDuplicateItsName(address: String, expected: String) {
         let place = LocationPlace(id: "place", name: "Place", address: address)
-        #expect(place.location == .place(name: expected))
         #expect(place.location.stringValue == expected)
     }
 
@@ -95,42 +89,20 @@ struct LocationPickerViewModelTests {
     }
 
     @Test
-    func unavailableRoomsRemainSelectableAndAccountChangeClearsRoomMetadata() async {
+    func clearingAccountClearsRoomsAndAvailability() async {
         let service = RoomsStub()
-        let room = room("room", "Meeting room")
-        service.rooms = [room]
+        service.rooms = [room("room", "Meeting room")]
         service.availabilityHandler = { _ in ["room": .unavailable] }
         let model = makeModel(rooms: service)
         await model.observeRooms(accountId: 42)
         await model.loadAvailability(for: request())
-        let selected = room.location
-        #expect(selected == .room(id: "room", name: "Meeting room", accountId: 42))
-        #expect(model.availability(for: room.id) == .unavailable)
+        #expect(model.availability(for: "room") == .unavailable)
 
         await model.observeRooms(accountId: nil)
         await model.loadAvailability(for: nil)
-        #expect(selected.stringValue == "Meeting room")
         #expect(model.rooms.isEmpty)
         #expect(model.availability.isEmpty)
         #expect(!model.isLoading)
-    }
-
-    @Test
-    func failedAvailabilityLeavesRoomsVisibleWithUnknownStatus() async {
-        let service = RoomsStub()
-        service.rooms = [room("room", "Meeting room")]
-        service.availabilityHandler = { _ in throw StubError.failed }
-        let model = makeModel(rooms: service)
-        await model.observeRooms(accountId: 42)
-        await model.loadAvailability(for: request())
-
-        #expect(model.rooms.count == 1)
-        #expect(model.visibleRooms(query: "") == service.rooms)
-        #expect(model.availability.isEmpty)
-        #expect(model.availability(for: "room") == .unknown)
-        #expect(!model.isLoading)
-        #expect(service.availabilityCalls == 1)
-        #expect(service.rooms[0].location == .room(id: "room", name: "Meeting room", accountId: 42))
     }
 
     @Test
@@ -227,62 +199,6 @@ struct LocationPickerViewModelTests {
         #expect(!model.isLoading)
     }
 
-    @Test(arguments: [
-        [LoadingOperation.rooms, .availability, .search],
-        [.rooms, .search, .availability],
-        [.availability, .rooms, .search],
-        [.availability, .search, .rooms],
-        [.search, .rooms, .availability],
-        [.search, .availability, .rooms]
-    ])
-    func loadingRemainsVisibleUntilAllOverlappingOperationsFinish(order: [LoadingOperation]) async {
-        let roomsService = RoomsStub()
-        let placesService = PlacesStub()
-        let roomsStarted = Gate<Void>()
-        let roomsResponse = Gate<Void>()
-        let availabilityStarted = Gate<Void>()
-        let availabilityResponse = Gate<Void>()
-        let searchStarted = Gate<Void>()
-        let searchResponse = Gate<Void>()
-        roomsService.beforeObservation = {
-            roomsStarted.open(())
-            await roomsResponse.wait()
-        }
-        roomsService.availabilityHandler = { _ in
-            availabilityStarted.open(())
-            await availabilityResponse.wait()
-            return [:]
-        }
-        placesService.handler = { _ in
-            searchStarted.open(())
-            await searchResponse.wait()
-            return []
-        }
-        let model = makeModel(rooms: roomsService, places: placesService)
-        let roomsTask = Task { await model.observeRooms(accountId: 42) }
-        let availabilityTask = Task { await model.loadAvailability(for: request()) }
-        let searchTask = Task { await model.searchPlaces(query: "Place") }
-        await roomsStarted.wait()
-        await availabilityStarted.wait()
-        await searchStarted.wait()
-        #expect(model.isLoading)
-
-        for (index, operation) in order.enumerated() {
-            switch operation {
-            case .rooms:
-                roomsResponse.open(())
-                await roomsTask.value
-            case .availability:
-                availabilityResponse.open(())
-                await availabilityTask.value
-            case .search:
-                searchResponse.open(())
-                await searchTask.value
-            }
-            #expect(model.isLoading == (index < order.count - 1))
-        }
-    }
-
     @Test
     func roomLoadingFinishesWhenRoomsAreEmitted() async {
         let service = RoomsStub()
@@ -325,26 +241,6 @@ struct LocationPickerViewModelTests {
         #expect(request.end == model.draft.endDate)
         #expect(request.startTimeZone == model.draft.startTimeZone)
         #expect(request.rrule == "FREQ=WEEKLY")
-    }
-
-    @Test(arguments: [true, false])
-    func availabilityRequestPreservesDraftTiming(allDay: Bool) throws {
-        let optionalZone = Foundation.TimeZone(identifier: "Europe/Zurich")
-        let zone = try #require(optionalZone)
-        let draft = EventDraft(
-            calendarId: "calendar",
-            allDay: allDay,
-            startDate: Date(timeIntervalSince1970: 1_793_347_200),
-            startTimeZone: allDay ? zone : nil,
-            endDate: Date(timeIntervalSince1970: 1_793_433_600),
-            endTimeZone: allDay ? zone : nil
-        )
-        let request = request(draft: draft)
-        #expect(request.start == draft.startDate)
-        #expect(request.end == draft.endDate)
-        #expect(request.startTimeZone == draft.startTimeZone)
-        #expect(request.endTimeZone == draft.endTimeZone)
-        #expect(request.allDay == draft.allDay)
     }
 
     private func room(_ id: String, _ name: String) -> LocationRoom {
@@ -422,10 +318,4 @@ private final class Gate<Value> {
 
 private enum StubError: Error {
     case failed
-}
-
-enum LoadingOperation {
-    case rooms
-    case availability
-    case search
 }

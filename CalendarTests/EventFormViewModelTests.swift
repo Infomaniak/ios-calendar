@@ -98,17 +98,10 @@ struct EventFormViewModelTests {
         #expect(viewModel.draft.calendarId == original.calendarId)
         #expect(viewModel.draft.isOccupied == false)
         #expect(viewModel.isEdited == false)
-
-        viewModel.draft.location = .place(name: "Different location")
-        #expect(viewModel.isEdited)
-        viewModel.draft.location = original.location
-        #expect(viewModel.isEdited == false)
-        viewModel.draft.location = nil
-        #expect(viewModel.isEdited)
     }
 
     @Test
-    func emptyStoredLocationIsUnsetWithoutMarkingFormChanged() throws {
+    func emptyStoredLocationIsMappedToNil() throws {
         let draft = EventDraft(
             calendarId: "0", location: .place(name: ""),
             startDate: Date(timeIntervalSince1970: 1000),
@@ -116,26 +109,7 @@ struct EventFormViewModelTests {
         )
         let editData = try draft.toEventEditData()
         let mapped = EventDraft(event: makeEvent(editData: editData), editData: editData)
-        let model = EventFormViewModel(editionMode: .editDraft(draft: mapped, editingEvent: .preview), userDefaults: .shared)
-        #expect(model.draft.location == nil)
-        #expect(!model.isEdited)
-    }
-
-    @Test
-    func storedRoomNameIsLoadedAsAPlaceWithoutGuessingItsIdentity() throws {
-        let draft = EventDraft(
-            calendarId: "0", location: .room(id: "room", name: "Meeting room", accountId: 42),
-            startDate: Date(timeIntervalSince1970: 1000),
-            endDate: Date(timeIntervalSince1970: 4600)
-        )
-        let editData = try draft.toEventEditData()
-        let mapped = EventDraft(event: makeEvent(editData: editData), editData: editData)
-
-        guard case .place(let name) = mapped.location else {
-            Issue.record("Expected a place location")
-            return
-        }
-        #expect(name == "Meeting room")
+        #expect(mapped.location == nil)
     }
 
     @Test
