@@ -18,7 +18,6 @@
 
 import CalendarCore
 import CalendarCoreUI
-import DesignSystem
 import SwiftUI
 
 private struct MonthObservationId: Hashable {
@@ -32,82 +31,19 @@ struct MonthView: View {
     @Environment(\.calendar) private var calendar
     @Environment(MainViewState.self) private var mainViewState
 
-    @AppStorage(UserDefaults.shared.key(.showWeekNumbers), store: .shared)
-    private var showWeekNumbers = DefaultPreferences.showWeekNumbers
-
-    @ScaledMetric(relativeTo: .caption2) private var weekNumberWidth: CGFloat = 24
-    @ScaledMetric(relativeTo: .caption) private var dayNumberHeight: CGFloat = 12
-    @ScaledMetric(relativeTo: .caption) private var eventTitleLineHeight: CGFloat = 16
-
     @State private var weekLayouts = [MonthGrid: [MonthWeekLayout]]()
-    @State private var contentWidth = CGFloat.zero
-    @State private var pagerHeight = CGFloat.zero
-    @State private var bottomSafeAreaInset = CGFloat.zero
-
-    private var displayedWeekNumberWidth: CGFloat? {
-        showWeekNumbers ? weekNumberWidth : nil
-    }
-
-    private var metrics: MonthGridMetrics {
-        MonthGridMetrics(
-            containerSize: CGSize(width: contentWidth, height: pagerHeight),
-            weekNumberWidth: displayedWeekNumberWidth ?? 0,
-            dayNumberHeight: dayNumberHeight,
-            laneHeight: eventTitleLineHeight + IKPadding.micro
-        )
-    }
 
     private var monthStart: Date {
         calendar.dateInterval(of: .month, for: mainViewState.selectedDate)?.start ?? mainViewState.selectedDate
     }
 
-    private var selectedMonth: Binding<Date> {
-        Binding {
-            mainViewState.selectedDate
-        } set: { newDate in
-            guard !calendar.isDate(newDate, equalTo: mainViewState.selectedDate, toGranularity: .month) else { return }
-            mainViewState.selectedDate = newDate
-        }
-    }
-
     var body: some View {
-        VStack(spacing: 0) {
-            MonthWeekdayHeaderView(weekNumberWidth: displayedWeekNumberWidth)
+        @Bindable var mainViewState = mainViewState
 
-            TimelineView(.everyDay(calendar)) { timeline in
-                CalendarPeriodPager(
-                    component: .month,
-                    periodOffsets: -1200 ..< 1201,
-                    date: selectedMonth
-                ) { pageMonthStart in
-                    if let grid = MonthGrid(month: pageMonthStart, calendar: calendar) {
-                        MonthPageView(
-                            grid: grid,
-                            weekLayouts: weekLayouts[grid],
-                            metrics: metrics,
-                            today: timeline.date,
-                            showWeekNumbers: showWeekNumbers,
-                            bottomSafeAreaInset: bottomSafeAreaInset
-                        )
-                    }
-                }
-                .ignoresSafeArea(.container, edges: .bottom)
+        MonthContentView(weekLayouts: weekLayouts, selectedDate: $mainViewState.selectedDate)
+            .task(id: MonthObservationId(monthStart: monthStart, calendar: calendar)) {
+                await observeEvents(around: monthStart, calendar: calendar)
             }
-            .onGeometryChange(for: CGSize.self) { proxy in
-                CGSize(width: proxy.size.height, height: proxy.safeAreaInsets.bottom)
-            } action: { newValue in
-                pagerHeight = newValue.width
-                bottomSafeAreaInset = newValue.height
-            }
-        }
-        .onGeometryChange(for: CGFloat.self) { proxy in
-            proxy.size.width
-        } action: { newWidth in
-            contentWidth = newWidth
-        }
-        .task(id: MonthObservationId(monthStart: monthStart, calendar: calendar)) {
-            await observeEvents(around: monthStart, calendar: calendar)
-        }
     }
 
     private func observeEvents(around monthStart: Date, calendar: Foundation.Calendar) async {
@@ -131,9 +67,4 @@ private extension Array {
     subscript(safe index: Int) -> Element? {
         indices.contains(index) ? self[index] : nil
     }
-}
-
-#Preview {
-    MonthView()
-        .environment(MainViewState())
 }
