@@ -41,14 +41,30 @@ struct PlanningDayRowView: View {
             if events.isEmpty {
                 NoEventsCellView()
             } else {
-                ForEach(events) { event in
-                    VStack {
-                        EventDetailsPopoverButton(event: event) {
-                            if event.isAllDay {
-                                PlanningDayEventView(event: event)
-                            } else {
-                                PlanningEventView(event: event)
+                TimelineView(.everyMinute) { timeline in
+                    let rulerIndex = calendar.isDate(date, inSameDayAs: timeline.date)
+                        ? PlanningNowRuler.insertionIndex(in: events, now: timeline.date)
+                        : nil
+
+                    VStack(spacing: IKPadding.mini) {
+                        ForEach(Array(events.enumerated()), id: \.element.id) { index, event in
+                            VStack(spacing: IKPadding.mini) {
+                                if index == rulerIndex {
+                                    TimelineIndicatorView()
+                                }
+
+                                EventDetailsPopoverButton(event: event) {
+                                    if event.isAllDay {
+                                        PlanningDayEventView(event: event)
+                                    } else {
+                                        PlanningEventView(event: event)
+                                    }
+                                }
                             }
+                        }
+
+                        if rulerIndex == events.count {
+                            TimelineIndicatorView()
                         }
                     }
                 }
