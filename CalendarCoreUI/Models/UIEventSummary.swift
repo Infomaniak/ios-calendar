@@ -70,7 +70,7 @@ public struct UIEventSummary: Identifiable, Equatable, Hashable, Sendable {
 }
 
 public extension UIEventSummary {
-    private init(details: UIEventDetails) {
+    internal init(details: UIEventDetails) {
         id = details.id
         occurrenceId = details.occurrenceId
         title = details.title

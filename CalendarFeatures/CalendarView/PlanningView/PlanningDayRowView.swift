@@ -41,13 +41,31 @@ struct PlanningDayRowView: View {
             if events.isEmpty {
                 NoEventsCellView()
             } else {
-                ForEach(events) { event in
-                    VStack {
-                        EventDetailsPopoverButton(event: event) {
-                            if event.isAllDay {
-                                PlanningDayEventView(event: event)
-                            } else {
-                                PlanningEventView(event: event)
+                TimelineView(.everyMinute) { timeline in
+                    let rulerIndex = calendar.isDate(date, inSameDayAs: timeline.date)
+                        ? PlanningNowRuler.insertionIndex(in: events, now: timeline.date)
+                        : nil
+
+                    VStack(spacing: IKPadding.mini) {
+                        ForEach(Array(events.enumerated()), id: \.element.id) { index, event in
+                            EventDetailsPopoverButton(event: event) {
+                                if event.isAllDay {
+                                    PlanningDayEventView(event: event)
+                                } else {
+                                    PlanningEventView(event: event)
+                                }
+                            }
+                            .overlay(alignment: .top) {
+                                if index == rulerIndex {
+                                    nowRuler
+                                        .offset(y: -IKPadding.mini / 2)
+                                }
+                            }
+                            .overlay(alignment: .bottom) {
+                                if index == events.count - 1 && rulerIndex == events.count {
+                                    nowRuler
+                                        .offset(y: IKPadding.mini / 2)
+                                }
                             }
                         }
                     }
@@ -68,6 +86,12 @@ struct PlanningDayRowView: View {
                 }
         }
         .padding(.vertical, value: .medium)
+    }
+
+    private var nowRuler: some View {
+        TimelineIndicatorView()
+            .padding(.horizontal, -IKPadding.medium)
+            .frame(height: 0)
     }
 }
 
