@@ -77,7 +77,7 @@ public extension UIParticipationStatus {
         case .accepted:
             return CalendarResourcesStrings.statusAcceptedLabel
         case .tentative:
-            return InfomaniakCoreUIResources.CoreUILocalizable.buttonMaybe
+            return CalendarResourcesStrings.statusTentativeLabel
         case .needsAction:
             return CalendarResourcesStrings.statusNeedsActionLabel
         case .declined:
