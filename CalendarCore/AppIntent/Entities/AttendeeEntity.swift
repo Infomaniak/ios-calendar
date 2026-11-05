@@ -140,6 +140,19 @@ public extension AttendeeEntity {
         isAttendanceOptional = false
         type = .individual
     }
+
+    var sdkValue: Attendee {
+        Attendee(
+            email: id.email,
+            displayName: id.name,
+            status: .needsAction,
+            role: isAttendanceOptional ? .optional : .requested,
+            isOrganizer: false,
+            responseNeeded: true,
+            type: (type ?? .individual).sdkValue,
+            contact: nil
+        )
+    }
 }
 
 @available(iOS 27.0, *)

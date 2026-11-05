@@ -45,7 +45,8 @@ public struct CreateEventIntent {
             description: note.map { String($0.characters) } ?? "",
             allDay: isAllDay,
             startDate: startDate,
-            endDate: endDate ?? defaultEndDate
+            endDate: endDate ?? defaultEndDate,
+            attendees: attendees.map(\.sdkValue)
         )
         try await CreateEventUseCase().execute(draft: draft)
 
@@ -61,7 +62,8 @@ public struct CreateEventIntent {
             startDate: draft.startDate,
             endDate: draft.endDate,
             isAllDay: draft.allDay,
-            note: note
+            note: note,
+            attendees: attendees
         )
     }
 }

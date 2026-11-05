@@ -53,4 +53,19 @@ public extension AttendeeEntityType {
             self = .unknown
         }
     }
+
+    var sdkValue: AttendeeType {
+        switch self {
+        case .individual:
+            return .individual
+        case .group:
+            return .group
+        case .resource:
+            return .resource
+        case .room:
+            return .room
+        case .unknown:
+            return .unknown
+        }
+    }
 }
