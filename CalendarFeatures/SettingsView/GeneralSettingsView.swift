@@ -29,8 +29,6 @@ public struct GeneralSettingsView: View {
     private var appTheme = DefaultPreferences.theme
     @AppStorage(UserDefaults.shared.key(.firstWeekday), store: .shared)
     private var firstWeekday = DefaultPreferences.firstWeekday
-    @AppStorage(UserDefaults.shared.key(.displayWeekends), store: .shared)
-    private var displayWeekends = DefaultPreferences.displayWeekends
     @AppStorage(UserDefaults.shared.key(.showWeekNumbers), store: .shared)
     private var showWeekNumbers = DefaultPreferences.showWeekNumbers
     @AppStorage(UserDefaults.shared.key(.defaultEventDuration), store: .shared)
@@ -88,9 +86,6 @@ public struct GeneralSettingsView: View {
                     }
                 }
                 .pickerStyle(.navigationLink)
-
-                Toggle(CalendarResourcesStrings.generalSettingsShowWeekendsLabel, isOn: $displayWeekends)
-                    .toggleStyle(.switch)
 
                 Toggle(CalendarResourcesStrings.generalSettingsShowWeekNumbersLabel, isOn: $showWeekNumbers)
                     .toggleStyle(.switch)
