@@ -114,6 +114,13 @@ public struct EventFormView: View {
             }
 
             Section {
+                LocationPickerButton(
+                    location: $viewModel.draft.location,
+                    request: viewModel.locationAvailabilityRequest
+                )
+            }
+
+            Section {
                 HStack(alignment: .iconAndMultilineTextAlignment, spacing: IKPadding.small) {
                     ESDSSymbols.listLeft.image
                         .font(.system(size: IKIconSize.large.rawValue))

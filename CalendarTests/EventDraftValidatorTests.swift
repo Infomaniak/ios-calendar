@@ -165,7 +165,6 @@ struct EventDraftValidatorTests {
         let updatedAlarms = try #require(updated.alarms as? AlarmListEditReplace)
 
         #expect(updated.title == "Updated title")
-        #expect(updated.location == stored.location)
         #expect(updated.timeBlocking == nil)
         #expect(updatedAlarms.alarms.map { UIAlarmAction(alarmAction: $0.action) } == draft.alarms.map(\.action))
         #expect(updatedAlarms.alarms.map { UIAlarmTrigger(alarmTrigger: $0.trigger) } == draft.alarms.map(\.trigger))
@@ -173,6 +172,25 @@ struct EventDraftValidatorTests {
         #expect(updated.organizer == stored.organizer)
         #expect(updated.timing.rDates.first as? IcalDateValueFloating == recurrenceDate)
         #expect(updated.timing.exDates.first as? IcalDateValueFloating == recurrenceDate)
+    }
+
+    @Test
+    func locationCanBeCreatedReplacedAndRemoved() throws {
+        var draft = makeDraft()
+        draft.location = .place(name: "Custom address")
+        let original = try draft.toEventEditData()
+        #expect(original.location == "Custom address")
+
+        draft.location = .place(name: "Place, Street")
+        let updated = try draft.toEventEditData(preserving: original)
+        #expect(updated.location == "Place, Street")
+
+        draft.location = .room(id: "room", name: "Meeting room", accountId: 42)
+        let room = try draft.toEventEditData(preserving: updated)
+        #expect(room.location == "Meeting room")
+
+        draft.location = nil
+        #expect(try draft.toEventEditData(preserving: room).location == nil)
     }
 
     @Test

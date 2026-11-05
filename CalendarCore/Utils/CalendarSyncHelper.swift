@@ -37,7 +37,7 @@ public actor CalendarSyncHelper: ExpiringActivityDelegate {
             await previousTask?.value
             guard !Task.isCancelled else { return }
 
-            Self.logger.debug("Calendar and contacts sync started")
+            Self.logger.debug("Calendar, contacts and resources sync started")
             let activity = ExpiringActivity(delegate: self)
             activity.start()
 
@@ -62,10 +62,20 @@ public actor CalendarSyncHelper: ExpiringActivityDelegate {
                         Self.logger.error("Failed to sync contacts: \(error.localizedDescription)")
                     }
                 }
+                group.addTask {
+                    @InjectService var calendarSDK: CalendarCoreGraph
+                    do {
+                        try await calendarSDK.bookableResourcesManager.sync()
+                    } catch is CancellationError {
+                        Self.logger.info("Resources sync cancelled")
+                    } catch {
+                        Self.logger.error("Failed to sync bookable resources: \(error.localizedDescription)")
+                    }
+                }
             }
 
             activity.endAll()
-            Self.logger.debug("Calendar and contacts sync done \(Task.isCancelled ? "- Cancelled" : "")")
+            Self.logger.debug("Calendar, contacts and resources sync done \(Task.isCancelled ? "- Cancelled" : "")")
         }
     }
 

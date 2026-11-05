@@ -67,6 +67,11 @@ final class EventFormViewModel {
         originalDraft != draft
     }
 
+    var locationAvailabilityRequest: LocationAvailabilityRequest? {
+        guard let calendar = availableCalendars.first(where: { $0.id == draft.calendarId }) else { return nil }
+        return LocationAvailabilityRequest(accountId: Int64(calendar.accountId), draft: draft)
+    }
+
     private var currentDuration: TimeInterval {
         max(draft.endDate.timeIntervalSince(draft.startDate), 0)
     }
