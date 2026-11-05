@@ -46,6 +46,7 @@ struct PlanningView: View {
                 ScrollViewReader { proxy in
                     ScrollView(.vertical) {
                         PlanningDaysListView(periods: periods, eventsByDay: eventsByDay, visibleDay: $visibleDay)
+                            .scrollsToTopDisabled()
                     }
                     .scrollIndicators(.hidden)
                     .onScrollPhaseChange { previousPhase, phase in
