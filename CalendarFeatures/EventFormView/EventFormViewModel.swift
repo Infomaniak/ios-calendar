@@ -177,7 +177,7 @@ final class EventFormViewModel {
         replaceOrganizer(with: Organizer(user: currentUser))
     }
 
-    private func replaceOrganizer(with newOrganizer: Organizer) {
+    func replaceOrganizer(with newOrganizer: Organizer) {
         guard let previousOrganizer = draft.organizer else { return }
 
         let previousEmail = previousOrganizer.email.lowercased()
@@ -186,7 +186,9 @@ final class EventFormViewModel {
         guard previousEmail != newEmail else { return }
 
         draft.organizer = newOrganizer
-        if let organizerIndex = draft.attendees.firstIndex(where: { $0.email.lowercased() == previousEmail }) {
+
+        if !draft.attendees.contains(where: { $0.email.lowercased() == newEmail }),
+           let organizerIndex = draft.attendees.firstIndex(where: { $0.email.lowercased() == previousEmail }) {
             draft.attendees[organizerIndex] = Attendee(organizer: newOrganizer)
         }
     }
