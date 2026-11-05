@@ -19,7 +19,6 @@
 import DesignSystem
 import ESDSFoundation
 import SwiftUI
-import UIKit
 
 private struct TextCenterAlignment: AlignmentID {
     static func defaultValue(in context: ViewDimensions) -> CGFloat {
