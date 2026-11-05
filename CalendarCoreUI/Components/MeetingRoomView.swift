@@ -58,6 +58,7 @@ public struct MeetingRoomView: View {
                                 ESDSSymbols.usersStacked.image
                                     .font(.system(size: IKIconSize.medium.rawValue))
                                     .foregroundStyle(theme.color.contentSecondary)
+                                    .accessibilityHidden(true)
                                 Text(CalendarResourcesStrings.roomSeatsLabel(roomCapacity))
                                     .padding(.trailing, IKPadding.mini)
                                     .font(.subheadline.weight(.regular))
@@ -68,6 +69,7 @@ public struct MeetingRoomView: View {
                                 ESDSSymbols.zigzagArrowUpRight.image
                                     .font(.system(size: IKIconSize.medium.rawValue))
                                     .foregroundStyle(theme.color.contentSecondary)
+                                    .accessibilityHidden(true)
 
                                 let floor = Self.ordinalFormatter.string(from: roomFloor as NSNumber) ?? "\(roomFloor)"
                                 Text(CalendarResourcesStrings.roomFloorLabel(floor))
