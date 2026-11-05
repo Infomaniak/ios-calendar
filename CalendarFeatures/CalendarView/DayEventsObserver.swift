@@ -29,8 +29,34 @@ struct DayGroupedEvents {
 }
 
 enum DayEventsObserver {
+    private static let downloadDebounceDelay = Duration.milliseconds(300)
+
     @concurrent
     static func observe(
+        in interval: DateInterval,
+        calendar: Foundation.Calendar,
+        onUpdate: @escaping @MainActor @Sendable (DayGroupedEvents) -> Void
+    ) async {
+        await withDiscardingTaskGroup { group in
+            group.addTask {
+                await downloadEvents(in: interval)
+            }
+            group.addTask {
+                await observeDaySlices(in: interval, calendar: calendar, onUpdate: onUpdate)
+            }
+        }
+    }
+
+    private static func downloadEvents(in interval: DateInterval) async {
+        guard await (try? Task.sleep(for: downloadDebounceDelay)) != nil else {
+            return
+        }
+
+        @InjectService var calendarSDK: CalendarCoreGraph
+        await calendarSDK.calendarManager.downloadEvents(in: interval)
+    }
+
+    private static func observeDaySlices(
         in interval: DateInterval,
         calendar: Foundation.Calendar,
         onUpdate: @escaping @MainActor @Sendable (DayGroupedEvents) -> Void
