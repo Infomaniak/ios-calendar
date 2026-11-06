@@ -176,6 +176,9 @@
 /* loco:6aa804867b7998a59003a9fc */
 "generalSettingsDisplayLabel" = "Ecrã";
 
+/* loco:6adb5844fc0bad425c0b1494 */
+"generalSettingsShowWeekNumbersLabel" = "Mostrar números das semanas";
+
 /* loco:6aa9363a0ccb57137202b232 */
 "generalSettingsStartOfWeekLabel" = "Início da semana";
 

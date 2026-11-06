@@ -50,6 +50,7 @@ struct MultipleDaysView: View {
             pagerScrollSync: pagerScrollSync,
             selectedDate: $mainViewState.selectedDate
         )
+        .id(layout)
         .task(id: layout.preloadedInterval(for: mainViewState.selectedDate, calendar: calendar)) {
             guard let interval = layout.preloadedInterval(for: mainViewState.selectedDate, calendar: calendar) else {
                 return

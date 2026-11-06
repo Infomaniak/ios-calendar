@@ -16,16 +16,10 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import SwiftUI
+import Foundation
 
-public struct MonthView: View {
-    public init() {}
-
-    public var body: some View {
-        Text("MonthView")
-    }
-}
-
-#Preview {
-    MonthView()
+public enum DefaultSceneValues {
+    public static let selectedMode = CalendarViewMode.day
+    public static let dayViewScrollPosition = 0.0
+    public static let calendarListExpandedAccounts = ExpandedAccounts()
 }

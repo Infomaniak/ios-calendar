@@ -181,6 +181,9 @@
 /* loco:6aa804867b7998a59003a9fc */
 "generalSettingsDisplayLabel" = "Display";
 
+/* loco:6adb5844fc0bad425c0b1494 */
+"generalSettingsShowWeekNumbersLabel" = "Show week numbers";
+
 /* loco:6aa9363a0ccb57137202b232 */
 "generalSettingsStartOfWeekLabel" = "Start of the week";
 

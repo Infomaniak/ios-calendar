@@ -59,7 +59,8 @@ public struct CalendarView: View {
     @Environment(\.calendarAccounts) private var calendarAccounts
     @Environment(MainViewState.self) private var mainViewState
 
-    @SceneStorage("SelectedMode") private var selectedMode: CalendarViewMode = .day
+    @SceneStorage(SceneStorageKeys.selectedMode.rawValue)
+    private var selectedMode = DefaultSceneValues.selectedMode
 
     @State private var multipleDaysPagerScrollSync = CalendarPeriodPagerScrollSync()
 
