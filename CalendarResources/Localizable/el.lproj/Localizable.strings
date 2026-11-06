@@ -351,6 +351,9 @@
 /* loco:6a8d6544c0a309a6c5026372 */
 "statusNeedsActionLabel" = "Σε εκκρεμότητα";
 
+/* loco:6aaba8283e1d9de2af001a06 */
+"statusTentativeLabel" = "Ίσως";
+
 /* loco:6a203f703a4a6492b407ce23 */
 "threeDaysTitle" = "Τρεις ημέρες";
 
