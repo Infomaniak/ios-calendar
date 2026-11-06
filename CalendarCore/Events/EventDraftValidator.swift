@@ -18,6 +18,7 @@
 
 import CalendarResources
 import Foundation
+import MultiplatformCalendar
 
 public struct EventDraftValidator: Sendable {
     public enum ValidationError: LocalizedError, Hashable, CaseIterable {
@@ -69,8 +70,8 @@ public struct EventDraftValidator: Sendable {
             errors.insert(.descriptionTooLong)
         }
 
-        if draft.attendees.count > Self.maximumAttendeeCount {
-            errors.insert(.tooManyAttendees)
+        if let attendeesError = validateAttendees(draft.attendees) {
+            errors.insert(attendeesError)
         }
 
         if draft.calendarId?.isEmpty != false {
@@ -82,5 +83,10 @@ public struct EventDraftValidator: Sendable {
         }
 
         return errors
+    }
+
+    public func validateAttendees(_ attendees: [Attendee]) -> ValidationError? {
+        guard attendees.count > Self.maximumAttendeeCount else { return nil }
+        return .tooManyAttendees
     }
 }
