@@ -22,7 +22,6 @@ import SwiftUI
 
 struct MonthWeekRowView: View {
     @Environment(\.calendar) private var calendar
-
     @Environment(\.esdsTheme) private var theme
 
     let days: [Date]
@@ -30,6 +29,7 @@ struct MonthWeekRowView: View {
     let layout: MonthWeekLayout?
     let metrics: MonthGridMetrics
     let rowHeight: CGFloat
+    let bottomExtension: CGFloat
     let showWeekNumber: Bool
     let monthInterval: DateInterval
 
@@ -54,8 +54,7 @@ struct MonthWeekRowView: View {
 
             ZStack(alignment: .top) {
                 HStack(spacing: 0) {
-                    ForEach(days.indices, id: \.self) { column in
-                        let day = days[column]
+                    ForEach(days, id: \.self) { day in
                         MonthDayCellView(
                             day: day,
                             isInMonth: day >= monthInterval.start && day < monthInterval.end,
@@ -73,30 +72,17 @@ struct MonthWeekRowView: View {
                 }
 
                 if let layout, laneCount > 0 {
-                    MonthWeekEventsLayout(
-                        columnCount: days.count,
-                        laneHeight: metrics.laneHeight,
-                        laneSpacing: MonthGridMetrics.laneSpacing,
-                        horizontalInset: 4
-                    ) {
-                        ForEach(layout.visibleSegments(laneCount: laneCount)) { segment in
-                            MonthEventButton(event: segment.event)
-                                .monthEventPlacement(column: segment.startColumn, span: segment.span, lane: segment.lane)
-                        }
-
-                        let hiddenEventCounts = layout.hiddenEventCounts(laneCount: laneCount)
-                        ForEach(hiddenEventCounts.indices, id: \.self) { column in
-                            if hiddenEventCounts[column] > 0 {
-                                MonthDayHiddenEventsView(count: hiddenEventCounts[column])
-                                    .monthEventPlacement(column: column, lane: laneCount - 1)
-                            }
-                        }
-                    }
+                    MonthWeekEventsView(
+                        segments: layout.visibleSegments(laneCount: laneCount),
+                        hiddenEventCounts: layout.hiddenEventCounts(laneCount: laneCount),
+                        laneCount: laneCount,
+                        laneHeight: metrics.laneHeight
+                    )
                     .padding(.top, metrics.totalDayNumberHeight)
                 }
             }
         }
-        .frame(height: rowHeight)
+        .frame(height: rowHeight + bottomExtension)
     }
 
     private var separator: some View {
