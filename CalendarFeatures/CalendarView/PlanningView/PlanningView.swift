@@ -16,48 +16,217 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import AsyncAlgorithms
 import CalendarCore
 import CalendarCoreUI
-import Foundation
+import InfomaniakDI
+import MultiplatformCalendar
 import SwiftUI
 
-public struct PlanningView: View {
-    @Environment(MainViewState.self) private var mainViewState: MainViewState
+struct PlanningView: View {
+    private static let periodOffsets = -36525 ..< 36526
+    private static let observeRadiusDays = 7
+    private static let observeRecenterThresholdDays = 3
 
-    @State private var planningViewModel: PlanningViewModel
+    @Environment(\.calendar) private var calendar
+    @Environment(MainViewState.self) private var mainViewState
+
+    @State private var periods: CalendarPeriodCollection?
+    @State private var visibleDay: Int?
+    @State private var scrollPhase = ScrollPhase.idle
+    @State private var anchoredDay: Int?
+    @State private var observeCenter: Date?
+    @State private var eventsByDay = [Date: [UIEventSummary]]()
 
     let calendarAccounts: [CalendarAccount.ID: CalendarAccount]
 
-    public init(calendarAccounts: [CalendarAccount.ID: CalendarAccount]) {
-        self.calendarAccounts = calendarAccounts
-        _planningViewModel = State(wrappedValue: PlanningViewModel())
-    }
-
-    public var body: some View {
-        PlanningCollectionView(
-            planningViewModel: planningViewModel,
-            mainViewState: mainViewState
-        )
-        .ignoresSafeArea(edges: [.bottom])
-        .onChange(of: mainViewState.selectedDate, initial: true) { _, newValue in
-            guard !planningViewModel.suppressScrollTargetSync else {
-                planningViewModel.suppressScrollTargetSync = false
-                return
+    var body: some View {
+        VStack(spacing: 0) {
+            if let periods {
+                ScrollViewReader { proxy in
+                    ScrollView(.vertical) {
+                        PlanningDaysListView(periods: periods, eventsByDay: eventsByDay, visibleDay: $visibleDay)
+                            .scrollsToTopDisabled()
+                    }
+                    .scrollIndicators(.hidden)
+                    .onScrollPhaseChange { previousPhase, phase in
+                        scrollPhase = phase
+                        if phase == .interacting {
+                            anchoredDay = nil
+                        }
+                        guard previousPhase.isScrolling, phase == .idle else { return }
+                        if anchoredDay != nil {
+                            restoreAnchoredDay(with: proxy)
+                        } else {
+                            updateSelectedDate()
+                        }
+                    }
+                    .onScrollGeometryChange(for: CGFloat.self) { geometry in
+                        geometry.contentSize.height
+                    } action: { _, _ in
+                        restoreAnchoredDay(with: proxy)
+                    }
+                    .onAppear {
+                        restoreAnchoredDay(with: proxy)
+                    }
+                    .modifier(PlanningSelectionSyncModifier(
+                        visibleDay: $visibleDay,
+                        onVisibleDayChange: {
+                            guard scrollPhase == .interacting || scrollPhase == .decelerating else { return }
+                            updateSelectedDate()
+                        },
+                        onSelectedDateChange: { date in
+                            scroll(to: date, with: proxy)
+                            refreshObserveCenterIfNeeded(around: date)
+                        }
+                    ))
+                }
+                .id(periods.origin)
             }
-            planningViewModel.scrollTarget = newValue
+        }
+        .onChange(of: calendar, initial: true) { _, _ in
+            resetPeriods()
+        }
+        .task(id: observeCenter) {
+            guard let observeCenter else { return }
+            await observeEvents(
+                around: observeCenter,
+                range: Self.observeRadiusDays,
+                in: calendar
+            )
         }
         .id(calendarAccounts)
+    }
+
+    private func resetPeriods() {
+        let periods = CalendarPeriodCollection(
+            calendar: calendar,
+            component: .day,
+            origin: mainViewState.selectedDate,
+            indices: Self.periodOffsets
+        )
+        var transaction = Transaction()
+        transaction.disablesAnimations = true
+        withTransaction(transaction) {
+            self.periods = periods
+            scrollPhase = .idle
+            anchoredDay = 0
+            visibleDay = nil
+            observeCenter = periods.origin
+            mainViewState.selectedDate = periods.origin
+        }
+    }
+
+    private func scroll(to date: Date, with proxy: ScrollViewProxy) {
+        guard let periods, let index = periods.index(for: date) else {
+            resetPeriods()
+            return
+        }
+
+        let dayDate = periods[index].date
+        if date != dayDate {
+            mainViewState.selectedDate = dayDate
+        }
+        guard visibleDay != index, anchoredDay != index else { return }
+
+        anchoredDay = index
+        var transaction = Transaction(animation: .default)
+        transaction.disablesAnimations = visibleDay.map { abs(index - $0) > 1 } ?? true
+        withTransaction(transaction) {
+            proxy.scrollTo(index, anchor: .top)
+        }
+    }
+
+    private func restoreAnchoredDay(with proxy: ScrollViewProxy) {
+        guard let anchoredDay, scrollPhase == .idle else { return }
+
+        var transaction = Transaction()
+        transaction.disablesAnimations = true
+        withTransaction(transaction) {
+            proxy.scrollTo(anchoredDay, anchor: .top)
+        }
+    }
+
+    private func updateSelectedDate() {
+        guard let index = visibleDay,
+              let periods,
+              periods.indices.contains(index) else { return }
+
+        let date = periods[index].date
+        guard mainViewState.selectedDate != date else { return }
+        mainViewState.selectedDate = date
+    }
+
+    private func refreshObserveCenterIfNeeded(around date: Date) {
+        let day = date.startOfDay(calendar)
+        guard let observeCenter,
+              let distance = calendar.dateComponents([.day], from: observeCenter, to: day).day else {
+            observeCenter = day
+            return
+        }
+        if abs(distance) > Self.observeRecenterThresholdDays {
+            self.observeCenter = day
+        }
+    }
+
+    @concurrent
+    private func observeEvents(around center: Date, range: Int, in calendar: Foundation.Calendar) async {
+        let startDate = calendar.date(byAdding: .day, value: -range, to: center) ?? center
+        let endDate = calendar.date(byAdding: .day, value: range + 1, to: center) ?? center
+
+        @InjectService var calendarSDK: CalendarCoreGraph
+        var lastGroupedEvents: [Date: [UIEventSummary]]?
+        for await daySlices in calendarSDK.calendarManager.observeDaySlices(
+            start: startDate.instant,
+            end: endDate.instant
+        )._throttle(for: .milliseconds(500)) {
+            guard !Task.isCancelled else { return }
+            let uiEvents = daySlices.values.flatMap { eventDaySlices in
+                eventDaySlices.map {
+                    UIEventSummary(eventDaySlice: $0)
+                }
+            }
+
+            let groupedEvents = Dictionary(grouping: uiEvents) { $0.startDate.startOfDay(calendar) }
+                .mapValues { $0.sorted { $0.startDate < $1.startDate } }
+            guard groupedEvents != lastGroupedEvents else { continue }
+            lastGroupedEvents = groupedEvents
+
+            guard !Task.isCancelled else { return }
+            await MainActor.run {
+                eventsByDay = groupedEvents
+            }
+        }
+    }
+}
+
+private struct PlanningSelectionSyncModifier: ViewModifier {
+    @Environment(\.calendar) private var calendar
+    @Environment(MainViewState.self) private var mainViewState
+
+    @Binding var visibleDay: Int?
+
+    let onVisibleDayChange: () -> Void
+    let onSelectedDateChange: (Date) -> Void
+
+    func body(content: Content) -> some View {
+        content
+            .sensoryFeedback(trigger: mainViewState.selectedDate) { oldValue, newValue in
+                guard !calendar.isDate(oldValue, inSameDayAs: newValue) else { return nil }
+                return .selection
+            }
+            .onChange(of: visibleDay) { _, _ in
+                onVisibleDayChange()
+            }
+            .onChange(of: mainViewState.selectedDate) { _, date in
+                onSelectedDateChange(date)
+            }
     }
 }
 
 #Preview {
     NavigationStack {
         PlanningView(calendarAccounts: [:])
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button("Menu", systemImage: "sidebar.left") {}
-                }
-            }
     }
     .environment(MainViewState())
 }
