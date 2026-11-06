@@ -16,7 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import ESDSFoundation
 import SwiftUI
 
 struct MonthPageView: View {
@@ -34,18 +33,10 @@ struct MonthPageView: View {
     var body: some View {
         switch metrics.sizing {
         case .fill:
-            VStack(spacing: 0) {
-                weekRows
-                MonthColumnSeparatorsView(metrics: metrics, showWeekNumbers: showWeekNumbers)
-                    .frame(height: bottomSafeAreaInset)
-            }
+            weekRows
         case .square:
             ScrollView(.vertical) {
-                VStack(spacing: 0) {
-                    weekRows
-                    MonthColumnSeparatorsView(metrics: metrics, showWeekNumbers: showWeekNumbers)
-                        .frame(height: bottomSafeAreaInset)
-                }
+                weekRows
             }
         }
     }
@@ -59,41 +50,11 @@ struct MonthPageView: View {
                     layout: weekLayouts?[safe: weekIndex],
                     metrics: metrics,
                     rowHeight: rowHeight,
+                    bottomExtension: weekIndex == grid.weeks.indices.last ? bottomSafeAreaInset : 0,
                     showWeekNumber: showWeekNumbers,
                     monthInterval: grid.monthInterval
                 )
             }
         }
-    }
-}
-
-struct MonthColumnSeparatorsView: View {
-    @Environment(\.esdsTheme) private var theme
-
-    let metrics: MonthGridMetrics
-    let showWeekNumbers: Bool
-
-    var body: some View {
-        HStack(spacing: 0) {
-            if showWeekNumbers {
-                separatorColumn
-                    .frame(width: metrics.weekNumberWidth)
-            }
-
-            ForEach(0 ..< MonthGridMetrics.columnCount, id: \.self) { _ in
-                separatorColumn
-            }
-        }
-        .allowsHitTesting(false)
-        .accessibilityHidden(true)
-    }
-
-    private var separatorColumn: some View {
-        Color.clear
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .overlay(alignment: .trailing) {
-                theme.color.borderDim2
-                    .frame(width: MonthGridMetrics.separatorThickness)
-            }
     }
 }
