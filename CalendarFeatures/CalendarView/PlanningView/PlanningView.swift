@@ -25,6 +25,7 @@ import SwiftUI
 
 struct PlanningView: View {
     private static let observeRadiusDays = 7
+    private static let downloadDebounceDelay = Duration.milliseconds(300)
     private static let observeRecenterThresholdDays = 3
 
     @Environment(\.calendar) private var calendar
@@ -172,7 +173,30 @@ struct PlanningView: View {
     private func observeEvents(around center: Date, range: Int, in calendar: Foundation.Calendar) async {
         let startDate = calendar.date(byAdding: .day, value: -range, to: center) ?? center
         let endDate = calendar.date(byAdding: .day, value: range + 1, to: center) ?? center
+        let interval = DateInterval(start: startDate, end: endDate)
 
+        await withDiscardingTaskGroup { group in
+            group.addTask {
+                await downloadEvents(in: interval)
+            }
+            group.addTask {
+                await observeDaySlices(in: interval, calendar: calendar)
+            }
+        }
+    }
+
+    private nonisolated func downloadEvents(in interval: DateInterval) async {
+        guard await (try? Task.sleep(for: Self.downloadDebounceDelay)) != nil else {
+            return
+        }
+
+        @InjectService var calendarSDK: CalendarCoreGraph
+        await calendarSDK.calendarManager.downloadEvents(in: interval)
+    }
+
+    private nonisolated func observeDaySlices(in interval: DateInterval, calendar: Foundation.Calendar) async {
+        let startDate = interval.start
+        let endDate = interval.end
         @InjectService var calendarSDK: CalendarCoreGraph
         var lastGroupedEvents: [Date: [UIEventSummary]]?
         for await daySlices in calendarSDK.calendarManager.observeDaySlices(
