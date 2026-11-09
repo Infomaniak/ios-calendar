@@ -78,17 +78,11 @@ public struct EventDraft: Hashable, Equatable, Sendable {
 
 public extension EventDraft {
     init(event: Event, editData: EventEditData) {
-        let location: EventLocation?
-        if let storedLocation = editData.location, !storedLocation.isEmpty {
-            location = .place(name: storedLocation)
-        } else {
-            location = nil
-        }
         self = EventDraft(
             calendarId: event.calendarIdValue,
             title: editData.title,
             description: editData.description_ ?? "",
-            location: location,
+            location: EventLocation(location: editData.location),
             availabilityRRule: editData.timing.recurrenceRule?.availabilityRRule,
             allDay: editData.timing.isAllDay,
             startDate: editData.timing.startInstantLocal().toNSDate(),
@@ -136,7 +130,7 @@ public extension EventDraft {
         return try EventEditData(
             title: title,
             timing: sdkTiming(preserving: originalData?.timing),
-            location: location?.stringValue,
+            location: location?.sdkValue,
             description: description,
             timeBlocking: originalData.map {
                 isOccupied == ($0.timeBlocking != .doesNotBlock) ? $0.timeBlocking : (isOccupied ? .blocks : .doesNotBlock)

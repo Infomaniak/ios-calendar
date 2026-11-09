@@ -117,13 +117,12 @@ struct EventMappingTests {
             accountId: 42,
             title: " Meeting ",
             description: "Full description",
-            location: "Meeting room",
+            location: LocationPlace(text: "Meeting room"),
             status: .confirmed,
             timeBlocking: .blocks,
             classification: .private,
             categories: [],
             meetRoomUrl: "https://kmeet.infomaniak.com/meeting",
-            bookableUuid: nil,
             attachments: [],
             timing: floatingTiming,
             lastModified: nil,
@@ -140,6 +139,7 @@ struct EventMappingTests {
         #expect(mapped.calendarId == "calendar")
         #expect(mapped.title == "Meeting")
         #expect(mapped.description == "Full description")
+        #expect(mapped.location == .place(text: "Meeting room"))
         #expect(mapped.kMeetLink?.absoluteString == event.meetRoomUrl)
         #expect(mapped.classification == .private)
         #expect(mapped.canEdit)
@@ -268,6 +268,7 @@ struct EventMappingTests {
             timing: floatingTiming,
             hasAttendees: true,
             hasMeetRoom: false,
+            hasPlace: true,
             isBookable: false,
             isRecurring: false,
             myStatus: .delegated

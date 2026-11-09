@@ -29,6 +29,7 @@ struct LocationPickerButton: View {
 
     @State private var isShowingLocationPickerView = false
     @State private var viewModel = LocationPickerViewModel()
+
     @Binding var location: EventLocation?
 
     let request: LocationAvailabilityRequest?
@@ -39,22 +40,26 @@ struct LocationPickerButton: View {
                 isShowingLocationPickerView = true
             } label: {
                 HStack(spacing: IKPadding.small) {
-                    if case .room(let id, let name, let accountId) = location,
-                       accountId == request?.accountId,
-                       let room = viewModel.rooms.first(where: { $0.id == id }) {
-                        MeetingRoomView(
-                            roomTitle: name,
-                            roomFloor: room.floor,
-                            roomCapacity: room.capacity,
-                            availability: viewModel.availability(for: room.id)
-                        )
+                    if let location {
+                        switch location {
+                        case .place(let text):
+                            Label(text, symbol: ESDSSymbols.mapPin)
+                                .labelStyle(.formLabel)
+                        case .room(let uuid, _):
+                            if let room = viewModel.rooms.first(where: { $0.id == uuid }) {
+                                MeetingRoomView(
+                                    roomTitle: room.name,
+                                    roomFloor: room.floor,
+                                    roomCapacity: room.capacity,
+                                    availability: viewModel.availability(for: room.id)
+                                )
+                            }
+                        }
                     } else {
-                        Label(location?.stringValue ?? CalendarResourcesStrings.locationOrRoomLabel, symbol: ESDSSymbols.mapPin)
+                        Label(CalendarResourcesStrings.locationOrRoomLabel, symbol: ESDSSymbols.mapPin)
                             .labelStyle(.formLabel)
                             .frame(maxWidth: .infinity, alignment: .leading)
-                    }
 
-                    if location == nil {
                         ESDSSymbols.chevronRight.image
                             .font(.system(size: IKIconSize.large.rawValue))
                             .foregroundStyle(theme.color.contentTertiary)
@@ -69,6 +74,7 @@ struct LocationPickerButton: View {
                     }
                 }
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
 
             if location != nil {
                 Button {
@@ -93,7 +99,7 @@ struct LocationPickerButton: View {
 
 #Preview {
     Form {
-        LocationPickerButton(location: .constant(.place(name: "Rue Eugène-Marziano 25, Geneva")), request: nil)
+        LocationPickerButton(location: .constant(.place(text: "Rue Eugène-Marziano 25, Geneva")), request: nil)
         LocationPickerButton(location: .constant(nil), request: nil)
     }
 }

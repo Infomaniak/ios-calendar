@@ -161,7 +161,7 @@ struct EventDraftValidatorTests {
         let stored = EventEditData(
             title: original.title,
             timing: timing,
-            location: "Meeting room",
+            location: LocationPlace(text: "Meeting room"),
             description: original.description_,
             timeBlocking: nil,
             calendarId: original.calendarId,
@@ -188,17 +188,17 @@ struct EventDraftValidatorTests {
     @Test
     func locationCanBeCreatedReplacedAndRemoved() throws {
         var draft = makeDraft()
-        draft.location = .place(name: "Custom address")
+        draft.location = .place(text: "Custom address")
         let original = try draft.toEventEditData()
-        #expect(original.location == "Custom address")
+        #expect((original.location as? LocationPlace)?.text == "Custom address")
 
-        draft.location = .place(name: "Place, Street")
+        draft.location = .place(text: "Place, Street")
         let updated = try draft.toEventEditData(preserving: original)
-        #expect(updated.location == "Place, Street")
+        #expect((updated.location as? LocationPlace)?.text == "Place, Street")
 
-        draft.location = .room(id: "room", name: "Meeting room", accountId: 42)
+        draft.location = .room(uuid: "room", room: nil)
         let room = try draft.toEventEditData(preserving: updated)
-        #expect(room.location == "Meeting room")
+        #expect((room.location as? LocationBookableRoom)?.uuidValue == "room")
 
         draft.location = nil
         #expect(try draft.toEventEditData(preserving: room).location == nil)
