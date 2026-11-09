@@ -141,8 +141,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/multiplatform-calendar",
       "state" : {
-        "revision" : "229ac7f375fdcd6e9d694b13af08356eac5fdaef",
-        "version" : "1.0.0"
+        "revision" : "0634e182fdac3c44c6aa2467027e91baf4b4ed71",
+        "version" : "2.0.0"
       }
     },
     {
