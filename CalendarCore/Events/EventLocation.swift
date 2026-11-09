@@ -20,7 +20,7 @@ import MultiplatformCalendar
 
 public enum EventLocation: Hashable, Sendable {
     case place(text: String)
-    case room(uuid: String, room: LocationRoom?)
+    case room(uuid: String)
 }
 
 public extension EventLocation {
@@ -30,11 +30,7 @@ public extension EventLocation {
             guard !place.text.isEmpty else { return nil }
             self = .place(text: place.text)
         case .bookableRoom(let bookableRoom):
-            if let resource = bookableRoom.resource {
-                self = .room(uuid: bookableRoom.uuidValue, room: LocationRoom(resource: resource))
-            } else {
-                self = .room(uuid: bookableRoom.uuidValue, room: nil)
-            }
+            self = .room(uuid: bookableRoom.uuidValue)
         case nil:
             return nil
         }
@@ -44,7 +40,7 @@ public extension EventLocation {
         switch self {
         case .place(let text):
             return LocationPlace(text: text)
-        case .room(let uuid, _):
+        case .room(let uuid):
             return LocationBookableRoom(uuid: uuid, resource: nil)
         }
     }

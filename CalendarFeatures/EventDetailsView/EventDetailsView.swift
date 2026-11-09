@@ -24,7 +24,7 @@ import DesignSystem
 import ESDSFoundation
 import ESDSSymbols
 import InfomaniakDI
-import MultiplatformCalendar
+@preconcurrency import MultiplatformCalendar
 import OSLog
 import SwiftUI
 
@@ -45,6 +45,7 @@ public struct EventDetailsView: View {
     @State private var editErrorMessage = ""
     @State private var isShowingReplyError = false
     @State private var replyErrorMessage = ""
+    @State private var room: LocationRoom?
 
     private let event: UIEventDetails
 
@@ -121,7 +122,7 @@ public struct EventDetailsView: View {
                             switch location {
                             case .place(let text):
                                 LocationRow(address: text)
-                            case .room(_, let room):
+                            case .room:
                                 if let room {
                                     MeetingRoomView(roomTitle: room.name, roomFloor: room.floor, roomCapacity: room.capacity)
                                 }
@@ -237,6 +238,9 @@ public struct EventDetailsView: View {
             .onChange(of: event.user?.status) { _, newStatus in
                 selectedStatus = newStatus
             }
+            .task(id: event.location) {
+                await observeRoom()
+            }
             .navigationBarTitleDisplayMode(.inline)
             .listSectionSpacing(IKPadding.large)
             .contentMargins(.top, 0, for: .scrollContent)
@@ -255,6 +259,21 @@ public struct EventDetailsView: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .center)
                 }
+            }
+        }
+    }
+
+    private func observeRoom() async {
+        room = nil
+        guard case .room(let uuid) = event.location else { return }
+
+        @InjectService var calendarSDK: CalendarCoreGraph
+        for await resource in calendarSDK.bookableResourcesManager.observeResource(accountId: event.accountId, uuid: uuid) {
+            guard !Task.isCancelled else { return }
+            if let resource {
+                room = LocationRoom(resource: resource)
+            } else {
+                room = nil
             }
         }
     }

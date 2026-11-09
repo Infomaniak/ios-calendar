@@ -45,7 +45,7 @@ struct LocationPickerButton: View {
                         case .place(let text):
                             Label(text, symbol: ESDSSymbols.mapPin)
                                 .labelStyle(.formLabel)
-                        case .room(let uuid, _):
+                        case .room(let uuid):
                             if let room = viewModel.rooms.first(where: { $0.id == uuid }) {
                                 MeetingRoomView(
                                     roomTitle: room.name,
