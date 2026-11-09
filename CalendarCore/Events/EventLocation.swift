@@ -16,25 +16,36 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public enum EventLocation: Hashable, Sendable {
-    case place(name: String)
-    case room(id: String, name: String, accountId: Int64)
+import MultiplatformCalendar
 
-    public var stringValue: String {
-        switch self {
-        case .place(let name):
-            return name
-        case .room(_, let name, _):
-            return name
+public enum EventLocation: Hashable, Sendable {
+    case place(text: String)
+    case room(uuid: String, room: LocationRoom?)
+}
+
+public extension EventLocation {
+    init?(location: (any Location)?) {
+        switch onEnum(of: location) {
+        case .place(let place):
+            guard !place.text.isEmpty else { return nil }
+            self = .place(text: place.text)
+        case .bookableRoom(let bookableRoom):
+            if let resource = bookableRoom.resource {
+                self = .room(uuid: bookableRoom.uuidValue, room: LocationRoom(resource: resource))
+            } else {
+                self = .room(uuid: bookableRoom.uuidValue, room: nil)
+            }
+        case nil:
+            return nil
         }
     }
 
-    /// Locations are persisted as text, so room metadata must not make an otherwise unchanged location differ.
-    public static func == (lhs: EventLocation, rhs: EventLocation) -> Bool {
-        lhs.stringValue == rhs.stringValue
-    }
-
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(stringValue)
+    var sdkValue: any Location {
+        switch self {
+        case .place(let text):
+            return LocationPlace(text: text)
+        case .room(let uuid, _):
+            return LocationBookableRoom(uuid: uuid, resource: nil)
+        }
     }
 }

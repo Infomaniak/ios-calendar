@@ -72,7 +72,7 @@ struct EventFormViewModelTests {
             calendarId: "0",
             title: "Stored title",
             description: "Stored description\nwith multiple lines",
-            location: .place(name: "Stored location, 123 Street"),
+            location: .place(text: "Stored location, 123 Street"),
             startDate: date("2026-09-22T10:10:00Z"),
             startTimeZone: timeZone("Europe/Zurich"),
             endDate: date("2026-09-22T11:10:00Z"),
@@ -98,7 +98,7 @@ struct EventFormViewModelTests {
     @Test
     func emptyStoredLocationIsMappedToNil() throws {
         let draft = EventDraft(
-            calendarId: "0", location: .place(name: ""),
+            calendarId: "0", location: .place(text: ""),
             startDate: Date(timeIntervalSince1970: 1000),
             endDate: Date(timeIntervalSince1970: 4600)
         )
@@ -108,21 +108,30 @@ struct EventFormViewModelTests {
     }
 
     @Test
-    func locationMetadataAloneDoesNotMarkStoredStringAsEdited() {
+    func changingLocationKindMarksFormEdited() {
         let draft = EventDraft(
-            calendarId: "0", location: .place(name: "Meeting room"),
+            calendarId: "0", location: .place(text: "Meeting room"),
             startDate: Date(timeIntervalSince1970: 1000),
             endDate: Date(timeIntervalSince1970: 4600)
         )
         let model = EventFormViewModel(editionMode: .editDraft(draft: draft, editingEvent: .preview))
 
-        model.draft.location = .room(id: "room", name: "Meeting room", accountId: 42)
-        #expect(!model.isEdited)
-        #expect(Set([draft, model.draft]).count == 1)
-        model.draft.location = .room(id: "other-room", name: "Other room", accountId: 42)
+        model.draft.location = .room(uuid: "room", room: nil)
         #expect(model.isEdited)
-        model.draft.location = .place(name: "Meeting room")
+        model.draft.location = .place(text: "Meeting room")
         #expect(!model.isEdited)
+    }
+
+    @Test
+    func bookableRoomRoundTripsThroughEditData() throws {
+        let draft = EventDraft(
+            calendarId: "0", location: .room(uuid: "room", room: nil),
+            startDate: Date(timeIntervalSince1970: 1000),
+            endDate: Date(timeIntervalSince1970: 4600)
+        )
+        let editData = try draft.toEventEditData()
+        let mapped = EventDraft(event: makeEvent(editData: editData), editData: editData)
+        #expect(mapped.location == .room(uuid: "room", room: nil))
     }
 
     @Test(arguments: [
@@ -430,7 +439,6 @@ struct EventFormViewModelTests {
             classification: .public,
             categories: [],
             meetRoomUrl: nil,
-            bookableUuid: nil,
             attachments: [],
             timing: editData.timing,
             lastModified: nil,

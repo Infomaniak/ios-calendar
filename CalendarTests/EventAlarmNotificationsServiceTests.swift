@@ -304,6 +304,7 @@ private enum EventAlarmTestFixtures {
             timing: timing,
             hasAttendees: false,
             hasMeetRoom: false,
+            hasPlace: location != nil,
             isBookable: false,
             isRecurring: false,
             myStatus: nil

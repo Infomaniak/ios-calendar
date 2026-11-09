@@ -117,11 +117,16 @@ public struct EventDetailsView: View {
                             )
                         }
 
-                        if let address = event.location {
-                            LocationRow(address: address)
+                        if let location = event.location {
+                            switch location {
+                            case .place(let text):
+                                LocationRow(address: text)
+                            case .room(_, let room):
+                                if let room {
+                                    MeetingRoomView(roomTitle: room.name, roomFloor: room.floor, roomCapacity: room.capacity)
+                                }
+                            }
                         }
-
-                        // TODO: Show meeting room information when available
                     }
                 }
 

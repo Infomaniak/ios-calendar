@@ -21,18 +21,6 @@ import Foundation
 import InfomaniakDI
 @preconcurrency import MultiplatformCalendar
 
-struct LocationRoom: Identifiable, Equatable {
-    let id: String
-    let name: String
-    let capacity: Int?
-    let floor: Int?
-    let accountId: Int64
-
-    var location: EventLocation {
-        .room(id: id, name: name, accountId: accountId)
-    }
-}
-
 struct LocationAvailabilityRequest: Hashable {
     let accountId: Int64
     let start: Date
@@ -66,13 +54,7 @@ struct LocationRoomsService: LocationRoomsProviding {
         for await resources in calendarSDK.bookableResourcesManager.observeResources(accountId: accountId) {
             guard !Task.isCancelled else { return }
             await onUpdate(resources.map { resource in
-                LocationRoom(
-                    id: resource.uuidValue,
-                    name: resource.name,
-                    capacity: resource.capacity?.intValue,
-                    floor: resource.floor?.intValue,
-                    accountId: accountId
-                )
+                LocationRoom(resource: resource)
             })
         }
     }

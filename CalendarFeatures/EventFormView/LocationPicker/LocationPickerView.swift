@@ -24,6 +24,7 @@ import SwiftUI
 
 struct LocationPickerView: View {
     @Environment(\.dismiss) private var dismiss
+
     @State private var search: String
 
     let viewModel: LocationPickerViewModel
@@ -32,7 +33,11 @@ struct LocationPickerView: View {
     init(viewModel: LocationPickerViewModel, location: EventLocation?, onSelect: @escaping (EventLocation) -> Void) {
         self.viewModel = viewModel
         self.onSelect = onSelect
-        _search = State(initialValue: location?.stringValue ?? "")
+        if case .place(let text) = location {
+            _search = State(initialValue: text)
+        } else {
+            _search = State(initialValue: "")
+        }
     }
 
     var body: some View {
@@ -78,12 +83,13 @@ private struct LocationPlacesSection: View {
             Section(CalendarResourcesStrings.placesSectionTitle) {
                 if !input.isEmpty {
                     Button {
-                        onSelect(.place(name: input))
+                        onSelect(.place(text: input))
                     } label: {
                         Label(CalendarResourcesStrings.useRawLocationLabel(input), symbol: ESDSSymbols.mapPin)
                             .labelStyle(.formLabel)
                     }
                 }
+
                 ForEach(viewModel.places) { place in
                     Button {
                         onSelect(place.location)
@@ -91,6 +97,7 @@ private struct LocationPlacesSection: View {
                         Label {
                             VStack(alignment: .leading) {
                                 Text(place.name)
+
                                 if !place.address.isEmpty {
                                     Text(place.address)
                                         .font(.subheadline)

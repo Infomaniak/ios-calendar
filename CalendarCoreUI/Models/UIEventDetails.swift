@@ -29,7 +29,7 @@ public struct UIEventDetails: Identifiable, Equatable, Hashable, Sendable {
     public let title: String
     public let description: String?
     public let status: EventStatus?
-    public let location: String?
+    public let location: EventLocation?
     public let kMeetLink: URL?
     public let colors: UIEventColor
     public let classification: Classification
@@ -60,7 +60,7 @@ public struct UIEventDetails: Identifiable, Equatable, Hashable, Sendable {
         endDate: Date,
         isAllDay: Bool = false,
         status: EventStatus?,
-        location: String? = nil,
+        location: EventLocation? = nil,
         kMeetLink: URL? = nil,
         calendarId: String,
         alarms: [UIEventAlarm] = [],
@@ -107,11 +107,7 @@ public extension UIEventDetails {
         status = event.status
         kMeetLink = event.meetRoomUrl.flatMap { URL(string: $0) }
 
-        if let location = event.location, !location.isEmpty {
-            self.location = location
-        } else {
-            location = nil
-        }
+        location = EventLocation(location: event.location)
 
         startDate = event.timing.startInstantLocal().toNSDate()
         endDate = event.timing.endInstantLocal().toNSDate()
@@ -150,7 +146,7 @@ public extension UIEventDetails {
         startDate: Date().addingTimeInterval(3600),
         endDate: Date().addingTimeInterval(7200),
         status: .confirmed,
-        location: "1 Infinite Loop, Cupertino",
+        location: .place(text: "1 Infinite Loop, Cupertino"),
         calendarId: "0",
         alarms: UIEventAlarm.previews,
         attendees: UIAttendee.previews,
@@ -166,7 +162,7 @@ public extension UIEventDetails {
         startDate: Date().addingTimeInterval(3600),
         endDate: Date().addingTimeInterval(7200),
         status: .confirmed,
-        location: "1 Infinite Loop",
+        location: .place(text: "1 Infinite Loop"),
         calendarId: "0",
         attendees: UIAttendee.previews,
         colors: .preview,

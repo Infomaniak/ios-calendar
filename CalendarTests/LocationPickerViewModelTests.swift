@@ -33,7 +33,7 @@ struct LocationPickerViewModelTests {
     ])
     func placeLocationDoesNotDuplicateItsName(address: String, expected: String) {
         let place = LocationPlace(id: "place", name: "Place", address: address)
-        #expect(place.location.stringValue == expected)
+        #expect(place.location == .place(text: expected))
     }
 
     @Test
@@ -249,7 +249,7 @@ struct LocationPickerViewModelTests {
     }
 
     private func room(_ id: String, _ name: String) -> LocationRoom {
-        LocationRoom(id: id, name: name, capacity: 20, floor: 3, accountId: 42)
+        LocationRoom(id: id, name: name, capacity: 20, floor: 3)
     }
 
     private func place(_ name: String) -> LocationPlace {
