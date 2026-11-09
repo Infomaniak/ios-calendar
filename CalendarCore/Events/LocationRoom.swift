@@ -25,7 +25,7 @@ public struct LocationRoom: Hashable, Identifiable, Sendable {
     public let floor: Int?
 
     public var location: EventLocation {
-        .room(uuid: id, room: self)
+        .room(uuid: id)
     }
 
     public init(id: String, name: String, capacity: Int?, floor: Int?) {

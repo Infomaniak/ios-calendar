@@ -196,7 +196,7 @@ struct EventDraftValidatorTests {
         let updated = try draft.toEventEditData(preserving: original)
         #expect((updated.location as? LocationPlace)?.text == "Place, Street")
 
-        draft.location = .room(uuid: "room", room: nil)
+        draft.location = .room(uuid: "room")
         let room = try draft.toEventEditData(preserving: updated)
         #expect((room.location as? LocationBookableRoom)?.uuidValue == "room")
 

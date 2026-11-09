@@ -116,7 +116,7 @@ struct EventFormViewModelTests {
         )
         let model = EventFormViewModel(editionMode: .editDraft(draft: draft, editingEvent: .preview))
 
-        model.draft.location = .room(uuid: "room", room: nil)
+        model.draft.location = .room(uuid: "room")
         #expect(model.isEdited)
         model.draft.location = .place(text: "Meeting room")
         #expect(!model.isEdited)
@@ -125,13 +125,13 @@ struct EventFormViewModelTests {
     @Test
     func bookableRoomRoundTripsThroughEditData() throws {
         let draft = EventDraft(
-            calendarId: "0", location: .room(uuid: "room", room: nil),
+            calendarId: "0", location: .room(uuid: "room"),
             startDate: Date(timeIntervalSince1970: 1000),
             endDate: Date(timeIntervalSince1970: 4600)
         )
         let editData = try draft.toEventEditData()
         let mapped = EventDraft(event: makeEvent(editData: editData), editData: editData)
-        #expect(mapped.location == .room(uuid: "room", room: nil))
+        #expect(mapped.location == .room(uuid: "room"))
     }
 
     @Test(arguments: [
