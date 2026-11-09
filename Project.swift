@@ -215,7 +215,7 @@ let project = Project(
             settings: .settings(base: Constants.baseSettings),
             environmentVariables: [
                 "hostname": .environmentVariable(value: "\(ProcessInfo.processInfo.hostName).", isEnabled: true)
-            ]
+            ].merging(ProxymanCertificate.environmentVariables) { current, _ in current }
         ),
         .target(name: "\(Constants.projectName)Core",
                 destinations: Constants.destinations,

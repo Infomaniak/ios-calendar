@@ -59,6 +59,20 @@ open class CalendarTargetAssembly: TargetAssembly {
         accessType: nil
     )
 
+    private static var debugInterception: CaldavDebugInterceptionSettings? {
+        #if DEBUG
+        guard let base64Certificate = ProcessInfo.processInfo.environment["PROXYMAN_CA_PEM_BASE64"],
+              let certificateData = Data(base64Encoded: base64Certificate),
+              let certificate = String(data: certificateData, encoding: .utf8) else {
+            return nil
+        }
+
+        return CaldavDebugInterceptionSettings(extraRootCertificatesPem: [certificate])
+        #else
+        return nil
+        #endif
+    }
+
     override public init() {
         super.init()
         ApiEnvironment.current = Self.apiEnvironment
@@ -77,7 +91,8 @@ open class CalendarTargetAssembly: TargetAssembly {
                 return CalendarSDKProvider().sdk(
                     calendar: CalendarSettings(
                         databasePath: appGroupPath.realmRootURL.appending(path: "calendars.db").path(),
-                        appEnvironment: ApiEnvironment.current.kmpEnvironment
+                        appEnvironment: ApiEnvironment.current.kmpEnvironment,
+                        caldavSettings: .init(userAgent: UserAgentBuilder().userAgent, debugInterception: debugInterception)
                     ),
                     crashReport: CrashReportService.shared,
                     contacts: ContactsSettings(
