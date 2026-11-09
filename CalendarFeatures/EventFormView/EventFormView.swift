@@ -112,10 +112,7 @@ public struct EventFormView: View {
             }
 
             Section {
-                LocationPickerButton(
-                    location: $viewModel.draft.location,
-                    request: viewModel.locationAvailabilityRequest
-                )
+                LocationPickerButton(location: $viewModel.draft.location, request: viewModel.locationAvailabilityRequest)
             }
 
             Section {
