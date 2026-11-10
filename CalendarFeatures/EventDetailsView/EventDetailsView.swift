@@ -154,6 +154,7 @@ public struct EventDetailsView: View {
                 }
             }
             .scrollBounceBehavior(.basedOnSize)
+            .selfSizingPopoverContent()
             .closeToolbarItem(dismiss: dismiss)
             .toolbar {
                 if #available(iOS 27.0, *) {
