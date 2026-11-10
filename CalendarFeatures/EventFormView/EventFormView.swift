@@ -71,14 +71,11 @@ public struct EventFormView: View {
                     .focused($isTitleFocused)
             } footer: {
                 if viewModel.validationErrors.contains(.titleTooLong) {
-                    HStack {
-                        Text(EventDraftValidator.ValidationError.titleTooLong.errorDescription)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                        Text(EventDraftValidator.maximumTitleCharacterCount - viewModel.draft.title.count, format: .number)
-                            .monospacedDigit()
-                    }
-                    .font(.caption)
-                    .foregroundStyle(theme.color.contentFeedbackError)
+                    TextFieldLengthErrorView(
+                        error: .titleTooLong,
+                        textFieldLength: viewModel.draft.title.count,
+                        maximumLength: EventDraftValidator.maximumTitleCharacterCount
+                    )
                 }
             }
 
@@ -129,6 +126,14 @@ public struct EventFormView: View {
                         .accessibilityHidden(true)
 
                     TextField(CalendarResourcesStrings.descriptionTitle, text: $viewModel.draft.description, axis: .vertical)
+                }
+            } footer: {
+                if viewModel.validationErrors.contains(.descriptionTooLong) {
+                    TextFieldLengthErrorView(
+                        error: .descriptionTooLong,
+                        textFieldLength: viewModel.draft.description.count,
+                        maximumLength: EventDraftValidator.maximumDescriptionCharacterCount
+                    )
                 }
             }
 
