@@ -102,9 +102,6 @@ public struct EventDetailsView: View {
                         } label: {
                             EventAttendeesCell(attendees: uniqueAttendees)
                         }
-                        .navigationDestination(isPresented: $isNavigatingToAttendeesList) {
-                            AttendeesListView(event: event)
-                        }
                     }
                 }
 
@@ -152,6 +149,9 @@ public struct EventDetailsView: View {
                 Section {
                     EventCalendarRow(event: event)
                 }
+            }
+            .navigationDestination(isPresented: $isNavigatingToAttendeesList) {
+                AttendeesListView(event: event)
             }
             .scrollBounceBehavior(.basedOnSize)
             .selfSizingPopoverContent()
