@@ -27,48 +27,40 @@ import Testing
 @MainActor
 struct EventFormViewModelTests {
     private let calendar = Foundation.Calendar(identifier: .gregorian)
-    private let previousUser = Organizer(email: "me@first.com", displayName: "Me", contact: nil)
-    private let newUser = Organizer(email: "me@second.com", displayName: "Me", contact: nil)
-    private let guest = Attendee(email: "guest@example.com", status: .needsAction, role: .requested)
 
     @Test(arguments: [true, false])
-    func newEventSelectsLastSavedWritableCalendarOrFallsBackToFirst(isSavedCalendarAvailable: Bool) throws {
-        let suiteName = "EventFormViewModelTests.\(UUID().uuidString)"
-        let userDefaults = try #require(UserDefaults(suiteName: suiteName))
-        defer { userDefaults.removePersistentDomain(forName: suiteName) }
-        userDefaults.lastSelectedCalendarId = "saved"
+    func newEventSelectsLastSavedWritableCalendarOrFallsBackToFirst(isSavedCalendarAvailable: Bool) async {
+        let previousCalendarId = UserDefaults.shared.lastSelectedCalendarId
+        defer { UserDefaults.shared.lastSelectedCalendarId = previousCalendarId }
+        UserDefaults.shared.lastSelectedCalendarId = "saved"
 
-        let viewModel = EventFormViewModel(editionMode: .new(selectedDate: Date()), userDefaults: userDefaults)
+        let viewModel = EventFormViewModel(editionMode: .new(selectedDate: Date()))
         let first = makeCalendar(id: "first")
         let saved = makeCalendar(id: "saved")
-        viewModel.updateAvailableCalendars(isSavedCalendarAvailable ? [first, saved] : [first])
+        await viewModel.updateCalendarSections([makeSection(isSavedCalendarAvailable ? [first, saved] : [first])])
 
         #expect(viewModel.draft.calendarId == (isSavedCalendarAvailable ? saved.id : first.id))
         #expect(viewModel.isEdited == false)
-        #expect(userDefaults.lastSelectedCalendarId == "saved")
+        #expect(UserDefaults.shared.lastSelectedCalendarId == "saved")
 
         viewModel.draft.calendarId = first.id
-        viewModel.updateAvailableCalendars([first, saved])
+        await viewModel.updateCalendarSections([makeSection([first, saved])])
         #expect(viewModel.draft.calendarId == first.id)
     }
 
     @Test
-    func editingEventKeepsItsCalendarRatherThanUsingLastSavedCalendar() throws {
-        let suiteName = "EventFormViewModelTests.\(UUID().uuidString)"
-        let userDefaults = try #require(UserDefaults(suiteName: suiteName))
-        defer { userDefaults.removePersistentDomain(forName: suiteName) }
-        userDefaults.lastSelectedCalendarId = "saved"
+    func editingEventKeepsItsCalendarRatherThanUsingLastSavedCalendar() async {
+        let previousCalendarId = UserDefaults.shared.lastSelectedCalendarId
+        defer { UserDefaults.shared.lastSelectedCalendarId = previousCalendarId }
+        UserDefaults.shared.lastSelectedCalendarId = "saved"
 
         let draft = EventDraft(
             calendarId: "event",
             startDate: Date(),
             endDate: Date().addingTimeInterval(3600)
         )
-        let viewModel = EventFormViewModel(
-            editionMode: .editDraft(draft: draft, editingEvent: .preview),
-            userDefaults: userDefaults
-        )
-        viewModel.updateAvailableCalendars([makeCalendar(id: "saved")])
+        let viewModel = EventFormViewModel(editionMode: .editDraft(draft: draft, editingEvent: .preview))
+        await viewModel.updateCalendarSections([makeSection([makeCalendar(id: "saved")])])
 
         #expect(viewModel.draft.calendarId == "event")
         #expect(viewModel.isEdited == false)
@@ -90,7 +82,7 @@ struct EventFormViewModelTests {
         let editData = try original.toEventEditData()
         let event = makeEvent(editData: editData)
         let draft = EventDraft(event: event, editData: editData)
-        let viewModel = EventFormViewModel(editionMode: .editDraft(draft: draft, editingEvent: .preview), userDefaults: .shared)
+        let viewModel = EventFormViewModel(editionMode: .editDraft(draft: draft, editingEvent: .preview))
 
         #expect(viewModel.draft.title == original.title)
         #expect(viewModel.draft.description == original.description)
@@ -122,7 +114,7 @@ struct EventFormViewModelTests {
             startDate: Date(timeIntervalSince1970: 1000),
             endDate: Date(timeIntervalSince1970: 4600)
         )
-        let model = EventFormViewModel(editionMode: .editDraft(draft: draft, editingEvent: .preview), userDefaults: .shared)
+        let model = EventFormViewModel(editionMode: .editDraft(draft: draft, editingEvent: .preview))
 
         model.draft.location = .room(id: "room", name: "Meeting room", accountId: 42)
         #expect(!model.isEdited)
@@ -411,8 +403,7 @@ struct EventFormViewModelTests {
         ])
         let draft = EventDraft(event: event, editData: editData)
         let viewModel = EventFormViewModel(
-            editionMode: .editDraft(draft: draft, editingEvent: UIEventDetails(event: event, userEmail: nil)),
-            userDefaults: .shared
+            editionMode: .editDraft(draft: draft, editingEvent: UIEventDetails(event: event, userEmail: nil))
         )
 
         #expect(viewModel.draft.alarms.count == 2)
@@ -479,45 +470,11 @@ struct EventFormViewModelTests {
             endDate: date(end),
             endTimeZone: timeZone(endTimeZone)
         )
-        return EventFormViewModel(editionMode: .editDraft(draft: draft, editingEvent: .preview), userDefaults: .shared)
+        return EventFormViewModel(editionMode: .editDraft(draft: draft, editingEvent: .preview))
     }
 
-    @Test
-    func replacingOrganizerWithoutOrganizerDoesNothing() {
-        let viewModel = makeOrganizerViewModel(attendees: [guest], organizer: nil)
-
-        viewModel.replaceOrganizer(with: newUser)
-
-        #expect(viewModel.draft.organizer == nil)
-        #expect(viewModel.draft.attendees.map(\.email) == [guest.email])
-    }
-
-    @Test
-    func replacingOrganizerAlsoReplacesItsAttendee() {
-        let viewModel = makeOrganizerViewModel(attendees: [Attendee(organizer: previousUser), guest], organizer: previousUser)
-
-        viewModel.replaceOrganizer(with: newUser)
-
-        #expect(viewModel.draft.organizer?.email == newUser.email)
-        #expect(viewModel.draft.attendees.map(\.email) == [newUser.email, guest.email])
-        #expect(viewModel.draft.attendees.first?.isOrganizer == true)
-    }
-
-    @Test
-    func replacingOrganizerDoesNotReAddRemovedOrganizerAttendee() {
-        let viewModel = makeOrganizerViewModel(attendees: [guest], organizer: previousUser)
-
-        viewModel.replaceOrganizer(with: newUser)
-
-        #expect(viewModel.draft.organizer?.email == newUser.email)
-        #expect(viewModel.draft.attendees.map(\.email) == [guest.email])
-    }
-
-    private func makeOrganizerViewModel(attendees: [Attendee], organizer: Organizer?) -> EventFormViewModel {
-        let viewModel = EventFormViewModel(editionMode: .new(selectedDate: Date()), userDefaults: .shared)
-        viewModel.draft.attendees = attendees
-        viewModel.draft.organizer = organizer
-        return viewModel
+    private func makeSection(_ calendars: [UICalendar]) -> UICalendarSection {
+        UICalendarSection(accountId: 1, organisationId: nil, organisationName: nil, calendars: calendars)
     }
 
     private func makeCalendar(id: String) -> UICalendar {

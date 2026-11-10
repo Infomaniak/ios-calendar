@@ -227,13 +227,18 @@ struct LocationPickerViewModelTests {
     }
 
     @Test
-    func availabilityRequestUsesSelectedCalendarAccountAndDraftContext() throws {
-        let model = EventFormViewModel(editionMode: .new(selectedDate: .now), userDefaults: .shared)
+    func availabilityRequestUsesSelectedCalendarAccountAndDraftContext() async throws {
+        let model = EventFormViewModel(editionMode: .new(selectedDate: .now))
         let calendar = UICalendar(
             id: "selected", displayName: "Calendar", colorArgb: 0,
             accountId: 84, isVisible: true, accessLevel: .owner
         )
-        model.updateAvailableCalendars([calendar])
+        await model.updateCalendarSections([UICalendarSection(
+            accountId: 84,
+            organisationId: nil,
+            organisationName: nil,
+            calendars: [calendar]
+        )])
         model.draft.availabilityRRule = "FREQ=WEEKLY"
         let request = try #require(model.locationAvailabilityRequest)
         #expect(request.accountId == 84)

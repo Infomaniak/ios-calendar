@@ -60,7 +60,7 @@ public struct EventFormView: View {
     @FocusState private var isTitleFocused: Bool
 
     public init(editionMode: EditionMode) {
-        _viewModel = State(wrappedValue: EventFormViewModel(editionMode: editionMode, userDefaults: .shared))
+        _viewModel = State(wrappedValue: EventFormViewModel(editionMode: editionMode))
     }
 
     public var body: some View {
@@ -163,10 +163,14 @@ public struct EventFormView: View {
                 EditableAlarmsView(alarms: $viewModel.draft.alarms)
             }
 
-            if !viewModel.availableCalendars.isEmpty {
+            if !viewModel.calendarSections.isEmpty {
                 Section {
                     LabeledContent {
-                        CalendarPicker(calendarId: $viewModel.draft.calendarId, calendars: viewModel.availableCalendars)
+                        CalendarPicker(
+                            calendarId: $viewModel.draft.calendarId,
+                            sections: viewModel.calendarSections,
+                            selectedCalendar: viewModel.selectedCalendar
+                        )
                     } label: {
                         Label(CalendarResourcesStrings.sectionCalendarHeader, symbol: .productCalendar)
                             .labelStyle(.formLabel)
