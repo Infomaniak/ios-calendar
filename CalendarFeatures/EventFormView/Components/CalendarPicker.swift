@@ -17,28 +17,36 @@
  */
 
 import CalendarCoreUI
+import CalendarResources
 import SwiftUI
 
 struct CalendarPicker: View {
     @Binding var calendarId: String?
 
-    let calendars: [CalendarCoreUI.UICalendar]
+    let sections: [UICalendarSection]
+    let selectedCalendar: UICalendar?
+
+    private var hasSeveralCalendars: Bool {
+        sections.count > 1 || sections.first?.calendars.count ?? 0 > 1
+    }
 
     var body: some View {
         Menu {
-            ForEach(calendars) { calendar in
-                Button {
-                    calendarId = calendar.id
-                } label: {
-                    CalendarLabel(calendar: calendar)
+            if sections.count > 1 {
+                ForEach(sections) { section in
+                    Section(section.organisationName ?? CalendarResourcesStrings.otherCalendarsSectionTitle) {
+                        buttons(forCalendars: section.calendars)
+                    }
                 }
+            } else if let section = sections.first {
+                buttons(forCalendars: section.calendars)
             }
         } label: {
-            if let calendar = calendars.first(where: { $0.id == calendarId }) {
+            if let selectedCalendar {
                 HStack {
-                    CalendarLabel(calendar: calendar)
+                    CalendarLabel(calendar: selectedCalendar)
 
-                    if calendars.count > 1 {
+                    if hasSeveralCalendars {
                         Image(systemName: "chevron.up.chevron.down")
                             .accessibilityHidden(true)
                     }
@@ -46,9 +54,20 @@ struct CalendarPicker: View {
             }
         }
         .buttonStyle(.plain)
+        .disabled(!hasSeveralCalendars)
+    }
+
+    private func buttons(forCalendars calendars: [CalendarCoreUI.UICalendar]) -> some View {
+        ForEach(calendars) { calendar in
+            Button {
+                calendarId = calendar.id
+            } label: {
+                CalendarLabel(calendar: calendar)
+            }
+        }
     }
 }
 
 #Preview {
-    CalendarPicker(calendarId: .constant(UICalendar.preview.id), calendars: [.preview])
+    CalendarPicker(calendarId: .constant(UICalendar.preview.id), sections: [.preview], selectedCalendar: nil)
 }

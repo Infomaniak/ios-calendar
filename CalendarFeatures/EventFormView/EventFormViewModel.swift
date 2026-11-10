@@ -51,35 +51,38 @@ final class EventFormViewModel {
         case editDraft(occurrenceId: String, scope: RecurrenceScope)
     }
 
-    private(set) var availableCalendars = [UICalendar]()
+    private(set) var calendarSections = [UICalendarSection]()
+    private var calendarsById = [String: UICalendar]()
 
     var draft: EventDraft
     private var originalDraft: EventDraft
+
     let editionMode: EditionMode
 
-    private let validator = EventDraftValidator()
-    private let userDefaults: UserDefaults
-
     var validationErrors: Set<EventDraftValidator.ValidationError> {
-        validator.validate(draft)
+        EventDraftValidator().validate(draft)
     }
 
     var isEdited: Bool {
         originalDraft != draft
     }
 
+    var selectedCalendar: UICalendar? {
+        return calendar(withId: draft.calendarId)
+    }
+
     var locationAvailabilityRequest: LocationAvailabilityRequest? {
-        guard let calendar = availableCalendars.first(where: { $0.id == draft.calendarId }) else { return nil }
+        guard let calendar = selectedCalendar else { return nil }
         return LocationAvailabilityRequest(accountId: Int64(calendar.accountId), draft: draft)
     }
 
     private var currentDuration: TimeInterval {
-        max(draft.endDate.timeIntervalSince(draft.startDate), 0)
+        return max(draft.endDate.timeIntervalSince(draft.startDate), 0)
     }
 
-    init(editionMode: EditionMode, userDefaults: UserDefaults) {
+    init(editionMode: EditionMode) {
         self.editionMode = editionMode
-        self.userDefaults = userDefaults
+
         let draft: EventDraft
         switch editionMode {
         case .new(let selectedDate):
@@ -103,7 +106,8 @@ final class EventFormViewModel {
                 draft: draft
             )
         }
-        userDefaults.lastSelectedCalendarId = draft.calendarId
+
+        UserDefaults.shared.lastSelectedCalendarId = draft.calendarId
     }
 
     func setDate(_ date: Date, for pickerId: DatePickerId) {
@@ -142,42 +146,78 @@ final class EventFormViewModel {
         fixInterval(keeping: pickerId, duration: duration)
     }
 
+    @concurrent
     func observeCalendars() async {
         @InjectService var calendarSDK: CalendarCoreGraph
         for await sections in calendarSDK.calendarManager.observeCalendars() {
-            let calendars = sections.flatMap { $0.calendars }
-            updateAvailableCalendars(calendars.map { UICalendar(calendar: $0) })
+            await updateCalendarSections(sections.map { UICalendarSection(section: $0) })
         }
     }
 
-    func updateAvailableCalendars(_ calendars: [UICalendar]) {
-        availableCalendars = calendars.filter { $0.accessLevel.canWrite }
+    @concurrent
+    func updateCalendarSections(_ sections: [UICalendarSection]) async {
+        var updatedSections = [UICalendarSection]()
+        var updatedCalendarsById = [String: UICalendar]()
+        for section in sections {
+            let writableCalendars = section.calendars.filter { $0.accessLevel.canWrite }
+            guard !writableCalendars.isEmpty else { continue }
 
-        guard case .new = editionMode else { return }
-        guard draft.calendarId == nil || !availableCalendars.contains(where: { $0.id == draft.calendarId }) else { return }
-        let calendarId = availableCalendars.first { $0.id == userDefaults.lastSelectedCalendarId }?.id
-            ?? availableCalendars.first?.id
+            updatedSections.append(UICalendarSection(
+                accountId: section.accountId,
+                organisationId: section.organisationId,
+                organisationName: section.organisationName,
+                calendars: writableCalendars
+            ))
+            for calendar in writableCalendars {
+                updatedCalendarsById[calendar.id] = calendar
+            }
+        }
+
+        await MainActor.run {
+            guard !Task.isCancelled else { return }
+            calendarSections = updatedSections
+            calendarsById = updatedCalendarsById
+
+            selectDraftDefaultCalendarIfNecessary()
+        }
+    }
+
+    private func selectDraftDefaultCalendarIfNecessary() {
+        guard case .new = editionMode, selectedCalendar == nil else {
+            return
+        }
+
+        let calendar = calendar(withId: UserDefaults.shared.lastSelectedCalendarId) ?? calendarSections.first?.calendars.first
+        let calendarId = calendar?.id
+
         if draft.calendarId == originalDraft.calendarId {
             originalDraft.calendarId = calendarId
         }
         draft.calendarId = calendarId
     }
 
+    private func calendar(withId calendarId: String?) -> UICalendar? {
+        guard let calendarId else { return nil }
+        return calendarsById[calendarId]
+    }
+
     func currentUser(in calendarAccounts: [CalendarAccount.ID: CalendarAccount]) -> UserProfile? {
-        guard let calendar = availableCalendars.first(where: { $0.id == draft.calendarId }) else { return nil }
+        guard let calendar = selectedCalendar else { return nil }
         return calendarAccounts[calendar.accountId]?.user
     }
 
     func updateOrganizerForSelectedCalendar(calendarAccounts: [CalendarAccount.ID: CalendarAccount]) {
-        guard case .new = editionMode,
-              let currentUser = currentUser(in: calendarAccounts),
-              let organizer = draft.organizer,
-              organizer.email != currentUser.email.lowercased() else { return }
+        guard case .new = editionMode else {
+            return
+        }
 
-        replaceOrganizer(with: Organizer(user: currentUser))
+        if let currentUser = currentUser(in: calendarAccounts), let organizer = draft.organizer,
+           organizer.email != currentUser.email.lowercased() {
+            replaceOrganizer(with: Organizer(user: currentUser))
+        }
     }
 
-    func replaceOrganizer(with newOrganizer: Organizer) {
+    private func replaceOrganizer(with newOrganizer: Organizer) {
         guard let previousOrganizer = draft.organizer else { return }
 
         let previousEmail = previousOrganizer.email.lowercased()
