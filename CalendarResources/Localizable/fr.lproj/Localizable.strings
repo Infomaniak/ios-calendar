@@ -181,9 +181,6 @@
 /* loco:6aa9363a0ccb57137202b232 */
 "generalSettingsStartOfWeekLabel" = "Début de la semaine";
 
-/* loco:6aaa8d68dc7e7cd5710750db */
-"generalSettingsTitle" = "Général";
-
 /* loco:6aa9363a66e1c7d3970dd2e2 */
 "generalSettingsUseDeviceTimeZoneLabel" = "Utiliser le fuseau horaire de l’appareil";
 

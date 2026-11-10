@@ -16,20 +16,108 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarCore
+import CalendarCoreUI
 import CalendarResources
+import InfomaniakCoreUIResources
 import SwiftUI
 
 public struct SettingsView: View {
+    @Environment(\.calendar) private var calendar
+
+    @AppStorage(UserDefaults.shared.key(.theme), store: .shared)
+    private var appTheme = DefaultPreferences.theme
+    @AppStorage(UserDefaults.shared.key(.firstWeekday), store: .shared)
+    private var firstWeekday = DefaultPreferences.firstWeekday
+    @AppStorage(UserDefaults.shared.key(.defaultEventDuration), store: .shared)
+    private var defaultEventDuration = DefaultPreferences.defaultEventDuration
+    @AppStorage(UserDefaults.shared.key(.customTimeZoneIdentifier), store: .shared)
+    private var customTimeZoneIdentifier: String?
+
+    private var weekdayIndices: [Int] {
+        let symbols = calendar.weekdaySymbols
+        let firstWeekdayIndex = calendar.firstWeekday - 1
+        guard symbols.indices.contains(firstWeekdayIndex) else {
+            return Array(symbols.indices)
+        }
+
+        return Array(symbols.indices[firstWeekdayIndex...]) + Array(symbols.indices[..<firstWeekdayIndex])
+    }
+
+    private var customTimeZone: TimeZone {
+        customTimeZoneIdentifier.flatMap(TimeZone.init(identifier:)) ?? .current
+    }
+
+    private var useSystemTimeZoneBinding: Binding<Bool> {
+        Binding {
+            customTimeZoneIdentifier == nil
+        } set: { useSystemTimeZone in
+            customTimeZoneIdentifier = useSystemTimeZone ? nil : TimeZone.current.identifier
+        }
+    }
+
+    private var customTimeZoneBinding: Binding<TimeZone> {
+        Binding {
+            customTimeZone
+        } set: { timeZone in
+            customTimeZoneIdentifier = timeZone.identifier
+        }
+    }
+
     public init() {}
 
     public var body: some View {
         List {
             Section {
-                NavigationLink {
-                    GeneralSettingsView()
-                } label: {
-                    Text(CalendarResourcesStrings.generalSettingsTitle)
+                Picker(CoreUILocalizable.themeTitle, selection: $appTheme) {
+                    ForEach(Theme.allCases, id: \.self) { theme in
+                        Text(theme.title)
+                            .tag(theme)
+                    }
                 }
+                .pickerStyle(.navigationLink)
+
+                Picker(CalendarResourcesStrings.generalSettingsStartOfWeekLabel, selection: $firstWeekday) {
+                    ForEach(weekdayIndices, id: \.self) { weekdayIndex in
+                        Text(calendar.weekdaySymbols[weekdayIndex].localizedCapitalized)
+                            .tag(weekdayIndex + 1)
+                    }
+                }
+                .pickerStyle(.navigationLink)
+            } header: {
+                Text(CalendarResourcesStrings.generalSettingsDisplayLabel)
+            }
+
+            Section {
+                Picker(CalendarResourcesStrings.generalSettingsDefaultEventDurationLabel, selection: $defaultEventDuration) {
+                    ForEach(DefaultEventDuration.defaultCases, id: \.self) { duration in
+                        Text(
+                            Duration.seconds(duration.timeInterval)
+                                .formatted(.units(allowed: [.hours, .minutes], width: .condensedAbbreviated))
+                        )
+                        .tag(duration)
+                    }
+                }
+                .pickerStyle(.navigationLink)
+
+                Toggle(
+                    CalendarResourcesStrings.generalSettingsUseDeviceTimeZoneLabel,
+                    isOn: useSystemTimeZoneBinding
+                )
+                .toggleStyle(.switch)
+
+                NavigationLink {
+                    TimeZoneListView(timeZone: customTimeZoneBinding, referenceDate: .now)
+                } label: {
+                    LabeledContent {
+                        Text(customTimeZone, format: .timeZone(.displayName))
+                    } label: {
+                        Text(CalendarResourcesStrings.timeZoneLabel)
+                    }
+                }
+                .disabled(customTimeZoneIdentifier == nil)
+            } header: {
+                Text(CalendarResourcesStrings.calendarsMenuSectionTitle)
             }
         }
         .navigationTitle(CalendarResourcesStrings.settingsTitle)
@@ -38,5 +126,7 @@ public struct SettingsView: View {
 }
 
 #Preview {
-    SettingsView()
+    NavigationStack {
+        SettingsView()
+    }
 }

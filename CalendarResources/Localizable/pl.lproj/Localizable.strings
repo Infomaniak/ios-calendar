@@ -179,9 +179,6 @@
 /* loco:6aa9363a0ccb57137202b232 */
 "generalSettingsStartOfWeekLabel" = "Początek tygodnia";
 
-/* loco:6aaa8d68dc7e7cd5710750db */
-"generalSettingsTitle" = "Ogólne";
-
 /* loco:6aa9363a66e1c7d3970dd2e2 */
 "generalSettingsUseDeviceTimeZoneLabel" = "Użyj strefy czasowej urządzenia";
 
