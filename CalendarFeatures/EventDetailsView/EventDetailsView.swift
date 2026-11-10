@@ -102,9 +102,6 @@ public struct EventDetailsView: View {
                         } label: {
                             EventAttendeesCell(attendees: uniqueAttendees)
                         }
-                        .navigationDestination(isPresented: $isNavigatingToAttendeesList) {
-                            AttendeesListView(event: event)
-                        }
                     }
                 }
 
@@ -153,7 +150,11 @@ public struct EventDetailsView: View {
                     EventCalendarRow(event: event)
                 }
             }
+            .navigationDestination(isPresented: $isNavigatingToAttendeesList) {
+                AttendeesListView(event: event)
+            }
             .scrollBounceBehavior(.basedOnSize)
+            .selfSizingPopoverContent()
             .closeToolbarItem(dismiss: dismiss)
             .toolbar {
                 if #available(iOS 27.0, *) {

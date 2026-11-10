@@ -112,13 +112,6 @@ public struct EventFormView: View {
                 } label: {
                     EventAttendeesCell(attendees: viewModel.draft.attendees.map { UIAttendee(attendee: $0) })
                 }
-                .navigationDestination(isPresented: $isNavigatingToAttendeesList) {
-                    EditableAttendeesList(
-                        attendees: $viewModel.draft.attendees,
-                        organizer: $viewModel.draft.organizer,
-                        currentUser: viewModel.currentUser(in: calendarAccounts)
-                    )
-                }
             }
 
             Section {
@@ -177,6 +170,13 @@ public struct EventFormView: View {
                     }
                 }
             }
+        }
+        .navigationDestination(isPresented: $isNavigatingToAttendeesList) {
+            EditableAttendeesList(
+                attendees: $viewModel.draft.attendees,
+                organizer: $viewModel.draft.organizer,
+                currentUser: viewModel.currentUser(in: calendarAccounts)
+            )
         }
         .navigationDestination(item: $timeZonePickerId) { pickerId in
             TimeZoneListView(

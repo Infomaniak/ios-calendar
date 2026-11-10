@@ -22,27 +22,46 @@ public extension View {
     func selfSizingPopover(idealWidth: CGFloat) -> some View {
         modifier(SelfSizingPopoverModifier(idealWidth: idealWidth))
     }
+
+    func selfSizingPopoverContent() -> some View {
+        modifier(SelfSizingPopoverContentModifier())
+    }
+}
+
+@MainActor
+@Observable
+final class SelfSizingPopoverState {
+    var contentHeight: CGFloat?
 }
 
 public struct SelfSizingPopoverModifier: ViewModifier {
     private static let maxHeight: CGFloat = 800
 
-    @State private var contentHeight: CGFloat?
+    @State private var state = SelfSizingPopoverState()
 
     let idealWidth: CGFloat
 
     private var idealHeight: CGFloat {
-        guard let contentHeight, contentHeight > 0 else { return Self.maxHeight }
+        guard let contentHeight = state.contentHeight, contentHeight > 0 else { return Self.maxHeight }
         return min(contentHeight, Self.maxHeight)
     }
 
     public func body(content: Content) -> some View {
         content
+            .environment(state)
+            .frame(idealWidth: idealWidth, idealHeight: idealHeight)
+    }
+}
+
+struct SelfSizingPopoverContentModifier: ViewModifier {
+    @Environment(SelfSizingPopoverState.self) private var state: SelfSizingPopoverState?
+
+    func body(content: Content) -> some View {
+        content
             .onScrollGeometryChange(for: CGFloat.self) { geometry in
                 geometry.contentSize.height + geometry.contentInsets.top + geometry.contentInsets.bottom
             } action: { _, newHeight in
-                contentHeight = newHeight
+                state?.contentHeight = newHeight
             }
-            .frame(idealWidth: idealWidth, idealHeight: idealHeight)
     }
 }
