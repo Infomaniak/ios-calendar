@@ -90,9 +90,7 @@ struct CalendarListContentView: View {
 
         ForEach(Array(sortedAccounts.enumerated()), id: \.element.id) { index, account in
             Section {
-                DisclosureGroup(
-                    isExpanded: isExpandedBinding(for: account.id)
-                ) {
+                DisclosureGroup(isExpanded: isExpandedBinding(for: account.id)) {
                     let sections = sectionsByAccount[account.id, default: []]
 
                     if sections.count == 1, let section = sections.first {
@@ -118,9 +116,7 @@ struct CalendarListContentView: View {
                         email: account.user.email
                     )
                 }
-                .alignmentGuide(.listRowSeparatorLeading) { _ in
-                    0
-                }
+                .alignmentGuide(.listRowSeparatorLeading) { _ in 0 }
             } header: {
                 if index == 0 {
                     Text(CalendarResourcesStrings.calendarsMenuSectionTitle)
@@ -143,10 +139,7 @@ struct CalendarListContentView: View {
         Task {
             @InjectService var calendarSDK: CalendarCoreGraph
             do {
-                try await calendarSDK.calendarManager.updateCalendar(
-                    calendarId: calendar.id,
-                    edit: .init(isVisible: KotlinBoolean(bool: newValue))
-                )
+                try await calendarSDK.calendarManager.updateCalendarVisibility(calendarId: calendar.id, visible: newValue)
             } catch {
                 visibilityOverrides[calendar.id] = previousValue
             }
