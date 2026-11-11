@@ -20,4 +20,6 @@ import SwiftUI
 
 public enum URLConstants {
     public static let helpAndSupportURL = URL(string: "https://support.infomaniak.com")!
+    public static let githubRepositoryURL = URL(string: "https://github.com/Infomaniak/ios-calendar")!
+    public static let matomoURL = URL(string: "https://analytics.infomaniak.com/matomo.php")!
 }

@@ -22,10 +22,15 @@ import CalendarResources
 import DesignSystem
 import ESDSFoundation
 import ESDSSymbols
+import InfomaniakCoreCommonUI
 import InfomaniakCoreUIResources
+import InfomaniakDI
+import InfomaniakPrivacyManagement
 import SwiftUI
 
 public struct SettingsView: View {
+    @LazyInjectService private var matomo: MatomoUtils
+
     @Environment(\.calendar) private var calendar
     @Environment(\.esdsTheme) private var theme
 
@@ -137,6 +142,21 @@ public struct SettingsView: View {
             }
 
             Section {
+                NavigationLink {
+                    PrivacyManagementView(
+                        urlRepository: URLConstants.githubRepositoryURL,
+                        backgroundColor: Color(uiColor: .systemGroupedBackground),
+                        groupedStyle: true,
+                        illustration: CalendarResourcesAsset.Images.privacy.swiftUIImage,
+                        userDefaultStore: .shared,
+                        userDefaultKeyMatomo: UserDefaults.shared.key(.matomoAuthorized),
+                        userDefaultKeySentry: UserDefaults.shared.key(.sentryAuthorized),
+                        matomo: matomo
+                    )
+                } label: {
+                    Label(PrivacyManagementView.title, symbol: ESDSSymbols.boxLid)
+                }
+
                 Link(destination: URLConstants.helpAndSupportURL) {
                     HStack {
                         Label {
