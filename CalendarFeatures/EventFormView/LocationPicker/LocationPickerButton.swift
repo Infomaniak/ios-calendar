@@ -94,6 +94,11 @@ struct LocationPickerButton: View {
         .task(id: request) {
             await viewModel.loadAvailability(for: request)
         }
+        .onChange(of: viewModel.rooms) { _, newValue in
+            if case .room(let uuid) = location, !newValue.contains(where: { $0.id == uuid }) {
+                location = nil
+            }
+        }
     }
 }
 
