@@ -19,11 +19,15 @@
 import CalendarCore
 import CalendarCoreUI
 import CalendarResources
+import DesignSystem
+import ESDSFoundation
+import ESDSSymbols
 import InfomaniakCoreUIResources
 import SwiftUI
 
 public struct SettingsView: View {
     @Environment(\.calendar) private var calendar
+    @Environment(\.esdsTheme) private var theme
 
     @AppStorage(UserDefaults.shared.key(.theme), store: .shared)
     private var appTheme = DefaultPreferences.theme
@@ -71,19 +75,23 @@ public struct SettingsView: View {
     public var body: some View {
         List {
             Section {
-                Picker(CoreUILocalizable.themeTitle, selection: $appTheme) {
+                Picker(selection: $appTheme) {
                     ForEach(Theme.allCases, id: \.self) { theme in
                         Text(theme.title)
                             .tag(theme)
                     }
+                } label: {
+                    Label(CoreUILocalizable.themeTitle, symbol: ESDSSymbols.smartphoneTablet)
                 }
                 .pickerStyle(.navigationLink)
 
-                Picker(CalendarResourcesStrings.generalSettingsStartOfWeekLabel, selection: $firstWeekday) {
+                Picker(selection: $firstWeekday) {
                     ForEach(weekdayIndices, id: \.self) { weekdayIndex in
                         Text(calendar.weekdaySymbols[weekdayIndex].localizedCapitalized)
                             .tag(weekdayIndex + 1)
                     }
+                } label: {
+                    Label(CalendarResourcesStrings.generalSettingsStartOfWeekLabel, symbol: ESDSSymbols.calendarDots)
                 }
                 .pickerStyle(.navigationLink)
 
@@ -94,7 +102,7 @@ public struct SettingsView: View {
             }
 
             Section {
-                Picker(CalendarResourcesStrings.generalSettingsDefaultEventDurationLabel, selection: $defaultEventDuration) {
+                Picker(selection: $defaultEventDuration) {
                     ForEach(DefaultEventDuration.defaultCases, id: \.self) { duration in
                         Text(
                             Duration.seconds(duration.timeInterval)
@@ -102,13 +110,14 @@ public struct SettingsView: View {
                         )
                         .tag(duration)
                     }
+                } label: {
+                    Label(CalendarResourcesStrings.generalSettingsDefaultEventDurationLabel, symbol: ESDSSymbols.clock)
                 }
                 .pickerStyle(.navigationLink)
 
-                Toggle(
-                    CalendarResourcesStrings.generalSettingsUseDeviceTimeZoneLabel,
-                    isOn: useSystemTimeZoneBinding
-                )
+                Toggle(isOn: useSystemTimeZoneBinding) {
+                    Label(CalendarResourcesStrings.generalSettingsUseDeviceTimeZoneLabel, symbol: ESDSSymbols.globe)
+                }
                 .toggleStyle(.switch)
 
                 NavigationLink {
@@ -123,6 +132,24 @@ public struct SettingsView: View {
                 .disabled(customTimeZoneIdentifier == nil)
             } header: {
                 Text(CalendarResourcesStrings.calendarsMenuSectionTitle)
+            }
+
+            Section {
+                Link(destination: URLConstants.helpAndSupportURL) {
+                    HStack {
+                        Label {
+                            Text(CalendarResourcesStrings.generalSettingsContactSupportLabel)
+                                .foregroundStyle(theme.color.contentPrimary)
+                        } icon: {
+                            ESDSSymbols.headset.image
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+
+                        ESDSSymbols.squareArrowOutUpRight.image
+                    }
+                }
+            } header: {
+                Text(CalendarResourcesStrings.generalSettingsHelpAndPrivacyLabel)
             }
         }
         .navigationTitle(CalendarResourcesStrings.settingsTitle)

@@ -113,6 +113,7 @@ let settingsView = Feature(
         TargetDependency.target(name: "\(Constants.projectName)Resources"),
         TargetDependency.external(name: "DesignSystem"),
         TargetDependency.external(name: "ESDSFoundation"),
+        TargetDependency.external(name: "ESDSSymbols"),
         TargetDependency.external(name: "InfomaniakCore"),
         TargetDependency.external(name: "InfomaniakCoreCommonUI"),
         TargetDependency.external(name: "InfomaniakCoreUIResources"),

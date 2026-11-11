@@ -170,11 +170,17 @@
  * %d is the maximum number of guests (currently 100). Preserve the integer placeholder. */
 "eventValidationTooManyAttendees" = "Du kan ikke ha flere enn %d gjester";
 
+/* loco:6af482860ce6a9c3f80b1a53 */
+"generalSettingsContactSupportLabel" = "Kontakt kundestøtte";
+
 /* loco:6aa9363a0e25629a59012932 */
 "generalSettingsDefaultEventDurationLabel" = "Standardvarighet for hendelser";
 
 /* loco:6aa804867b7998a59003a9fc */
 "generalSettingsDisplayLabel" = "Visning";
+
+/* loco:6af482867dd518d2a5005b03 */
+"generalSettingsHelpAndPrivacyLabel" = "Hjelp & Personvern";
 
 /* loco:6adb5844fc0bad425c0b1494 */
 "generalSettingsShowWeekNumbersLabel" = "Vis ukenumre";
@@ -184,9 +190,6 @@
 
 /* loco:6aa9363a66e1c7d3970dd2e2 */
 "generalSettingsUseDeviceTimeZoneLabel" = "Bruk enhetens tidssone";
-
-/* loco:6a3e2023d4ed90a7ed0b19e5 */
-"helpTitle" = "Hjelp";
 
 /* loco:6a7dc6669b0d18a8380bb172 */
 "hideAccountToggle" = "Skjul kontoen";

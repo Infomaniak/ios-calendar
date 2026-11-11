@@ -65,16 +65,6 @@ public struct CalendarListView: View {
                         ESDSSymbols.cog.image
                     }
                 }
-
-                Link(destination: URLConstants.helpAndSupportURL) {
-                    Label {
-                        Text(CalendarResourcesStrings.helpTitle)
-                            .foregroundStyle(theme.color.contentPrimary)
-                    } icon: {
-                        ESDSSymbols.headset.image
-                    }
-                }
-                .buttonStyle(.plain)
             } header: {
                 Text(CalendarResourcesStrings.configurationMenuSectionTitle)
                     .foregroundStyle(theme.color.contentSecondary)
