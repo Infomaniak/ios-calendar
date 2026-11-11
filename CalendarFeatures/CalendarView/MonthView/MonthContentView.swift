@@ -68,7 +68,7 @@ struct MonthContentView: View {
             TimelineView(.everyDay(calendar)) { timeline in
                 CalendarPeriodPager(
                     component: .month,
-                    periodOffsets: -1200 ..< 1201,
+                    periodOffsets: CalendarPeriodOffsets.months,
                     date: selectedMonth
                 ) { pageMonthStart in
                     if let grid = MonthGrid(month: pageMonthStart, calendar: calendar) {

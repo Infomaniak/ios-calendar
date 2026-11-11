@@ -54,14 +54,7 @@ enum MultipleDaysLayout: Hashable {
     }
 
     var pagerOffsets: Range<Int> {
-        switch pagerComponent {
-        case .weekOfYear, .weekOfMonth:
-            return -5218 ..< 5219
-        case .month:
-            return -1200 ..< 1201
-        default:
-            return -36525 ..< 36526
-        }
+        return CalendarPeriodOffsets.offsets(for: pagerComponent)
     }
 
     func pagerDate(for date: Date, calendar: Calendar) -> Date {

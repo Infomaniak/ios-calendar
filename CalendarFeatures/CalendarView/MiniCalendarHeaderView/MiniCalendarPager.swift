@@ -25,19 +25,10 @@ struct MiniCalendarPager: View {
 
     @Binding var selectedDate: Date
 
-    private var periodOffsets: Range<Int> {
-        switch displayMode {
-        case .month:
-            return -1200 ..< 1201
-        case .week:
-            return -5200 ..< 5201
-        }
-    }
-
     var body: some View {
         CalendarPeriodPager(
             component: displayMode.referenceDateInterval,
-            periodOffsets: periodOffsets,
+            periodOffsets: CalendarPeriodOffsets.offsets(for: displayMode.referenceDateInterval),
             date: displayedDate
         ) { date in
             switch displayMode {
