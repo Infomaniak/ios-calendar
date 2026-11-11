@@ -88,8 +88,8 @@ struct LocationPickerButton: View {
                 .accessibilityLabel(CalendarResourcesStrings.removeLocationLabel)
             }
         }
-        .task(id: request?.accountId) {
-            await viewModel.observeRooms(accountId: request?.accountId)
+        .task(id: request?.calendarId) {
+            await viewModel.observeRooms(calendarId: request?.calendarId)
         }
         .task(id: request) {
             await viewModel.loadAvailability(for: request)

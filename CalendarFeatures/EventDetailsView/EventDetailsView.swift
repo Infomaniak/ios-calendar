@@ -268,7 +268,10 @@ public struct EventDetailsView: View {
         guard case .room(let uuid) = event.location else { return }
 
         @InjectService var calendarSDK: CalendarCoreGraph
-        for await resource in calendarSDK.bookableResourcesManager.observeResource(accountId: event.accountId, uuid: uuid) {
+        for await resource in calendarSDK.calendarBookableResourcesManager.observeResource(
+            calendarId: event.calendarId,
+            uuid: uuid
+        ) {
             guard !Task.isCancelled else { return }
             if let resource {
                 room = LocationRoom(resource: resource)
