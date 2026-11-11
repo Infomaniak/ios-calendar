@@ -23,6 +23,7 @@ import CalendarSettingsView
 import DesignSystem
 import ESDSFoundation
 import ESDSSymbols
+import InfomaniakCore
 import InfomaniakDI
 import MultiplatformCalendar
 import SwiftUI
@@ -60,14 +61,14 @@ public struct CalendarListView: View {
                 } label: {
                     Label {
                         Text(CalendarResourcesStrings.settingsTitle)
-                            .foregroundStyle(theme.color.contentPrimary)
                     } icon: {
                         ESDSSymbols.cog.image
                     }
                 }
             } header: {
                 Text(CalendarResourcesStrings.configurationMenuSectionTitle)
-                    .foregroundStyle(theme.color.contentSecondary)
+            } footer: {
+                Text(CorePlatform.appVersionLabel(fallbackAppName: "Calendar"))
             }
         }
         .task(id: calendarAccounts) {
