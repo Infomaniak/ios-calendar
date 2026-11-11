@@ -27,7 +27,7 @@ struct PlanningWeekHeaderView: View {
     let date: Date
 
     private var weekInterval: Range<Date>? {
-        guard let interval = Calendar.current.dateInterval(of: .weekOfYear, for: date) else { return nil }
+        guard let interval = calendar.dateInterval(of: .weekOfYear, for: date) else { return nil }
         return interval.start ..< interval.end.addingTimeInterval(-1)
     }
 

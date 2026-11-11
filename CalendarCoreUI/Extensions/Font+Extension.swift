@@ -25,10 +25,6 @@ public extension Font.Weight {
     static let emphasized = Font.Weight.semibold
 }
 
-public extension UIFont.Weight {
-    static let emphasized = UIFont.Weight.semibold
-}
-
 // MARK: - Utils
 
 public extension UIFont {
