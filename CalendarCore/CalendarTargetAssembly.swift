@@ -59,20 +59,6 @@ open class CalendarTargetAssembly: TargetAssembly {
         accessType: nil
     )
 
-    private static var debugInterception: CaldavDebugInterceptionSettings? {
-        #if DEBUG
-        guard let base64Certificate = ProcessInfo.processInfo.environment["PROXYMAN_CA_PEM_BASE64"],
-              let certificateData = Data(base64Encoded: base64Certificate),
-              let certificate = String(data: certificateData, encoding: .utf8) else {
-            return nil
-        }
-
-        return CaldavDebugInterceptionSettings(extraRootCertificatesPem: [certificate])
-        #else
-        return nil
-        #endif
-    }
-
     override public init() {
         super.init()
         ApiEnvironment.current = Self.apiEnvironment
@@ -92,7 +78,10 @@ open class CalendarTargetAssembly: TargetAssembly {
                     calendar: CalendarSettings(
                         databasePath: appGroupPath.realmRootURL.appending(path: "calendars.db").path(),
                         appEnvironment: ApiEnvironment.current.kmpEnvironment,
-                        caldavSettings: .init(userAgent: UserAgentBuilder().userAgent, debugInterception: debugInterception)
+                        caldavSettings: .init(
+                            userAgent: UserAgentBuilder().userAgent,
+                            debugInterception: debugInterception(false)
+                        )
                     ),
                     crashReport: CrashReportService.shared,
                     contacts: ContactsSettings(
@@ -157,5 +146,21 @@ open class CalendarTargetAssembly: TargetAssembly {
                 AppLaunchCounter()
             }
         ]
+    }
+
+    private static func debugInterception(_ isEnabled: Bool) -> CaldavDebugInterceptionSettings? {
+        #if DEBUG
+        guard isEnabled else { return nil }
+
+        guard let base64Certificate = ProcessInfo.processInfo.environment["PROXYMAN_CA_PEM_BASE64"],
+              let certificateData = Data(base64Encoded: base64Certificate),
+              let certificate = String(data: certificateData, encoding: .utf8) else {
+            return nil
+        }
+
+        return CaldavDebugInterceptionSettings(extraRootCertificatesPem: [certificate])
+        #else
+        return nil
+        #endif
     }
 }
