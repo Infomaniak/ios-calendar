@@ -32,7 +32,7 @@ final class LocationPickerViewModel {
     private var isLoadingRooms = false
     private var isLoadingAvailability = false
 
-    private var accountId: Int64?
+    private var calendarId: String?
     private var availabilityRequest: LocationAvailabilityRequest?
     private var searchQuery = ""
     private let roomsService: any LocationRoomsProviding
@@ -72,18 +72,18 @@ final class LocationPickerViewModel {
             }
     }
 
-    func observeRooms(accountId: Int64?) async {
-        if self.accountId != accountId {
+    func observeRooms(calendarId: String?) async {
+        if self.calendarId != calendarId {
             rooms = []
-            if availabilityRequest?.accountId != accountId {
+            if availabilityRequest?.calendarId != calendarId {
                 availability = [:]
             }
         }
-        self.accountId = accountId
-        isLoadingRooms = accountId != nil
-        guard let accountId else { return }
-        await roomsService.observeRooms(accountId: accountId) { rooms in
-            guard !Task.isCancelled, self.accountId == accountId else { return }
+        self.calendarId = calendarId
+        isLoadingRooms = calendarId != nil
+        guard let calendarId else { return }
+        await roomsService.observeRooms(calendarId: calendarId) { rooms in
+            guard !Task.isCancelled, self.calendarId == calendarId else { return }
             self.rooms = rooms
             self.isLoadingRooms = false
         }

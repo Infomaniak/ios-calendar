@@ -25,7 +25,6 @@ public struct EventDraft: Hashable, Equatable, Sendable {
     public var title: String
     public var description: String
     public var location: EventLocation?
-    public var availabilityRRule: String?
 
     public var allDay: Bool
     public var startDate: Date
@@ -46,7 +45,6 @@ public struct EventDraft: Hashable, Equatable, Sendable {
         title: String = "",
         description: String = "",
         location: EventLocation? = nil,
-        availabilityRRule: String? = nil,
         allDay: Bool = false,
         startDate: Date,
         startTimeZone: TimeZone? = .current,
@@ -62,7 +60,6 @@ public struct EventDraft: Hashable, Equatable, Sendable {
         self.title = title
         self.description = description
         self.location = location
-        self.availabilityRRule = availabilityRRule
         self.allDay = allDay
         self.startDate = startDate
         self.startTimeZone = startTimeZone
@@ -83,7 +80,6 @@ public extension EventDraft {
             title: editData.title,
             description: editData.description_ ?? "",
             location: EventLocation(location: editData.location),
-            availabilityRRule: editData.timing.recurrenceRule?.availabilityRRule,
             allDay: editData.timing.isAllDay,
             startDate: editData.timing.startInstantLocal().toNSDate(),
             startTimeZone: editData.timing.startTimeZone,
