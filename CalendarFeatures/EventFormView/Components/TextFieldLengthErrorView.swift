@@ -37,6 +37,7 @@ struct TextFieldLengthErrorView: View {
         }
         .font(.caption)
         .foregroundStyle(theme.color.contentFeedbackError)
+        .accessibilityElement(children: .combine)
     }
 }
 
