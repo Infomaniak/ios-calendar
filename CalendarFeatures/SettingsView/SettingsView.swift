@@ -95,8 +95,10 @@ public struct SettingsView: View {
                 }
                 .pickerStyle(.navigationLink)
 
-                Toggle(CalendarResourcesStrings.generalSettingsShowWeekNumbersLabel, isOn: $showWeekNumbers)
-                    .toggleStyle(.switch)
+                Toggle(isOn: $showWeekNumbers) {
+                    Label(CalendarResourcesStrings.generalSettingsShowWeekNumbersLabel, symbol: ESDSSymbols.calendarNumberOne)
+                }
+                .toggleStyle(.switch)
             } header: {
                 Text(CalendarResourcesStrings.generalSettingsDisplayLabel)
             }
