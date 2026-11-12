@@ -74,7 +74,11 @@ public extension UIEventSummary {
         id = details.id
         occurrenceId = details.occurrenceId
         title = details.title
-        location = details.location
+        if case .place(let text) = details.location {
+            location = text
+        } else {
+            location = nil
+        }
         status = details.status
         colors = details.colors
         startDate = details.startDate

@@ -33,7 +33,7 @@ struct LocationPickerViewModelTests {
     ])
     func placeLocationDoesNotDuplicateItsName(address: String, expected: String) {
         let place = LocationPlace(id: "place", name: "Place", address: address)
-        #expect(place.location.stringValue == expected)
+        #expect(place.location == .place(text: expected))
     }
 
     @Test
@@ -52,11 +52,11 @@ struct LocationPickerViewModelTests {
             return await response.wait()
         }
         let model = makeModel(rooms: service)
-        await model.observeRooms(accountId: 42)
+        await model.observeRooms(calendarId: "calendar")
         let task = Task { await model.loadAvailability(for: request()) }
         _ = await started.wait()
 
-        #expect(service.observedAccountIds == [42])
+        #expect(service.observedCalendarIds == ["calendar"])
         #expect(model.rooms.count == 4)
         #expect(model.availability.isEmpty)
         #expect(model.isLoading)
@@ -82,7 +82,7 @@ struct LocationPickerViewModelTests {
         service.availabilityHandler = { _ in ["room": .available] }
         let model = makeModel(rooms: service)
         await model.loadAvailability(for: request())
-        await model.observeRooms(accountId: 42)
+        await model.observeRooms(calendarId: "calendar")
 
         #expect(model.availability == ["room": .available])
         #expect(model.rooms.count == 1)
@@ -94,11 +94,11 @@ struct LocationPickerViewModelTests {
         service.rooms = [room("room", "Meeting room")]
         service.availabilityHandler = { _ in ["room": .unavailable] }
         let model = makeModel(rooms: service)
-        await model.observeRooms(accountId: 42)
+        await model.observeRooms(calendarId: "calendar")
         await model.loadAvailability(for: request())
         #expect(model.availability(for: "room") == .unavailable)
 
-        await model.observeRooms(accountId: nil)
+        await model.observeRooms(calendarId: nil)
         await model.loadAvailability(for: nil)
         #expect(model.rooms.isEmpty)
         #expect(model.availability.isEmpty)
@@ -111,7 +111,7 @@ struct LocationPickerViewModelTests {
         service.rooms = [room("room", "Meeting room")]
         service.availabilityHandler = { _ in ["room": .available] }
         let model = makeModel(rooms: service)
-        await model.observeRooms(accountId: 42)
+        await model.observeRooms(calendarId: "calendar")
         await model.loadAvailability(for: request())
         #expect(model.availability(for: "room") == .available)
 
@@ -135,7 +135,7 @@ struct LocationPickerViewModelTests {
         let started = Gate<Bool>()
         let response = Gate<[String: MeetingRoomAvailability]>()
         service.availabilityHandler = { request in
-            if request.accountId == 42 {
+            if request.calendarId == "calendar" {
                 started.open(true)
                 return await response.wait()
             }
@@ -144,7 +144,7 @@ struct LocationPickerViewModelTests {
         let model = makeModel(rooms: service)
         let oldTask = Task { await model.loadAvailability(for: request()) }
         _ = await started.wait()
-        await model.loadAvailability(for: request(accountId: 84))
+        await model.loadAvailability(for: request(calendarId: "other"))
         response.open(["old": .unavailable])
         await oldTask.value
 
@@ -215,7 +215,7 @@ struct LocationPickerViewModelTests {
             await finishObservation.wait()
         }
         let model = makeModel(rooms: service)
-        let task = Task { await model.observeRooms(accountId: 42) }
+        let task = Task { await model.observeRooms(calendarId: "calendar") }
         _ = await started.wait()
         #expect(model.isLoading)
 
@@ -227,7 +227,7 @@ struct LocationPickerViewModelTests {
     }
 
     @Test
-    func availabilityRequestUsesSelectedCalendarAccountAndDraftContext() async throws {
+    func availabilityRequestUsesSelectedCalendarAndDraftContext() async throws {
         let model = EventFormViewModel(editionMode: .new(selectedDate: .now))
         let calendar = UICalendar(
             id: "selected", displayName: "Calendar", colorArgb: 0,
@@ -239,26 +239,24 @@ struct LocationPickerViewModelTests {
             organisationName: nil,
             calendars: [calendar]
         )])
-        model.draft.availabilityRRule = "FREQ=WEEKLY"
         let request = try #require(model.locationAvailabilityRequest)
-        #expect(request.accountId == 84)
+        #expect(request.calendarId == "selected")
         #expect(request.start == model.draft.startDate)
         #expect(request.end == model.draft.endDate)
         #expect(request.startTimeZone == model.draft.startTimeZone)
-        #expect(request.rrule == "FREQ=WEEKLY")
     }
 
     private func room(_ id: String, _ name: String) -> LocationRoom {
-        LocationRoom(id: id, name: name, capacity: 20, floor: 3, accountId: 42)
+        LocationRoom(id: id, name: name, capacity: 20, floor: 3)
     }
 
     private func place(_ name: String) -> LocationPlace {
         LocationPlace(id: name, name: name, address: "")
     }
 
-    private func request(accountId: Int64 = 42, draft: EventDraft? = nil) -> LocationAvailabilityRequest {
+    private func request(calendarId: String = "calendar", draft: EventDraft? = nil) -> LocationAvailabilityRequest {
         LocationAvailabilityRequest(
-            accountId: accountId,
+            calendarId: calendarId,
             draft: draft ?? EventDraft(startDate: Date(timeIntervalSince1970: 1000), endDate: Date(timeIntervalSince1970: 4600))
         )
     }
@@ -274,14 +272,14 @@ struct LocationPickerViewModelTests {
 @MainActor
 private final class RoomsStub: LocationRoomsProviding {
     var rooms = [LocationRoom]()
-    var observedAccountIds = [Int64]()
+    var observedCalendarIds = [String]()
     var availabilityCalls = 0
     var beforeObservation: (() async -> Void)?
     var afterObservation: (() async -> Void)?
     var availabilityHandler: (LocationAvailabilityRequest) async throws -> [String: MeetingRoomAvailability] = { _ in [:] }
 
-    func observeRooms(accountId: Int64, onUpdate: @MainActor ([LocationRoom]) -> Void) async {
-        observedAccountIds.append(accountId)
+    func observeRooms(calendarId: String, onUpdate: @MainActor ([LocationRoom]) -> Void) async {
+        observedCalendarIds.append(calendarId)
         await beforeObservation?()
         onUpdate(rooms)
         await afterObservation?()

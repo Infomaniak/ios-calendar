@@ -226,10 +226,10 @@ public struct EditableAttendeesList: View {
         }
 
         if newAttendee.contact == nil {
-            Task { await fillMissingContact(email: newAttendee.email) }
+            Task { await fillMissingContact(email: newAttendee.email, name: newAttendee.displayName) }
         }
         if isCurrentUserAddedAsOrganizer, let newOrganizer {
-            Task { await fillMissingContact(email: newOrganizer.email) }
+            Task { await fillMissingContact(email: newOrganizer.email, name: newOrganizer.displayName) }
         }
     }
 
@@ -244,11 +244,9 @@ public struct EditableAttendeesList: View {
         return newOrganizer
     }
 
-    private func fillMissingContact(email: String) async {
+    private func fillMissingContact(email: String, name: String?) async {
         @InjectService var calendarSDK: CalendarCoreGraph
-        guard let results = try? await calendarSDK.contactsManager.search(query: email) else { return }
-
-        guard let contact = results.first else { return }
+        guard let contact = try? await calendarSDK.contactsManager.findContact(email: email, name: name) else { return }
 
         if let index = attendees.firstIndex(where: { $0.email.lowercased() == email && $0.contact == nil }) {
             let attendee = attendees[index]

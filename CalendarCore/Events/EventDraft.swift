@@ -25,7 +25,6 @@ public struct EventDraft: Hashable, Equatable, Sendable {
     public var title: String
     public var description: String
     public var location: EventLocation?
-    public var availabilityRRule: String?
 
     public var allDay: Bool
     public var startDate: Date
@@ -46,7 +45,6 @@ public struct EventDraft: Hashable, Equatable, Sendable {
         title: String = "",
         description: String = "",
         location: EventLocation? = nil,
-        availabilityRRule: String? = nil,
         allDay: Bool = false,
         startDate: Date,
         startTimeZone: TimeZone? = .current,
@@ -62,7 +60,6 @@ public struct EventDraft: Hashable, Equatable, Sendable {
         self.title = title
         self.description = description
         self.location = location
-        self.availabilityRRule = availabilityRRule
         self.allDay = allDay
         self.startDate = startDate
         self.startTimeZone = startTimeZone
@@ -78,18 +75,11 @@ public struct EventDraft: Hashable, Equatable, Sendable {
 
 public extension EventDraft {
     init(event: Event, editData: EventEditData) {
-        let location: EventLocation?
-        if let storedLocation = editData.location, !storedLocation.isEmpty {
-            location = .place(name: storedLocation)
-        } else {
-            location = nil
-        }
         self = EventDraft(
             calendarId: event.calendarIdValue,
             title: editData.title,
             description: editData.description_ ?? "",
-            location: location,
-            availabilityRRule: editData.timing.recurrenceRule?.availabilityRRule,
+            location: EventLocation(location: editData.location),
             allDay: editData.timing.isAllDay,
             startDate: editData.timing.startInstantLocal().toNSDate(),
             startTimeZone: editData.timing.startTimeZone,
@@ -136,7 +126,7 @@ public extension EventDraft {
         return try EventEditData(
             title: title,
             timing: sdkTiming(preserving: originalData?.timing),
-            location: location?.stringValue,
+            location: location?.sdkValue,
             description: description,
             timeBlocking: originalData.map {
                 isOccupied == ($0.timeBlocking != .doesNotBlock) ? $0.timeBlocking : (isOccupied ? .blocks : .doesNotBlock)

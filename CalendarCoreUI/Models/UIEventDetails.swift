@@ -25,11 +25,12 @@ public struct UIEventDetails: Identifiable, Equatable, Hashable, Sendable {
     public let id: String
     public let occurrenceId: String
     public let calendarId: String
+    public let accountId: Int64
 
     public let title: String
     public let description: String?
     public let status: EventStatus?
-    public let location: String?
+    public let location: EventLocation?
     public let kMeetLink: URL?
     public let colors: UIEventColor
     public let classification: Classification
@@ -60,9 +61,10 @@ public struct UIEventDetails: Identifiable, Equatable, Hashable, Sendable {
         endDate: Date,
         isAllDay: Bool = false,
         status: EventStatus?,
-        location: String? = nil,
+        location: EventLocation? = nil,
         kMeetLink: URL? = nil,
         calendarId: String,
+        accountId: Int64,
         alarms: [UIEventAlarm] = [],
         user: UIAttendee? = nil,
         attendees: [UIAttendee],
@@ -84,6 +86,7 @@ public struct UIEventDetails: Identifiable, Equatable, Hashable, Sendable {
         self.location = location
         self.kMeetLink = kMeetLink
         self.calendarId = calendarId
+        self.accountId = accountId
         self.alarms = alarms
         self.user = user
         self.attendees = attendees
@@ -101,17 +104,14 @@ public extension UIEventDetails {
         id = event.occurrenceIdValue
         occurrenceId = event.occurrenceIdValue
         calendarId = event.calendarIdValue
+        accountId = event.accountIdValue
 
         title = event.title.trimmingCharacters(in: .whitespacesAndNewlines)
         description = event.description_
         status = event.status
         kMeetLink = event.meetRoomUrl.flatMap { URL(string: $0) }
 
-        if let location = event.location, !location.isEmpty {
-            self.location = location
-        } else {
-            location = nil
-        }
+        location = EventLocation(location: event.location)
 
         startDate = event.timing.startInstantLocal().toNSDate()
         endDate = event.timing.endInstantLocal().toNSDate()
@@ -150,8 +150,9 @@ public extension UIEventDetails {
         startDate: Date().addingTimeInterval(3600),
         endDate: Date().addingTimeInterval(7200),
         status: .confirmed,
-        location: "1 Infinite Loop, Cupertino",
+        location: .place(text: "1 Infinite Loop, Cupertino"),
         calendarId: "0",
+        accountId: 0,
         alarms: UIEventAlarm.previews,
         attendees: UIAttendee.previews,
         colors: .preview,
@@ -166,8 +167,9 @@ public extension UIEventDetails {
         startDate: Date().addingTimeInterval(3600),
         endDate: Date().addingTimeInterval(7200),
         status: .confirmed,
-        location: "1 Infinite Loop",
+        location: .place(text: "1 Infinite Loop"),
         calendarId: "0",
+        accountId: 0,
         attendees: UIAttendee.previews,
         colors: .preview,
         timing: .preview,
@@ -182,6 +184,7 @@ public extension UIEventDetails {
         endDate: Date().addingTimeInterval(60 * 15),
         status: .confirmed,
         calendarId: "0",
+        accountId: 0,
         user: UIAttendee(displayName: "Tim Cook", email: "tim@apple.com", status: .accepted),
         attendees: UIAttendee.previews,
         colors: .preview,
@@ -196,6 +199,7 @@ public extension UIEventDetails {
         endDate: Date().addingTimeInterval(60 * 60 * 2),
         status: .tentative,
         calendarId: "0",
+        accountId: 0,
         user: UIAttendee(displayName: "Tim Cook", email: "tim@apple.com", status: .needsAction),
         attendees: [],
         colors: .preview,
@@ -210,6 +214,7 @@ public extension UIEventDetails {
         endDate: Date().addingTimeInterval(60 * 60 * 24 * 2),
         status: .cancelled,
         calendarId: "0",
+        accountId: 0,
         user: UIAttendee(displayName: "Tim Cook", email: "tim@apple.com", status: .declined),
         attendees: UIAttendee.previews,
         colors: .preview,
@@ -229,6 +234,7 @@ public extension UIEventDetails {
             endDate: randomEndDate,
             status: .confirmed,
             calendarId: "0",
+            accountId: 0,
             attendees: UIAttendee.previews,
             colors: .preview,
             timing: .preview,
