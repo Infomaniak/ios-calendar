@@ -21,10 +21,6 @@ import ESDSFoundation
 import SwiftUI
 
 struct MonthPickerView: View {
-    private enum Constants {
-        static let monthOffsets = -1200 ..< 1201
-    }
-
     @Environment(\.calendar) private var calendar
 
     @State private var months: CalendarPeriodCollection?
@@ -78,7 +74,7 @@ struct MonthPickerView: View {
                 calendar: calendar,
                 component: .month,
                 origin: month,
-                indices: Constants.monthOffsets
+                indices: CalendarPeriodOffsets.months
             )
             scrollPosition.scrollTo(id: 0)
         }

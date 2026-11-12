@@ -24,7 +24,6 @@ import MultiplatformCalendar
 import SwiftUI
 
 struct PlanningView: View {
-    private static let periodOffsets = -36525 ..< 36526
     private static let observeRadiusDays = 7
     private static let observeRecenterThresholdDays = 3
 
@@ -103,7 +102,7 @@ struct PlanningView: View {
             calendar: calendar,
             component: .day,
             origin: mainViewState.selectedDate,
-            indices: Self.periodOffsets
+            indices: CalendarPeriodOffsets.days
         )
         var transaction = Transaction()
         transaction.disablesAnimations = true

@@ -46,8 +46,10 @@ struct CalendarListContentView: View {
     @Environment(\.esdsTheme) private var theme
     @Environment(\.calendarAccounts) private var calendarAccounts
 
-    @SceneStorage("CalendarListExpandedAccounts") private var expandedAccounts = StoredIds<Int>()
-    @SceneStorage("CalendarListCollapsedSections") private var collapsedSections = StoredIds<String>()
+    @SceneStorage(SceneStorageKeys.calendarListExpandedAccounts.rawValue)
+    private var expandedAccounts = DefaultSceneValues.calendarListExpandedAccounts
+    @SceneStorage(SceneStorageKeys.calendarListCollapsedSections.rawValue)
+    private var collapsedSections = StoredIds<String>()
     @State private var visibilityOverrides = [String: Bool]()
 
     let sectionsByAccount: [Int: [UICalendarSection]]
@@ -56,11 +58,13 @@ struct CalendarListContentView: View {
         Binding(
             get: { expandedAccounts.ids.contains(accountId) },
             set: { isExpanding in
+                var ids = expandedAccounts.ids.intersection(calendarAccounts.keys)
                 if isExpanding {
-                    expandedAccounts.ids.insert(accountId)
+                    ids.insert(accountId)
                 } else {
-                    expandedAccounts.ids.remove(accountId)
+                    ids.remove(accountId)
                 }
+                expandedAccounts.ids = ids
             }
         )
     }
@@ -69,11 +73,14 @@ struct CalendarListContentView: View {
         Binding(
             get: { !collapsedSections.ids.contains(sectionId) },
             set: { isExpanding in
+                let existingSectionIds = sectionsByAccount.values.flatMap { $0.map(\.id) }
+                var ids = collapsedSections.ids.intersection(existingSectionIds)
                 if isExpanding {
-                    collapsedSections.ids.remove(sectionId)
+                    ids.remove(sectionId)
                 } else {
-                    collapsedSections.ids.insert(sectionId)
+                    ids.insert(sectionId)
                 }
+                collapsedSections.ids = ids
             }
         )
     }

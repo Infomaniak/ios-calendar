@@ -54,14 +54,7 @@ enum MultipleDaysLayout: Hashable {
     }
 
     var pagerOffsets: Range<Int> {
-        switch pagerComponent {
-        case .weekOfYear, .weekOfMonth:
-            return -5218 ..< 5219
-        case .month:
-            return -1200 ..< 1201
-        default:
-            return -36525 ..< 36526
-        }
+        return CalendarPeriodOffsets.offsets(for: pagerComponent)
     }
 
     func pagerDate(for date: Date, calendar: Calendar) -> Date {
@@ -118,18 +111,5 @@ enum MultipleDaysLayout: Hashable {
 
     func isSelectingToday(_ selectedDate: Date, calendar: Calendar) -> Bool {
         return calendar.isDate(selectedDate, equalTo: .now, toGranularity: pagerComponent)
-    }
-}
-
-private extension Calendar {
-    func days(from start: Date, to end: Date) -> [Date] {
-        var days = [Date]()
-        var currentDay = startOfDay(for: start)
-        while currentDay < end {
-            days.append(currentDay)
-            guard let nextDay = date(byAdding: .day, value: 1, to: currentDay) else { break }
-            currentDay = nextDay
-        }
-        return days
     }
 }

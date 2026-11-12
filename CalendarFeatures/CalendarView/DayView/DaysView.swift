@@ -41,7 +41,7 @@ struct DayPager: View {
     var body: some View {
         CalendarPeriodPager(
             component: .day,
-            periodOffsets: -36525 ..< 36526,
+            periodOffsets: CalendarPeriodOffsets.days,
             date: $selectedDate
         ) { date in
             DayView(date: date)
