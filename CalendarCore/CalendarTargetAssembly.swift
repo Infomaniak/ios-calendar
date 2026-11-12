@@ -51,6 +51,7 @@ open class CalendarTargetAssembly: TargetAssembly {
     private static let sharedAppGroupName = "group.com.infomaniak"
     private static let appIdentifierPrefix = Bundle.main.infoDictionary!["AppIdentifierPrefix"] as! String
     private static let keychainGroupIdentifier = "\(appIdentifierPrefix)\(bundleId)"
+    private static let matomoSiteId = "-1"
 
     public static let bundleId = "com.infomaniak.calendar"
     public static let loginConfig = InfomaniakLogin.Config(
@@ -136,6 +137,13 @@ open class CalendarTargetAssembly: TargetAssembly {
             },
             Factory(type: EventAlarmNotificationsService.self) { _, _ in
                 EventAlarmNotificationsService()
+            },
+            Factory(type: MatomoUtils.self) { _, _ in
+                let matomo = MatomoUtils(siteId: matomoSiteId, baseURL: URLConstants.matomoURL)
+                #if DEBUG
+                matomo.optOut(true)
+                #endif
+                return matomo
             }
         ]
     }
