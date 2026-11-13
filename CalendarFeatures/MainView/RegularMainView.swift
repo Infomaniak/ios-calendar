@@ -18,15 +18,36 @@
 
 import CalendarCalendarListView
 import CalendarCalendarView
+import CalendarCoreUI
 import SwiftUI
 
 public struct RegularMainView: View {
+    @Environment(MainViewState.self) private var mainViewState
+
     public var body: some View {
         NavigationSplitView {
             CalendarListView(isCompact: false)
+                .topBar {
+                    @Bindable var mainViewState = mainViewState
+                    MiniCalendarView(selectedDate: $mainViewState.selectedDate, displayMode: .month)
+                }
         } detail: {
             NavigationStack {
                 CalendarView()
+            }
+        }
+    }
+}
+
+private extension View {
+    @ViewBuilder
+    func topBar<Content: View>(@ViewBuilder content: () -> Content) -> some View {
+        if #available(iOS 26.0, *) {
+            safeAreaBar(edge: .top, spacing: 0, content: content)
+        } else {
+            safeAreaInset(edge: .top, spacing: 0) {
+                content()
+                    .background(Material.bar)
             }
         }
     }

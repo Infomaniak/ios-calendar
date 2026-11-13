@@ -20,6 +20,8 @@ import DesignSystem
 import SwiftUI
 
 struct MiniCalendarHeaderViewModifier: ViewModifier {
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+
     @State private var isExpanded = false
     @State private var barItems = [SafeAreaBarItem]()
     @State private var miniCalendarHeight: CGFloat = 0
@@ -30,8 +32,12 @@ struct MiniCalendarHeaderViewModifier: ViewModifier {
     let configuration: MiniCalendarHeaderConfiguration
     let pagerScrollSync: CalendarPeriodPagerScrollSync
 
+    private var isSplitView: Bool {
+        horizontalSizeClass == .regular
+    }
+
     private var headerContent: MiniCalendarHeaderConfiguration.Content {
-        return configuration.content(isExpanded: isExpanded)
+        return configuration.content(isExpanded: isExpanded && !isSplitView)
     }
 
     func body(content: Content) -> some View {
@@ -95,8 +101,12 @@ struct MiniCalendarHeaderViewModifier: ViewModifier {
         .toolbar {
             if #available(iOS 26.0, *) {
                 ToolbarItem(placement: .principal) {
-                    Button(action: toggleExpansion) {
-                        AnimatedTitleView(date: selectedDate, isExpanded: isExpanded)
+                    if isSplitView {
+                        AnimatedTitleView(date: selectedDate, isExpanded: false, showChevron: false)
+                    } else {
+                        Button(action: toggleExpansion) {
+                            AnimatedTitleView(date: selectedDate, isExpanded: isExpanded, showChevron: true)
+                        }
                     }
                 }
                 .sharedBackgroundVisibility(.hidden)
@@ -108,14 +118,19 @@ struct MiniCalendarHeaderViewModifier: ViewModifier {
                 .sharedBackgroundVisibility(.hidden)
             } else {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button(action: toggleExpansion) {
-                        AnimatedTitleView(date: selectedDate, isExpanded: isExpanded)
+                    if isSplitView {
+                        AnimatedTitleView(date: selectedDate, isExpanded: false, showChevron: false)
+                    } else {
+                        Button(action: toggleExpansion) {
+                            AnimatedTitleView(date: selectedDate, isExpanded: isExpanded, showChevron: true)
+                        }
+                        .buttonStyle(.plain)
                     }
-                    .buttonStyle(.plain)
                 }
             }
         }
         .navigationBarTitleDisplayMode(.inline)
+        .adaptiveLeadingToolbarTitleAlignment()
         .onPreferenceChange(SafeAreaBarItemsKey.self) { items in
             barItems = items
         }
@@ -130,6 +145,17 @@ struct MiniCalendarHeaderViewModifier: ViewModifier {
     private func toggleExpansion() {
         withAnimation {
             isExpanded.toggle()
+        }
+    }
+}
+
+private extension View {
+    @ViewBuilder
+    func adaptiveLeadingToolbarTitleAlignment() -> some View {
+        if #available(iOS 27.2, *) {
+            toolbarTitleAlignment(.leading)
+        } else {
+            self
         }
     }
 }

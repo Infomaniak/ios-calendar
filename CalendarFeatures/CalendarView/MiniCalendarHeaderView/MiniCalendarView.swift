@@ -34,8 +34,8 @@ final class MiniCalendarViewModel {
     }
 }
 
-struct MiniCalendarView: View {
-    enum DisplayMode {
+public struct MiniCalendarView: View {
+    public enum DisplayMode {
         case month
         case week
 
@@ -61,7 +61,12 @@ struct MiniCalendarView: View {
 
     let displayMode: DisplayMode
 
-    var body: some View {
+    public init(selectedDate: Binding<Date>, displayMode: DisplayMode) {
+        _selectedDate = selectedDate
+        self.displayMode = displayMode
+    }
+
+    public var body: some View {
         VStack(spacing: 0) {
             DayOfWeekView()
             MiniCalendarPager(
