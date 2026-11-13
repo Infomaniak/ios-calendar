@@ -38,6 +38,12 @@ struct EventCellStyle: ViewModifier {
         self.cornerRadius = cornerRadius
     }
 
+    init(colors: UIEventColor, padding: CGFloat) {
+        mode = .default
+        self.colors = colors
+        self.padding = padding
+    }
+
     // periphery:ignore - Used for #Preview
     init(mode: Mode, colors: UIEventColor = .preview) {
         self.mode = mode
@@ -117,6 +123,10 @@ struct EventCellStyle: ViewModifier {
 extension View {
     func eventCellStyle(event: UIEventSummary, cornerRadius: CGFloat = 8) -> some View {
         modifier(EventCellStyle(event: event, cornerRadius: cornerRadius))
+    }
+
+    func eventCellStyle(colors: UIEventColor, padding: CGFloat = IKPadding.mini) -> some View {
+        modifier(EventCellStyle(colors: colors, padding: padding))
     }
 
     // periphery:ignore - Used for #Preview

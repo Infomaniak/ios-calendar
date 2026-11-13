@@ -67,6 +67,14 @@ public struct UIEventColor: Sendable, Equatable, Hashable {
 }
 
 public extension UIEventColor {
+    /// Colors of an event that has no color of its own in a calendar of the given color.
+    init(calendarSourceColorArgb: Int32?) {
+        let calendarColor = calendarSourceColorArgb ?? CalendarColors.companion.DEFAULT_SOURCE_COLOR
+        self.init(eventColors: EventColors.companion.from(eventSourceColor: nil, calendarSourceColor: calendarColor))
+    }
+}
+
+public extension UIEventColor {
     static let preview = UIEventColor(
         calendarSourceColor: Color.green,
         sourceColor: Color.orange,

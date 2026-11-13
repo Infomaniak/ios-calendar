@@ -259,4 +259,5 @@ private struct PlanningSelectionSyncModifier: ViewModifier {
         PlanningView(calendarAccounts: [:])
     }
     .environment(MainViewState())
+    .environment(EventInteractionModel())
 }

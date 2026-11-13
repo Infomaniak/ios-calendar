@@ -87,11 +87,22 @@ final class EventFormViewModel {
         switch editionMode {
         case .new(let selectedDate):
             draft = EventDraft.new(selectedDate: selectedDate)
+            originalDraft = draft
+        case .prefilled(let prefilledDraft):
+            draft = prefilledDraft
+            // Compare against a blank draft at the same time so a duplicated event can be saved right away.
+            originalDraft = EventDraft(
+                calendarId: prefilledDraft.calendarId,
+                allDay: prefilledDraft.allDay,
+                startDate: prefilledDraft.startDate,
+                startTimeZone: prefilledDraft.startTimeZone,
+                endDate: prefilledDraft.endDate,
+                endTimeZone: prefilledDraft.endTimeZone
+            )
         case .editDraft(let existingDraft, _):
             draft = existingDraft
+            originalDraft = existingDraft
         }
-
-        originalDraft = draft
         self.draft = draft
     }
 
@@ -183,12 +194,12 @@ final class EventFormViewModel {
     }
 
     private func selectDraftDefaultCalendarIfNecessary() {
-        guard case .new = editionMode, selectedCalendar == nil else {
+        guard editionMode.isCreation, selectedCalendar == nil else {
             return
         }
 
-        let calendar = calendar(withId: UserDefaults.shared.lastSelectedCalendarId) ?? calendarSections.first?.calendars.first
-        let calendarId = calendar?.id
+        let writableCalendarIds = calendarSections.flatMap { $0.calendars.map(\.id) }
+        let calendarId = UserDefaults.shared.defaultCalendarId(among: writableCalendarIds)
 
         if draft.calendarId == originalDraft.calendarId {
             originalDraft.calendarId = calendarId
@@ -207,7 +218,7 @@ final class EventFormViewModel {
     }
 
     func updateOrganizerForSelectedCalendar(calendarAccounts: [CalendarAccount.ID: CalendarAccount]) {
-        guard case .new = editionMode else {
+        guard editionMode.isCreation else {
             return
         }
 

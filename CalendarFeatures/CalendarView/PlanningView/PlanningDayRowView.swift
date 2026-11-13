@@ -68,6 +68,7 @@ struct PlanningDayRowView: View {
                                 }
                             }
                         }
+                        .eventQuickActions(.menu, event: event)
                     }
                 }
             }
@@ -101,4 +102,5 @@ struct PlanningDayRowView: View {
         PlanningDayRowView(date: Date().addingTimeInterval(86400), events: [])
     }
     .environment(MainViewState())
+    .environment(EventInteractionModel())
 }
