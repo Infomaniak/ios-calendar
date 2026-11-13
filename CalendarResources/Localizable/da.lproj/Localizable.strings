@@ -75,6 +75,8 @@
 /* loco:6a4deaee7855b4f804068862 */
 "buttonNavigate" = "Rejseplan";
 
+"buttonOpenSystemSettings" = "Åbn systemindstillinger";
+
 /* loco:6a4deb24e064eb69fa065712 */
 "buttonShow" = "Vis";
 
@@ -85,6 +87,12 @@
 "buttonThisAndFollowingEvents" = "Denne og alle efterfølgende begivenheder";
 /* loco:6ad217df3b24e434ea055745 */
 "buttonThisEvent" = "Denne begivenhed";
+
+"calendarNotificationSettingsDescription" = "Kun for denne kalender";
+
+"calendarNotificationSettingsEnableLabel" = "Aktivér notifikationer";
+
+"calendarNotificationSettingsTitle" = "Kalendernotifikationer";
 
 /* loco:6a742d5283e910cbff0a9742 */
 "calendarsMenuSectionTitle" = "Kalendere";
@@ -170,6 +178,8 @@
  * %d is the maximum number of guests (currently 100). Preserve the integer placeholder. */
 "eventValidationTooManyAttendees" = "Du kan ikke have mere end %d gæster";
 
+"generalSettingsAuthorizationsLabel" = "Tilladelser";
+
 /* loco:6af482860ce6a9c3f80b1a53 */
 "generalSettingsContactSupportLabel" = "Kontakt support";
 
@@ -181,6 +191,8 @@
 
 /* loco:6af482867dd518d2a5005b03 */
 "generalSettingsHelpAndPrivacyLabel" = "Hjælp & Privatliv";
+
+"generalSettingsNotificationsLabel" = "Notifikationer";
 
 /* loco:6adb5844fc0bad425c0b1494 */
 "generalSettingsShowWeekNumbersLabel" = "Vis ugenumre";
@@ -206,6 +218,16 @@
 
 /* loco:6a8db088bdcf38c11d0c8a94 */
 "notificationDefaultDescription" = "Påmindelse om begivenhed";
+
+"notificationSettingsAllowNotificationsLabel" = "Tillad notifikationer";
+
+"notificationSettingsDisabledLabel" = "Deaktiveret";
+
+"notificationSettingsEnabledLabel" = "Aktiveret";
+
+"notificationSettingsPermissionDeniedDescription" = "Tillad notifikationer i din enheds indstillinger.";
+
+"notificationSettingsSystemSectionTitle" = "System";
 
 /* loco:6a8ed23a8523fc2ec50554a2 */
 "notificationTypeEmail" = "E-mail";

@@ -36,6 +36,7 @@ public extension UserDefaults.Keys {
     static let defaultEventDuration = UserDefaults.Keys(rawValue: "defaultEventDuration")
     static let customTimeZoneIdentifier = UserDefaults.Keys(rawValue: "customTimeZoneIdentifier")
     static let lastSelectedCalendarId = UserDefaults.Keys(rawValue: "lastSelectedCalendarId")
+    static let notificationsEnabled = UserDefaults.Keys(rawValue: "notificationsEnabled")
 }
 
 public extension UserDefaults {
@@ -126,6 +127,18 @@ public extension UserDefaults {
         }
         set {
             set(newValue, forKey: key(.lastSelectedCalendarId))
+        }
+    }
+
+    var areNotificationsEnabled: Bool {
+        get {
+            if object(forKey: key(.notificationsEnabled)) == nil {
+                set(DefaultPreferences.notificationsEnabled, forKey: key(.notificationsEnabled))
+            }
+            return bool(forKey: key(.notificationsEnabled))
+        }
+        set {
+            set(newValue, forKey: key(.notificationsEnabled))
         }
     }
 }

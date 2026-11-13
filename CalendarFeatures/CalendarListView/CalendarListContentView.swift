@@ -147,24 +147,6 @@ struct CalendarListContentView: View {
     }
 }
 
-private struct ListRowLeadingInsetModifier: ViewModifier {
-    let leadingInset: CGFloat
-    func body(content: Content) -> some View {
-        if #available(iOS 26.0, *) {
-            content
-                .listRowInsets(.leading, leadingInset)
-        } else {
-            content
-        }
-    }
-}
-
-private extension View {
-    func listRowLeadingInset(_ leadingInset: CGFloat = 0) -> some View {
-        modifier(ListRowLeadingInsetModifier(leadingInset: leadingInset))
-    }
-}
-
 #Preview {
     CalendarListContentView(sectionsByAccount: [0: [.preview]])
 }

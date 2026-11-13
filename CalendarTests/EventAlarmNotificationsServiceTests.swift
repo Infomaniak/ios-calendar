@@ -89,7 +89,7 @@ struct EventAlarmNotificationsServiceTests {
             calendar: Calendar.current,
             eventsProvider: eventsProvider,
             notificationCenter: notificationCenter
-        )
+        ) { true }
 
         let beforeScheduling = Date.now
         await service.scheduleNotificationsForEventAlarms()
@@ -171,15 +171,38 @@ struct EventAlarmNotificationsServiceTests {
         #expect(snapshot.removedIdentifiers.isEmpty)
     }
 
+    @Test func removesAllEventAlarmsWhenNotificationsAreDisabled() async {
+        let notificationCenter = EventAlarmTestNotificationCenter(pendingRequests: [
+            EventAlarmTestFixtures.notificationRequest(identifier: "event-alarm:existing"),
+            EventAlarmTestFixtures.notificationRequest(identifier: "another-feature")
+        ])
+        let eventsProvider = EventAlarmTestEventsProvider(upcomingAlarms: [
+            EventAlarmTestFixtures.upcomingAlarm(id: "alarm-id")
+        ])
+        let service = makeService(
+            eventsProvider: eventsProvider,
+            notificationCenter: notificationCenter,
+            isEnabled: false
+        )
+
+        await service.scheduleNotificationsForEventAlarms()
+
+        let snapshot = await notificationCenter.snapshot()
+        #expect(snapshot.addedRequests.isEmpty)
+        #expect(snapshot.removedIdentifiers == ["event-alarm:existing"])
+        #expect(await eventsProvider.requests.isEmpty)
+    }
+
     private func makeService(
         eventsProvider: EventAlarmTestEventsProvider,
-        notificationCenter: EventAlarmTestNotificationCenter
+        notificationCenter: EventAlarmTestNotificationCenter,
+        isEnabled: Bool = true
     ) -> EventAlarmNotificationsService {
         EventAlarmNotificationsService(
             calendar: Calendar.current,
             eventsProvider: eventsProvider,
             notificationCenter: notificationCenter
-        )
+        ) { isEnabled }
     }
 }
 

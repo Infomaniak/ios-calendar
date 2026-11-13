@@ -143,6 +143,16 @@ public struct SettingsView: View {
 
             Section {
                 NavigationLink {
+                    NotificationSettingsView()
+                } label: {
+                    Label(CalendarResourcesStrings.generalSettingsNotificationsLabel, symbol: ESDSSymbols.bell)
+                }
+            } header: {
+                Text(CalendarResourcesStrings.generalSettingsAuthorizationsLabel)
+            }
+
+            Section {
+                NavigationLink {
                     PrivacyManagementView(
                         urlRepository: URLConstants.githubRepositoryURL,
                         backgroundColor: Color(uiColor: .systemGroupedBackground),

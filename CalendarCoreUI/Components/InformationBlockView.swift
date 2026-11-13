@@ -60,22 +60,36 @@ public struct InformationBlockView: View {
 
     let state: State
     let text: String
+    let actionTitle: String?
+    let action: (() -> Void)?
 
-    public init(state: State, text: String) {
+    public init(state: State, text: String, actionTitle: String? = nil, action: (() -> Void)? = nil) {
         self.state = state
         self.text = text
+        self.actionTitle = actionTitle
+        self.action = action
     }
 
     public var body: some View {
-        HStack(spacing: IKPadding.medium) {
+        HStack(alignment: action == nil ? .center : .top, spacing: IKPadding.medium) {
             state.symbol.image
                 .font(.system(size: IKIconSize.large.rawValue))
                 .accessibilityHidden(true)
 
-            Text(text)
-                .font(.body)
-                .multilineTextAlignment(.leading)
-                .frame(maxWidth: .infinity, alignment: .leading)
+            VStack(alignment: .leading, spacing: IKPadding.small) {
+                Text(text)
+                    .font(.body)
+                    .multilineTextAlignment(.leading)
+
+                if let actionTitle, let action {
+                    Button(actionTitle, action: action)
+                        .font(.body.weight(.semibold))
+                        .buttonStyle(.borderless)
+                        .foregroundStyle(state.contentColor(theme: theme))
+                        .underline()
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
         .foregroundStyle(state.contentColor(theme: theme))
         .padding(value: .medium)
@@ -88,9 +102,17 @@ public struct InformationBlockView: View {
 }
 
 #Preview {
-    InformationBlockView(
-        state: .info,
-        text: "The limit is 100 guests."
-    )
+    VStack {
+        InformationBlockView(
+            state: .info,
+            text: "The limit is 100 guests."
+        )
+
+        InformationBlockView(
+            state: .info,
+            text: "Allow notifications in your device settings.",
+            actionTitle: "Open system settings"
+        ) {}
+    }
     .padding()
 }

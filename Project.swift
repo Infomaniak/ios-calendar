@@ -119,7 +119,8 @@ let settingsView = Feature(
         TargetDependency.external(name: "InfomaniakCoreUIResources"),
         TargetDependency.external(name: "InfomaniakDI"),
         TargetDependency.external(name: "InfomaniakLogin"),
-        TargetDependency.external(name: "InfomaniakPrivacyManagement")
+        TargetDependency.external(name: "InfomaniakPrivacyManagement"),
+        TargetDependency.external(name: "MultiplatformCalendar")
     ]
 )
 

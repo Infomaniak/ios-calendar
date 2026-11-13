@@ -96,18 +96,21 @@ public final class EventAlarmNotificationsService: Sendable {
     private let calendar: Foundation.Calendar
     private let eventsProvider: EventAlarmEventsProviding
     private let notificationCenter: EventAlarmNotificationCenter
+    private let isEnabledProvider: @Sendable () -> Bool
     private let refreshActor = RefreshActor()
 
     public init(
         windowSize: TimeInterval = EventAlarmNotificationsService.defaultWindowSize,
         calendar: Foundation.Calendar = .current,
         eventsProvider: EventAlarmEventsProviding = EventAlarmEventsProvider(),
-        notificationCenter: EventAlarmNotificationCenter = UNUserNotificationCenter.current()
+        notificationCenter: EventAlarmNotificationCenter = UNUserNotificationCenter.current(),
+        isEnabledProvider: @escaping @Sendable () -> Bool = { UserDefaults.shared.areNotificationsEnabled }
     ) {
         self.windowSize = windowSize
         self.calendar = calendar
         self.eventsProvider = eventsProvider
         self.notificationCenter = notificationCenter
+        self.isEnabledProvider = isEnabledProvider
     }
 
     public func scheduleNotificationsForEventAlarms() async {
@@ -118,8 +121,17 @@ public final class EventAlarmNotificationsService: Sendable {
 
     private func scheduleAlarms() async {
         let rangeOfEvents = Date.now ..< Date.now.addingTimeInterval(windowSize)
-        guard let upcomingAlarms = await upcomingAlarms(range: rangeOfEvents, limit: Self.maximumNotificationsToSchedule) else {
-            return
+        let upcomingAlarms: [UpcomingAlarm]
+        if isEnabledProvider() {
+            guard let fetchedAlarms = await self.upcomingAlarms(
+                range: rangeOfEvents,
+                limit: Self.maximumNotificationsToSchedule
+            ) else {
+                return
+            }
+            upcomingAlarms = fetchedAlarms
+        } else {
+            upcomingAlarms = []
         }
 
         guard !Task.isCancelled else { return }

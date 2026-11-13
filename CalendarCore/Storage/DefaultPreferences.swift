@@ -26,4 +26,5 @@ public enum DefaultPreferences {
     public static let firstWeekday = Calendar.autoupdatingCurrent.firstWeekday
     public static let showWeekNumbers = false
     public static let defaultEventDuration = DefaultEventDuration.thirtyMinutes
+    public static let notificationsEnabled = true
 }

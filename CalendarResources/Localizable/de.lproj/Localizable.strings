@@ -75,6 +75,8 @@
 /* loco:6a4deaee7855b4f804068862 */
 "buttonNavigate" = "Reiseroute";
 
+"buttonOpenSystemSettings" = "Systemeinstellungen öffnen";
+
 /* loco:6a4deb24e064eb69fa065712 */
 "buttonShow" = "Anzeigen";
 
@@ -85,6 +87,12 @@
 "buttonThisAndFollowingEvents" = "Diesen und alle folgenden Anlässe";
 /* loco:6ad217df3b24e434ea055745 */
 "buttonThisEvent" = "Diesen Anlass";
+
+"calendarNotificationSettingsDescription" = "Nur für diesen Kalender";
+
+"calendarNotificationSettingsEnableLabel" = "Benachrichtigungen aktivieren";
+
+"calendarNotificationSettingsTitle" = "Kalenderbenachrichtigungen";
 
 /* loco:6a742d5283e910cbff0a9742 */
 "calendarsMenuSectionTitle" = "Kalender";
@@ -170,6 +178,8 @@
  * %d is the maximum number of guests (currently 100). Preserve the integer placeholder. */
 "eventValidationTooManyAttendees" = "Du kannst nicht mehr als %d Gäste einladen";
 
+"generalSettingsAuthorizationsLabel" = "Berechtigungen";
+
 /* loco:6af482860ce6a9c3f80b1a53 */
 "generalSettingsContactSupportLabel" = "Support kontaktieren";
 
@@ -181,6 +191,8 @@
 
 /* loco:6af482867dd518d2a5005b03 */
 "generalSettingsHelpAndPrivacyLabel" = "Hilfe & Datenschutz";
+
+"generalSettingsNotificationsLabel" = "Benachrichtigungen";
 
 /* loco:6adb5844fc0bad425c0b1494 */
 "generalSettingsShowWeekNumbersLabel" = "Kalenderwochen anzeigen";
@@ -206,6 +218,16 @@
 
 /* loco:6a8db088bdcf38c11d0c8a94 */
 "notificationDefaultDescription" = "Terminerinnerung";
+
+"notificationSettingsAllowNotificationsLabel" = "Benachrichtigungen erlauben";
+
+"notificationSettingsDisabledLabel" = "Deaktiviert";
+
+"notificationSettingsEnabledLabel" = "Aktiviert";
+
+"notificationSettingsPermissionDeniedDescription" = "Erlaube Benachrichtigungen in den Einstellungen deines Geräts.";
+
+"notificationSettingsSystemSectionTitle" = "System";
 
 /* loco:6a8ed23a8523fc2ec50554a2 */
 "notificationTypeEmail" = "E-Mail";
