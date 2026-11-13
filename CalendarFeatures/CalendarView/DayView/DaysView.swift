@@ -59,6 +59,13 @@ struct DaysView: View {
 
         DayPager(selectedDate: $mainViewState.selectedDate)
             .environment(viewModel)
+            .edgePagingDropZones { direction in
+                mainViewState.selectedDate = calendar.date(
+                    byAdding: .day,
+                    value: direction,
+                    to: mainViewState.selectedDate
+                ) ?? mainViewState.selectedDate
+            }
             .sensoryFeedback(trigger: mainViewState.selectedDate) { oldValue, newValue in
                 guard !calendar.isDate(oldValue, inSameDayAs: newValue) else {
                     return nil

@@ -30,9 +30,12 @@ struct AllDayEventButton: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .eventCellStyle(event: event)
         }
+        .eventQuickActions(.menu, event: event)
     }
 }
 
 #Preview {
     AllDayEventButton(event: .preview)
+        .environment(MainViewState())
+        .environment(EventInteractionModel())
 }
