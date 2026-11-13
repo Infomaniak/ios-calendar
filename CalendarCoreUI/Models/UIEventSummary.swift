@@ -32,6 +32,8 @@ public struct UIEventSummary: Identifiable, Equatable, Hashable, Sendable {
     public let hasAttendees: Bool
     public let hasMeetRoom: Bool
     public let myStatus: UIParticipationStatus?
+    public let canEdit: Bool
+    public let isRecurring: Bool
 
     public var displayTitle: AttributedString {
         title.formatted(.eventDisplayTitle.attributed)
@@ -61,6 +63,8 @@ public struct UIEventSummary: Identifiable, Equatable, Hashable, Sendable {
         self.isAllDay = isAllDay
         hasAttendees = event.hasAttendees
         hasMeetRoom = false
+        canEdit = event.canEdit
+        isRecurring = event.isRecurring
         if let status = event.myStatus {
             myStatus = UIParticipationStatus(participationStatus: status)
         } else {
@@ -83,6 +87,8 @@ public extension UIEventSummary {
         hasAttendees = !details.attendees.isEmpty
         hasMeetRoom = details.kMeetLink != nil
         myStatus = details.user?.status
+        canEdit = details.canEdit
+        isRecurring = details.isOccurrence
     }
 
     static let preview = UIEventSummary(details: .preview)

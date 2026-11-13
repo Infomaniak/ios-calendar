@@ -128,4 +128,12 @@ public extension UserDefaults {
             set(newValue, forKey: key(.lastSelectedCalendarId))
         }
     }
+
+    /// Calendar used for new events: the last one used if still writable, else the first writable one.
+    func defaultCalendarId(among writableCalendarIds: [String]) -> String? {
+        if let lastSelectedCalendarId, writableCalendarIds.contains(lastSelectedCalendarId) {
+            return lastSelectedCalendarId
+        }
+        return writableCalendarIds.first
+    }
 }

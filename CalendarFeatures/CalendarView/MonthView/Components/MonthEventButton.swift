@@ -31,5 +31,6 @@ struct MonthEventButton: View {
                 .frame(maxHeight: .infinity)
                 .eventCellStyle(event: event, padding: 0)
         }
+        .eventQuickActions(.drag, event: event)
     }
 }

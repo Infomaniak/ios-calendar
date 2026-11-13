@@ -80,9 +80,11 @@ struct DayContentView: View {
                             maxVisibleHeight: coveredTextHeights[index]
                         )
                     }
+                    .eventQuickActions(.all, event: event)
                     .eventuallyDateIntervalLayout(DateInterval(start: event.startDate, end: event.endDate))
                 }
             }
+            .timelineInteractions(date: date, pointsPerHour: geometry.pointsPerHour)
             .onAppear {
                 scrollToCorrectPosition(geometry)
             }
@@ -142,4 +144,5 @@ struct DayContentView: View {
 #Preview {
     DayContentView(date: .now, events: [.preview, .preview], allDayEvents: [])
         .environment(MainViewState())
+        .environment(EventInteractionModel())
 }

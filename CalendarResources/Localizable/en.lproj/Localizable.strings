@@ -59,12 +59,18 @@
  * Use a concise imperative action. */
 "buttonConfirm" = "Confirm";
 
+/* loco:6af6bf19357d063a990f4cb2 */
+"buttonCopy" = "Copy";
+
 /* loco:6a7dc6dcf678fdc6400639d9 */
 "buttonDeleteAccount" = "Delete Account";
 
 /* loco:6ab387c24e3a9ba3e7049042
  * Destructive toolbar action and confirmation button in event details. Deletes the displayed calendar event. */
 "buttonDeleteEvent" = "Delete this event";
+
+/* loco:6af6bf191ebf3584940765c2 */
+"buttonDuplicate" = "Duplicate";
 
 /* loco:6a4de9659924fbe9f10f1002 */
 "buttonJoin" = "Join";
@@ -74,6 +80,9 @@
 
 /* loco:6a4deaee7855b4f804068862 */
 "buttonNavigate" = "Navigate";
+
+/* loco:6af6bf19eec5d9c16c09c552 */
+"buttonRespond" = "Respond";
 
 /* loco:6a4deb24e064eb69fa065712 */
 "buttonShow" = "Show";
@@ -204,6 +213,12 @@
 
 /* loco:6a2040c0637876be5f0ec2f2 */
 "monthTitle" = "Month";
+
+/* loco:6af6bf1aae408540990a0832 */
+"moveEventErrorTitle" = "Could not move the event";
+
+/* loco:6af6afe2de41ec552103bd43 */
+"newEventTitle" = "New Event";
 
 /* loco:6aacf3b9af2c4cbae503a652
  * Keep this label concise. */

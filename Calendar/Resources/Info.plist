@@ -52,5 +52,18 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>UTExportedTypeDeclarations</key>
+	<array>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.data</string>
+			</array>
+			<key>UTTypeDescription</key>
+			<string>Infomaniak Calendar event</string>
+			<key>UTTypeIdentifier</key>
+			<string>com.infomaniak.calendar.event</string>
+		</dict>
+	</array>
 </dict>
 </plist>

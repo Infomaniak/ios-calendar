@@ -51,6 +51,13 @@ struct MultipleDaysView: View {
             selectedDate: $mainViewState.selectedDate
         )
         .id(layout)
+        .edgePagingDropZones { direction in
+            mainViewState.selectedDate = calendar.date(
+                byAdding: layout.pagerComponent,
+                value: direction,
+                to: mainViewState.selectedDate
+            ) ?? mainViewState.selectedDate
+        }
         .task(id: layout.preloadedInterval(for: mainViewState.selectedDate, calendar: calendar)) {
             guard let interval = layout.preloadedInterval(for: mainViewState.selectedDate, calendar: calendar) else {
                 return
@@ -82,10 +89,12 @@ struct MultipleDaysView: View {
     @Previewable @State var pagerScrollSync = CalendarPeriodPagerScrollSync()
     MultipleDaysView(layout: .week, pagerScrollSync: pagerScrollSync)
         .environment(MainViewState())
+        .environment(EventInteractionModel())
 }
 
 #Preview("Three days") {
     @Previewable @State var pagerScrollSync = CalendarPeriodPagerScrollSync()
     MultipleDaysView(layout: .threeDays, pagerScrollSync: pagerScrollSync)
         .environment(MainViewState())
+        .environment(EventInteractionModel())
 }

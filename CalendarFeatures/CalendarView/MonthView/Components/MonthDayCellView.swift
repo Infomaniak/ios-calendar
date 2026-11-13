@@ -23,8 +23,12 @@ import ESDSFoundation
 import SwiftUI
 
 struct MonthDayCellView: View {
+    private static let creationPressDuration: TimeInterval = 0.4
+
+    @Environment(\.calendar) private var calendar
     @Environment(\.esdsTheme) private var theme
 
+    @Environment(EventInteractionModel.self) private var interaction
     @Environment(MainViewState.self) private var mainViewState
 
     @SceneStorage(SceneStorageKeys.selectedMode.rawValue)
@@ -42,29 +46,41 @@ struct MonthDayCellView: View {
     }
 
     var body: some View {
-        Button(action: selectDay) {
-            Text(day, format: .dateTime.day())
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(dayNumberColor)
-                .opacity(isInMonth ? 1 : 0.45)
-                .padding(value: .micro)
-                .background {
-                    if isToday {
-                        Circle()
-                            .fill(theme.color.backgroundBrand)
-                    }
+        dayCell
+            // Tap and long press gestures instead of a Button, so that a long press never selects the day.
+            .onTapGesture(perform: selectDay)
+            .onLongPressGesture(minimumDuration: Self.creationPressDuration, perform: createEvent)
+            .accessibilityElement(children: .ignore)
+            .accessibilityAddTraits(.isButton)
+            .accessibilityLabel(Text(day, format: .dateTime.weekday(.wide).day().month(.wide)))
+            .accessibilityAction(.default, selectDay)
+    }
+
+    private var dayCell: some View {
+        Text(day, format: .dateTime.day())
+            .font(.caption.weight(.semibold))
+            .foregroundStyle(dayNumberColor)
+            .opacity(isInMonth ? 1 : 0.45)
+            .padding(value: .micro)
+            .background {
+                if isToday {
+                    Circle()
+                        .fill(theme.color.backgroundBrand)
                 }
-                .padding(value: .mini)
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                .background(isToday ? theme.color.backgroundBrand.opacity(0.1) : .clear)
-                .contentShape(.rect)
-        }
-        .buttonStyle(.plain)
-        .accessibilityLabel(Text(day, format: .dateTime.weekday(.wide).day().month(.wide)))
+            }
+            .padding(value: .mini)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+            .background(isToday ? theme.color.backgroundBrand.opacity(0.1) : .clear)
+            .contentShape(.rect)
     }
 
     private func selectDay() {
         selectedMode = .day
         mainViewState.selectedDate = day
+    }
+
+    private func createEvent() {
+        interaction.beginCreation(at: EventDraft.new(selectedDate: day, calendar: calendar).startDate, calendar: calendar)
+        interaction.endCreation()
     }
 }
