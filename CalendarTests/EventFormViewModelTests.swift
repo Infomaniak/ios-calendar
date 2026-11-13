@@ -66,6 +66,22 @@ struct EventFormViewModelTests {
         #expect(viewModel.isEdited == false)
     }
 
+    @Test(arguments: [true, false])
+    func prefilledDraftKeepsItsWritableCalendarAndIsSavableOnlyWhenDuplicated(isDuplicate: Bool) async {
+        let draft = EventDraft(
+            calendarId: "event",
+            title: isDuplicate ? "Duplicated event" : "",
+            startDate: Date(),
+            endDate: Date().addingTimeInterval(3600)
+        )
+        let viewModel = EventFormViewModel(editionMode: .prefilled(draft: draft))
+        await viewModel.updateCalendarSections([makeSection([makeCalendar(id: "first"), makeCalendar(id: "event")])])
+
+        #expect(viewModel.draft.calendarId == "event")
+        #expect(viewModel.draft.startDate == draft.startDate)
+        #expect(viewModel.isEdited == isDuplicate)
+    }
+
     @Test
     func editingPrefillsStoredValuesWithoutMarkingFormChanged() throws {
         let original = try EventDraft(
