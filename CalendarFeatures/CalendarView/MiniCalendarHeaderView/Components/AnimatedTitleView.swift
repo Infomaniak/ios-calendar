@@ -27,6 +27,7 @@ struct AnimatedTitleView: View {
 
     let date: Date
     let isExpanded: Bool
+    let showChevron: Bool
 
     private var dateFormat: Date.FormatStyle {
         if calendar.isDate(date, equalTo: .now, toGranularity: .year) {
@@ -43,11 +44,15 @@ struct AnimatedTitleView: View {
                 .transition(
                     .push(from: isForward ? .bottom : .top)
                 )
-            Image(systemName: "chevron.down")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 12, height: 12)
-                .rotationEffect(.degrees(isExpanded ? 180 : 0))
+
+            if showChevron {
+                Image(systemName: "chevron.down")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 12, height: 12)
+                    .rotationEffect(.degrees(isExpanded ? 180 : 0))
+                    .accessibilityHidden(true)
+            }
         }
         .onAppear {
             displayedDate = date
@@ -58,14 +63,13 @@ struct AnimatedTitleView: View {
                 displayedDate = calendar.monthStart(for: newValue)
             }
         }
-        .clipped()
     }
 }
 
 #Preview {
     @Previewable @State var date = Date.now
     VStack(spacing: 32) {
-        AnimatedTitleView(date: date, isExpanded: false)
+        AnimatedTitleView(date: date, isExpanded: false, showChevron: true)
 
         HStack {
             Button("Previous Month") {
