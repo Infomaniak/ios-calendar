@@ -90,8 +90,8 @@ struct PlanningDayRowView: View {
 
     private var nowRuler: some View {
         TimelineIndicatorView()
+            .visualEffect { $0.offset(y: -$1.size.height / 2) }
             .padding(.horizontal, -IKPadding.medium)
-            .frame(height: 0)
     }
 }
 
