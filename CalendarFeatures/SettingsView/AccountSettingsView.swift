@@ -68,10 +68,12 @@ public struct AccountSettingsView: View {
                 .frame(maxWidth: .infinity, alignment: .center)
             } header: {
                 HStack(spacing: IKPadding.medium) {
-                    AvatarView(avatar: .user(rawURL: user.avatar),
-                               displayName: user.displayName,
-                               email: user.email,
-                               size: iconSize)
+                    AvatarView(
+                        avatar: .user(rawURL: user.avatar),
+                        displayName: user.displayName,
+                        email: user.email
+                    )
+                    .frame(width: iconSize, height: iconSize)
 
                     VStack(alignment: .leading, spacing: 0) {
                         Text(user.displayName)

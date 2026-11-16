@@ -90,17 +90,16 @@ public struct EventAttendeesCell: View {
                 AvatarView(
                     avatar: attendee.contact?.avatar,
                     displayName: attendee.displayName ?? attendee.email,
-                    email: attendee.email,
-                    size: IKIconSize.large.rawValue
+                    email: attendee.email
                 )
+                .frame(width: IKIconSize.large.rawValue, height: IKIconSize.large.rawValue)
             }
 
             if attendees.count > 4 {
                 InitialsView(
                     initials: "+\(attendees.count - 4)",
                     backgroundColor: theme.color.backgroundElevationSunken,
-                    foregroundColor: theme.color.contentBrand,
-                    size: IKIconSize.large.rawValue
+                    foregroundColor: theme.color.contentBrand
                 )
             }
         }
