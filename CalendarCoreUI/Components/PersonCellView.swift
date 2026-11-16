@@ -153,7 +153,8 @@ private struct PersonCellView<AdditionalContent: View>: View {
 
     var body: some View {
         HStack(spacing: 8) {
-            AvatarView(avatar: avatar, displayName: displayName, email: email, size: avatarSize)
+            AvatarView(avatar: avatar, displayName: displayName, email: email)
+                .frame(width: avatarSize, height: avatarSize)
                 .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 0) {

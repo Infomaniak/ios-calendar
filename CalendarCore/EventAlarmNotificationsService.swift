@@ -21,7 +21,7 @@ import Foundation
 import InfomaniakDI
 import MultiplatformCalendar
 import OSLog
-import Sentry
+import SentrySwift
 import UserNotifications
 
 public protocol EventAlarmEventsProviding: Sendable {

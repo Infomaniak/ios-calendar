@@ -28,20 +28,18 @@ public struct AvatarView: View {
     let avatar: UIAvatarType?
     let displayName: String
     let email: String
-    let size: CGFloat
 
-    public init(avatar: UIAvatarType?, displayName: String, email: String, size: CGFloat) {
+    public init(avatar: UIAvatarType?, displayName: String, email: String) {
         self.avatar = avatar
         self.displayName = displayName
         self.email = email
-        self.size = size
     }
 
     public var body: some View {
         if let avatarRequest = avatar?.imageRequest(accounts: calendarAccounts) {
             LazyImage(request: avatarRequest) { state in
                 if let image = state.image {
-                    AvatarImage(image: image, size: size)
+                    AvatarImage(image: image)
                 } else {
                     initialsView
                 }
@@ -55,8 +53,7 @@ public struct AvatarView: View {
         InitialsView(
             initials: NameFormatter(fullName: displayName).initials,
             backgroundColor: Color.backgroundColor(from: email.hash),
-            foregroundColor: Color.white,
-            size: size
+            foregroundColor: Color.white
         )
     }
 }
