@@ -61,6 +61,7 @@ tuist test # Or via Xcode Test Navigator
 - **Model presentation:** Keep shared model data and SDK mapping in Core, with presentation extensions in a matching `Type+UI.swift` file in CoreUI (as with `EventDraft+UI` and `EventAlarmDraft+UI`). Alarm drafts store Swift values rather than KMP alarm objects; do not map unused alarm description, summary, attendees, or attachments.
 - **Model extensions:** Group SDK initializers and `sdkValue` conversions in the same `public extension` of the model, and preview fixtures in a separate `public extension`.
 - **Alarm terminology:** Use `Alarm` in code identifiers to match KMP; localized user-facing wording may use "reminder".
+- **Availability wrappers:** Prefix helper functions that apply a modifier only on newer OS versions (with an `#available` fallback) with `adaptive`, e.g. `adaptiveLeadingToolbarTitleAlignment()`, `adaptiveGlass()`.
 
 
 ### PR Checklist
