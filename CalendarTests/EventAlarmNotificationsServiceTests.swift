@@ -307,7 +307,8 @@ private enum EventAlarmTestFixtures {
             hasPlace: location != nil,
             isBookable: false,
             isRecurring: false,
-            myStatus: nil
+            myStatus: nil,
+            canEdit: true
         )
         let firesAtInstant = KotlinInstant.companion.fromEpochMilliseconds(
             epochMilliseconds: Int64(firesAt.timeIntervalSince1970 * 1000)

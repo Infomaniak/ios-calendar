@@ -271,7 +271,8 @@ struct EventMappingTests {
             hasPlace: true,
             isBookable: false,
             isRecurring: false,
-            myStatus: .delegated
+            myStatus: .delegated,
+            canEdit: true
         )
     }
 
