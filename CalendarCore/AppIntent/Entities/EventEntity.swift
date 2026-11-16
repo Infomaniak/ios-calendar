@@ -126,9 +126,16 @@ public extension EventEntity {
 
         travelTime = nil
 
-        if let location = event.location, !location.isEmpty {
-            self.location = .address(location)
-        } else {
+        switch onEnum(of: event.location) {
+        case .place(let place):
+            location = .address(place.text)
+        case .bookableRoom(let room):
+            if let name = room.resource?.name {
+                location = .address(name)
+            } else {
+                location = nil
+            }
+        default:
             location = nil
         }
 

@@ -101,6 +101,7 @@ public struct EventAttendeesCell: View {
                     backgroundColor: theme.color.backgroundElevationSunken,
                     foregroundColor: theme.color.contentBrand
                 )
+                .frame(width: IKIconSize.large.rawValue, height: IKIconSize.large.rawValue)
             }
         }
         .compositingGroup()

@@ -73,7 +73,7 @@ final class EventFormViewModel {
 
     var locationAvailabilityRequest: LocationAvailabilityRequest? {
         guard let calendar = selectedCalendar else { return nil }
-        return LocationAvailabilityRequest(accountId: Int64(calendar.accountId), draft: draft)
+        return LocationAvailabilityRequest(calendarId: calendar.id, draft: draft)
     }
 
     private var currentDuration: TimeInterval {

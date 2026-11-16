@@ -26,10 +26,11 @@ import SwiftUI
 
 public struct MeetingRoomView: View {
     @Environment(\.esdsTheme) private var theme
+
     let roomTitle: String
     let roomFloor: Int?
     let roomCapacity: Int?
-    let availability: MeetingRoomAvailability
+    let availability: MeetingRoomAvailability?
 
     private static let ordinalFormatter: NumberFormatter = {
         let formatter = NumberFormatter()
@@ -37,7 +38,7 @@ public struct MeetingRoomView: View {
         return formatter
     }()
 
-    public init(roomTitle: String, roomFloor: Int?, roomCapacity: Int?, availability: MeetingRoomAvailability) {
+    public init(roomTitle: String, roomFloor: Int?, roomCapacity: Int?, availability: MeetingRoomAvailability? = nil) {
         self.roomTitle = roomTitle
         self.roomFloor = roomFloor
         self.roomCapacity = roomCapacity
@@ -86,10 +87,12 @@ public struct MeetingRoomView: View {
             .labelStyle(.formLabel)
             .frame(maxWidth: .infinity, alignment: .leading)
 
-            Circle()
-                .fill(availability.color(theme: theme))
-                .frame(width: IKIconSize.small.rawValue, height: IKIconSize.small.rawValue)
-                .accessibilityLabel(availability.accessibilityLabel)
+            if let availability {
+                Circle()
+                    .fill(availability.color(theme: theme))
+                    .frame(width: IKIconSize.small.rawValue, height: IKIconSize.small.rawValue)
+                    .accessibilityLabel(availability.accessibilityLabel)
+            }
         }
     }
 }
@@ -99,5 +102,6 @@ public struct MeetingRoomView: View {
         MeetingRoomView(roomTitle: "Salle Jules Verne", roomFloor: 3, roomCapacity: 20, availability: .available)
         MeetingRoomView(roomTitle: "Salle Jules Verne", roomFloor: 3, roomCapacity: 20, availability: .unavailable)
         MeetingRoomView(roomTitle: "Salle Jules Verne", roomFloor: 3, roomCapacity: 20, availability: .unknown)
+        MeetingRoomView(roomTitle: "Salle Jules Verne", roomFloor: 3, roomCapacity: 20)
     }
 }

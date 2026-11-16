@@ -26,9 +26,9 @@ struct LocationPlace: Identifiable, Equatable {
     let address: String
 
     var location: EventLocation {
-        if address.isEmpty { return .place(name: name) }
-        if address == name || address.hasPrefix("\(name),") { return .place(name: address) }
-        return .place(name: "\(name), \(address)")
+        if address.isEmpty { return .place(text: name) }
+        if address == name || address.hasPrefix("\(name),") { return .place(text: address) }
+        return .place(text: "\(name), \(address)")
     }
 }
 
