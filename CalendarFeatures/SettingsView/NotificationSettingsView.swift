@@ -222,8 +222,7 @@ struct NotificationSettingsView: View {
     private func observeCalendarNotificationStates() async {
         @InjectService var calendarSDK: CalendarCoreGraph
         for await states in calendarSDK.calendarManager.observeCalendarNotificationStatesByIdValue() {
-            let statesById = states as? [String: any CalendarNotificationState] ?? [:]
-            calendarNotificationStates = statesById.mapValues { UICalendarNotificationState(state: $0) }
+            calendarNotificationStates = states.mapValues { UICalendarNotificationState(state: $0) }
         }
     }
 
