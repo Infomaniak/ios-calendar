@@ -17,10 +17,21 @@
  */
 
 import CalendarResources
+import DataDetection
 import DesignSystem
 import ESDSFoundation
 import ESDSSymbols
 import SwiftUI
+
+private extension View {
+    func adaptiveDataDetection() -> some View {
+        if #available(iOS 27.0, macOS 27.2, *) {
+            return dataDetection()
+        } else {
+            return self
+        }
+    }
+}
 
 struct DescriptionRow: View {
     @Environment(\.esdsTheme) private var theme
@@ -48,6 +59,7 @@ struct DescriptionRow: View {
             }
 
             Text(description)
+                .adaptiveDataDetection()
                 .lineLimit(isExpanded ? nil : 2)
                 .textSelection(.enabled)
                 .foregroundStyle(theme.color.contentSecondary)
