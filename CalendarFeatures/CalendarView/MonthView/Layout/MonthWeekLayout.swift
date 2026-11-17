@@ -19,7 +19,6 @@
 import CalendarCoreUI
 import Foundation
 
-/// An event drawn in a week row, spanning one or several consecutive columns.
 struct MonthEventSegment: Identifiable, Equatable {
     let id: String
     let event: UIEventSummary
@@ -32,18 +31,17 @@ struct MonthEventSegment: Identifiable, Equatable {
     }
 }
 
-/// Events of a week row packed into lanes, independent of the available height.
-///
-/// This logic is meant to move to the KMP library later on: keep it pure.
+private struct PendingSegment {
+    let event: UIEventSummary
+    let startColumn: Int
+    let order: Int
+    var span = 1
+}
+
 struct MonthWeekLayout: Equatable {
     let segments: [MonthEventSegment]
-    /// All the events of each column, in display order.
     let dayEvents: [[UIEventSummary]]
 
-    /// - Parameters:
-    ///   - days: Days of the week row, one per column.
-    ///   - eventsByDay: Day slices of events grouped by start of day, sorted as they must be displayed.
-    ///   - isDisplayed: Days whose events are displayed, e.g. days of the current month.
     init(days: [Date], eventsByDay: [Date: [UIEventSummary]], isDisplayed: (Date) -> Bool) {
         let columnEvents = days.map { isDisplayed($0) ? eventsByDay[$0] ?? [] : [] }
 
@@ -70,6 +68,7 @@ struct MonthWeekLayout: Equatable {
             if lhsIsMultiDay != rhsIsMultiDay {
                 return lhsIsMultiDay
             }
+
             if lhsIsMultiDay {
                 if lhs.startColumn != rhs.startColumn {
                     return lhs.startColumn < rhs.startColumn
@@ -78,19 +77,23 @@ struct MonthWeekLayout: Equatable {
                     return lhs.span > rhs.span
                 }
             }
+
             return lhs.order < rhs.order
         }
 
         var occupiedLanes = Array(repeating: Set<Int>(), count: days.count)
         segments = sortedSegments.map { pendingSegment in
             let columns = pendingSegment.startColumn ..< pendingSegment.startColumn + pendingSegment.span
+
             var lane = 0
             while columns.contains(where: { occupiedLanes[$0].contains(lane) }) {
                 lane += 1
             }
+
             for column in columns {
                 occupiedLanes[column].insert(lane)
             }
+
             return MonthEventSegment(
                 id: "\(pendingSegment.startColumn)-\(pendingSegment.event.occurrenceId)",
                 event: pendingSegment.event,
@@ -99,25 +102,25 @@ struct MonthWeekLayout: Equatable {
                 lane: lane
             )
         }
+
         dayEvents = columnEvents
     }
 
-    /// Segments fitting in `laneCount` lanes. The last lane is kept for the "+N" label of overflowing days.
     func visibleSegments(laneCount: Int) -> [MonthEventSegment] {
         let overflowingColumns = overflowingColumns(laneCount: laneCount)
         return segments.filter { isVisible($0, laneCount: laneCount, overflowingColumns: overflowingColumns) }
     }
 
-    /// Number of events hidden in each column when only `laneCount` lanes are available.
-    func hiddenEventCounts(laneCount: Int) -> [Int] {
+    func columnsWithHiddenEvents(laneCount: Int) -> [Bool] {
         let overflowingColumns = overflowingColumns(laneCount: laneCount)
-        var counts = Array(repeating: 0, count: dayEvents.count)
+        var hasHiddenEvents = Array(repeating: false, count: dayEvents.count)
         for segment in segments where !isVisible(segment, laneCount: laneCount, overflowingColumns: overflowingColumns) {
             for column in segment.columns {
-                counts[column] += 1
+                hasHiddenEvents[column] = true
             }
         }
-        return counts
+
+        return hasHiddenEvents
     }
 
     private func overflowingColumns(laneCount: Int) -> Set<Int> {
@@ -127,6 +130,7 @@ struct MonthWeekLayout: Equatable {
                 usedLaneCounts[column] = max(usedLaneCounts[column], segment.lane + 1)
             }
         }
+
         return Set(usedLaneCounts.indices.filter { usedLaneCounts[$0] > laneCount })
     }
 
@@ -136,13 +140,6 @@ struct MonthWeekLayout: Equatable {
         }
         return segment.lane == laneCount - 1 && !segment.columns.contains { overflowingColumns.contains($0) }
     }
-}
-
-private struct PendingSegment {
-    let event: UIEventSummary
-    let startColumn: Int
-    let order: Int
-    var span = 1
 }
 
 extension MonthWeekLayout {
