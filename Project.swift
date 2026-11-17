@@ -206,6 +206,7 @@ let project = Project(
                 .target(name: "\(Constants.projectName)CoreUI"),
                 .target(name: "\(Constants.projectName)Resources"),
                 rootView.asDependency,
+                .target(name: "\(Constants.projectName)Widget"),
                 .external(name: "ESDSCalendar"),
                 .external(name: "InfomaniakCore"),
                 .external(name: "InfomaniakCoreSwiftUI"),
@@ -218,6 +219,23 @@ let project = Project(
             environmentVariables: [
                 "hostname": .environmentVariable(value: "\(ProcessInfo.processInfo.hostName).", isEnabled: true)
             ].merging(ProxymanCertificate.environmentVariables) { current, _ in current }
+        ),
+        .target(
+            name: "\(Constants.projectName)Widget",
+            destinations: .iOS,
+            product: .appExtension,
+            bundleId: "\(Constants.baseIdentifier).WidgetExtension",
+            deploymentTargets: Constants.deploymentTarget,
+            infoPlist: "\(Constants.projectName)Widget/Resources/Info.plist",
+            buildableFolders: [
+                .folder("\(Constants.projectName)Widget/Sources")
+            ],
+            entitlements: "\(Constants.projectName)Widget/Resources/\(Constants.projectName)Widget.entitlements",
+            dependencies: [
+                .external(name: "ESDSCalendar"),
+                .external(name: "ESDSFoundation")
+            ],
+            settings: .settings(base: Constants.baseSettings)
         ),
         .target(name: "\(Constants.projectName)Core",
                 destinations: Constants.destinations,
