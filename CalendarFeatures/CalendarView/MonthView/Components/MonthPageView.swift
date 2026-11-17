@@ -38,6 +38,7 @@ struct MonthPageView: View {
             ScrollView(.vertical) {
                 weekRows
             }
+            .scrollBounceBehavior(.basedOnSize)
         }
     }
 

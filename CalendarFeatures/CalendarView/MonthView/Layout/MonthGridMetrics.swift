@@ -52,11 +52,12 @@ struct MonthGridMetrics: Equatable {
     }
 
     func rowHeight(weekCount: Int) -> CGFloat {
+        let fillingRowHeight = containerSize.height / CGFloat(max(weekCount, 1))
         switch sizing {
         case .fill:
-            return containerSize.height / CGFloat(max(weekCount, 1))
+            return fillingRowHeight
         case .square:
-            return columnWidth
+            return max(columnWidth, fillingRowHeight)
         }
     }
 
