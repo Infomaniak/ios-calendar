@@ -30,7 +30,7 @@ struct TodayWidgetView: View {
     }
 
     private var monthText: Text {
-        Text(.currentDate, format: .dateTime.month(.abbreviated))
+        Text(.currentDate, format: Date.FormatStyle(capitalizationContext: .beginningOfSentence).month(.abbreviated))
             .foregroundStyle(theme.color.contentSecondary)
     }
 
