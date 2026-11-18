@@ -226,7 +226,16 @@ let project = Project(
             product: .appExtension,
             bundleId: "\(Constants.baseIdentifier).WidgetExtension",
             deploymentTargets: Constants.deploymentTarget,
-            infoPlist: "\(Constants.projectName)Widget/Resources/Info.plist",
+            infoPlist: .extendingDefault(with: [
+                "CFBundleDisplayName": "Infomaniak Calendar",
+                "CFBundleShortVersionString": "$(MARKETING_VERSION)",
+                "CFBundleVersion": "$(CURRENT_PROJECT_VERSION)",
+                // This key is needed while we don't have localizations in the target (Xcode infers from .strings files)
+                "CFBundleLocalizations": ["da", "de", "el", "en", "es", "fi", "fr", "it", "nb", "nl", "pl", "pt", "sv"],
+                "NSExtension": [
+                    "NSExtensionPointIdentifier": "com.apple.widgetkit-extension"
+                ]
+            ]),
             buildableFolders: [
                 .folder("\(Constants.projectName)Widget/Sources")
             ],
