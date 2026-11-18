@@ -19,22 +19,22 @@
 import CalendarCoreUI
 import DesignSystem
 import ESDSFoundation
+import ESDSSymbols
 import SwiftUI
 
 struct MonthDayHiddenEventsView: View {
     @Environment(\.esdsTheme) private var theme
 
-    let count: Int
-
     var body: some View {
-        Text(verbatim: "+\(count)")
-            .font(.caption2.bold())
+        ESDSSymbols.dotsThreeHorizontal.image
+            .font(.system(size: 16))
             .foregroundStyle(theme.color.contentTertiary)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .allowsHitTesting(false)
+            .accessibilityHidden(true)
     }
 }
 
 #Preview {
-    MonthDayHiddenEventsView(count: 42)
+    MonthDayHiddenEventsView()
 }

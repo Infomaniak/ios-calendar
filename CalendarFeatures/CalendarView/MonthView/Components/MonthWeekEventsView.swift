@@ -20,13 +20,13 @@ import SwiftUI
 
 struct MonthWeekEventsView: View {
     let segments: [MonthEventSegment]
-    let hiddenEventCounts: [Int]
+    let columnsWithHiddenEvents: [Bool]
     let laneCount: Int
     let laneHeight: CGFloat
 
     var body: some View {
         MonthWeekEventsLayout(
-            columnCount: hiddenEventCounts.count,
+            columnCount: columnsWithHiddenEvents.count,
             laneHeight: laneHeight,
             laneSpacing: MonthGridMetrics.laneSpacing,
             horizontalInset: 4
@@ -36,9 +36,9 @@ struct MonthWeekEventsView: View {
                     .monthEventPlacement(column: segment.startColumn, span: segment.span, lane: segment.lane)
             }
 
-            ForEach(hiddenEventCounts.indices, id: \.self) { column in
-                if hiddenEventCounts[column] > 0 {
-                    MonthDayHiddenEventsView(count: hiddenEventCounts[column])
+            ForEach(columnsWithHiddenEvents.indices, id: \.self) { column in
+                if columnsWithHiddenEvents[column] {
+                    MonthDayHiddenEventsView()
                         .monthEventPlacement(column: column, lane: laneCount - 1)
                 }
             }

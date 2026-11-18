@@ -74,7 +74,7 @@ struct MonthWeekRowView: View {
                 if let layout, laneCount > 0 {
                     MonthWeekEventsView(
                         segments: layout.visibleSegments(laneCount: laneCount),
-                        hiddenEventCounts: layout.hiddenEventCounts(laneCount: laneCount),
+                        columnsWithHiddenEvents: layout.columnsWithHiddenEvents(laneCount: laneCount),
                         laneCount: laneCount,
                         laneHeight: metrics.laneHeight
                     )

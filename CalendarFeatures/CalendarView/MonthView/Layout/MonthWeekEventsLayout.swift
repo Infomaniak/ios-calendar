@@ -45,7 +45,10 @@ struct MonthWeekEventsLayout: Layout {
     }
 
     func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
-        guard columnCount > 0 else { return }
+        guard columnCount > 0 else {
+            return
+        }
+
         let columnWidth = bounds.width / CGFloat(columnCount)
         for subview in subviews {
             let placement = subview[MonthEventPlacement.self]
