@@ -17,7 +17,7 @@
  */
 
 import MultiplatformCalendar
-import SentrySwift
+import Sentry
 
 public extension MultiplatformCalendar.CrashReportLevel {
     var sentryLevel: SentryLevel {

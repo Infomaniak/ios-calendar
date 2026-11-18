@@ -18,7 +18,7 @@
 
 import Foundation
 import MultiplatformCalendar
-import SentrySwift
+import Sentry
 
 public final class KotlinThrowableWrapper: NSError, @unchecked Sendable {
     public init(kotlinThrowable: KotlinThrowable) {
