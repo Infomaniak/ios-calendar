@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarResources
 import ESDSCalendar
 import SwiftUI
 import WidgetKit
@@ -26,8 +27,8 @@ struct TodayWidget: Widget {
             TodayWidgetView()
                 .esdsTheme(.calendar)
         }
-        .configurationDisplayName("Today")
-        .description("Shows today's date.")
+        .configurationDisplayName(CalendarResourcesStrings.todayWidgetTitle)
+        .description(CalendarResourcesStrings.todayWidgetDescription)
         .supportedFamilies([.systemSmall])
     }
 }

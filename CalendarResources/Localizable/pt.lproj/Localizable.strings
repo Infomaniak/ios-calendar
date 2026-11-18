@@ -363,6 +363,12 @@
 /* loco:6aa9363b3f16c92f7e024b92 */
 "timeZoneLabel" = "Fuso horário";
 
+/* loco:6afd589a8aa8b02b590f4d52 */
+"todayWidgetDescription" = "Mostra a data de hoje.";
+
+/* loco:6afd589a4c24a2dc1101aba2 */
+"todayWidgetTitle" = "Hoje";
+
 /* loco:6ae9872edabaa75a2e010612 */
 "unavailableLabel" = "Indisponível";
 

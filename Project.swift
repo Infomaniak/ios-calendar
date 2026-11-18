@@ -232,6 +232,7 @@ let project = Project(
             ],
             entitlements: "\(Constants.projectName)Widget/Resources/\(Constants.projectName)Widget.entitlements",
             dependencies: [
+                .target(name: "\(Constants.projectName)Resources"),
                 .external(name: "ESDSCalendar"),
                 .external(name: "ESDSFoundation")
             ],
