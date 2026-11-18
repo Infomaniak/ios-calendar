@@ -31,6 +31,7 @@ struct MonthDayHiddenEventsView: View {
             .foregroundStyle(theme.color.contentTertiary)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .allowsHitTesting(false)
+            .accessibilityHidden(true)
     }
 }
 
