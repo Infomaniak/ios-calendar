@@ -33,7 +33,7 @@ struct MonthGridMetrics: Equatable {
 
     static let laneSpacing: CGFloat = 2
     static let hiddenEventsIndicatorHeight: CGFloat = 12
-    static let separatorThickness: CGFloat = 1
+    static let separatorThickness: CGFloat = 0.5
 
     let containerSize: CGSize
     let weekNumberWidth: CGFloat
