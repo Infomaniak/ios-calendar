@@ -33,6 +33,16 @@ enum TimelineViewConstants {
     }
 }
 
+enum TimelineSafeAreaBehavior {
+    /// Nothing is drawn below the trailing safe area.
+    case confined
+    /// Only the hour dividers extend below the trailing safe area.
+    case extendsDividers
+    /// The hour dividers extend below the trailing safe area, which is also provided to the events as safe area
+    /// so that scrollable events can reveal their content below it.
+    case extendsContent
+}
+
 struct TimelineContentView<EventContent: View, Overlay: View>: View {
     @Environment(\.calendar) private var calendar
 
@@ -47,6 +57,8 @@ struct TimelineContentView<EventContent: View, Overlay: View>: View {
     let date: Date
     var leadingPadding: CGFloat = IKPadding.medium
     var trailingPadding: CGFloat = IKPadding.medium
+    var safeAreaBehavior = TimelineSafeAreaBehavior.extendsDividers
+
     @ViewBuilder let eventContent: (TimelineGeometry) -> EventContent
     @ViewBuilder let overlay: (TimelineGeometry) -> Overlay
 
@@ -68,8 +80,12 @@ struct TimelineContentView<EventContent: View, Overlay: View>: View {
     }
 
     private var dividersTrailingExtension: CGFloat {
-        guard horizontalSafeAreaInsets.trailing > 0 else { return 0 }
+        guard safeAreaBehavior != .confined, horizontalSafeAreaInsets.trailing > 0 else { return 0 }
         return trailingPadding + horizontalSafeAreaInsets.trailing
+    }
+
+    private var trailingSafeAreaPadding: CGFloat {
+        return safeAreaBehavior == .extendsContent ? horizontalSafeAreaInsets.trailing : 0
     }
 
     var body: some View {
@@ -101,7 +117,8 @@ struct TimelineContentView<EventContent: View, Overlay: View>: View {
                         .allowsHitTesting(false)
                 }
                 .padding(.leading, horizontalSafeAreaInsets.leading)
-                .padding(.trailing, horizontalSafeAreaInsets.trailing)
+                .padding(.trailing, horizontalSafeAreaInsets.trailing - trailingSafeAreaPadding)
+                .safeAreaPadding(.trailing, trailingSafeAreaPadding)
             }
             .frame(height: contentHeight)
         }

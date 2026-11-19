@@ -52,7 +52,8 @@ struct MultipleDaysContentView: View {
             scrollPosition: $scrollPosition,
             scrollOffset: $scrollOffset,
             date: selectedDate,
-            trailingPadding: 0
+            trailingPadding: 0,
+            safeAreaBehavior: layout.timelineSafeAreaBehavior
         ) { geometry in
             CalendarPeriodPager(
                 component: layout.pagerComponent,
@@ -60,6 +61,7 @@ struct MultipleDaysContentView: View {
                 viewCount: layout.pagerViewCount,
                 scrollBehavior: layout.pagerScrollBehavior,
                 scrollSync: pagerScrollSync,
+                safeAreaBehavior: layout.pagerSafeAreaBehavior,
                 date: pagerDate
             ) { date in
                 HStack(spacing: 0) {
@@ -89,7 +91,11 @@ struct MultipleDaysContentView: View {
                 let date = timeline.date
                 let localCalendar = calendar
 
-                CalendarPeriodPagerMirror(scrollSync: pagerScrollSync, viewCount: layout.pagerViewCount) { date in
+                CalendarPeriodPagerMirror(
+                    scrollSync: pagerScrollSync,
+                    viewCount: layout.pagerViewCount,
+                    safeAreaBehavior: layout.pagerSafeAreaBehavior
+                ) { date in
                     HStack(spacing: 0) {
                         ForEach(layout.pageDates(for: date, calendar: calendar), id: \.self) { day in
                             TimelineIndicatorView()

@@ -28,6 +28,7 @@ final class CalendarPeriodPagerScrollSync {
 enum CalendarPeriodPagerSafeAreaBehavior {
     case confined
     case extended
+    case revealsNeighbors
 }
 
 struct CalendarPeriodPager<Content: View>: View {
@@ -70,7 +71,7 @@ struct CalendarPeriodPager<Content: View>: View {
                     }
                     .scrollTargetLayout()
                 }
-                .ignoresSafeArea(.container, edges: .horizontal)
+                .ignoresSafeArea(.container, edges: safeAreaBehavior == .revealsNeighbors ? [] : .horizontal)
                 .scrollIndicators(.hidden, axes: .horizontal)
                 .scrollTargetBehavior(scrollBehavior)
                 .scrollPosition(id: $visiblePeriod, anchor: scrollAnchor)
@@ -155,10 +156,10 @@ struct CalendarPeriodPage<Content: View>: View {
 
     var safeAreaInsets = EdgeInsets()
     var safeAreaBehavior = CalendarPeriodPagerSafeAreaBehavior.confined
-
+
     @ViewBuilder let content: (Date) -> Content
 
-    var body: some View {
+    var body: some View {
         switch safeAreaBehavior {
         case .confined:
             content(period.date)
@@ -167,6 +168,8 @@ struct CalendarPeriodPage<Content: View>: View {
         case .extended:
             content(period.date)
                 .safeAreaPadding(safeAreaInsets)
+        case .revealsNeighbors:
+            content(period.date)
         }
     }
 }

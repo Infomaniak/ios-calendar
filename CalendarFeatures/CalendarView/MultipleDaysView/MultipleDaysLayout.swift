@@ -53,6 +53,24 @@ enum MultipleDaysLayout: Hashable {
         }
     }
 
+    var pagerSafeAreaBehavior: CalendarPeriodPagerSafeAreaBehavior {
+        switch self {
+        case .paged:
+            return .confined
+        case .continuous:
+            return .revealsNeighbors
+        }
+    }
+
+    var timelineSafeAreaBehavior: TimelineSafeAreaBehavior {
+        switch self {
+        case .paged:
+            return .confined
+        case .continuous:
+            return .extendsContent
+        }
+    }
+
     var pagerOffsets: Range<Int> {
         return CalendarPeriodOffsets.offsets(for: pagerComponent)
     }

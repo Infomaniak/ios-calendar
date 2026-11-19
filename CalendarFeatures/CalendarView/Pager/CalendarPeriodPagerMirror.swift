@@ -21,6 +21,7 @@ import SwiftUI
 struct CalendarPeriodPagerMirror<Content: View>: View {
     let scrollSync: CalendarPeriodPagerScrollSync
     var viewCount = 1
+    var safeAreaBehavior = CalendarPeriodPagerSafeAreaBehavior.confined
 
     @ViewBuilder let content: (Date) -> Content
 
@@ -30,6 +31,7 @@ struct CalendarPeriodPagerMirror<Content: View>: View {
                 periods: periods,
                 scrollSync: scrollSync,
                 viewCount: viewCount,
+                revealsNeighbors: safeAreaBehavior == .revealsNeighbors,
                 content: content
             )
         }
@@ -40,9 +42,20 @@ private struct CalendarPeriodMirrorScrollView<Content: View>: View {
     let periods: CalendarPeriodCollection
     let scrollSync: CalendarPeriodPagerScrollSync
     let viewCount: Int
+    let revealsNeighbors: Bool
     let content: (Date) -> Content
 
     var body: some View {
+        if revealsNeighbors {
+            scrollView
+        } else {
+            // The scroll view extends below the safe area, where the neighboring pages must stay hidden.
+            scrollView
+                .clipped()
+        }
+    }
+
+    private var scrollView: some View {
         ScrollView(.horizontal) {
             LazyHStack(spacing: 0) {
                 ForEach(periods) { period in
@@ -54,8 +67,6 @@ private struct CalendarPeriodMirrorScrollView<Content: View>: View {
         .scrollIndicators(.hidden, axes: .horizontal)
         .scrollDisabled(true)
         .modifier(MirrorScrollOffsetModifier(scrollSync: scrollSync))
-        // The scroll view extends below the safe area, where the neighboring pages must stay hidden.
-        .clipped()
     }
 }
 
