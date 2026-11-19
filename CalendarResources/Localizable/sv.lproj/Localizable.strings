@@ -363,6 +363,12 @@
 /* loco:6aa9363b3f16c92f7e024b92 */
 "timeZoneLabel" = "Tidszon";
 
+/* loco:6afd589a8aa8b02b590f4d52 */
+"todayWidgetDescription" = "Visar dagens datum.";
+
+/* loco:6afd589a4c24a2dc1101aba2 */
+"todayWidgetTitle" = "Idag";
+
 /* loco:6ae9872edabaa75a2e010612 */
 "unavailableLabel" = "Inte tillgänglig";
 
