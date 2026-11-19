@@ -25,18 +25,25 @@ final class CalendarPeriodPagerScrollSync {
     var contentOffset = CGFloat.zero
 }
 
+enum CalendarPeriodPagerSafeAreaBehavior {
+    case confined
+    case extended
+}
+
 struct CalendarPeriodPager<Content: View>: View {
     @Environment(\.calendar) private var calendar
 
     @State private var periods: CalendarPeriodCollection?
     @State private var visiblePeriod: Int?
     @State private var scrollPhase = ScrollPhase.idle
+    @State private var horizontalSafeAreaInsets = EdgeInsets()
 
     let component: Calendar.Component
     let periodOffsets: Range<Int>
     var viewCount = 1
     var scrollBehavior = AnyScrollTargetBehavior(.paging)
     var scrollSync: CalendarPeriodPagerScrollSync?
+    var safeAreaBehavior = CalendarPeriodPagerSafeAreaBehavior.confined
 
     @Binding var date: Date
 
@@ -52,12 +59,18 @@ struct CalendarPeriodPager<Content: View>: View {
                 ScrollView(.horizontal) {
                     LazyHStack(spacing: 0) {
                         ForEach(periods) { period in
-                            CalendarPeriodPage(period: period, content: content)
-                                .containerRelativeFrame(.horizontal, count: viewCount, spacing: 0)
+                            CalendarPeriodPage(
+                                period: period,
+                                safeAreaInsets: horizontalSafeAreaInsets,
+                                safeAreaBehavior: safeAreaBehavior,
+                                content: content
+                            )
+                            .containerRelativeFrame(.horizontal, count: viewCount, spacing: 0)
                         }
                     }
                     .scrollTargetLayout()
                 }
+                .ignoresSafeArea(.container, edges: .horizontal)
                 .scrollIndicators(.hidden, axes: .horizontal)
                 .scrollTargetBehavior(scrollBehavior)
                 .scrollPosition(id: $visiblePeriod, anchor: scrollAnchor)
@@ -75,6 +88,9 @@ struct CalendarPeriodPager<Content: View>: View {
                 .id(component)
                 .id(calendar)
             }
+        }
+        .onHorizontalSafeAreaInsetsChange { newInsets in
+            horizontalSafeAreaInsets = newInsets
         }
         .onChange(of: calendar, initial: true) { _, _ in
             resetPeriods()
@@ -136,9 +152,21 @@ struct CalendarPeriodPager<Content: View>: View {
 
 struct CalendarPeriodPage<Content: View>: View {
     let period: CalendarPeriodCollection.Period
+
+    var safeAreaInsets = EdgeInsets()
+    var safeAreaBehavior = CalendarPeriodPagerSafeAreaBehavior.confined
+
     @ViewBuilder let content: (Date) -> Content
 
-    var body: some View {
-        content(period.date)
+    var body: some View {
+        switch safeAreaBehavior {
+        case .confined:
+            content(period.date)
+                .padding(.leading, safeAreaInsets.leading)
+                .padding(.trailing, safeAreaInsets.trailing)
+        case .extended:
+            content(period.date)
+                .safeAreaPadding(safeAreaInsets)
+        }
     }
 }

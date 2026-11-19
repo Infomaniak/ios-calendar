@@ -42,6 +42,7 @@ struct DayPager: View {
         CalendarPeriodPager(
             component: .day,
             periodOffsets: CalendarPeriodOffsets.days,
+            safeAreaBehavior: .extended,
             date: $selectedDate
         ) { date in
             DayView(date: date)

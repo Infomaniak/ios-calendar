@@ -39,6 +39,7 @@ struct TimelineContentView<EventContent: View, Overlay: View>: View {
     @State private var currentMagnification: CGFloat = 1.0
     @State private var pointsPerHour = TimelineViewConstants.PointsPerHour.default
     @State private var visibleHeight = CGFloat.zero
+    @State private var horizontalSafeAreaInsets = EdgeInsets()
 
     @Binding var scrollPosition: ScrollPosition
     @Binding var scrollOffset: CGFloat
@@ -66,6 +67,11 @@ struct TimelineContentView<EventContent: View, Overlay: View>: View {
         return maximumElapsedHours * effectivePointsPerHour + TimelineBackgroundView.Constants.verticalInset * 2
     }
 
+    private var dividersTrailingExtension: CGFloat {
+        guard horizontalSafeAreaInsets.trailing > 0 else { return 0 }
+        return trailingPadding + horizontalSafeAreaInsets.trailing
+    }
+
     var body: some View {
         ScrollView {
             GeometryReader { _ in
@@ -83,6 +89,7 @@ struct TimelineContentView<EventContent: View, Overlay: View>: View {
                         leadingOffset: TimelineBackgroundView.Constants.leadingInset,
                         verticalOffset: TimelineBackgroundView.Constants.verticalInset
                     )
+                    .padding(.trailing, -dividersTrailingExtension)
 
                     eventContent(geometry)
                         .padding(geometry.eventLayoutPadding)
@@ -93,10 +100,16 @@ struct TimelineContentView<EventContent: View, Overlay: View>: View {
                     overlay(geometry)
                         .allowsHitTesting(false)
                 }
+                .padding(.leading, horizontalSafeAreaInsets.leading)
+                .padding(.trailing, horizontalSafeAreaInsets.trailing)
             }
             .frame(height: contentHeight)
         }
         .contentMargins(.vertical, IKPadding.small, for: .scrollContent)
+        .ignoresSafeArea(.container, edges: .horizontal)
+        .onHorizontalSafeAreaInsetsChange { newInsets in
+            horizontalSafeAreaInsets = newInsets
+        }
         .onGeometryChange(for: CGFloat.self) { proxy in
             max(proxy.size.height - IKPadding.small * 2, 0)
         } action: { newHeight in

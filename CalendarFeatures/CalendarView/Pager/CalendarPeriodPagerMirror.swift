@@ -54,6 +54,8 @@ private struct CalendarPeriodMirrorScrollView<Content: View>: View {
         .scrollIndicators(.hidden, axes: .horizontal)
         .scrollDisabled(true)
         .modifier(MirrorScrollOffsetModifier(scrollSync: scrollSync))
+        // The scroll view extends below the safe area, where the neighboring pages must stay hidden.
+        .clipped()
     }
 }
 
