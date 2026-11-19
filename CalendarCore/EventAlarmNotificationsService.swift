@@ -197,11 +197,13 @@ public final class EventAlarmNotificationsService: Sendable {
         let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
 
         let content = UNMutableNotificationContent()
-        content.body = upcomingAlarm.event.title
+        content.title = upcomingAlarm.formatted(.notificationTitle)
+        content.body = upcomingAlarm.formatted(.notificationBody)
         content.sound = .default
         content.categoryIdentifier = NotificationsHelper.CategoryIdentifier.eventAlarm
+        content.threadIdentifier = upcomingAlarm.event.occurrenceIdValue
         content.userInfo = [
-            NotificationsHelper.UserInfoKeys.eventId: upcomingAlarm.event.occurrenceIdValue
+            NotificationsHelper.UserInfoKeys.occurrenceId: upcomingAlarm.event.occurrenceIdValue
         ]
 
         return UNNotificationRequest(identifier: notificationID(for: upcomingAlarm), content: content, trigger: trigger)

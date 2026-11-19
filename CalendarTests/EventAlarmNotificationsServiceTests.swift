@@ -17,6 +17,7 @@
  */
 
 @testable import CalendarCore
+import CalendarResources
 import Foundation
 import MultiplatformCalendar
 import Testing
@@ -123,29 +124,83 @@ struct EventAlarmNotificationsServiceTests {
         let trigger = try #require(request.trigger as? UNCalendarNotificationTrigger)
 
         #expect(request.identifier == "event-alarm:alarm-id")
-        #expect(trigger.dateComponents == Calendar.current.dateComponents(
+        #expect(trigger.dateComponents == testCalendar.dateComponents(
             [.year, .month, .day, .hour, .minute, .second],
             from: firesAt
         ))
-        #expect(request.content.body == "Team meeting")
+        #expect(request.content.title == "Team meeting")
         #expect(request.content.categoryIdentifier == NotificationsHelper.CategoryIdentifier.eventAlarm)
-        #expect(request.content.userInfo[NotificationsHelper.UserInfoKeys.eventId] as? String == "event-id")
+        #expect(request.content.userInfo[NotificationsHelper.UserInfoKeys.occurrenceId] as? String == "event-id")
     }
 
-    @Test func usesEventTitleAsBodyRegardlessOfLocation() async throws {
-        let upcomingAlarm = EventAlarmTestFixtures.upcomingAlarm(
+    @Test func showsTimeBoundsAndLocationForTimedEvent() async throws {
+        let request = try await scheduledRequest(for: EventAlarmTestFixtures.upcomingAlarm(
             id: "alarm-id",
-            title: "Team meeting",
-            location: "Meeting room"
-        )
-        let notificationCenter = EventAlarmTestNotificationCenter()
-        let eventsProvider = EventAlarmTestEventsProvider(upcomingAlarms: [upcomingAlarm])
-        let service = makeService(eventsProvider: eventsProvider, notificationCenter: notificationCenter)
+            title: " Workshop ",
+            location: "Salle Jules Verne",
+            start: DateComponents(year: 2027, month: 1, day: 15, hour: 14),
+            end: DateComponents(year: 2027, month: 1, day: 15, hour: 14, minute: 45)
+        ))
 
-        await service.scheduleNotificationsForEventAlarms()
+        #expect(request.content.title == "Workshop")
+        #expect(request.content.body == "14:00\u{2009}–\u{2009}14:45\nSalle Jules Verne")
+    }
 
-        let request = try #require(await notificationCenter.snapshot().addedRequests.first)
-        #expect(request.content.body == "Team meeting")
+    @Test func showsDayAndAllDayLabelForAllDayEvent() async throws {
+        let firesAt = try #require(testCalendar.date(from: DateComponents(year: 2027, month: 1, day: 15, hour: 9, minute: 41)))
+        let request = try await scheduledRequest(for: EventAlarmTestFixtures.upcomingAlarm(
+            id: "alarm-id",
+            firesAt: firesAt,
+            title: "Séminaire",
+            start: DateComponents(year: 2027, month: 1, day: 15),
+            end: DateComponents(year: 2027, month: 1, day: 16),
+            isAllDay: true
+        ))
+
+        #expect(request.content.body == "\(relativeDay(offset: 0)) · \(CalendarResourcesStrings.allDayLabel)")
+    }
+
+    @Test func showsLocationOnSecondLineForAllDayEvent() async throws {
+        let firesAt = try #require(testCalendar.date(from: DateComponents(year: 2027, month: 1, day: 15, hour: 9, minute: 41)))
+        let request = try await scheduledRequest(for: EventAlarmTestFixtures.upcomingAlarm(
+            id: "alarm-id",
+            firesAt: firesAt,
+            location: "Rue du Rhône 1, 1204 Genève",
+            start: DateComponents(year: 2027, month: 1, day: 15),
+            end: DateComponents(year: 2027, month: 1, day: 16),
+            isAllDay: true
+        ))
+
+        #expect(request.content
+            .body == "\(relativeDay(offset: 0)) · \(CalendarResourcesStrings.allDayLabel)\nRue du Rhône 1, 1204 Genève")
+    }
+
+    @Test func omitsLocationLineWhenEventHasNoLocation() async throws {
+        let request = try await scheduledRequest(for: EventAlarmTestFixtures.upcomingAlarm(
+            id: "alarm-id",
+            start: DateComponents(year: 2027, month: 1, day: 15, hour: 9),
+            end: DateComponents(year: 2027, month: 1, day: 15, hour: 10)
+        ))
+
+        #expect(request.content.body == "09:00\u{2009}–\u{2009}10:00")
+    }
+
+    @Test func showsRelativeDayWhenEventIsNotOnFiringDay() async throws {
+        let firesAt = try #require(testCalendar.date(from: DateComponents(year: 2027, month: 1, day: 14, hour: 18)))
+        let request = try await scheduledRequest(for: EventAlarmTestFixtures.upcomingAlarm(
+            id: "alarm-id",
+            firesAt: firesAt,
+            start: DateComponents(year: 2027, month: 1, day: 15, hour: 9),
+            end: DateComponents(year: 2027, month: 1, day: 15, hour: 10)
+        ))
+
+        #expect(request.content.body == "\(relativeDay(offset: 1)) · 09:00\u{2009}–\u{2009}10:00")
+    }
+
+    @Test func usesUntitledLabelForEventWithoutTitle() async throws {
+        let request = try await scheduledRequest(for: EventAlarmTestFixtures.upcomingAlarm(id: "alarm-id", title: "  "))
+
+        #expect(request.content.title == CalendarResourcesStrings.eventUntitledLabel)
     }
 
     @Test func reschedulesPendingAlarmWhenEventTitleChanged() async throws {
@@ -167,8 +222,35 @@ struct EventAlarmNotificationsServiceTests {
 
         let snapshot = await notificationCenter.snapshot()
         #expect(snapshot.addedRequests.map(\.identifier) == ["event-alarm:alarm-id"])
-        #expect(snapshot.addedRequests.first?.content.body == "New title")
+        #expect(snapshot.addedRequests.first?.content.title == "New title")
         #expect(snapshot.removedIdentifiers.isEmpty)
+    }
+
+    private var testCalendar: Foundation.Calendar {
+        var calendar = Foundation.Calendar(identifier: .gregorian)
+        calendar.locale = Locale(identifier: "fr_CH")
+        return calendar
+    }
+
+    private func relativeDay(offset: Int) -> String {
+        let referenceDay = Date(timeIntervalSince1970: 1_800_000_000)
+        let anchor = Calendar.current.date(byAdding: .day, value: offset, to: referenceDay) ?? referenceDay
+        var style = Date.AnchoredRelativeFormatStyle(
+            anchor: anchor,
+            presentation: .named,
+            unitsStyle: .wide,
+            capitalizationContext: .beginningOfSentence
+        )
+        style.allowedFields = [.day]
+        return style.format(referenceDay)
+    }
+
+    private func scheduledRequest(for upcomingAlarm: UpcomingAlarm) async throws -> UNNotificationRequest {
+        let notificationCenter = EventAlarmTestNotificationCenter()
+        let eventsProvider = EventAlarmTestEventsProvider(upcomingAlarms: [upcomingAlarm])
+        await makeService(eventsProvider: eventsProvider, notificationCenter: notificationCenter)
+            .scheduleNotificationsForEventAlarms()
+        return try #require(await notificationCenter.snapshot().addedRequests.first)
     }
 
     private func makeService(
@@ -176,7 +258,7 @@ struct EventAlarmNotificationsServiceTests {
         notificationCenter: EventAlarmTestNotificationCenter
     ) -> EventAlarmNotificationsService {
         EventAlarmNotificationsService(
-            calendar: Calendar.current,
+            calendar: testCalendar,
             eventsProvider: eventsProvider,
             notificationCenter: notificationCenter
         )
@@ -253,38 +335,29 @@ private enum EventAlarmTestFixtures {
     static func upcomingAlarm(
         id: String,
         eventId: String? = nil,
-        firesAt: Date = Date(timeIntervalSince1970: 1_800_000_000),
+        firesAt: Date? = nil,
         title: String? = nil,
-        location: String? = nil
+        location: String? = nil,
+        start: DateComponents = DateComponents(year: 2027, month: 1, day: 15, hour: 10),
+        end: DateComponents = DateComponents(year: 2027, month: 1, day: 15, hour: 11),
+        isAllDay: Bool = false
     ) -> UpcomingAlarm {
         let alarm = EventAlarm(
             action: AlarmActionDisplay(),
             trigger: AlarmTriggerRelative(offset: -300, relatedTo: .start)
         )
-        let startDate = LocalDateTime(
-            year: 2027,
-            month: 1,
-            day: 15,
-            hour: 10,
-            minute: 0,
-            second: 0,
-            nanosecond: 0
-        )
-        let endDate = LocalDateTime(
-            year: 2027,
-            month: 1,
-            day: 15,
-            hour: 11,
-            minute: 0,
-            second: 0,
-            nanosecond: 0
-        )
+        let startDate = localDateTime(start)
+        let endDate = localDateTime(end)
+        let bounds: any EventBounds = isAllDay
+            ? EventBoundsAllDay(start: startDate.date, end: endDate.date)
+            : EventBoundsFloating(start: startDate, end: endDate)
         let timing = EventTiming(
-            bounds: EventBoundsFloating(start: startDate, end: endDate),
+            bounds: bounds,
             recurrenceRule: nil,
             rDates: [],
             exDates: []
         )
+        let firesAt = firesAt ?? timing.startInstantLocal().toNSDate().addingTimeInterval(-300)
         let themedColor = ThemedColor(light: 0, dark: 0)
         let colors = EventColors(
             calendarSourceColor: 0,
@@ -310,10 +383,19 @@ private enum EventAlarmTestFixtures {
             myStatus: nil,
             canEdit: true
         )
-        let firesAtInstant = KotlinInstant.companion.fromEpochMilliseconds(
-            epochMilliseconds: Int64(firesAt.timeIntervalSince1970 * 1000)
+        return UpcomingAlarm(id: id, firesAt: firesAt.instant, alarm: alarm, event: event)
+    }
+
+    private static func localDateTime(_ components: DateComponents) -> LocalDateTime {
+        LocalDateTime(
+            year: Int32(components.year ?? 0),
+            month: Int32(components.month ?? 1),
+            day: Int32(components.day ?? 1),
+            hour: Int32(components.hour ?? 0),
+            minute: Int32(components.minute ?? 0),
+            second: 0,
+            nanosecond: 0
         )
-        return UpcomingAlarm(id: id, firesAt: firesAtInstant, alarm: alarm, event: event)
     }
 
     static func notificationRequest(identifier: String) -> UNNotificationRequest {
