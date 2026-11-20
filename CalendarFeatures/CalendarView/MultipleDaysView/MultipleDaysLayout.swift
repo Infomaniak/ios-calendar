@@ -47,9 +47,18 @@ enum MultipleDaysLayout: Hashable {
     var pagerScrollBehavior: AnyScrollTargetBehavior {
         switch self {
         case .paged:
-            return AnyScrollTargetBehavior(.paging)
+            return AnyScrollTargetBehavior(.viewAligned(limitBehavior: .alwaysByOne))
         case .continuous:
             return AnyScrollTargetBehavior(.viewAligned)
+        }
+    }
+
+    var revealsNeighborsInSafeArea: Bool {
+        switch self {
+        case .paged:
+            return false
+        case .continuous:
+            return true
         }
     }
 
