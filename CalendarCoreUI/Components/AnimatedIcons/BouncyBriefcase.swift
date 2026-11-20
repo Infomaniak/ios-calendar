@@ -44,65 +44,65 @@ private struct BriefcaseShape: AnimatedIconShape {
         var path = Path()
 
         // Handle
-        path.move(to: pt(8, 6))
-        path.addLine(to: pt(8, 4))
-        path.addCurve(to: pt(10, 2), control1: pt(8, 2.895), control2: pt(8.895, 2))
-        path.addLine(to: pt(14, 2))
-        path.addCurve(to: pt(16, 4), control1: pt(15.105, 2), control2: pt(16, 2.895))
-        path.addLine(to: pt(16, 6))
+        path.move(to: CGPoint(x: 8, y: 6))
+        path.addLine(to: CGPoint(x: 8, y: 4))
+        path.addCurve(to: CGPoint(x: 10, y: 2), control1: CGPoint(x: 8, y: 2.895), control2: CGPoint(x: 8.895, y: 2))
+        path.addLine(to: CGPoint(x: 14, y: 2))
+        path.addCurve(to: CGPoint(x: 16, y: 4), control1: CGPoint(x: 15.105, y: 2), control2: CGPoint(x: 16, y: 2.895))
+        path.addLine(to: CGPoint(x: 16, y: 6))
 
         let leftTop = Self.y(atX: 2, onCubic: p[11], p[12], p[13], p[14])
         let rightTop = Self.y(atX: 22, onCubic: p[8], p[9], p[10], p[11])
-        path.move(to: pt(2, leftTop))
-        path.addLine(to: pt(2, 18))
-        path.addCurve(to: pt(4, 20), control1: pt(2, 19.105), control2: pt(2.895, 20))
-        path.addLine(to: pt(20, 20))
-        path.addCurve(to: pt(22, 18), control1: pt(21.105, 20), control2: pt(22, 19.105))
-        path.addLine(to: pt(22, rightTop))
+        path.move(to: CGPoint(x: 2, y: leftTop))
+        path.addLine(to: CGPoint(x: 2, y: 18))
+        path.addCurve(to: CGPoint(x: 4, y: 20), control1: CGPoint(x: 2, y: 19.105), control2: CGPoint(x: 2.895, y: 20))
+        path.addLine(to: CGPoint(x: 20, y: 20))
+        path.addCurve(to: CGPoint(x: 22, y: 18), control1: CGPoint(x: 21.105, y: 20), control2: CGPoint(x: 22, y: 19.105))
+        path.addLine(to: CGPoint(x: 22, y: rightTop))
 
         // Flap
         path.move(to: p[0])
-        path.addLine(to: p[1]) // top edge = hinge
-        path.addCurve(to: p[4], control1: p[2], control2: p[3]) // top-right corner
-        path.addLine(to: p[5]) // right side
-        path.addCurve(to: p[8], control1: p[6], control2: p[7]) // bottom-right corner
-        path.addCurve(to: p[11], control1: p[9], control2: p[10]) // bottom curve, right half
-        path.addCurve(to: p[14], control1: p[12], control2: p[13]) // bottom curve, left half
-        path.addCurve(to: p[17], control1: p[15], control2: p[16]) // bottom-left corner
-        path.addLine(to: p[18]) // left side
-        path.addCurve(to: p[21], control1: p[19], control2: p[20]) // top-left corner
+        path.addLine(to: p[1])
+        path.addCurve(to: p[4], control1: p[2], control2: p[3])
+        path.addLine(to: p[5])
+        path.addCurve(to: p[8], control1: p[6], control2: p[7])
+        path.addCurve(to: p[11], control1: p[9], control2: p[10])
+        path.addCurve(to: p[14], control1: p[12], control2: p[13])
+        path.addCurve(to: p[17], control1: p[15], control2: p[16])
+        path.addLine(to: p[18])
+        path.addCurve(to: p[21], control1: p[19], control2: p[20])
         path.closeSubpath()
 
         // Clasp
         let claspY = 12 + (9.5 - 12) * t
-        path.move(to: pt(12, claspY))
-        path.addLine(to: pt(12.01, claspY))
+        path.move(to: CGPoint(x: 12, y: claspY))
+        path.addLine(to: CGPoint(x: 12.01, y: claspY))
 
         return path
     }
 
     private static let closedFlap: [CGPoint] = [
-        pt(4, 6), pt(20, 6),
-        pt(21.105, 6), pt(22, 6.895), pt(22, 8),
-        pt(22, 13),
-        pt(22, 13), pt(22, 13), pt(22, 13),
-        pt(19.033, 14.959), pt(15.556, 16.003), pt(12, 16.003),
-        pt(8.444, 16.003), pt(4.967, 14.959), pt(2, 13),
-        pt(2, 13), pt(2, 13), pt(2, 13),
-        pt(2, 8),
-        pt(2, 6.895), pt(2.895, 6), pt(4, 6)
+        CGPoint(x: 4, y: 6), CGPoint(x: 20, y: 6),
+        CGPoint(x: 21.105, y: 6), CGPoint(x: 22, y: 6.895), CGPoint(x: 22, y: 8),
+        CGPoint(x: 22, y: 13),
+        CGPoint(x: 22, y: 13), CGPoint(x: 22, y: 13), CGPoint(x: 22, y: 13),
+        CGPoint(x: 19.033, y: 14.959), CGPoint(x: 15.556, y: 16.003), CGPoint(x: 12, y: 16.003),
+        CGPoint(x: 8.444, y: 16.003), CGPoint(x: 4.967, y: 14.959), CGPoint(x: 2, y: 13),
+        CGPoint(x: 2, y: 13), CGPoint(x: 2, y: 13), CGPoint(x: 2, y: 13),
+        CGPoint(x: 2, y: 8),
+        CGPoint(x: 2, y: 6.895), CGPoint(x: 2.895, y: 6), CGPoint(x: 4, y: 6)
     ]
 
     private static let openFlap: [CGPoint] = [
-        pt(4.5, 6), pt(19.5, 6),
-        pt(20.35, 6), pt(21.05, 6.42), pt(21.48, 7.2),
-        pt(22.7, 9.43),
-        pt(23.02, 10.01), pt(22.95, 10.45), pt(22.4, 10.7),
-        pt(18.9333, 12.2667), pt(15.4667, 13.05), pt(12, 13.05),
-        pt(8.5333, 13.05), pt(5.0667, 12.2667), pt(1.6, 10.7),
-        pt(1.05, 10.45), pt(0.98, 10.01), pt(1.3, 9.43),
-        pt(2.52, 7.2),
-        pt(2.95, 6.42), pt(3.65, 6), pt(4.5, 6)
+        CGPoint(x: 4.5, y: 6), CGPoint(x: 19.5, y: 6),
+        CGPoint(x: 20.35, y: 6), CGPoint(x: 21.05, y: 6.42), CGPoint(x: 21.48, y: 7.2),
+        CGPoint(x: 22.7, y: 9.43),
+        CGPoint(x: 23.02, y: 10.01), CGPoint(x: 22.95, y: 10.45), CGPoint(x: 22.4, y: 10.7),
+        CGPoint(x: 18.9333, y: 12.2667), CGPoint(x: 15.4667, y: 13.05), CGPoint(x: 12, y: 13.05),
+        CGPoint(x: 8.5333, y: 13.05), CGPoint(x: 5.0667, y: 12.2667), CGPoint(x: 1.6, y: 10.7),
+        CGPoint(x: 1.05, y: 10.45), CGPoint(x: 0.98, y: 10.01), CGPoint(x: 1.3, y: 9.43),
+        CGPoint(x: 2.52, y: 7.2),
+        CGPoint(x: 2.95, y: 6.42), CGPoint(x: 3.65, y: 6), CGPoint(x: 4.5, y: 6)
     ]
 
     private static func y(atX x: CGFloat, onCubic p0: CGPoint, _ p1: CGPoint, _ p2: CGPoint, _ p3: CGPoint) -> CGFloat {
@@ -126,10 +126,6 @@ private struct BriefcaseShape: AnimatedIconShape {
 
         return point((low + high) / 2).y
     }
-}
-
-private func pt(_ x: CGFloat, _ y: CGFloat) -> CGPoint {
-    CGPoint(x: x, y: y)
 }
 
 #Preview("BouncyBriefcase") {
