@@ -32,9 +32,12 @@ struct AllDayEventButton: View {
                 .padding(.trailing, value: .mini)
                 .eventCellStyle(event: event)
         }
+        .eventQuickActions(.menu, event: event)
     }
 }
 
 #Preview {
     AllDayEventButton(event: .preview)
+        .environment(MainViewState())
+        .environment(EventInteractionModel())
 }

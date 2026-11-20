@@ -137,6 +137,7 @@ public struct CalendarView: View {
                 .buttonStyle(.borderedProminent)
             }
         }
+        .eventInteractionsHost()
     }
 }
 
