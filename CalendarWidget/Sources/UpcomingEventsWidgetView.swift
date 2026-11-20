@@ -22,6 +22,7 @@ import CalendarResources
 import DesignSystem
 import ESDSCalendar
 import ESDSFoundation
+import ESDSSymbols
 import SwiftUI
 import WidgetKit
 
@@ -73,15 +74,27 @@ struct UpcomingEventsWidgetView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: IKPadding.micro) {
-            VStack(alignment: .leading, spacing: 0) {
-                Text(.currentDate, format: .dateTime.weekday(.wide))
-                    .textCase(.uppercase)
-                    .font(.caption2.weight(.emphasized))
-                    .foregroundStyle(theme.color.contentBrand)
+            HStack(alignment: .top, spacing: IKPadding.micro) {
+                VStack(alignment: .leading, spacing: 0) {
+                    Text(.currentDate, format: .dateTime.weekday(.wide))
+                        .textCase(.uppercase)
+                        .font(.caption2.weight(.emphasized))
+                        .foregroundStyle(theme.color.contentBrand)
 
-                Text(.currentDate, format: .dateTime.day())
-                    .font(.title2)
-                    .foregroundStyle(theme.color.contentPrimary)
+                    Text(.currentDate, format: .dateTime.day())
+                        .font(.title2)
+                        .foregroundStyle(theme.color.contentPrimary)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+                Link(destination: DeeplinkConstants.newEventURL) {
+                    ESDSSymbols.plus.image
+                        .font(.system(size: IKIconSize.medium.rawValue, weight: .semibold))
+                        .foregroundStyle(theme.color.contentOnBrand)
+                        .padding(value: .small)
+                        .background(theme.color.backgroundBrand, in: .circle)
+                }
+                .accessibilityLabel(CalendarResourcesStrings.contentDescriptionCreateEvent)
             }
 
             if entry.events.isEmpty {
@@ -94,7 +107,9 @@ struct UpcomingEventsWidgetView: View {
                     ForEach(layouts, id: \.self) { layout in
                         VStack(spacing: IKPadding.micro) {
                             ForEach(entry.events.prefix(layout.count)) { event in
-                                UpcomingEventCell(event: event, showsLocation: layout.showsLocation)
+                                Link(destination: DeeplinkConstants.eventURL(occurrenceId: event.occurrenceId)) {
+                                    UpcomingEventCell(event: event, showsLocation: layout.showsLocation)
+                                }
                             }
                         }
                     }

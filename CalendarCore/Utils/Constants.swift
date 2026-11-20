@@ -23,3 +23,25 @@ public enum URLConstants {
     public static let githubRepositoryURL = URL(string: "https://github.com/Infomaniak/ios-calendar")!
     public static let matomoURL = URL(string: "https://analytics.infomaniak.com/matomo.php")!
 }
+
+public enum DeeplinkConstants {
+    public static let scheme = "com.infomaniak.calendar"
+    public static let widgetEventHost = "widget-event"
+    public static let widgetNewEventHost = "widget-new-event"
+    public static let occurrenceIdQueryItem = "occurrence_id"
+
+    public static var newEventURL: URL {
+        var components = URLComponents()
+        components.scheme = scheme
+        components.host = widgetNewEventHost
+        return components.url!
+    }
+
+    public static func eventURL(occurrenceId: String) -> URL {
+        var components = URLComponents()
+        components.scheme = scheme
+        components.host = widgetEventHost
+        components.queryItems = [URLQueryItem(name: occurrenceIdQueryItem, value: occurrenceId)]
+        return components.url!
+    }
+}

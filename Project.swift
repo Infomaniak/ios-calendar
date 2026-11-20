@@ -248,6 +248,7 @@ let project = Project(
                 .external(name: "DesignSystem"),
                 .external(name: "ESDSCalendar"),
                 .external(name: "ESDSFoundation"),
+                .external(name: "ESDSSymbols"),
                 .external(name: "InfomaniakDI"),
                 .external(name: "MultiplatformCalendar")
             ],

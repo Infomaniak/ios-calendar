@@ -38,6 +38,7 @@ struct CalendarApp: App {
     private var customTimeZoneIdentifier: String?
 
     @StateObject private var rootViewState = RootViewState()
+    @State private var universalLinksState = UniversalLinksState()
 
     private var calendar: Calendar {
         var calendar = Calendar.autoupdatingCurrent
@@ -53,17 +54,26 @@ struct CalendarApp: App {
         WindowGroup {
             RootView()
                 .environmentObject(rootViewState)
+                .environment(universalLinksState)
                 .environment(\.calendar, calendar)
                 .environment(\.timeZone, calendar.timeZone)
                 .sceneLifecycle(willEnterForeground: willEnterForeground, didEnterBackground: didEnterBackground)
                 .esdsTheme(.calendar)
                 .colorSchemeModifier()
+                .onOpenURL(perform: handleURL)
         }
         .backgroundTask(.appRefresh(EventAlarmBackgroundTaskHelper.identifier)) {
             await EventAlarmBackgroundTaskHelper().scheduleIfNecessary()
 
             @InjectService var eventAlarmNotification: EventAlarmNotificationsService
             await eventAlarmNotification.scheduleNotificationsForEventAlarms()
+        }
+    }
+
+    private func handleURL(_ url: URL) {
+        let linkHandler = UniversalLinkHandler()
+        if let universalLink = linkHandler.handlePossibleUniversalLink(url) {
+            universalLinksState.pendingAction = .goTo(universalLink)
         }
     }
 
