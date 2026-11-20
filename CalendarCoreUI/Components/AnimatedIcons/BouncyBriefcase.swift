@@ -18,60 +18,27 @@
 
 import SwiftUI
 
-private struct BounceValues {
-    var scale = 1.0
-    var rotation = 0.0
-}
-
 public struct BouncyBriefcase: View {
-    @State private var bounceTrigger = false
-
     let isOpened: Bool
     let lineWidth: CGFloat
 
-    public init(isUnlocked: Bool, lineWidth: CGFloat = 1.6) {
-        self.isOpened = isUnlocked
+    public init(isOpened: Bool, lineWidth: CGFloat = 1.6) {
+        self.isOpened = isOpened
         self.lineWidth = lineWidth
     }
 
     public var body: some View {
-        BriefcaseShape(progress: isOpened ? 1 : 0)
-            .stroke(.foreground, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round, lineJoin: .round))
-            .aspectRatio(1, contentMode: .fit)
-            .keyframeAnimator(initialValue: BounceValues(), trigger: bounceTrigger) { content, value in
-                content
-                    .scaleEffect(value.scale)
-                    .rotationEffect(.degrees(value.rotation))
-            } keyframes: { _ in
-                KeyframeTrack(\.scale) {
-                    CubicKeyframe(0.88, duration: 0.1)
-                    SpringKeyframe(1, duration: 0.38, spring: .bouncy)
-                }
-                KeyframeTrack(\.rotation) {
-                    CubicKeyframe(isOpened ? -7 : 7, duration: 0.12)
-                    SpringKeyframe(0, duration: 0.36, spring: .bouncy)
-                }
-            }
-            .animation(.spring(duration: 0.52, bounce: 0.42), value: isOpened)
-            .onChange(of: isOpened) {
-                bounceTrigger.toggle()
-            }
-            .accessibilityHidden(true)
+        BouncyIcon(shape: BriefcaseShape.self, isToggled: isOpened, lineWidth: lineWidth)
     }
 }
 
-struct BriefcaseShape: Shape {
+private struct BriefcaseShape: AnimatedIconShape {
     var progress: CGFloat
 
-    var animatableData: CGFloat {
-        get { progress }
-        set { progress = newValue }
-    }
-
-    func path(in rect: CGRect) -> Path {
+    func iconPath() -> Path {
         let t = max(progress, 0)
         let p = zip(Self.closedFlap, Self.openFlap).map { closed, open in
-            CGPoint(x: closed.x + (open.x - closed.x) * t, y: closed.y + (open.y - closed.y) * t)
+            closed.interpolated(to: open, progress: t)
         }
 
         var path = Path()
@@ -111,11 +78,7 @@ struct BriefcaseShape: Shape {
         path.move(to: pt(12, claspY))
         path.addLine(to: pt(12.01, claspY))
 
-        let scale = min(rect.width, rect.height) / 24
-        return path.applying(
-            CGAffineTransform(scaleX: scale, y: scale)
-                .concatenating(CGAffineTransform(translationX: rect.midX - 12 * scale, y: rect.midY - 12 * scale))
-        )
+        return path
     }
 
     private static let closedFlap: [CGPoint] = [
@@ -127,7 +90,7 @@ struct BriefcaseShape: Shape {
         pt(8.444, 16.003), pt(4.967, 14.959), pt(2, 13),
         pt(2, 13), pt(2, 13), pt(2, 13),
         pt(2, 8),
-        pt(2, 6.895), pt(2.895, 6), pt(4, 6),
+        pt(2, 6.895), pt(2.895, 6), pt(4, 6)
     ]
 
     private static let openFlap: [CGPoint] = [
@@ -139,7 +102,7 @@ struct BriefcaseShape: Shape {
         pt(8.5333, 13.05), pt(5.0667, 12.2667), pt(1.6, 10.7),
         pt(1.05, 10.45), pt(0.98, 10.01), pt(1.3, 9.43),
         pt(2.52, 7.2),
-        pt(2.95, 6.42), pt(3.65, 6), pt(4.5, 6),
+        pt(2.95, 6.42), pt(3.65, 6), pt(4.5, 6)
     ]
 
     private static func y(atX x: CGFloat, onCubic p0: CGPoint, _ p1: CGPoint, _ p2: CGPoint, _ p3: CGPoint) -> CGFloat {
@@ -165,31 +128,18 @@ struct BriefcaseShape: Shape {
     }
 }
 
-private func pt(_ x: CGFloat, _ y: CGFloat) -> CGPoint { CGPoint(x: x, y: y) }
+private func pt(_ x: CGFloat, _ y: CGFloat) -> CGPoint {
+    CGPoint(x: x, y: y)
+}
 
 #Preview("BouncyBriefcase") {
-    @Previewable @State var isUnlocked = true
+    @Previewable @State var isOpened = true
     VStack {
-        BouncyBriefcase(isUnlocked: isUnlocked)
+        BouncyBriefcase(isOpened: isOpened)
             .frame(width: 48, height: 48)
 
         Button("Toggle") {
-            isUnlocked.toggle()
+            isOpened.toggle()
         }
     }
-}
-
-#Preview("BriefcaseShape") {
-    @Previewable @State var progress = 0.0
-    VStack {
-        BriefcaseShape(progress: progress)
-            .stroke(
-                .foreground,
-                style: StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round)
-            )
-            .frame(width: 48, height: 48)
-
-        Slider(value: $progress, in: 0 ... 1)
-    }
-    .padding()
 }

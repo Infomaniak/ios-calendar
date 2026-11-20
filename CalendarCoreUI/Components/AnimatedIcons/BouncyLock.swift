@@ -18,14 +18,7 @@
 
 import SwiftUI
 
-private struct BounceValues {
-    var scale = 1.0
-    var rotation = 0.0
-}
-
 public struct BouncyLock: View {
-    @State private var bounceTrigger = false
-
     let isUnlocked: Bool
     let lineWidth: CGFloat
 
@@ -35,51 +28,14 @@ public struct BouncyLock: View {
     }
 
     public var body: some View {
-        LockShape(progress: isUnlocked ? 1 : 0)
-            .stroke(.foreground, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round, lineJoin: .round))
-            .aspectRatio(1, contentMode: .fit)
-            .keyframeAnimator(initialValue: BounceValues(), trigger: bounceTrigger) { content, value in
-                content
-                    .scaleEffect(value.scale)
-                    .rotationEffect(.degrees(value.rotation))
-            } keyframes: { _ in
-                KeyframeTrack(\.scale) {
-                    CubicKeyframe(0.88, duration: 0.1)
-                    SpringKeyframe(1, duration: 0.38, spring: .bouncy)
-                }
-                KeyframeTrack(\.rotation) {
-                    CubicKeyframe(isUnlocked ? -7 : 7, duration: 0.12)
-                    SpringKeyframe(0, duration: 0.36, spring: .bouncy)
-                }
-            }
-            .animation(.spring(duration: 0.52, bounce: 0.42), value: isUnlocked)
-            .onChange(of: isUnlocked) {
-                bounceTrigger.toggle()
-            }
-            .accessibilityHidden(true)
+        BouncyIcon(shape: LockShape.self, isToggled: isUnlocked, lineWidth: lineWidth)
     }
 }
 
-/// LockShape recreates the icons `lock` and `lock-open` from ESDS
-private struct LockShape: Shape {
+private struct LockShape: AnimatedIconShape {
     var progress: CGFloat
 
-    var animatableData: CGFloat {
-        get { progress }
-        set { progress = newValue }
-    }
-
-    func path(in rect: CGRect) -> Path {
-        let scale = min(rect.width, rect.height) / 24
-        let origin = CGPoint(
-            x: rect.midX - 12 * scale,
-            y: rect.midY - 12 * scale
-        )
-        let transform = CGAffineTransform(
-            a: scale, b: 0, c: 0, d: scale,
-            tx: origin.x, ty: origin.y
-        )
-
+    func iconPath() -> Path {
         var path = Path()
         path.addRoundedRect(
             in: CGRect(x: 3, y: 11, width: 18, height: 11),
@@ -115,14 +71,11 @@ private struct LockShape: Shape {
         )
         path.addLine(to: point(locked: (17, 11), unlocked: (16.9, 6), t: t))
 
-        return path.applying(transform)
+        return path
     }
 
     private func point(locked: (CGFloat, CGFloat), unlocked: (CGFloat, CGFloat), t: CGFloat) -> CGPoint {
-        return CGPoint(
-            x: locked.0 + (unlocked.0 - locked.0) * t,
-            y: locked.1 + (unlocked.1 - locked.1) * t
-        )
+        CGPoint(x: locked.0, y: locked.1).interpolated(to: CGPoint(x: unlocked.0, y: unlocked.1), progress: t)
     }
 
     private func addCurve(to point: CGPoint, control1: CGPoint, control2: CGPoint, to path: inout Path) {
@@ -140,19 +93,4 @@ private struct LockShape: Shape {
             isUnlocked.toggle()
         }
     }
-}
-
-#Preview("LockShape") {
-    @Previewable @State var progress = 0.0
-    VStack {
-        LockShape(progress: progress)
-            .stroke(
-                .foreground,
-                style: StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round)
-            )
-            .frame(width: 48, height: 48)
-
-        Slider(value: $progress, in: 0 ... 1)
-    }
-    .padding()
 }
