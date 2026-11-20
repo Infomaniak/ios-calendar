@@ -61,7 +61,7 @@ enum MultipleDaysLayout: Hashable {
         switch self {
         case .paged:
             return 6
-        case .continuous:
+        case .continuous:
             return 8
         }
     }

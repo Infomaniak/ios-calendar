@@ -42,7 +42,7 @@ struct EventCellStyle: ViewModifier {
     init(mode: Mode, colors: UIEventColor = .preview) {
         self.mode = mode
         self.colors = colors
-        self.cornerRadius = 8
+        cornerRadius = 8
     }
 
     private var foreground: Color {

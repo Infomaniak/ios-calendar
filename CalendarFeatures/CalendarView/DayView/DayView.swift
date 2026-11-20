@@ -69,7 +69,11 @@ struct DayContentView: View {
                 startOfDay: geometry.startOfDay,
                 hourSlotHeight: geometry.pointsPerHour,
                 horizontalHourSlotHeight: geometry.horizontalLayoutPointsPerHour,
-                config: .init(hSpacing: Constants.layoutHorizontalSpacing, hPadding: 12, vSpacing: Constants.layoutVerticalSpacing),
+                config: .init(
+                    hSpacing: Constants.layoutHorizontalSpacing,
+                    hPadding: 12,
+                    vSpacing: Constants.layoutVerticalSpacing
+                ),
                 onCoveredIndicesChange: onCoveredIndicesChange
             ) {
                 ForEach(Array(events.enumerated()), id: \.element.id) { index, event in
