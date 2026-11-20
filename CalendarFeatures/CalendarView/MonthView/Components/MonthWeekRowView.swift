@@ -37,6 +37,10 @@ struct MonthWeekRowView: View {
         metrics.maxEventsCount(rowHeight: rowHeight)
     }
 
+    private var truncatedLaneCount: Int {
+        min(metrics.maxEventsCountWithHiddenEventsIndicator(rowHeight: rowHeight), laneCount)
+    }
+
     var body: some View {
         HStack(alignment: .top, spacing: 0) {
             if showWeekNumber, let firstDay = days.first {
@@ -73,9 +77,12 @@ struct MonthWeekRowView: View {
 
                 if let layout, laneCount > 0 {
                     MonthWeekEventsView(
-                        segments: layout.visibleSegments(laneCount: laneCount),
-                        columnsWithHiddenEvents: layout.columnsWithHiddenEvents(laneCount: laneCount),
-                        laneCount: laneCount,
+                        segments: layout.visibleSegments(laneCount: laneCount, truncatedLaneCount: truncatedLaneCount),
+                        columnsWithHiddenEvents: layout.columnsWithHiddenEvents(
+                            laneCount: laneCount,
+                            truncatedLaneCount: truncatedLaneCount
+                        ),
+                        truncatedLaneCount: truncatedLaneCount,
                         laneHeight: metrics.laneHeight
                     )
                     .padding(.top, metrics.totalDayNumberHeight)

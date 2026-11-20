@@ -57,6 +57,15 @@ enum MultipleDaysLayout: Hashable {
         return CalendarPeriodOffsets.offsets(for: pagerComponent)
     }
 
+    var layoutHPadding: CGFloat {
+        switch self {
+        case .paged:
+            return 6
+        case .continuous:
+            return 8
+        }
+    }
+
     func pagerDate(for date: Date, calendar: Calendar) -> Date {
         return calendar.dateInterval(of: pagerComponent, for: date)?.start ?? calendar.startOfDay(for: date)
     }

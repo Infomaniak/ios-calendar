@@ -30,19 +30,19 @@ struct EventCellStyle: ViewModifier {
 
     let mode: Mode
     let colors: UIEventColor
-    let padding: CGFloat
+    let cornerRadius: CGFloat
 
-    init(event: UIEventSummary, padding: CGFloat) {
+    init(event: UIEventSummary, cornerRadius: CGFloat) {
         colors = event.colors
-        self.padding = padding
         mode = Self.computeMode(for: event)
+        self.cornerRadius = cornerRadius
     }
 
     // periphery:ignore - Used for #Preview
     init(mode: Mode, colors: UIEventColor = .preview) {
         self.mode = mode
         self.colors = colors
-        padding = IKPadding.mini
+        cornerRadius = 8
     }
 
     private var foreground: Color {
@@ -75,13 +75,13 @@ struct EventCellStyle: ViewModifier {
         content
             .opacity(mode == .declined ? 0.5 : 1)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(padding)
+            .padding(.leading, IKPadding.mini)
             .foregroundStyle(foreground)
             .background(background)
             .strikethrough(mode == .declined)
             .overlay {
                 if mode == .pending {
-                    RoundedRectangle(cornerRadius: 8)
+                    RoundedRectangle(cornerRadius: cornerRadius)
                         .strokeBorder(colors.sourceColor, lineWidth: 1)
                 }
             }
@@ -89,7 +89,7 @@ struct EventCellStyle: ViewModifier {
                 colors.calendarSourceColor
                     .frame(width: 4)
             }
-            .clipShape(.rect(cornerRadius: 8))
+            .clipShape(.rect(cornerRadius: cornerRadius))
     }
 
     private static func computeMode(for event: UIEventSummary) -> Mode {
@@ -115,8 +115,8 @@ struct EventCellStyle: ViewModifier {
 }
 
 extension View {
-    func eventCellStyle(event: UIEventSummary, padding: CGFloat = IKPadding.mini) -> some View {
-        modifier(EventCellStyle(event: event, padding: padding))
+    func eventCellStyle(event: UIEventSummary, cornerRadius: CGFloat = 8) -> some View {
+        modifier(EventCellStyle(event: event, cornerRadius: cornerRadius))
     }
 
     // periphery:ignore - Used for #Preview

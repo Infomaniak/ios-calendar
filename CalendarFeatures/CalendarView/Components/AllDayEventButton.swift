@@ -28,6 +28,8 @@ struct AllDayEventButton: View {
                 .font(.caption.bold())
                 .lineLimit(1)
                 .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.vertical, value: .mini)
+                .padding(.trailing, value: .mini)
                 .eventCellStyle(event: event)
         }
     }

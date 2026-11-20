@@ -106,39 +106,54 @@ struct MonthWeekLayout: Equatable {
         dayEvents = columnEvents
     }
 
-    func visibleSegments(laneCount: Int) -> [MonthEventSegment] {
-        let overflowingColumns = overflowingColumns(laneCount: laneCount)
-        return segments.filter { isVisible($0, laneCount: laneCount, overflowingColumns: overflowingColumns) }
+    /// - Parameters:
+    ///   - laneCount: Lanes displayed in a column without hidden events.
+    ///   - truncatedLaneCount: Lanes displayed above the hidden events indicator in a column with hidden events.
+    func visibleSegments(laneCount: Int, truncatedLaneCount: Int) -> [MonthEventSegment] {
+        let overflowingColumns = overflowingColumns(laneCount: laneCount, truncatedLaneCount: truncatedLaneCount)
+        return segments.filter {
+            isVisible($0, laneCount: laneCount, truncatedLaneCount: truncatedLaneCount, overflowingColumns: overflowingColumns)
+        }
     }
 
-    func columnsWithHiddenEvents(laneCount: Int) -> [Bool] {
-        let overflowingColumns = overflowingColumns(laneCount: laneCount)
-        var hasHiddenEvents = Array(repeating: false, count: dayEvents.count)
-        for segment in segments where !isVisible(segment, laneCount: laneCount, overflowingColumns: overflowingColumns) {
-            for column in segment.columns {
-                hasHiddenEvents[column] = true
+    func columnsWithHiddenEvents(laneCount: Int, truncatedLaneCount: Int) -> [Bool] {
+        let overflowingColumns = overflowingColumns(laneCount: laneCount, truncatedLaneCount: truncatedLaneCount)
+        return dayEvents.indices.map { overflowingColumns.contains($0) }
+    }
+
+    private func overflowingColumns(laneCount: Int, truncatedLaneCount: Int) -> Set<Int> {
+        let truncatedLaneCount = min(truncatedLaneCount, laneCount)
+        var overflowingColumns = Set<Int>()
+        for segment in segments where segment.lane >= laneCount {
+            overflowingColumns.formUnion(segment.columns)
+        }
+
+        // Hiding a multi-day segment marks all its columns as overflowing, which can hide more segments.
+        var didChange = true
+        while didChange {
+            didChange = false
+            for segment in segments
+                where !isVisible(segment, laneCount: laneCount, truncatedLaneCount: truncatedLaneCount,
+                                 overflowingColumns: overflowingColumns)
+                && !overflowingColumns.isSuperset(of: segment.columns) {
+                overflowingColumns.formUnion(segment.columns)
+                didChange = true
             }
         }
 
-        return hasHiddenEvents
+        return overflowingColumns
     }
 
-    private func overflowingColumns(laneCount: Int) -> Set<Int> {
-        var usedLaneCounts = Array(repeating: 0, count: dayEvents.count)
-        for segment in segments {
-            for column in segment.columns {
-                usedLaneCounts[column] = max(usedLaneCounts[column], segment.lane + 1)
-            }
-        }
-
-        return Set(usedLaneCounts.indices.filter { usedLaneCounts[$0] > laneCount })
-    }
-
-    private func isVisible(_ segment: MonthEventSegment, laneCount: Int, overflowingColumns: Set<Int>) -> Bool {
-        if segment.lane < laneCount - 1 {
+    private func isVisible(
+        _ segment: MonthEventSegment,
+        laneCount: Int,
+        truncatedLaneCount: Int,
+        overflowingColumns: Set<Int>
+    ) -> Bool {
+        if segment.lane < min(truncatedLaneCount, laneCount) {
             return true
         }
-        return segment.lane == laneCount - 1 && !segment.columns.contains { overflowingColumns.contains($0) }
+        return segment.lane < laneCount && !segment.columns.contains { overflowingColumns.contains($0) }
     }
 }
 
