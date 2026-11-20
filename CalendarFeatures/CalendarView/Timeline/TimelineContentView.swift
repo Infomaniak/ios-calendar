@@ -46,6 +46,7 @@ struct TimelineContentView<EventContent: View, Overlay: View>: View {
     let date: Date
     var leadingPadding: CGFloat = IKPadding.medium
     var trailingPadding: CGFloat = IKPadding.medium
+    var extendsHourDividersIntoSafeArea = false
     @ViewBuilder let eventContent: (TimelineGeometry) -> EventContent
     @ViewBuilder let overlay: (TimelineGeometry) -> Overlay
 
@@ -83,6 +84,7 @@ struct TimelineContentView<EventContent: View, Overlay: View>: View {
                         leadingOffset: TimelineBackgroundView.Constants.leadingInset,
                         verticalOffset: TimelineBackgroundView.Constants.verticalInset
                     )
+                    .ignoresSafeArea(.container, edges: extendsHourDividersIntoSafeArea ? .trailing : [])
 
                     eventContent(geometry)
                         .padding(geometry.eventLayoutPadding)

@@ -21,6 +21,7 @@ import SwiftUI
 struct CalendarPeriodPagerMirror<Content: View>: View {
     let scrollSync: CalendarPeriodPagerScrollSync
     var viewCount = 1
+    var revealsNeighborsInSafeArea = false
 
     @ViewBuilder let content: (Date) -> Content
 
@@ -30,6 +31,7 @@ struct CalendarPeriodPagerMirror<Content: View>: View {
                 periods: periods,
                 scrollSync: scrollSync,
                 viewCount: viewCount,
+                revealsNeighborsInSafeArea: revealsNeighborsInSafeArea,
                 content: content
             )
         }
@@ -40,6 +42,7 @@ private struct CalendarPeriodMirrorScrollView<Content: View>: View {
     let periods: CalendarPeriodCollection
     let scrollSync: CalendarPeriodPagerScrollSync
     let viewCount: Int
+    let revealsNeighborsInSafeArea: Bool
     let content: (Date) -> Content
 
     var body: some View {
@@ -53,6 +56,7 @@ private struct CalendarPeriodMirrorScrollView<Content: View>: View {
         }
         .scrollIndicators(.hidden, axes: .horizontal)
         .scrollDisabled(true)
+        .horizontalSafeAreaClipped(!revealsNeighborsInSafeArea)
         .modifier(MirrorScrollOffsetModifier(scrollSync: scrollSync))
     }
 }
