@@ -34,12 +34,8 @@ enum TimelineViewConstants {
 }
 
 enum TimelineSafeAreaBehavior {
-    /// Nothing is drawn below the trailing safe area.
     case confined
-    /// Only the hour dividers extend below the trailing safe area.
     case extendsDividers
-    /// The hour dividers extend below the trailing safe area, which is also provided to the events as safe area
-    /// so that scrollable events can reveal their content below it.
     case extendsContent
 }
 

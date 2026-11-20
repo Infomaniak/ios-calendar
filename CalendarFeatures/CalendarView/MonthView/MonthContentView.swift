@@ -34,6 +34,7 @@ struct MonthContentView: View {
     @State private var contentWidth = CGFloat.zero
     @State private var pagerHeight = CGFloat.zero
     @State private var bottomSafeAreaInset = CGFloat.zero
+    @State private var horizontalSafeAreaInsets = EdgeInsets()
 
     let weekLayouts: [MonthGrid: [MonthWeekLayout]]
 
@@ -66,23 +67,32 @@ struct MonthContentView: View {
             MonthWeekdayHeaderView(weekNumberWidth: displayedWeekNumberWidth)
 
             TimelineView(.everyDay(calendar)) { timeline in
-                CalendarPeriodPager(
-                    component: .month,
-                    periodOffsets: CalendarPeriodOffsets.months,
-                    date: selectedMonth
-                ) { pageMonthStart in
-                    if let grid = MonthGrid(month: pageMonthStart, calendar: calendar) {
-                        MonthPageView(
-                            grid: grid,
-                            weekLayouts: weekLayouts[grid],
-                            metrics: metrics,
-                            today: timeline.date,
-                            showWeekNumbers: showWeekNumbers,
-                            bottomSafeAreaInset: bottomSafeAreaInset
-                        )
+                ScrollView(.vertical) {
+                    CalendarPeriodPager(
+                        component: .month,
+                        periodOffsets: CalendarPeriodOffsets.months,
+                        date: selectedMonth
+                    ) { pageMonthStart in
+                        if let grid = MonthGrid(month: pageMonthStart, calendar: calendar) {
+                            MonthPageView(
+                                grid: grid,
+                                weekLayouts: weekLayouts[grid],
+                                metrics: metrics,
+                                today: timeline.date,
+                                showWeekNumbers: showWeekNumbers,
+                                bottomSafeAreaInset: bottomSafeAreaInset
+                            )
+                        }
                     }
+                    .padding(.leading, horizontalSafeAreaInsets.leading)
+                    .padding(.trailing, horizontalSafeAreaInsets.trailing)
+                    .containerRelativeFrame(.vertical)
                 }
-                .ignoresSafeArea(.container, edges: .bottom)
+                .scrollBounceBehavior(.basedOnSize, axes: .vertical)
+                .ignoresSafeArea(.container, edges: [.horizontal, .bottom])
+                .onHorizontalSafeAreaInsetsChange { newInsets in
+                    horizontalSafeAreaInsets = newInsets
+                }
             }
             .onGeometryChange(for: CGSize.self) { proxy in
                 CGSize(width: proxy.size.height, height: proxy.safeAreaInsets.bottom)

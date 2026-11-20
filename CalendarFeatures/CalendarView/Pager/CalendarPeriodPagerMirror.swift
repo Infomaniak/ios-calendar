@@ -49,7 +49,6 @@ private struct CalendarPeriodMirrorScrollView<Content: View>: View {
         if revealsNeighbors {
             scrollView
         } else {
-            // The scroll view extends below the safe area, where the neighboring pages must stay hidden.
             scrollView
                 .clipped()
         }
