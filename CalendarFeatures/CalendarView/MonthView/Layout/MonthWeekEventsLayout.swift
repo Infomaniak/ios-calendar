@@ -19,16 +19,21 @@
 import SwiftUI
 
 struct MonthEventPlacement: LayoutValueKey {
-    static let defaultValue = MonthEventPlacement(column: 0, span: 1, lane: 0)
+    static let defaultValue = MonthEventPlacement(column: 0, span: 1, lane: 0, height: nil)
 
     let column: Int
     let span: Int
     let lane: Int
+    /// Overrides the lane height, the subview stays positioned at the top of its lane.
+    let height: CGFloat?
 }
 
 extension View {
-    func monthEventPlacement(column: Int, span: Int = 1, lane: Int) -> some View {
-        layoutValue(key: MonthEventPlacement.self, value: MonthEventPlacement(column: column, span: span, lane: lane))
+    func monthEventPlacement(column: Int, span: Int = 1, lane: Int, height: CGFloat? = nil) -> some View {
+        layoutValue(
+            key: MonthEventPlacement.self,
+            value: MonthEventPlacement(column: column, span: span, lane: lane, height: height)
+        )
     }
 }
 
@@ -39,8 +44,10 @@ struct MonthWeekEventsLayout: Layout {
     let horizontalInset: CGFloat
 
     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
-        let laneCount = subviews.map { $0[MonthEventPlacement.self].lane + 1 }.max() ?? 0
-        let height = CGFloat(laneCount) * laneHeight + CGFloat(max(laneCount - 1, 0)) * laneSpacing
+        let height = subviews.map { subview in
+            let placement = subview[MonthEventPlacement.self]
+            return laneOffset(placement.lane) + (placement.height ?? laneHeight)
+        }.max() ?? 0
         return CGSize(width: proposal.width ?? 0, height: height)
     }
 
@@ -56,11 +63,15 @@ struct MonthWeekEventsLayout: Layout {
             subview.place(
                 at: CGPoint(
                     x: bounds.minX + CGFloat(placement.column) * columnWidth + horizontalInset,
-                    y: bounds.minY + CGFloat(placement.lane) * (laneHeight + laneSpacing)
+                    y: bounds.minY + laneOffset(placement.lane)
                 ),
                 anchor: .topLeading,
-                proposal: ProposedViewSize(width: width, height: laneHeight)
+                proposal: ProposedViewSize(width: width, height: placement.height ?? laneHeight)
             )
         }
+    }
+
+    private func laneOffset(_ lane: Int) -> CGFloat {
+        CGFloat(lane) * (laneHeight + laneSpacing)
     }
 }

@@ -21,7 +21,7 @@ import SwiftUI
 struct MonthWeekEventsView: View {
     let segments: [MonthEventSegment]
     let columnsWithHiddenEvents: [Bool]
-    let laneCount: Int
+    let truncatedLaneCount: Int
     let laneHeight: CGFloat
 
     var body: some View {
@@ -39,7 +39,11 @@ struct MonthWeekEventsView: View {
             ForEach(columnsWithHiddenEvents.indices, id: \.self) { column in
                 if columnsWithHiddenEvents[column] {
                     MonthDayHiddenEventsView()
-                        .monthEventPlacement(column: column, lane: laneCount - 1)
+                        .monthEventPlacement(
+                            column: column,
+                            lane: truncatedLaneCount,
+                            height: MonthGridMetrics.hiddenEventsIndicatorHeight
+                        )
                 }
             }
         }

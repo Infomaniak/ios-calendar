@@ -32,6 +32,7 @@ struct MonthGridMetrics: Equatable {
     static let columnCount = 7
 
     static let laneSpacing: CGFloat = 2
+    static let hiddenEventsIndicatorHeight: CGFloat = 12
     static let separatorThickness: CGFloat = 1
 
     let containerSize: CGSize
@@ -68,5 +69,14 @@ struct MonthGridMetrics: Equatable {
         }
 
         return Int((availableHeight + Self.laneSpacing) / (laneHeight + Self.laneSpacing))
+    }
+
+    func maxEventsCountWithHiddenEventsIndicator(rowHeight: CGFloat) -> Int {
+        let availableHeight = rowHeight - totalDayNumberHeight - Self.laneSpacing - Self.hiddenEventsIndicatorHeight
+        guard availableHeight > 0 else {
+            return 0
+        }
+
+        return Int(availableHeight / (laneHeight + Self.laneSpacing))
     }
 }
