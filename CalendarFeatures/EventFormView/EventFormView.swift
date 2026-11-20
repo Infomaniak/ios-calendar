@@ -66,9 +66,12 @@ public struct EventFormView: View {
     public var body: some View {
         Form {
             Section {
-                TextField(CalendarResourcesStrings.eventTitle, text: $viewModel.draft.title)
-                    .fontWeight(.bold)
-                    .focused($isTitleFocused)
+                HStack {
+                    EventColorPicker(selectedColor: $viewModel.draft.colorArgb, calendarId: viewModel.draft.calendarId)
+                    TextField(CalendarResourcesStrings.eventTitle, text: $viewModel.draft.title)
+                        .fontWeight(.bold)
+                        .focused($isTitleFocused)
+                }
             } footer: {
                 if viewModel.validationErrors.contains(.titleTooLong) {
                     TextFieldLengthErrorView(

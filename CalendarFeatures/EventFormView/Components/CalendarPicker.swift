@@ -44,7 +44,7 @@ struct CalendarPicker: View {
         } label: {
             if let selectedCalendar {
                 HStack {
-                    CalendarLabel(calendar: selectedCalendar)
+                    ColorDotLabel(calendar: selectedCalendar)
 
                     if hasSeveralCalendars {
                         Image(systemName: "chevron.up.chevron.down")
@@ -62,7 +62,7 @@ struct CalendarPicker: View {
             Button {
                 calendarId = calendar.id
             } label: {
-                CalendarLabel(calendar: calendar)
+                ColorDotLabel(calendar: calendar)
             }
         }
     }

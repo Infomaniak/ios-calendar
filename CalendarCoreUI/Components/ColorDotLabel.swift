@@ -18,20 +18,17 @@
 
 import SwiftUI
 
-public struct CalendarLabel: View {
-    let name: String
+public struct ColorDotLabel: View {
+    let name: String?
     let colorIndicator: UIImage
 
     public init(calendar: UICalendar) {
-        name = calendar.displayName
+        self.init(name: calendar.displayName, color: calendar.color)
+    }
 
-        let size = CGSize(width: 12, height: 12)
-        colorIndicator = UIGraphicsImageRenderer(size: size)
-            .image { context in
-                context.cgContext.setFillColor(UIColor(calendar.color).cgColor)
-                context.cgContext.fillEllipse(in: CGRect(origin: .zero, size: size))
-            }
-            .withRenderingMode(.alwaysOriginal)
+    public init(name: String? = nil, color: Color) {
+        self.name = name
+        colorIndicator = Self.colorIndicatorImage(color)
     }
 
     public var body: some View {
@@ -39,11 +36,23 @@ public struct CalendarLabel: View {
             Image(uiImage: colorIndicator)
                 .accessibilityHidden(true)
 
-            Text(name)
+            if let name {
+                Text(name)
+            }
         }
+    }
+
+    private static func colorIndicatorImage(_ color: Color) -> UIImage {
+        let size = CGSize(width: 12, height: 12)
+        return UIGraphicsImageRenderer(size: size)
+            .image { context in
+                context.cgContext.setFillColor(UIColor(color).cgColor)
+                context.cgContext.fillEllipse(in: CGRect(origin: .zero, size: size))
+            }
+            .withRenderingMode(.alwaysOriginal)
     }
 }
 
 #Preview {
-    CalendarLabel(calendar: .preview)
+    ColorDotLabel(calendar: .preview)
 }
