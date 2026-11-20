@@ -461,7 +461,8 @@ struct EventFormViewModelTests {
     private func makeAlarmRows(viewModel: EventFormViewModel) -> EventAlarmTypeRowsView {
         EventAlarmTypeRowsView(
             alarms: Binding(get: { viewModel.draft.alarms }, set: { viewModel.draft.alarms = $0 }),
-            action: .email
+            action: .email,
+            canAddAlarm: true
         )
     }
 
