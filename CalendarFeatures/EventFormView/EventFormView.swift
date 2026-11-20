@@ -139,7 +139,8 @@ public struct EventFormView: View {
                     Label {
                         Text(CalendarResourcesStrings.occupiedLabel)
                     } icon: {
-                        ESDSSymbols.briefcase.image
+                        BouncyBriefcase(isUnlocked: !viewModel.draft.isOccupied)
+                            .frame(width: 22, height: 22)
                     }
                     .labelStyle(.formLabel)
                 }
