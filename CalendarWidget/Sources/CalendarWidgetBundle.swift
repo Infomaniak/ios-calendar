@@ -16,12 +16,17 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarCore
 import SwiftUI
 import WidgetKit
 
 @main
 struct CalendarWidgetBundle: WidgetBundle {
+    // periphery:ignore - Making sure the DI is registered at a very early stage of the extension launch.
+    private let dependencyInjectionHook = CalendarTargetAssembly()
+
     var body: some Widget {
         TodayWidget()
+        UpcomingEventsWidget()
     }
 }

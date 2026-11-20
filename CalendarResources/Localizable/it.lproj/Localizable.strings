@@ -376,6 +376,12 @@
 /* loco:6ae9872edabaa75a2e010612 */
 "unavailableLabel" = "Non disponibile";
 
+/* loco:6b06dcde6edb517c0a009b57 */
+"upcomingEventsWidgetDescription" = "Mostra i prossimi eventi di oggi.";
+
+/* loco:6b06dcdeec1b62b6000dd312 */
+"upcomingEventsWidgetTitle" = "Prossimi eventi";
+
 /* loco:6ae9872fc89295dc4b0ca172 */
 "useRawLocationLabel" = "Usa \"%@\"";
 

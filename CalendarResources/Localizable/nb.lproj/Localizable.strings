@@ -376,6 +376,12 @@
 /* loco:6ae9872edabaa75a2e010612 */
 "unavailableLabel" = "Utilgjengelig";
 
+/* loco:6b06dcde6edb517c0a009b57 */
+"upcomingEventsWidgetDescription" = "Viser dagens kommende hendelser.";
+
+/* loco:6b06dcdeec1b62b6000dd312 */
+"upcomingEventsWidgetTitle" = "Kommende hendelser";
+
 /* loco:6ae9872fc89295dc4b0ca172 */
 "useRawLocationLabel" = "Bruk \"%@\"";
 

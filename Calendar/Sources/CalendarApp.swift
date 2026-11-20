@@ -23,6 +23,7 @@ import ESDSCalendar
 import InfomaniakCore
 import InfomaniakDI
 import SwiftUI
+import WidgetKit
 
 @main
 struct CalendarApp: App {
@@ -74,6 +75,7 @@ struct CalendarApp: App {
     }
 
     private func didEnterBackground() {
+        WidgetCenter.shared.reloadAllTimelines()
         Task {
             await EventAlarmBackgroundTaskHelper().scheduleIfNecessary()
         }

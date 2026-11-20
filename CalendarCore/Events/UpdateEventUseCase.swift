@@ -18,6 +18,7 @@
 
 import InfomaniakDI
 import MultiplatformCalendar
+import WidgetKit
 
 public struct UpdateEventUseCase: Sendable {
     public init() {}
@@ -44,5 +45,7 @@ public struct UpdateEventUseCase: Sendable {
             target: target,
             data: draft.toEventEditData(preserving: originalData)
         )
+
+        WidgetCenter.shared.reloadAllTimelines()
     }
 }

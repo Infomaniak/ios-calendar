@@ -18,6 +18,7 @@
 
 import InfomaniakDI
 import MultiplatformCalendar
+import WidgetKit
 
 public struct DeleteEventUseCase: Sendable {
     public init() {}
@@ -30,5 +31,7 @@ public struct DeleteEventUseCase: Sendable {
         }
         let target = occurrence.targetFor(scope: scope)
         try await calendarSDK.calendarManager.deleteEvent(target: target)
+
+        WidgetCenter.shared.reloadAllTimelines()
     }
 }
