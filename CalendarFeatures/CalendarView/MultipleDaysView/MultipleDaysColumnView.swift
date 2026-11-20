@@ -45,6 +45,7 @@ struct MultipleDaysColumnView: View {
     let events: [UIEventSummary]
     let pointsPerHour: CGFloat
     let horizontalLayoutPointsPerHour: CGFloat
+    let hPadding: CGFloat
 
     var body: some View {
         EventuallyLayout(
@@ -53,6 +54,7 @@ struct MultipleDaysColumnView: View {
             horizontalHourSlotHeight: horizontalLayoutPointsPerHour,
             config: .init(
                 hSpacing: Constants.eventsSpacing,
+                hPadding: hPadding,
                 vSpacing: DayContentView.Constants.layoutVerticalSpacing
             ),
             onCoveredIndicesChange: onCoveredIndicesChange
@@ -86,6 +88,7 @@ struct MultipleDaysColumnView: View {
         date: .now,
         events: [.preview, .shortPreview],
         pointsPerHour: 64,
-        horizontalLayoutPointsPerHour: 64
+        horizontalLayoutPointsPerHour: 64,
+        hPadding: 8
     )
 }

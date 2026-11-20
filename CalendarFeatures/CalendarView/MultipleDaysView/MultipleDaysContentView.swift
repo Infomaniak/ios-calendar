@@ -68,7 +68,8 @@ struct MultipleDaysContentView: View {
                             date: day,
                             events: events(for: day),
                             pointsPerHour: geometry.pointsPerHour,
-                            horizontalLayoutPointsPerHour: geometry.horizontalLayoutPointsPerHour
+                            horizontalLayoutPointsPerHour: geometry.horizontalLayoutPointsPerHour,
+                            hPadding: layout.layoutHPadding
                         )
                     }
                 }
