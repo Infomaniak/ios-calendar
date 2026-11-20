@@ -39,7 +39,11 @@ struct MultipleDaysAllDayEventsView: View {
             HStack(alignment: .top, spacing: 0) {
                 AllDayLabelView()
 
-                CalendarPeriodPagerMirror(scrollSync: pagerScrollSync, viewCount: layout.pagerViewCount) { pagerDate in
+                CalendarPeriodPagerMirror(
+                    scrollSync: pagerScrollSync,
+                    viewCount: layout.pagerViewCount,
+                    revealsNeighborsInSafeArea: layout.revealsNeighborsInSafeArea
+                ) { pagerDate in
                     HStack(alignment: .top, spacing: 0) {
                         ForEach(layout.pageDates(for: pagerDate, calendar: calendar), id: \.self) { day in
                             dayColumn(events: events[calendar.startOfDay(for: day)] ?? [])
