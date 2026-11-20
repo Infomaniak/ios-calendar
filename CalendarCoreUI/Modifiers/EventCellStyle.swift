@@ -16,12 +16,11 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import CalendarCoreUI
 import DesignSystem
 import SwiftUI
 
-struct EventCellStyle: ViewModifier {
-    enum Mode: Equatable {
+public struct EventCellStyle: ViewModifier {
+    public enum Mode: Equatable {
         case `default`
         case maybe
         case declined
@@ -32,14 +31,14 @@ struct EventCellStyle: ViewModifier {
     let colors: UIEventColor
     let cornerRadius: CGFloat
 
-    init(event: UIEventSummary, cornerRadius: CGFloat) {
+    public init(event: UIEventSummary, cornerRadius: CGFloat) {
         colors = event.colors
         mode = Self.computeMode(for: event)
         self.cornerRadius = cornerRadius
     }
 
     // periphery:ignore - Used for #Preview
-    init(mode: Mode, colors: UIEventColor = .preview) {
+    public init(mode: Mode, colors: UIEventColor = .preview) {
         self.mode = mode
         self.colors = colors
         cornerRadius = 8
@@ -71,7 +70,7 @@ struct EventCellStyle: ViewModifier {
         }
     }
 
-    func body(content: Content) -> some View {
+    public func body(content: Content) -> some View {
         content
             .opacity(mode == .declined ? 0.5 : 1)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -114,7 +113,7 @@ struct EventCellStyle: ViewModifier {
     }
 }
 
-extension View {
+public extension View {
     func eventCellStyle(event: UIEventSummary, cornerRadius: CGFloat = 8) -> some View {
         modifier(EventCellStyle(event: event, cornerRadius: cornerRadius))
     }
