@@ -60,6 +60,7 @@ struct PlanningEventView: View {
             EventIconsView(event: event)
         }
         .padding(.bottom, event.additionalDurationHeight)
+        .padding([.vertical, .trailing], value: .mini)
         .eventCellStyle(event: event)
     }
 }

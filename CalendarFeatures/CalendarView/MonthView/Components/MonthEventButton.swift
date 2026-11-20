@@ -26,10 +26,19 @@ struct MonthEventButton: View {
         EventDetailsPopoverButton(event: event) {
             Text(event.displayTitle)
                 .font(.caption.bold())
-                .lineLimit(1)
-                .padding(.leading, value: .micro)
-                .frame(maxHeight: .infinity)
-                .eventCellStyle(event: event, padding: 0)
+                .fixedSize(horizontal: true, vertical: false)
+                .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                .clipped()
+                .mask(
+                    HStack(spacing: 0) {
+                        Color.black
+                        LinearGradient(colors: [.black, .clear], startPoint: .leading, endPoint: .trailing)
+                            .frame(width: 10)
+                    }
+                )
+
+                .padding(.trailing, 2)
+                .eventCellStyle(event: event, cornerRadius: 4)
         }
     }
 }

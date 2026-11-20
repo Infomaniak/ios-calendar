@@ -33,6 +33,7 @@ struct PlanningDayEventView: View {
             Text(CalendarResourcesStrings.allDayLabel)
                 .font(.caption2)
         }
+        .padding([.vertical, .trailing], value: .mini)
         .eventCellStyle(event: event)
     }
 }

@@ -48,7 +48,7 @@ struct MonthContentView: View {
             containerSize: CGSize(width: contentWidth, height: pagerHeight),
             weekNumberWidth: displayedWeekNumberWidth ?? 0,
             dayNumberHeight: dayNumberHeight,
-            laneHeight: eventTitleLineHeight + IKPadding.micro
+            laneHeight: eventTitleLineHeight
         )
     }
 

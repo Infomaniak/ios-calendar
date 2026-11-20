@@ -51,16 +51,16 @@ struct DayEventView: View {
             mediumCell
             smallCell
             compactCell
+            ultraCompactCell
         }
-        .padding(.horizontal, value: .mini)
         .frame(maxHeight: visibleContentHeight, alignment: .top)
         .frame(height: cellFullHeight, alignment: .top)
-        .eventCellStyle(event: event, padding: 0)
+        .eventCellStyle(event: event)
     }
 
     private var largeCell: some View {
         VStack(alignment: .leading, spacing: 2) {
-            HStack {
+            HStack(alignment: .top) {
                 Text(event.displayTitle)
                     .font(.caption.bold())
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -77,12 +77,13 @@ struct DayEventView: View {
             Text(event.startDate ..< event.endDate, format: .eventTimeBounds)
                 .font(.caption2)
         }
-        .padding(.vertical, value: .mini)
+        .padding(.vertical, 4)
+        .padding(.trailing, 8)
     }
 
     private var mediumCell: some View {
         VStack(alignment: .leading, spacing: 2) {
-            HStack {
+            HStack(alignment: .top) {
                 Text(event.displayTitle)
                     .font(.caption.bold())
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -96,24 +97,35 @@ struct DayEventView: View {
                     .lineLimit(1)
             }
         }
-        .padding(.vertical, value: .mini)
+        .padding(.vertical, 4)
+        .padding(.trailing, 8)
     }
 
     private var smallCell: some View {
-        HStack {
+        HStack(alignment: .top) {
             Text(event.displayTitle)
                 .font(.caption.bold())
                 .frame(maxWidth: .infinity, alignment: .leading)
 
             EventIconsView(event: event)
         }
-        .padding(.vertical, value: .mini)
+        .padding(.vertical, 4)
+        .padding(.trailing, 8)
     }
 
     private var compactCell: some View {
         Text(event.displayTitle)
             .font(.caption.bold())
-            .padding(.vertical, 2)
+            .padding(.vertical, 4)
+            .padding(.trailing, 2)
+    }
+
+    private var ultraCompactCell: some View {
+        Text(event.displayTitle)
+            .font(.caption.bold())
+            .minimumScaleFactor(0.9)
+            .padding(.vertical, 1)
+            .padding(.trailing, 2)
     }
 }
 
