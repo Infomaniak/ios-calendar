@@ -26,7 +26,7 @@ public enum NotificationsHelper {
     }
 
     public enum UserInfoKeys {
-        public static let eventId = "event_id"
+        public static let occurrenceId = "occurrence_id"
     }
 
     public static func askForPermissions() async {

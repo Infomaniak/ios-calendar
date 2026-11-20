@@ -317,6 +317,7 @@ let project = Project(
                 .target(name: Constants.projectName),
                 .target(name: "\(Constants.projectName)Core"),
                 .target(name: "\(Constants.projectName)CoreUI"),
+                .target(name: "\(Constants.projectName)Resources"),
                 calendarView.asDependency,
                 eventFormView.asDependency,
                 .external(name: "InfomaniakCore"),
