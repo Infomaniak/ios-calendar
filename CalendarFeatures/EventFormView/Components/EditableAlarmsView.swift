@@ -21,15 +21,21 @@ import CalendarCoreUI
 import SwiftUI
 
 struct EditableAlarmsView: View {
+    static let maximumAlarmsCount = 5
+
     @Binding var alarms: [EventAlarmDraft]
 
     private var otherAlarms: [EventAlarmDraft] {
         alarms.filter { !$0.action.isEditable }.sorted()
     }
 
+    private var canAddAlarm: Bool {
+        return alarms.count < Self.maximumAlarmsCount
+    }
+
     var body: some View {
         ForEach([UIAlarmAction.display, UIAlarmAction.email]) { action in
-            EventAlarmTypeRowsView(alarms: $alarms, action: action)
+            EventAlarmTypeRowsView(alarms: $alarms, action: action, canAddAlarm: canAddAlarm)
         }
 
         ForEach(otherAlarms) { alarm in
@@ -42,6 +48,8 @@ struct EventAlarmTypeRowsView: View {
     @Binding var alarms: [EventAlarmDraft]
 
     let action: UIAlarmAction
+    let canAddAlarm: Bool
+
     private var sortedAlarms: [EventAlarmDraft] {
         alarms.filter { $0.action == action }.sorted()
     }
@@ -62,7 +70,9 @@ struct EventAlarmTypeRowsView: View {
             EventAlarmRowView(alarm: alarmBinding(for: alarm), action: action)
         }
 
-        EventAlarmRowView(alarm: newAlarmBinding, action: action)
+        if canAddAlarm {
+            EventAlarmRowView(alarm: newAlarmBinding, action: action)
+        }
     }
 
     func alarmBinding(for alarm: EventAlarmDraft) -> Binding<EventAlarmDraft?> {
