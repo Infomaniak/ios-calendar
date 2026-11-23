@@ -370,6 +370,7 @@ private enum EventAlarmTestFixtures {
         let eventId = eventId ?? id
         let event = EventSummary(
             occurrenceId: OccurrenceId.Master(masterId: eventId),
+            calendarId: "calendar",
             title: title ?? eventId,
             location: location,
             status: .confirmed,

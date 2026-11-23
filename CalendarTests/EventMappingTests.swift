@@ -261,6 +261,7 @@ struct EventMappingTests {
     private func makeSummary() -> EventSummary {
         EventSummary(
             occurrenceId: OccurrenceId.Master(masterId: "event"),
+            calendarId: "calendar",
             title: " Meeting ",
             location: "Meeting room",
             status: .confirmed,
