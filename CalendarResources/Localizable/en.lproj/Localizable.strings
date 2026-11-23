@@ -122,6 +122,10 @@
  * Short option label. */
 "customAlarmLabel" = "Custom";
 
+/* loco:6b03f2492887ed12c6096532
+ * Short option label. */
+"customColorLabel" = "Custom";
+
 /* loco:6a203e6bc6a8e2e3c9024e12 */
 "dayTitle" = "Day";
 

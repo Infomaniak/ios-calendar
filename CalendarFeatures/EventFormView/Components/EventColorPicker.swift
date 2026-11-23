@@ -17,6 +17,7 @@
  */
 
 import CalendarCoreUI
+import CalendarResources
 import ESDSFoundation
 import InfomaniakDI
 import MultiplatformCalendar
@@ -30,6 +31,12 @@ struct EventColorPicker: View {
     @Binding var selectedColor: Int32?
 
     let calendarId: String?
+
+    private var isCustomColor: Bool {
+        guard let selectedColor else { return false }
+        guard let colors else { return true }
+        return !colors.contains { $0.sourceColor == selectedColor }
+    }
 
     var body: some View {
         Menu {
@@ -63,6 +70,9 @@ struct EventColorPicker: View {
         guard let calendarId,
               let colors = try? await calendarSDK.calendarManager.getColorChoices(calendarId: calendarId) else { return }
         self.colors = colors
+        if isCustomColor {
+            self.colors?.append(NamedColor(sourceColor: selectedColor ?? 0, name: CalendarResourcesStrings.customColorLabel))
+        }
         selectedColor = selectedColor ?? colors.first?.sourceColor
     }
 }
