@@ -94,7 +94,7 @@ public extension EventDraft {
             alarms: event.alarms.map { EventAlarmDraft(eventAlarm: $0) },
             isOccupied: editData.timeBlocking != .doesNotBlock,
             isPrivate: event.classification == .private,
-            colorArgb: event.colors.sourceColor
+            colorArgb: editData.eventColor == nil ? nil : event.colors.sourceColor
         )
     }
 

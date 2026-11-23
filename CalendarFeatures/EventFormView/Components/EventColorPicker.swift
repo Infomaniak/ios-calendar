@@ -32,40 +32,48 @@ struct EventColorPicker: View {
 
     let calendarId: String?
 
-    private var isCustomColor: Bool {
-        guard let selectedColor else { return false }
-        guard let colors else { return true }
-        return !colors.contains { $0.sourceColor == selectedColor }
+    private var defaultColor: NamedColor? {
+        colors?.first
+    }
+
+    private var explicitChoices: [NamedColor] {
+        Array(colors?.dropFirst() ?? [])
+    }
+
+    private var displayedColor: Int32? {
+        selectedColor ?? defaultColor?.sourceColor
     }
 
     private var selectedColorName: String? {
-        if let selectedColor {
-            if let color = colors?.first(where: { $0.sourceColor == selectedColor }) {
-                return color.name
-            }
-            return CalendarResourcesStrings.customColorLabel
-        }
-        return colors?.first?.name
+        guard let selectedColor else { return defaultColor?.name }
+        return colors?.first { $0.sourceColor == selectedColor }?.name ?? CalendarResourcesStrings.customColorLabel
     }
 
     var body: some View {
         Menu {
-            if let colors {
-                ForEach(colors, id: \.sourceColor) { namedColor in
-                    Button {
-                        selectedColor = namedColor.sourceColor
-                    } label: {
-                        ColorDotLabel(name: namedColor.name, color: Color(argb: namedColor.sourceColor))
-                    }
+            if let defaultColor {
+                Button {
+                    selectedColor = nil
+                } label: {
+                    ColorDotLabel(name: defaultColor.name, color: Color(argb: defaultColor.sourceColor))
+                }
+            }
+
+            ForEach(explicitChoices, id: \.sourceColor) { namedColor in
+                Button {
+                    guard selectedColor != namedColor.sourceColor else { return }
+                    selectedColor = namedColor.sourceColor
+                } label: {
+                    ColorDotLabel(name: namedColor.name, color: Color(argb: namedColor.sourceColor))
                 }
             }
         } label: {
             HStack {
-                if let selectedColor {
+                if let displayedColor {
                     Image(systemName: "chevron.up.chevron.down")
                         .accessibilityHidden(true)
                         .foregroundStyle(theme.color.contentSecondary)
-                    ColorDotLabel(color: Color(argb: selectedColor))
+                    ColorDotLabel(color: Color(argb: displayedColor))
                 }
             }
         }
@@ -79,13 +87,11 @@ struct EventColorPicker: View {
 
     private func loadColors() async {
         @InjectService var calendarSDK: CalendarCoreGraph
-        let previousDefaultColor = colors?.first?.sourceColor
+        colors = nil
         guard let calendarId,
               let colors = try? await calendarSDK.calendarManager.getColorChoices(calendarId: calendarId) else { return }
         self.colors = colors
-        if selectedColor == nil || selectedColor == previousDefaultColor {
-            selectedColor = colors.first?.sourceColor
-        } else if let selectedColor, isCustomColor {
+        if let selectedColor, !colors.contains(where: { $0.sourceColor == selectedColor }) {
             self.colors?.append(NamedColor(sourceColor: selectedColor, name: CalendarResourcesStrings.customColorLabel))
         }
     }
