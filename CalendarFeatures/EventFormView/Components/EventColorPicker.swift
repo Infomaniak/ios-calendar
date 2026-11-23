@@ -38,6 +38,16 @@ struct EventColorPicker: View {
         return !colors.contains { $0.sourceColor == selectedColor }
     }
 
+    private var selectedColorName: String? {
+        if let selectedColor {
+            if let color = colors?.first(where: { $0.sourceColor == selectedColor }) {
+                return color.name
+            }
+            return CalendarResourcesStrings.customColorLabel
+        }
+        return colors?.first?.name
+    }
+
     var body: some View {
         Menu {
             if let colors {
@@ -60,6 +70,8 @@ struct EventColorPicker: View {
             }
         }
         .buttonStyle(.plain)
+        .accessibilityLabel(Text(CalendarResourcesStrings.eventColorLabel))
+        .accessibilityValue(Text(selectedColorName ?? ""))
         .task(id: calendarId) {
             await loadColors()
         }
