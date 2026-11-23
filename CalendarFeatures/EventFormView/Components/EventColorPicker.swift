@@ -67,12 +67,14 @@ struct EventColorPicker: View {
 
     private func loadColors() async {
         @InjectService var calendarSDK: CalendarCoreGraph
+        let previousDefaultColor = colors?.first?.sourceColor
         guard let calendarId,
               let colors = try? await calendarSDK.calendarManager.getColorChoices(calendarId: calendarId) else { return }
         self.colors = colors
-        if isCustomColor {
-            self.colors?.append(NamedColor(sourceColor: selectedColor ?? 0, name: CalendarResourcesStrings.customColorLabel))
+        if selectedColor == nil || selectedColor == previousDefaultColor {
+            selectedColor = colors.first?.sourceColor
+        } else if let selectedColor, isCustomColor {
+            self.colors?.append(NamedColor(sourceColor: selectedColor, name: CalendarResourcesStrings.customColorLabel))
         }
-        selectedColor = selectedColor ?? colors.first?.sourceColor
     }
 }
