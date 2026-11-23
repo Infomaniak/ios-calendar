@@ -35,7 +35,8 @@ struct CalendarPeriodPager<Content: View>: View {
     let component: Calendar.Component
     let periodOffsets: Range<Int>
     var viewCount = 1
-    var scrollBehavior = AnyScrollTargetBehavior(.paging)
+    var scrollBehavior = AnyScrollTargetBehavior(.viewAligned(limitBehavior: .alwaysByOne))
+    var revealsNeighborsInSafeArea = false
     var scrollSync: CalendarPeriodPagerScrollSync?
 
     @Binding var date: Date
@@ -59,6 +60,7 @@ struct CalendarPeriodPager<Content: View>: View {
                     .scrollTargetLayout()
                 }
                 .scrollIndicators(.hidden, axes: .horizontal)
+                .horizontalSafeAreaClipped(!revealsNeighborsInSafeArea)
                 .scrollTargetBehavior(scrollBehavior)
                 .scrollPosition(id: $visiblePeriod, anchor: scrollAnchor)
                 .onScrollGeometryChange(for: CGFloat.self) { scrollGeometry in
