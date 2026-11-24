@@ -40,6 +40,8 @@ public struct EventDraft: Hashable, Equatable, Sendable {
     public var isOccupied: Bool
     public var isPrivate: Bool
 
+    public var colorArgb: Int32?
+
     public init(
         calendarId: String? = nil,
         title: String = "",
@@ -54,7 +56,8 @@ public struct EventDraft: Hashable, Equatable, Sendable {
         organizer: Organizer? = nil,
         alarms: [EventAlarmDraft] = [],
         isOccupied: Bool = true,
-        isPrivate: Bool = false
+        isPrivate: Bool = false,
+        colorArgb: Int32? = nil
     ) {
         self.calendarId = calendarId
         self.title = title
@@ -70,6 +73,7 @@ public struct EventDraft: Hashable, Equatable, Sendable {
         self.alarms = alarms
         self.isOccupied = isOccupied
         self.isPrivate = isPrivate
+        self.colorArgb = colorArgb
     }
 }
 
@@ -89,7 +93,8 @@ public extension EventDraft {
             organizer: editData.organizer,
             alarms: event.alarms.map { EventAlarmDraft(eventAlarm: $0) },
             isOccupied: editData.timeBlocking != .doesNotBlock,
-            isPrivate: event.classification == .private
+            isPrivate: event.classification == .private,
+            colorArgb: editData.eventColor == nil ? nil : event.colors.sourceColor
         )
     }
 
@@ -132,7 +137,7 @@ public extension EventDraft {
                 isOccupied == ($0.timeBlocking != .doesNotBlock) ? $0.timeBlocking : (isOccupied ? .blocks : .doesNotBlock)
             } ?? (isOccupied ? .blocks : .doesNotBlock),
             calendarId: calendarId,
-            eventColor: originalData?.eventColor,
+            eventColor: colorArgb,
             alarms: AlarmListEditReplace(alarms: alarms.map { $0.sdkValue }),
             attendees: attendees.map {
                 AttendeeEdit(email: $0.email, displayName: $0.displayName, type: $0.type, role: $0.role)
