@@ -87,9 +87,12 @@ struct EventColorPicker: View {
 
     private func loadColors() async {
         @InjectService var calendarSDK: CalendarCoreGraph
-        colors = nil
         guard let calendarId,
-              let colors = try? await calendarSDK.calendarManager.getColorChoices(calendarId: calendarId) else { return }
+              let colors = try? await calendarSDK.calendarManager.getColorChoices(calendarId: calendarId) else {
+            colors = nil
+            return
+        }
+
         self.colors = colors
         if let selectedColor, !colors.contains(where: { $0.sourceColor == selectedColor }) {
             self.colors?.append(NamedColor(sourceColor: selectedColor, name: CalendarResourcesStrings.customColorLabel))
