@@ -18,7 +18,16 @@
 
 import CalendarCoreUI
 import DesignSystem
+import MultiplatformCalendar
 import SwiftUI
+
+protocol EventCellStylable {
+    var colors: UIEventColor { get }
+    var status: EventStatus? { get }
+    var myStatus: UIParticipationStatus? { get }
+}
+
+extension UIEventSummary: EventCellStylable {}
 
 struct EventCellStyle: ViewModifier {
     enum Mode: Equatable {
@@ -32,7 +41,7 @@ struct EventCellStyle: ViewModifier {
     let colors: UIEventColor
     let cornerRadius: CGFloat
 
-    init(event: UIEventSummary, cornerRadius: CGFloat) {
+    init(event: some EventCellStylable, cornerRadius: CGFloat) {
         colors = event.colors
         mode = Self.computeMode(for: event)
         self.cornerRadius = cornerRadius
@@ -92,7 +101,7 @@ struct EventCellStyle: ViewModifier {
             .clipShape(.rect(cornerRadius: cornerRadius))
     }
 
-    private static func computeMode(for event: UIEventSummary) -> Mode {
+    private static func computeMode(for event: some EventCellStylable) -> Mode {
         if event.status == .cancelled {
             return .declined
         }
@@ -115,7 +124,7 @@ struct EventCellStyle: ViewModifier {
 }
 
 extension View {
-    func eventCellStyle(event: UIEventSummary, cornerRadius: CGFloat = 8) -> some View {
+    func eventCellStyle(event: some EventCellStylable, cornerRadius: CGFloat = 8) -> some View {
         modifier(EventCellStyle(event: event, cornerRadius: cornerRadius))
     }
 
