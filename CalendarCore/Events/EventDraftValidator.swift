@@ -53,8 +53,8 @@ public struct EventDraftValidator: Sendable {
         }
     }
 
-    public static let maximumTitleCharacterCount = 1000
-    public static let maximumDescriptionCharacterCount = 5000
+    public static let maximumTitleCharacterCount = 150
+    public static let maximumDescriptionCharacterCount = 10000
     public static let maximumAttendeeCount = 100
 
     public init() {}
