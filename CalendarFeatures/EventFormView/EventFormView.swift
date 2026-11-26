@@ -55,6 +55,7 @@ public struct EventFormView: View {
     @State private var isShowingRecurrenceScope = false
     @State private var isSaving = false
     @State private var saveErrorMessage: CalendarError?
+    @State private var descriptionSelection: TextSelection?
 
     @State private var hasFocusedKeyboardOnce = false
     @FocusState private var isTitleFocused: Bool
@@ -125,7 +126,12 @@ public struct EventFormView: View {
                         .foregroundStyle(theme.color.contentSecondary)
                         .accessibilityHidden(true)
 
-                    TextField(CalendarResourcesStrings.descriptionTitle, text: $viewModel.draft.description, axis: .vertical)
+                    TextField(
+                        CalendarResourcesStrings.descriptionTitle,
+                        text: $viewModel.draft.description,
+                        selection: $descriptionSelection,
+                        axis: .vertical
+                    )
                 }
             } footer: {
                 if viewModel.validationErrors.contains(.descriptionTooLong) {
