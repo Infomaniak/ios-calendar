@@ -16,12 +16,14 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarCore
 import CoreTransferable
 import Foundation
 import UniformTypeIdentifiers
 
 public extension UTType {
     static let calendarEvent = UTType(exportedAs: "com.infomaniak.calendar.event")
+    static let ics = UTType(filenameExtension: "ics", conformingTo: .data) ?? .data
 }
 
 public struct EventTransferItem: Codable, Hashable, Identifiable, Sendable {
@@ -69,6 +71,11 @@ extension EventTransferItem: Transferable {
     public static var transferRepresentation: some TransferRepresentation {
         CodableRepresentation(contentType: .calendarEvent)
             .visibility(.ownProcess)
+
+        DataRepresentation(exportedContentType: .ics) { item in
+            try await GetEventIcsUseCase().execute(occurrenceId: item.occurrenceId)
+        }
+        .suggestedFileName { "\($0.title).ics" }
 
         ProxyRepresentation(exporting: \.plainTextDescription)
     }
