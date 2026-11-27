@@ -29,19 +29,8 @@ struct EventRecurrenceRowView: View {
 
     @Binding var recurrence: EventRecurrence
 
-    private var selectionBinding: Binding<EventRecurrence> {
-        Binding(
-            get: { recurrence },
-            set: { newRecurrence in
-                // TODO: The custom recurrence editor is not available yet.
-                guard newRecurrence != .custom else { return }
-                recurrence = newRecurrence
-            }
-        )
-    }
-
     var body: some View {
-        Picker(selection: selectionBinding) {
+        Picker(selection: $recurrence) {
             Section {
                 Text(EventRecurrence.none.label)
                     .tag(EventRecurrence.none)

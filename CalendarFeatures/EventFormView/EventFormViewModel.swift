@@ -77,7 +77,7 @@ final class EventFormViewModel {
     }
 
     var isRecurrenceEdited: Bool {
-        originalDraft.recurrence != draft.recurrence
+        originalDraft.recurrence != draft.recurrence || originalDraft.customRecurrence != draft.customRecurrence
     }
 
     private var currentDuration: TimeInterval {
@@ -114,10 +114,67 @@ final class EventFormViewModel {
         UserDefaults.shared.lastSelectedCalendarId = draft.calendarId
     }
 
+    func setRecurrence(_ recurrence: EventRecurrence) {
+        if recurrence != .custom {
+            draft.customRecurrence = originalDraft.customRecurrence
+        } else if draft.recurrence != .custom {
+            draft.customRecurrence = originalDraft.recurrence == .custom
+                ? originalDraft.customRecurrence
+                : CustomRecurrence(recurrence: draft.recurrence, startDate: draft.startDate, calendar: draft.recurrenceCalendar)
+        }
+        draft.recurrence = recurrence
+    }
+
+    /// Custom recurrence to start editing from, matching what selecting `.custom` would produce.
+    func customRecurrenceToEdit() -> CustomRecurrence {
+        if draft.recurrence == .custom, let customRecurrence = draft.customRecurrence {
+            return customRecurrence
+        }
+        if originalDraft.recurrence == .custom, let customRecurrence = originalDraft.customRecurrence {
+            return customRecurrence
+        }
+        return CustomRecurrence(recurrence: draft.recurrence, startDate: draft.startDate, calendar: draft.recurrenceCalendar)
+    }
+
+    func applyCustomRecurrence(_ customRecurrence: CustomRecurrence) {
+        setRecurrence(.custom)
+        draft.customRecurrence = customRecurrence
+    }
+
+    func customRecurrenceDescription() async -> String? {
+        guard let customRecurrence = draft.customRecurrence else { return nil }
+        return await customRecurrenceDescription(for: customRecurrence)
+    }
+
+    func customRecurrenceDescription(for customRecurrence: CustomRecurrence) async -> String? {
+        if customRecurrence == originalDraft.customRecurrence,
+           case .editDraft(_, let editingEvent) = editionMode,
+           editingEvent.isOccurrence {
+            @InjectService var calendarSDK: CalendarCoreGraph
+            let id = OccurrenceId.companion.parse(value: editingEvent.occurrenceId)
+            if let occurrence = try? await calendarSDK.calendarManager.getOccurrence(occurrenceId: id) {
+                return try? await occurrence.toLocalizedRecurrenceString()
+            }
+        }
+
+        var previewDraft = draft
+        previewDraft.customRecurrence = customRecurrence
+        return await previewDraft.localizedCustomRecurrenceDescription()
+    }
+
     func setDate(_ date: Date, for pickerId: DatePickerId) {
         let duration = currentDuration
+        let previousStartWeekday = Locale.Weekday(date: draft.startDate, calendar: draft.recurrenceCalendar)
         draft[keyPath: pickerId.dateKeyPath] = date
         fixInterval(keeping: pickerId, duration: duration)
+        followStartWeekday(previousStartWeekday: previousStartWeekday)
+    }
+
+    /// Keeps a weekly recurrence on the start weekday when it only repeats on that implicit day.
+    private func followStartWeekday(previousStartWeekday: Locale.Weekday) {
+        guard draft.customRecurrence?.weekdays == [previousStartWeekday] else { return }
+        let startWeekday = Locale.Weekday(date: draft.startDate, calendar: draft.recurrenceCalendar)
+        draft.customRecurrence?.weekdays = [startWeekday]
     }
 
     private func fixInterval(keeping pickerId: DatePickerId, duration: TimeInterval) {

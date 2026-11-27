@@ -128,6 +128,144 @@ struct EventRecurrenceTests {
         #expect(viewModel.isEdited)
     }
 
+    @Test
+    func weeklyOnStartWeekdayOmitsByDay() {
+        let recurrence = CustomRecurrence(frequency: .weekly, interval: 3, weekdays: [.thursday])
+
+        let rule = recurrence.sdkValue(startDate: thursdayStart, calendar: utcCalendar)
+
+        #expect(rule == makeRule(frequency: .weekly, interval: 3))
+    }
+
+    @Test
+    func endConditionsRoundTrip() {
+        let count = CustomRecurrence(frequency: .daily, weekdays: [.thursday], end: .count(5))
+        let until = CustomRecurrence(
+            frequency: .daily,
+            weekdays: [.thursday],
+            end: .until(thursdayStart.addingTimeInterval(86400 * 10))
+        )
+
+        for recurrence in [count, until] {
+            let rule = recurrence.sdkValue(startDate: thursdayStart, calendar: utcCalendar)
+            let parsed = CustomRecurrence(rule: rule, startDate: thursdayStart, calendar: utcCalendar)
+            #expect(parsed.end != .never)
+        }
+        #expect(count.sdkValue(startDate: thursdayStart, calendar: utcCalendar).occurrenceCount?.intValue == 5)
+        #expect(until.sdkValue(startDate: thursdayStart, calendar: utcCalendar).until != nil)
+    }
+
+    @Test
+    func weeklyOnSeveralWeekdaysUsesOrderedByDay() {
+        let recurrence = CustomRecurrence(frequency: .weekly, weekdays: [.sunday, .monday, .thursday])
+
+        let rule = recurrence.sdkValue(startDate: thursdayStart, calendar: utcCalendar)
+
+        #expect(rule == makeRule(frequency: .weekly, byDay: [
+            WeekDayNum(ordinal: nil, dayOfWeek: .monday),
+            WeekDayNum(ordinal: nil, dayOfWeek: .thursday),
+            WeekDayNum(ordinal: nil, dayOfWeek: .sunday)
+        ]))
+    }
+
+    @Test
+    func monthDayPatternsAnchorOnStartDate() {
+        let dayOfMonth = CustomRecurrence(frequency: .monthly, weekdays: [.thursday], monthDayPattern: .dayOfMonth)
+        let lastWeekday = CustomRecurrence(frequency: .monthly, weekdays: [.thursday], monthDayPattern: .lastWeekday)
+        let firstWeekdayOfMonth = CustomRecurrence(frequency: .yearly, weekdays: [.thursday], monthDayPattern: .firstWeekday)
+
+        #expect(dayOfMonth.sdkValue(startDate: thursdayStart, calendar: utcCalendar) == makeRule(frequency: .monthly))
+        #expect(lastWeekday.sdkValue(startDate: thursdayStart, calendar: utcCalendar) == makeRule(
+            frequency: .monthly,
+            byDay: [WeekDayNum(ordinal: KotlinInt(int: -1), dayOfWeek: .thursday)]
+        ))
+        #expect(firstWeekdayOfMonth.sdkValue(startDate: thursdayStart, calendar: utcCalendar) == makeRule(
+            frequency: .yearly,
+            byDay: [WeekDayNum(ordinal: KotlinInt(int: 1), dayOfWeek: .thursday)],
+            byMonth: [11]
+        ))
+    }
+
+    @Test
+    func ruleMapsToCustomRecurrence() {
+        let weekly = makeRule(frequency: .weekly, interval: 2, byDay: [
+            WeekDayNum(ordinal: nil, dayOfWeek: .monday),
+            WeekDayNum(ordinal: nil, dayOfWeek: .friday)
+        ])
+        let monthly = makeRule(frequency: .monthly, byDay: [WeekDayNum(ordinal: KotlinInt(int: -1), dayOfWeek: .thursday)])
+
+        #expect(CustomRecurrence(rule: weekly, startDate: thursdayStart, calendar: utcCalendar)
+            == CustomRecurrence(frequency: .weekly, interval: 2, weekdays: [.monday, .friday]))
+        #expect(CustomRecurrence(rule: monthly, startDate: thursdayStart, calendar: utcCalendar)
+            == CustomRecurrence(frequency: .monthly, weekdays: [.thursday], monthDayPattern: .lastWeekday))
+    }
+
+    @Test
+    func unchangedCustomRecurrencePreservesUnsupportedRule() throws {
+        let originalRule = makeRule(frequency: .daily, interval: 2, occurrenceCount: 5)
+        var draft = makeDraft(startDate: thursdayStart)
+        draft.recurrence = .custom
+        draft.customRecurrence = CustomRecurrence(rule: originalRule, startDate: thursdayStart, calendar: utcCalendar)
+
+        let preserved = try draft.toEventEditData(preserving: makeEditData(rule: originalRule))
+        draft.customRecurrence?.interval = 4
+        let updated = try draft.toEventEditData(preserving: makeEditData(rule: originalRule))
+
+        #expect(preserved.timing.recurrenceRule == originalRule)
+        #expect(updated.timing.recurrenceRule == makeRule(frequency: .daily, interval: 4, occurrenceCount: 5))
+    }
+
+    @MainActor
+    @Test
+    func selectingCustomSeedsRecurrenceFromPreset() throws {
+        let viewModel = EventFormViewModel(editionMode: .new(selectedDate: thursdayStart))
+        viewModel.draft.startDate = thursdayStart
+        viewModel.draft.startTimeZone = utcCalendar.timeZone
+        viewModel.setRecurrence(.monthly)
+
+        viewModel.setRecurrence(.custom)
+        let rule = try #require(try viewModel.draft.sdkTiming().recurrenceRule)
+
+        #expect(viewModel.draft.customRecurrence == CustomRecurrence(frequency: .monthly, weekdays: [.thursday]))
+        #expect(rule == makeRule(frequency: .monthly))
+
+        viewModel.setRecurrence(.none)
+        #expect(viewModel.draft.customRecurrence == nil)
+    }
+
+    @MainActor
+    @Test
+    func implicitWeekdayFollowsStartDate() {
+        let viewModel = EventFormViewModel(editionMode: .new(selectedDate: thursdayStart))
+        viewModel.draft.startDate = thursdayStart
+        viewModel.draft.startTimeZone = utcCalendar.timeZone
+        viewModel.setRecurrence(.custom)
+
+        viewModel.setDate(thursdayStart.addingTimeInterval(24 * 3600), for: .start)
+
+        #expect(viewModel.draft.customRecurrence?.weekdays == [.friday])
+    }
+
+    /// Thursday 26 November 2026, 10:00 UTC.
+    private let thursdayStart = Date(timeIntervalSince1970: 1_795_687_200)
+
+    private var utcCalendar: Foundation.Calendar {
+        var calendar = Foundation.Calendar(identifier: .gregorian)
+        calendar.timeZone = Foundation.TimeZone(identifier: "UTC")!
+        return calendar
+    }
+
+    private func makeDraft(startDate: Date) -> EventDraft {
+        EventDraft(
+            calendarId: "calendar-id",
+            title: "Event title",
+            startDate: startDate,
+            startTimeZone: utcCalendar.timeZone,
+            endDate: startDate.addingTimeInterval(3600),
+            endTimeZone: utcCalendar.timeZone
+        )
+    }
+
     private func frequency(for recurrence: EventRecurrence) -> Frequency? {
         switch recurrence {
         case .daily: .daily
@@ -181,16 +319,18 @@ struct EventRecurrenceTests {
         frequency: Frequency,
         interval: Int32 = 1,
         occurrenceCount: Int32? = nil,
-        byMonthDay: [Int32] = []
+        byDay: [WeekDayNum] = [],
+        byMonthDay: [Int32] = [],
+        byMonth: [Int32] = []
     ) -> RecurrenceRule {
         RecurrenceRule(
             freq: frequency,
             interval: interval,
             occurrenceCount: occurrenceCount.map { KotlinInt(int: $0) },
             until: nil,
-            byDay: [],
+            byDay: byDay,
             byMonthDay: byMonthDay.map { KotlinInt(int: $0) },
-            byMonth: [],
+            byMonth: byMonth.map { KotlinInt(int: $0) },
             byOccurrencePosition: [],
             weekStart: nil,
             byHour: [],
