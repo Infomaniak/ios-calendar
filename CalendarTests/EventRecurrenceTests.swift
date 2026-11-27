@@ -119,10 +119,7 @@ struct EventRecurrenceTests {
     func viewModelTracksRecurrenceEdition() {
         var draft = makeDraft()
         draft.recurrence = .weekly
-        let viewModel = EventFormViewModel(
-            editionMode: .editDraft(draft: draft, editingEvent: .preview),
-            userDefaults: .shared
-        )
+        let viewModel = EventFormViewModel(editionMode: .editDraft(draft: draft, editingEvent: .preview))
 
         #expect(viewModel.isRecurrenceEdited == false)
 
