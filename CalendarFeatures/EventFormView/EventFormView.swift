@@ -52,6 +52,7 @@ public struct EventFormView: View {
     @State private var expandedDatePickerId: EventFormViewModel.DatePickerId?
     @State private var timeZonePickerId: EventFormViewModel.DatePickerId?
     @State private var isNavigatingToAttendeesList = false
+    @State private var isShowingCustomRecurrence = false
     @State private var isShowingRecurrenceScope = false
     @State private var isSaving = false
     @State private var saveErrorMessage: CalendarError?
@@ -105,7 +106,19 @@ public struct EventFormView: View {
                     canSelectHour: !viewModel.draft.allDay
                 )
 
-                EventRecurrenceRowView(recurrence: $viewModel.draft.recurrence)
+                EventRecurrenceRowView(recurrence: recurrenceBinding)
+
+                if viewModel.draft.recurrence == .custom {
+                    Button {
+                        isShowingCustomRecurrence = true
+                    } label: {
+                        CustomRecurrenceSummaryRow(
+                            recurrence: viewModel.draft.customRecurrence,
+                            startDate: viewModel.draft.startDate,
+                            describe: viewModel.customRecurrenceDescription
+                        )
+                    }
+                }
             }
 
             Section {
@@ -232,8 +245,32 @@ public struct EventFormView: View {
                     }
             }
         }
+        .sheet(isPresented: $isShowingCustomRecurrence) {
+            NavigationStack {
+                CustomRecurrenceView(
+                    recurrence: viewModel.customRecurrenceToEdit(),
+                    startDate: viewModel.draft.startDate,
+                    calendar: viewModel.draft.recurrenceCalendar,
+                    describe: viewModel.customRecurrenceDescription(for:),
+                    onConfirm: viewModel.applyCustomRecurrence
+                )
+            }
+        }
         .alert(error: $saveErrorMessage) {}
         .interactiveDismissDisabled(viewModel.isEdited)
+    }
+
+    private var recurrenceBinding: Binding<EventRecurrence> {
+        Binding(
+            get: { viewModel.draft.recurrence },
+            set: { recurrence in
+                if recurrence == .custom {
+                    isShowingCustomRecurrence = true
+                } else {
+                    viewModel.setRecurrence(recurrence)
+                }
+            }
+        )
     }
 
     private func dateBinding(for pickerId: EventFormViewModel.DatePickerId) -> Binding<Date> {
