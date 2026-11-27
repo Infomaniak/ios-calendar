@@ -56,6 +56,7 @@ extension CalendarViewMode {
 }
 
 public struct CalendarView: View {
+    @Environment(\.calendar) private var calendar
     @Environment(\.calendarAccounts) private var calendarAccounts
     @Environment(MainViewState.self) private var mainViewState
 
@@ -120,7 +121,7 @@ public struct CalendarView: View {
 
             ToolbarItem(placement: .bottomBar) {
                 Button {
-                    mainViewState.selectedDate = Calendar.current.startOfDay(for: Date())
+                    mainViewState.showToday(calendar: calendar)
                 } label: {
                     TodayIconView()
                 }

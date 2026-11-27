@@ -48,6 +48,7 @@ struct MultipleDaysView: View {
             layout: layout,
             events: events,
             pagerScrollSync: pagerScrollSync,
+            todayScrollRequest: mainViewState.todayScrollRequest,
             selectedDate: $mainViewState.selectedDate
         )
         .id(layout)
