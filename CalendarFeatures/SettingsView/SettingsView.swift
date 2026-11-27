@@ -82,11 +82,13 @@ public struct SettingsView: View {
             Section {
                 Picker(selection: $appTheme) {
                     ForEach(Theme.allCases, id: \.self) { theme in
-                        Text(theme.title)
+                        Label(theme.title, symbol: theme.icon)
                             .tag(theme)
                     }
                 } label: {
-                    Label(CoreUILocalizable.themeTitle, symbol: ESDSSymbols.smartphoneTablet)
+                    Label(CoreUILocalizable.themeTitle, symbol: appTheme.icon)
+                } currentValueLabel: {
+                    Text(appTheme.title)
                 }
                 .pickerStyle(.navigationLink)
 

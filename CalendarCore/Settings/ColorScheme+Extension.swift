@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import ESDSSymbols
 import Foundation
 import InfomaniakCoreUIResources
 import SwiftUI
@@ -33,6 +34,17 @@ public enum Theme: String, CaseIterable, Sendable {
             return CoreUILocalizable.themeDark
         case .system:
             return CoreUILocalizable.themeSystem
+        }
+    }
+
+    public var icon: ESDSSymbols {
+        switch self {
+        case .light:
+            return .sun
+        case .dark:
+            return .moon
+        case .system:
+            return .smartphoneTablet
         }
     }
 
