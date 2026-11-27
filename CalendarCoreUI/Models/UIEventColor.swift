@@ -68,7 +68,7 @@ public struct UIEventColor: Sendable, Equatable, Hashable {
 
 public extension UIEventColor {
     init(customSource: Int32?) {
-        let calendarColor = calendarSourceColorArgb ?? CalendarColors.companion.DEFAULT_SOURCE_COLOR
+        let calendarColor = customSource ?? CalendarColors.companion.DEFAULT_SOURCE_COLOR
         self.init(eventColors: EventColors.companion.from(eventSourceColor: nil, calendarSourceColor: calendarColor))
     }
 }
