@@ -17,6 +17,7 @@
  */
 
 import CalendarResources
+import DesignSystem
 import ESDSFoundation
 import SwiftUI
 
@@ -28,7 +29,8 @@ struct NoEventsCellView: View {
             .font(.caption.weight(.medium))
             .foregroundStyle(theme.color.contentPrimary)
             .padding(.horizontal, value: .medium)
-            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.top, IKPadding.large)
+            .frame(maxWidth: .infinity)
     }
 }
 
