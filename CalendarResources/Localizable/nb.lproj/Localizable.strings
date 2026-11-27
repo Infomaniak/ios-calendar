@@ -293,6 +293,26 @@
 
 /* loco:6ae9872e2ae0ce93170dd772 */
 "removeLocationLabel" = "Fjern sted";
+/* loco:6b06f68d3b268fcdda022df3 */
+"recurrenceCustom" = "Tilpasset";
+
+/* loco:6b06f68fb41fbfad8000c807 */
+"recurrenceEveryDay" = "Hver dag";
+
+/* loco:6b06f69139fa47adb508bdfb */
+"recurrenceEveryMonth" = "Hver måned";
+
+/* loco:6b06f692cde9a151580206c5 */
+"recurrenceEveryWeek" = "Hver uke";
+
+/* loco:6b06f69439fa47adb508bdfd */
+"recurrenceEveryYear" = "Hvert år";
+
+/* loco:6af6d09b6f0286c42e0eaba2 */
+"recurrenceLabel" = "Gjentakelse";
+
+/* loco:6af6d0b76f0286c42e0eaba8 */
+"recurrenceNone" = "Ingen";
 
 /* loco:6ada2199dd47d237c40a2a52
  * Alert title shown when changing the participation status of a calendar event fails. */
