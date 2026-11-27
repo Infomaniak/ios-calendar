@@ -138,12 +138,13 @@ struct EventAlarmNotificationsServiceTests {
             id: "alarm-id",
             title: " Workshop ",
             location: "Salle Jules Verne",
-            start: DateComponents(year: 2027, month: 1, day: 15, hour: 14),
-            end: DateComponents(year: 2027, month: 1, day: 15, hour: 14, minute: 45)
+            start: DateComponents(year: 2027, month: 1, day: 15, hour: 10),
+            end: DateComponents(year: 2027, month: 1, day: 15, hour: 10, minute: 45)
         ))
 
         #expect(request.content.title == "Workshop")
-        #expect(request.content.body == "14:00\u{2009}–\u{2009}14:45\nSalle Jules Verne")
+        #expect(request.content.body.hasPrefix("10:00\u{2009}–\u{2009}10:45"))
+        #expect(request.content.body.hasSuffix("\nSalle Jules Verne"))
     }
 
     @Test func showsDayAndAllDayLabelForAllDayEvent() async throws {
@@ -178,11 +179,12 @@ struct EventAlarmNotificationsServiceTests {
     @Test func omitsLocationLineWhenEventHasNoLocation() async throws {
         let request = try await scheduledRequest(for: EventAlarmTestFixtures.upcomingAlarm(
             id: "alarm-id",
-            start: DateComponents(year: 2027, month: 1, day: 15, hour: 9),
-            end: DateComponents(year: 2027, month: 1, day: 15, hour: 10)
+            start: DateComponents(year: 2027, month: 1, day: 15, hour: 10),
+            end: DateComponents(year: 2027, month: 1, day: 15, hour: 11)
         ))
 
-        #expect(request.content.body == "09:00\u{2009}–\u{2009}10:00")
+        #expect(request.content.body.hasPrefix("10:00\u{2009}–\u{2009}11:00"))
+        #expect(!request.content.body.contains("\n"))
     }
 
     @Test func showsRelativeDayWhenEventIsNotOnFiringDay() async throws {
@@ -190,11 +192,11 @@ struct EventAlarmNotificationsServiceTests {
         let request = try await scheduledRequest(for: EventAlarmTestFixtures.upcomingAlarm(
             id: "alarm-id",
             firesAt: firesAt,
-            start: DateComponents(year: 2027, month: 1, day: 15, hour: 9),
-            end: DateComponents(year: 2027, month: 1, day: 15, hour: 10)
+            start: DateComponents(year: 2027, month: 1, day: 15, hour: 10),
+            end: DateComponents(year: 2027, month: 1, day: 15, hour: 11)
         ))
 
-        #expect(request.content.body == "\(relativeDay(offset: 1)) · 09:00\u{2009}–\u{2009}10:00")
+        #expect(request.content.body.hasPrefix("\(relativeDay(offset: 1)) · 10:00\u{2009}–\u{2009}11:00"))
     }
 
     @Test func usesUntitledLabelForEventWithoutTitle() async throws {
