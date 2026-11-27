@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarCore
 import CalendarCoreUI
 import CalendarResources
 import DesignSystem
@@ -26,17 +27,24 @@ struct MultipleDaysHeaderView: View {
     @Environment(\.calendar) private var calendar
     @Environment(\.esdsTheme) private var theme
 
+    @AppStorage(UserDefaults.shared.key(.showWeekNumbers), store: .shared)
+    private var showWeekNumbers = DefaultPreferences.showWeekNumbers
+
     let layout: MultipleDaysLayout
     let date: Date
     let pagerScrollSync: CalendarPeriodPagerScrollSync
 
     var body: some View {
         HStack(spacing: 0) {
-            Text(CalendarResourcesStrings.weekHeaderWeekNumber(calendar.component(.weekOfYear, from: date)))
-                .font(.caption2)
-                .foregroundStyle(theme.color.contentTertiary)
-                .padding(.trailing, value: .small)
-                .frame(width: TimelineBackgroundView.Constants.leadingInset, alignment: .trailing)
+            ZStack {
+                if showWeekNumbers {
+                    Text(CalendarResourcesStrings.weekHeaderWeekNumber(calendar.component(.weekOfYear, from: date)))
+                        .font(.caption2)
+                        .foregroundStyle(theme.color.contentTertiary)
+                        .padding(.trailing, value: .small)
+                }
+            }
+            .frame(width: TimelineBackgroundView.Constants.leadingInset, alignment: .trailing)
 
             TimelineView(.everyDay(calendar)) { timeline in
                 CalendarPeriodPagerMirror(
