@@ -93,12 +93,14 @@ struct ExpandableDatePicker<ID: Hashable>: View {
                 DatePicker(CalendarResourcesStrings.selectDateLabel, selection: $date, displayedComponents: .date)
                     .datePickerStyle(.graphical)
                     .labelsHidden()
+                    .frame(maxWidth: .infinity)
             }
 
             if expandedPickerId == id, expandedComponent == .hour {
                 DatePicker(CalendarResourcesStrings.selectTimeLabel, selection: $date, displayedComponents: .hourAndMinute)
                     .datePickerStyle(.wheel)
                     .labelsHidden()
+                    .frame(maxWidth: .infinity)
 
                 Button {
                     timeZonePickerId = id
