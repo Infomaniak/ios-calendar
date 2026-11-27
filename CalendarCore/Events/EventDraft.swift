@@ -33,6 +33,8 @@ public struct EventDraft: Hashable, Equatable, Sendable {
     public var endTimeZone: TimeZone?
 
     public var recurrence: EventRecurrence
+    /// Custom rule edited by the user. `nil` keeps the original rule untouched.
+    public var customRecurrence: CustomRecurrence?
 
     public var attendees: [Attendee]
     public var organizer: Organizer?
@@ -55,6 +57,7 @@ public struct EventDraft: Hashable, Equatable, Sendable {
         endDate: Date,
         endTimeZone: TimeZone? = .current,
         recurrence: EventRecurrence = .none,
+        customRecurrence: CustomRecurrence? = nil,
         attendees: [Attendee] = [],
         organizer: Organizer? = nil,
         alarms: [EventAlarmDraft] = [],
@@ -72,6 +75,7 @@ public struct EventDraft: Hashable, Equatable, Sendable {
         self.endDate = endDate
         self.endTimeZone = endTimeZone
         self.recurrence = recurrence
+        self.customRecurrence = customRecurrence
         self.attendees = attendees
         self.organizer = organizer
         self.alarms = alarms
@@ -101,6 +105,18 @@ public extension EventDraft {
             isPrivate: event.classification == .private,
             colorArgb: editData.eventColor == nil ? nil : event.colors.sourceColor
         )
+
+        if recurrence == .custom, let rule = editData.timing.recurrenceRule {
+            customRecurrence = CustomRecurrence(rule: rule, startDate: startDate, calendar: recurrenceCalendar)
+        }
+    }
+
+    /// Gregorian calendar in the start time zone, used to anchor recurrence rules on DTSTART.
+    var recurrenceCalendar: Foundation.Calendar {
+        var calendar = Foundation.Calendar(identifier: .gregorian)
+        calendar.locale = .current
+        calendar.timeZone = startTimeZone ?? .current
+        return calendar
     }
 
     static func empty() -> EventDraft {
@@ -171,10 +187,32 @@ public extension EventDraft {
         let isRecurring = recurrence != .none
         return EventTiming(
             bounds: bounds,
-            recurrenceRule: recurrence.sdkValue(preserving: originalTiming?.recurrenceRule),
+            recurrenceRule: sdkRecurrenceRule(preserving: originalTiming?.recurrenceRule),
             rDates: isRecurring ? originalTiming?.rDates ?? [] : [],
             exDates: isRecurring ? originalTiming?.exDates ?? [] : []
         )
+    }
+
+    func localizedCustomRecurrenceDescription() async -> String? {
+        guard let customRecurrence else { return nil }
+
+        let startZone = (startTimeZone ?? .current).toKotlinTimeZone()
+        guard let start = try? localDateTime(startDate, in: startZone) else { return nil }
+
+        let rule = customRecurrence.sdkValue(startDate: startDate, calendar: recurrenceCalendar, allDay: allDay)
+        return try? await rule.toLocalizedString(start: start, timeZone: startTimeZone == nil ? nil : startZone)
+    }
+
+    private func sdkRecurrenceRule(preserving originalRule: RecurrenceRule?) -> RecurrenceRule? {
+        guard recurrence == .custom, let customRecurrence else {
+            return recurrence.sdkValue(preserving: originalRule)
+        }
+
+        if let originalRule,
+           CustomRecurrence(rule: originalRule, startDate: startDate, calendar: recurrenceCalendar) == customRecurrence {
+            return originalRule
+        }
+        return customRecurrence.sdkValue(startDate: startDate, calendar: recurrenceCalendar, allDay: allDay)
     }
 
     private func localDateTime(_ date: Date, in timeZone: MultiplatformCalendar.TimeZone) throws -> LocalDateTime {
