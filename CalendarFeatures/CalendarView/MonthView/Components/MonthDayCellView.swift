@@ -23,9 +23,8 @@ import ESDSFoundation
 import SwiftUI
 
 struct MonthDayCellView: View {
-    private static let creationPressDuration: TimeInterval = 0.3
-
     @Environment(\.calendar) private var calendar
+    @Environment(\.creationPage) private var creationPage
     @Environment(\.esdsTheme) private var theme
 
     @Environment(EventInteractionModel.self) private var interaction
@@ -62,7 +61,7 @@ struct MonthDayCellView: View {
             .background(isToday ? theme.color.backgroundBrand.opacity(0.1) : .clear)
             .contentShape(.rect)
             .onTapGesture(perform: selectDay)
-            .onLongPressGesture(minimumDuration: Self.creationPressDuration, perform: createEvent)
+            .creationGesture(action: handleCreationGesture)
             .accessibilityElement(children: .ignore)
             .accessibilityAddTraits(.isButton)
             .accessibilityLabel(Text(day, format: .dateTime.weekday(.wide).day().month(.wide)))
@@ -73,8 +72,17 @@ struct MonthDayCellView: View {
         mainViewState.selectedDate = day
     }
 
-    private func createEvent() {
-        interaction.beginCreation(at: day, isAllDay: true, calendar: calendar)
-        interaction.endCreation()
+    private func handleCreationGesture(phase: CreationGesturePhase, location: CGPoint) {
+        switch phase {
+        case .began:
+            interaction.beginCreation(at: day, isAllDay: true, calendar: calendar)
+        case .changed:
+            interaction.updateCreation(to: creationPage?.day(at: location) ?? day)
+        case .ended:
+            interaction.updateCreation(to: creationPage?.day(at: location) ?? day)
+            interaction.endCreation()
+        case .cancelled:
+            interaction.cancelCreation()
+        }
     }
 }

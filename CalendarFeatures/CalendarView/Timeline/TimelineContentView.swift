@@ -39,6 +39,7 @@ struct TimelineContentView<EventContent: View, Overlay: View>: View {
     @State private var currentMagnification: CGFloat = 1.0
     @State private var pointsPerHour = TimelineViewConstants.PointsPerHour.default
     @State private var visibleHeight = CGFloat.zero
+    @State private var autoScroller = TimelineAutoScroller()
 
     @Binding var scrollPosition: ScrollPosition
     @Binding var scrollOffset: CGFloat
@@ -88,6 +89,7 @@ struct TimelineContentView<EventContent: View, Overlay: View>: View {
 
                     eventContent(geometry)
                         .padding(geometry.eventLayoutPadding)
+                        .environment(\.timelineAutoScroller, autoScroller)
                 }
                 .padding(.leading, leadingPadding)
                 .padding(.trailing, trailingPadding)
@@ -103,12 +105,22 @@ struct TimelineContentView<EventContent: View, Overlay: View>: View {
             max(proxy.size.height - IKPadding.small * 2, 0)
         } action: { newHeight in
             visibleHeight = newHeight
+            autoScroller.visibleHeight = newHeight
+        }
+        .onChange(of: contentHeight, initial: true) { _, newContentHeight in
+            autoScroller.contentHeight = newContentHeight
+        }
+        .onAppear {
+            autoScroller.scrollTo = { offset in
+                scrollPosition.scrollTo(y: offset)
+            }
         }
         .scrollPosition($scrollPosition)
         .onScrollGeometryChange(for: CGFloat.self) { scrollProxy in
             scrollProxy.contentOffset.y + scrollProxy.contentInsets.top
         } action: { _, offset in
             scrollOffset = offset
+            autoScroller.scrollOffset = offset
         }
         .timelineZoom(
             pointsPerHour: $pointsPerHour,

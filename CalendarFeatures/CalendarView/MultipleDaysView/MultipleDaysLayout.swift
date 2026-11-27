@@ -130,4 +130,9 @@ enum MultipleDaysLayout: Hashable {
     func isSelectingToday(_ selectedDate: Date, calendar: Calendar) -> Bool {
         return calendar.isDate(selectedDate, equalTo: .now, toGranularity: pagerComponent)
     }
+
+    func visibleDays(for selectedDate: Date, calendar: Calendar) -> [Date] {
+        guard let visibleInterval = visibleInterval(for: selectedDate, calendar: calendar) else { return [] }
+        return calendar.days(from: visibleInterval.start, to: visibleInterval.end)
+    }
 }

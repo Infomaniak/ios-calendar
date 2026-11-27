@@ -71,6 +71,7 @@ struct MultipleDaysColumnView: View {
                 .eventuallyDateIntervalLayout(DateInterval(start: event.startDate, end: event.endDate))
             }
         }
+        .timelineInteractions(date: date, pointsPerHour: pointsPerHour)
         .padding(.horizontal, Constants.eventsSpacing)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .overlay(alignment: .trailing) {

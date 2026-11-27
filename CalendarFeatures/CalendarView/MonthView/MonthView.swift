@@ -41,6 +41,7 @@ struct MonthView: View {
         @Bindable var mainViewState = mainViewState
 
         MonthContentView(weekLayouts: weekLayouts, selectedDate: $mainViewState.selectedDate)
+            .edgePagingDropZones(component: .month, date: $mainViewState.selectedDate)
             .task(id: MonthObservationId(monthStart: monthStart, calendar: calendar)) {
                 await observeEvents(around: monthStart, calendar: calendar)
             }

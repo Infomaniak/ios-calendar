@@ -88,6 +88,7 @@ struct MonthWeekRowView: View {
                     .padding(.top, metrics.totalDayNumberHeight)
                 }
             }
+            .monthWeekInteractions(days: days, metrics: metrics)
         }
         .frame(height: rowHeight + bottomExtension)
     }
