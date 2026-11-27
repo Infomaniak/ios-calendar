@@ -298,6 +298,26 @@
 /* loco:6b06f68d3b268fcdda022df3 */
 "recurrenceCustom" = "Personnalisée";
 
+/* loco:6b095d93a2e3733c1e0d1422
+ * Custom recurrence editor: label of the menu choosing when the recurrence ends */
+"recurrenceEnd" = "Se termine";
+
+/* loco:6b095d92cc67337c3a093bb2
+ * Custom recurrence editor: the recurrence ends after a number of occurrences */
+"recurrenceEndAfter" = "Après un nombre de fois";
+
+/* loco:6b095d93566d610b3f0d0bc2
+ * Custom recurrence editor: the recurrence never ends */
+"recurrenceEndNever" = "Jamais";
+
+/* loco:6b095d937216eeeca00c4032
+ * Custom recurrence editor: unit shown next to the occurrence count wheel (e.g. 3 times) */
+"recurrenceEndOccurrences" = "fois";
+
+/* loco:6b095d93ef33f0f75d071878
+ * Custom recurrence editor: the recurrence ends at a chosen date */
+"recurrenceEndUntil" = "Jusqu’à une date de fin";
+
 /* loco:6b06f68fb41fbfad8000c807 */
 "recurrenceEveryDay" = "Tous les jours";
 
@@ -310,11 +330,47 @@
 /* loco:6b06f69439fa47adb508bdfd */
 "recurrenceEveryYear" = "Tous les ans";
 
+/* loco:6b095d93708f4137ad0e7ac2
+ * Custom recurrence editor: label of the frequency menu */
+"recurrenceFrequency" = "Fréquence";
+
+/* loco:6b095d94cc67337c3a093bb4
+ * Custom recurrence editor: daily frequency option */
+"recurrenceFrequencyDaily" = "Chaque jour";
+
+/* loco:6b095d94566d610b3f0d0bc4
+ * Custom recurrence editor: monthly frequency option */
+"recurrenceFrequencyMonthly" = "Chaque mois";
+
+/* loco:6b095d94a2e3733c1e0d1424
+ * Custom recurrence editor: weekly frequency option */
+"recurrenceFrequencyWeekly" = "Chaque semaine";
+
+/* loco:6b095d9426d9fe9ae40fd633
+ * Custom recurrence editor: yearly frequency option */
+"recurrenceFrequencyYearly" = "Chaque année";
+
 /* loco:6af6d09b6f0286c42e0eaba2 */
 "recurrenceLabel" = "Récurrence";
 
 /* loco:6af6d0b76f0286c42e0eaba8 */
 "recurrenceNone" = "Aucune";
+
+/* loco:6b095d99708f4137ad0e7ac4
+ * Yearly recurrence option: repeat on this date. %@ is a day and month (e.g. On November 26) */
+"recurrencePatternDate" = "Le %@";
+
+/* loco:6b095d945639d403f10e1842
+ * Monthly recurrence option: repeat on this day of the month. %d is the day number (e.g. On the 26) */
+"recurrencePatternDayOfMonth" = "Le %d";
+
+/* loco:6b095d9acc67337c3a093bb6
+ * Monthly/yearly recurrence option. %@ is a weekday name (e.g. The first Monday) */
+"recurrencePatternFirstWeekday" = "Le premier %@";
+
+/* loco:6b095d99453ee07b45065ce6
+ * Monthly/yearly recurrence option. %@ is a weekday name (e.g. The last Monday) */
+"recurrencePatternLastWeekday" = "Le dernier %@";
 
 /* loco:6ada2199dd47d237c40a2a52
  * Alert title shown when changing the participation status of a calendar event fails. */
