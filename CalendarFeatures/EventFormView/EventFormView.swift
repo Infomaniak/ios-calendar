@@ -27,10 +27,14 @@ import MultiplatformCalendar
 import OSLog
 import SwiftUI
 
-public enum EditionMode {
+public enum EditionMode: Hashable, Identifiable {
     case new(selectedDate: Date)
     case prefilled(draft: EventDraft)
     case editDraft(draft: EventDraft, editingEvent: UIEventDetails)
+
+    public var id: Self {
+        return self
+    }
 
     var isCreation: Bool {
         switch self {

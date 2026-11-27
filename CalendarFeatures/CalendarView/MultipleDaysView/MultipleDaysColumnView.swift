@@ -67,6 +67,7 @@ struct MultipleDaysColumnView: View {
                         maxVisibleHeight: coveredTextHeights[index]
                     )
                 }
+                .eventQuickActions(.all, event: event)
                 .eventuallyDateIntervalLayout(DateInterval(start: event.startDate, end: event.endDate))
             }
         }
@@ -91,4 +92,6 @@ struct MultipleDaysColumnView: View {
         horizontalLayoutPointsPerHour: 64,
         hPadding: 8
     )
+    .environment(MainViewState())
+    .environment(EventInteractionModel())
 }

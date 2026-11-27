@@ -40,5 +40,6 @@ struct MonthEventButton: View {
                 .padding(.trailing, 2)
                 .eventCellStyle(event: event, cornerRadius: 4)
         }
+        .eventQuickActions(.drag, event: event)
     }
 }
