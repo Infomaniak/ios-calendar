@@ -18,6 +18,7 @@
 
 import InfomaniakDI
 import MultiplatformCalendar
+import WidgetKit
 
 public struct CreateEventUseCase: Sendable {
     public init() {}
@@ -30,5 +31,7 @@ public struct CreateEventUseCase: Sendable {
 
         @InjectService var calendarSDK: CalendarCoreGraph
         try await calendarSDK.calendarManager.createEvent(data: draft.toEventEditData())
+
+        WidgetCenter.shared.reloadAllTimelines()
     }
 }

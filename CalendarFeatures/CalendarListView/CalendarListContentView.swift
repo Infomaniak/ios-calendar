@@ -25,6 +25,7 @@ import ESDSSymbols
 import InfomaniakDI
 @preconcurrency import MultiplatformCalendar
 import SwiftUI
+import WidgetKit
 
 struct StoredIds<ID: LosslessStringConvertible & Hashable & Comparable>: RawRepresentable {
     var ids: Set<ID>
@@ -140,6 +141,7 @@ struct CalendarListContentView: View {
             @InjectService var calendarSDK: CalendarCoreGraph
             do {
                 try await calendarSDK.calendarManager.updateCalendarVisibility(calendarId: calendar.id, visible: newValue)
+                WidgetCenter.shared.reloadAllTimelines()
             } catch {
                 visibilityOverrides[calendar.id] = previousValue
             }

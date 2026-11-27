@@ -211,14 +211,7 @@ struct PlanningView: View {
             }
 
             let groupedEvents = Dictionary(grouping: uiEvents) { $0.startDate.startOfDay(calendar) }
-                .mapValues { events in
-                    events.sorted { lhs, rhs in
-                        if lhs.isAllDay != rhs.isAllDay {
-                            return lhs.isAllDay
-                        }
-                        return lhs.startDate < rhs.startDate
-                    }
-                }
+                .mapValues { $0.sortedForPlanning() }
             guard groupedEvents != lastGroupedEvents else { continue }
             lastGroupedEvents = groupedEvents
 

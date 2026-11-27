@@ -18,6 +18,7 @@
 
 import InfomaniakDI
 import MultiplatformCalendar
+import WidgetKit
 
 public struct UpdateParticipationStatusUseCase: Sendable {
     public init() {}
@@ -30,5 +31,7 @@ public struct UpdateParticipationStatusUseCase: Sendable {
         }
         let target = occurrence.targetFor(scope: scope)
         try await calendarSDK.calendarManager.updateParticipationStatus(target: target, reply: reply)
+
+        WidgetCenter.shared.reloadAllTimelines()
     }
 }

@@ -17,15 +17,26 @@
  */
 
 import CalendarCore
+import CalendarCoreUI
+import CalendarEventDetailsView
 import Contacts
 import InfomaniakDI
 @preconcurrency import MultiplatformCalendar
 import OSLog
 import SwiftUI
 
+private struct PresentedOccurrenceId: Identifiable {
+    let id: String
+}
+
 public struct MainView: View {
+    @Environment(\.calendar) private var calendar
     @Environment(\.calendarAccounts) private var calendarAccounts
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @Environment(MainViewState.self) private var mainViewState
+    @Environment(UniversalLinksState.self) private var universalLinksState
+
+    @State private var presentedOccurrenceId: PresentedOccurrenceId?
 
     public init() {}
 
@@ -42,6 +53,32 @@ public struct MainView: View {
             await askForPermissions()
         }
         .sceneLifecycle(willEnterForeground: willEnterForeground)
+        .onAppear {
+            if let pendingAction = universalLinksState.pendingAction {
+                consume(pendingAction)
+            }
+        }
+        .onChange(of: universalLinksState.pendingAction) { _, pendingAction in
+            guard let pendingAction else { return }
+            consume(pendingAction)
+        }
+        .sheet(item: $presentedOccurrenceId) { presentedOccurrenceId in
+            OpenEventDetailsIntentView(occurrenceId: presentedOccurrenceId.id)
+        }
+    }
+
+    private func consume(_ action: UniversalLinksState.UniversalLinkAction) {
+        switch action {
+        case .goTo(.event(let occurrenceId)):
+            mainViewState.presentedEvent = nil
+            presentedOccurrenceId = PresentedOccurrenceId(id: occurrenceId)
+        case .goTo(.newEvent):
+            mainViewState.presentedEvent = nil
+            presentedOccurrenceId = nil
+            mainViewState.selectedDate = calendar.startOfDay(for: .now)
+            mainViewState.isShowingEventCreation = true
+        }
+        universalLinksState.pendingAction = nil
     }
 
     private func willEnterForeground() {
@@ -82,4 +119,6 @@ public struct MainView: View {
 
 #Preview {
     MainView()
+        .environment(MainViewState())
+        .environment(UniversalLinksState())
 }

@@ -227,6 +227,7 @@ let project = Project(
             bundleId: "\(Constants.baseIdentifier).WidgetExtension",
             deploymentTargets: Constants.deploymentTarget,
             infoPlist: .extendingDefault(with: [
+                "AppIdentifierPrefix": "$(AppIdentifierPrefix)",
                 "CFBundleDisplayName": "Infomaniak Calendar",
                 "CFBundleShortVersionString": "$(MARKETING_VERSION)",
                 "CFBundleVersion": "$(CURRENT_PROJECT_VERSION)",
@@ -241,9 +242,15 @@ let project = Project(
             ],
             entitlements: "\(Constants.projectName)Widget/Resources/\(Constants.projectName)Widget.entitlements",
             dependencies: [
+                .target(name: "\(Constants.projectName)Core"),
+                .target(name: "\(Constants.projectName)CoreUI"),
                 .target(name: "\(Constants.projectName)Resources"),
+                .external(name: "DesignSystem"),
                 .external(name: "ESDSCalendar"),
-                .external(name: "ESDSFoundation")
+                .external(name: "ESDSFoundation"),
+                .external(name: "ESDSSymbols"),
+                .external(name: "InfomaniakDI"),
+                .external(name: "MultiplatformCalendar")
             ],
             settings: .settings(base: Constants.baseSettings)
         ),
