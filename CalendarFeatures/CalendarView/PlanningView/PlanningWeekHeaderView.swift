@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CalendarCore
 import CalendarResources
 import ESDSFoundation
 import SwiftUI
@@ -23,6 +24,9 @@ import SwiftUI
 struct PlanningWeekHeaderView: View {
     @Environment(\.esdsTheme) private var theme
     @Environment(\.calendar) private var calendar
+
+    @AppStorage(UserDefaults.shared.key(.showWeekNumbers), store: .shared)
+    private var showWeekNumbers = DefaultPreferences.showWeekNumbers
 
     let date: Date
 
@@ -34,9 +38,11 @@ struct PlanningWeekHeaderView: View {
     var body: some View {
         if let weekInterval {
             HStack {
-                Text(CalendarResourcesStrings.weekHeaderWeekNumber(calendar.component(.weekOfYear, from: date)))
-                    .font(.system(.caption2))
-                    .foregroundStyle(theme.color.contentTertiary)
+                if showWeekNumbers {
+                    Text(CalendarResourcesStrings.weekHeaderWeekNumber(calendar.component(.weekOfYear, from: date)))
+                        .font(.system(.caption2))
+                        .foregroundStyle(theme.color.contentTertiary)
+                }
 
                 Text(weekInterval, format: .interval.day().month(.wide))
                     .font(.system(.caption, weight: .semibold))
