@@ -171,7 +171,7 @@ public struct EventFormView: View {
                             selectedCalendar: viewModel.selectedCalendar
                         )
                     } label: {
-                        Label(CalendarResourcesStrings.sectionCalendarHeader, symbol: .productCalendar)
+                        Label(CalendarResourcesStrings.sectionCalendarHeader, symbol: .calendar)
                             .labelStyle(.formLabel)
                     }
                 }

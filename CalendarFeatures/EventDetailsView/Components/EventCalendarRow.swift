@@ -43,7 +43,7 @@ struct EventCalendarRow: View {
                             .lineLimit(1)
                     }
                 } label: {
-                    Label(CalendarResourcesStrings.sectionCalendarHeader, symbol: .productCalendar)
+                    Label(CalendarResourcesStrings.sectionCalendarHeader, symbol: .calendar)
                         .labelStyle(.formLabel)
                 }
             }
