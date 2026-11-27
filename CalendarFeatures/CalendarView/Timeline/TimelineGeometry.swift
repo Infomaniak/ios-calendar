@@ -19,18 +19,19 @@
 import SwiftUI
 
 struct TimelineGeometry {
+    static let eventLayerVerticalInset = TimelineBackgroundView.Constants.verticalInset
+        - TimelineBackgroundView.Constants.indexHeight / 2
+
     let startOfDay: Date
     let pointsPerHour: CGFloat
     let contentHeight: CGFloat
     let visibleHeight: CGFloat
 
     var eventLayoutPadding: EdgeInsets {
-        let verticalInset = TimelineBackgroundView.Constants.verticalInset - TimelineBackgroundView.Constants.indexHeight / 2
-
         return EdgeInsets(
-            top: verticalInset,
+            top: Self.eventLayerVerticalInset,
             leading: TimelineBackgroundView.Constants.leadingInset,
-            bottom: verticalInset,
+            bottom: Self.eventLayerVerticalInset,
             trailing: 0
         )
     }

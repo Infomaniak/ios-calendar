@@ -27,13 +27,27 @@ import MultiplatformCalendar
 import OSLog
 import SwiftUI
 
-public enum EditionMode {
+public enum EditionMode: Hashable, Identifiable {
     case new(selectedDate: Date)
+    case prefilled(draft: EventDraft)
     case editDraft(draft: EventDraft, editingEvent: UIEventDetails)
+
+    public var id: Self {
+        return self
+    }
+
+    var isCreation: Bool {
+        switch self {
+        case .new, .prefilled:
+            return true
+        case .editDraft:
+            return false
+        }
+    }
 
     var navigationTitle: String {
         switch self {
-        case .new:
+        case .new, .prefilled:
             return CalendarResourcesStrings.createEventTitle
         case .editDraft:
             return CalendarResourcesStrings.editEventTitle
@@ -204,7 +218,7 @@ public struct EventFormView: View {
         .navigationTitle(Text(viewModel.editionMode.navigationTitle))
         .toolbarTitleDisplayMode(.inline)
         .toolbar {
-            if case .new = viewModel.editionMode {
+            if viewModel.editionMode.isCreation {
                 CloseToolbarItem(action: dismiss.callAsFunction)
             }
 
@@ -257,7 +271,7 @@ public struct EventFormView: View {
     private func saveEvent(scope: RecurrenceScope) {
         let action: EventFormViewModel.EditFormAction
         switch viewModel.editionMode {
-        case .new:
+        case .new, .prefilled:
             action = .new
         case .editDraft(_, let editingEvent):
             action = .editDraft(occurrenceId: editingEvent.occurrenceId, scope: scope)
@@ -277,7 +291,7 @@ public struct EventFormView: View {
     }
 
     private func focusTitleIfNecessary() {
-        guard case .new = viewModel.editionMode, !hasFocusedKeyboardOnce else {
+        guard viewModel.editionMode.isCreation, !hasFocusedKeyboardOnce else {
             return
         }
 

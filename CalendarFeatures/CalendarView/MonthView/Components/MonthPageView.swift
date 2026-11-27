@@ -57,5 +57,6 @@ struct MonthPageView: View {
                 )
             }
         }
+        .creationPage(rows: grid.weeks, rowHeight: rowHeight, leadingInset: metrics.weekNumberWidth)
     }
 }

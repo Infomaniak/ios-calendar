@@ -23,8 +23,11 @@ import ESDSFoundation
 import SwiftUI
 
 struct MonthDayCellView: View {
+    @Environment(\.calendar) private var calendar
+    @Environment(\.creationPage) private var creationPage
     @Environment(\.esdsTheme) private var theme
 
+    @Environment(EventInteractionModel.self) private var interaction
     @Environment(MainViewState.self) private var mainViewState
 
     @SceneStorage(SceneStorageKeys.selectedMode.rawValue)
@@ -42,29 +45,44 @@ struct MonthDayCellView: View {
     }
 
     var body: some View {
-        Button(action: selectDay) {
-            Text(day, format: .dateTime.day())
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(dayNumberColor)
-                .opacity(isInMonth ? 1 : 0.45)
-                .padding(value: .micro)
-                .background {
-                    if isToday {
-                        Circle()
-                            .fill(theme.color.backgroundBrand)
-                    }
+        Text(day, format: .dateTime.day())
+            .font(.caption.weight(.semibold))
+            .foregroundStyle(dayNumberColor)
+            .opacity(isInMonth ? 1 : 0.45)
+            .padding(value: .micro)
+            .background {
+                if isToday {
+                    Circle()
+                        .fill(theme.color.backgroundBrand)
                 }
-                .padding(value: .mini)
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                .background(isToday ? theme.color.backgroundBrand.opacity(0.1) : .clear)
-                .contentShape(.rect)
-        }
-        .buttonStyle(.plain)
-        .accessibilityLabel(Text(day, format: .dateTime.weekday(.wide).day().month(.wide)))
+            }
+            .padding(value: .mini)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+            .background(isToday ? theme.color.backgroundBrand.opacity(0.1) : .clear)
+            .contentShape(.rect)
+            .onTapGesture(perform: selectDay)
+            .creationGesture(action: handleCreationGesture)
+            .accessibilityElement(children: .ignore)
+            .accessibilityAddTraits(.isButton)
+            .accessibilityLabel(Text(day, format: .dateTime.weekday(.wide).day().month(.wide)))
     }
 
     private func selectDay() {
         selectedMode = .day
         mainViewState.selectedDate = day
+    }
+
+    private func handleCreationGesture(phase: CreationGesturePhase, location: CGPoint) {
+        switch phase {
+        case .began:
+            interaction.beginCreation(at: day, isAllDay: true, calendar: calendar)
+        case .changed:
+            interaction.updateCreation(to: creationPage?.day(at: location) ?? day)
+        case .ended:
+            interaction.updateCreation(to: creationPage?.day(at: location) ?? day)
+            interaction.endCreation()
+        case .cancelled:
+            interaction.cancelCreation()
+        }
     }
 }

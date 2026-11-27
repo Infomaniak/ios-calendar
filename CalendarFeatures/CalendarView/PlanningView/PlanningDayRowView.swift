@@ -67,6 +67,7 @@ struct PlanningDayRowView: View {
                                         .offset(y: IKPadding.mini / 2)
                                 }
                             }
+                            .eventQuickActions(.menu, event: event)
                         }
                     }
                 }
@@ -101,4 +102,5 @@ struct PlanningDayRowView: View {
         PlanningDayRowView(date: Date().addingTimeInterval(86400), events: [])
     }
     .environment(MainViewState())
+    .environment(EventInteractionModel())
 }

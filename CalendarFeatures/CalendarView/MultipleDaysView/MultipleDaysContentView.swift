@@ -76,6 +76,7 @@ struct MultipleDaysContentView: View {
                     }
                 }
             }
+            .creationPage(rows: [layout.visibleDays(for: selectedDate, calendar: calendar)])
             .overlay(alignment: .leading) {
                 MultipleDaysColumnView.Separator()
             }
@@ -136,4 +137,5 @@ struct MultipleDaysContentView: View {
     @Previewable @State var selectedDate = Date.now
     @Previewable @State var pagerScrollSync = CalendarPeriodPagerScrollSync()
     MultipleDaysContentView(layout: .week, events: [:], pagerScrollSync: pagerScrollSync, selectedDate: $selectedDate)
+        .environment(EventInteractionModel())
 }
