@@ -35,6 +35,7 @@ struct MultipleDaysContentView: View {
     let layout: MultipleDaysLayout
     let events: [Date: [UIEventSummary]]
     let pagerScrollSync: CalendarPeriodPagerScrollSync
+    let todayScrollRequest: TodayScrollRequest?
 
     @Binding var selectedDate: Date
 
@@ -86,6 +87,10 @@ struct MultipleDaysContentView: View {
                 guard oldHeight == 0, newHeight > 0 else { return }
                 scrollToInitialPosition(geometry)
             }
+            .onChange(of: todayScrollRequest) { _, request in
+                guard let request, geometry.visibleHeight > 0 else { return }
+                scrollToTime(request.date, geometry: geometry)
+            }
         } overlay: { geometry in
             TimelineView(.everyMinute) { timeline in
                 let date = timeline.date
@@ -130,10 +135,23 @@ struct MultipleDaysContentView: View {
         }
         hasPerformedInitialScroll = true
     }
+
+    private func scrollToTime(_ time: Date, geometry: TimelineGeometry) {
+        guard geometry.visibleHeight > 0 else { return }
+        withAnimation {
+            scrollPosition.scrollTo(y: geometry.centeredScrollOffset(for: time, calendar: calendar))
+        }
+    }
 }
 
 #Preview {
     @Previewable @State var selectedDate = Date.now
     @Previewable @State var pagerScrollSync = CalendarPeriodPagerScrollSync()
-    MultipleDaysContentView(layout: .week, events: [:], pagerScrollSync: pagerScrollSync, selectedDate: $selectedDate)
+    MultipleDaysContentView(
+        layout: .week,
+        events: [:],
+        pagerScrollSync: pagerScrollSync,
+        todayScrollRequest: nil,
+        selectedDate: $selectedDate
+    )
 }

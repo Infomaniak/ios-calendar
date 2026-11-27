@@ -18,6 +18,12 @@
 
 import Foundation
 
+/// An explicit request to show today and scroll to the current time, distinct for every request.
+public struct TodayScrollRequest: Equatable, Sendable {
+    public let id = UUID()
+    public let date: Date
+}
+
 @MainActor
 @Observable
 public final class MainViewState {
@@ -26,7 +32,15 @@ public final class MainViewState {
 
     public var isShowingEventCreation = false
 
+    public private(set) var todayScrollRequest: TodayScrollRequest?
+
     public init(selectedDate: Date = Date()) {
         self.selectedDate = selectedDate
+    }
+
+    public func showToday(calendar: Calendar) {
+        let now = Date()
+        selectedDate = calendar.startOfDay(for: now)
+        todayScrollRequest = TodayScrollRequest(date: now)
     }
 }

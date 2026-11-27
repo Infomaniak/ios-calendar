@@ -99,6 +99,10 @@ struct DayContentView: View {
                       !calendar.isDate(date, inSameDayAs: oldSelectedDate) else { return }
                 scrollToCorrectPosition(geometry)
             }
+            .onChange(of: mainViewState.todayScrollRequest) { _, request in
+                guard let request, calendar.isDate(date, inSameDayAs: request.date) else { return }
+                scrollToTime(request.date, geometry: geometry)
+            }
         } overlay: { geometry in
             TimelineView(.everyMinute) { timeline in
                 timelineIndicator(date: timeline.date, geometry: geometry)
@@ -135,10 +139,16 @@ struct DayContentView: View {
 
     private func scrollToCorrectPosition(_ geometry: TimelineGeometry) {
         if calendar.isDate(date, inSameDayAs: .now) {
-            guard geometry.visibleHeight > 0 else { return }
-            scrollPosition.scrollTo(y: geometry.centeredScrollOffset(for: .now, calendar: calendar))
+            scrollToTime(.now, geometry: geometry)
         } else {
             scrollPosition.scrollTo(y: storedScrollPosition)
+        }
+    }
+
+    private func scrollToTime(_ time: Date, geometry: TimelineGeometry) {
+        guard geometry.visibleHeight > 0 else { return }
+        withAnimation {
+            scrollPosition.scrollTo(y: geometry.centeredScrollOffset(for: time, calendar: calendar))
         }
     }
 }
