@@ -83,8 +83,10 @@ struct UpcomingEventsWidgetProvider: TimelineProvider {
                 return
             }
 
-            let events = await Self.todayEvents(now: now, calendar: calendar)
-            completion(UpcomingEventsWidgetEntry(date: now, calendar: calendar, events: events.upcoming(at: now)))
+            @InjectService var calendarSDK: CalendarCoreGraph
+            let events = await calendarSDK.calendarManager.planningEvents(on: now, calendar: calendar)
+                .filterUpcomingAttending(at: now)
+            completion(UpcomingEventsWidgetEntry(date: now, calendar: calendar, events: events))
         }
     }
 
@@ -119,9 +121,12 @@ struct UpcomingEventsWidgetProvider: TimelineProvider {
 
                 let firstEntryDate = max(now, startOfDay)
                 let events = await calendarSDK.calendarManager.planningEvents(on: startOfDay, calendar: calendar)
-                let refreshDates = Set(events.map(\.endDate).filter { $0 > firstEntryDate && $0 < endOfDay })
-                entries += ([firstEntryDate] + refreshDates.sorted()).map { date in
-                    UpcomingEventsWidgetEntry(date: date, calendar: calendar, events: events.upcoming(at: date))
+                    .filterUpcomingAttending(at: firstEntryDate)
+                let refreshDates = Set(events.map(\.endDate).filter { $0 < endOfDay })
+
+                entries.append(UpcomingEventsWidgetEntry(date: firstEntryDate, calendar: calendar, events: events))
+                entries += refreshDates.sorted().map { date in
+                    UpcomingEventsWidgetEntry(date: date, calendar: calendar, events: events.filterUpcomingAttending(at: date))
                 }
             }
 
@@ -135,10 +140,5 @@ struct UpcomingEventsWidgetProvider: TimelineProvider {
         guard await !accountManager.calendarAccounts.isEmpty else {
             throw .noAccount
         }
-    }
-
-    private static func todayEvents(now: Date, calendar: Foundation.Calendar) async -> [UIEventSummary] {
-        @InjectService var calendarSDK: CalendarCoreGraph
-        return await calendarSDK.calendarManager.planningEvents(on: now, calendar: calendar)
     }
 }

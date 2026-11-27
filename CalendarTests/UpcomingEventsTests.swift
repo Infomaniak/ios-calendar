@@ -24,18 +24,36 @@ private func hour(_ hour: Double) -> Date {
     Date(timeIntervalSince1970: hour * 3600)
 }
 
-private func event(_ startHour: Double, _ endHour: Double, isAllDay: Bool = false) -> UIEventSummary {
-    UIEventSummary(details: UIEventDetails(
+private func event(
+    _ startHour: Double,
+    _ endHour: Double,
+    isAllDay: Bool = false,
+    myStatus: UIParticipationStatus? = nil,
+    hasGuests: Bool = false,
+    isCancelled: Bool = false
+) -> UIEventSummary {
+    let user = myStatus.map { UIAttendee(displayName: "User", email: "user@example.com", status: $0) }
+    let attendees: [UIAttendee]
+    if let user {
+        attendees = [user]
+    } else if hasGuests {
+        attendees = [UIAttendee(displayName: "Guest", email: "guest@example.com", status: .accepted)]
+    } else {
+        attendees = []
+    }
+
+    return UIEventSummary(details: UIEventDetails(
         id: "\(startHour)-\(endHour)",
         occurrenceId: "\(startHour)-\(endHour)",
         title: "Event",
         startDate: hour(startHour),
         endDate: hour(endHour),
         isAllDay: isAllDay,
-        status: .confirmed,
+        status: isCancelled ? .cancelled : .confirmed,
         calendarId: "0",
         accountId: 0,
-        attendees: [],
+        user: user,
+        attendees: attendees,
         colors: .preview,
         timing: .preview,
         canEdit: true
@@ -51,11 +69,37 @@ struct UpcomingEventsTests {
 
     @Test func keepsOngoingAndUpcomingEvents() {
         let allDay = event(0, 24, isAllDay: true)
-        let events = [allDay, event(8, 9), event(9.5, 11), event(12, 13)]
-        #expect(events.upcoming(at: hour(10)) == [allDay, event(9.5, 11), event(12, 13)])
+        let ongoing = event(9.5, 11)
+        let upcoming = event(12, 13, myStatus: .accepted)
+        let events = [allDay, event(8, 9, myStatus: .accepted), ongoing, upcoming]
+        #expect(events.filterUpcomingAttending(at: hour(10)) == [allDay, ongoing, upcoming])
     }
 
     @Test func dropsEventEndingNow() {
-        #expect([event(8, 10)].upcoming(at: hour(10)).isEmpty)
+        #expect([event(8, 10)].filterUpcomingAttending(at: hour(10)).isEmpty)
+    }
+
+    @Test func keepsAcceptedEventsAndEventsWithoutGuests() {
+        let personal = event(8, 9)
+        let accepted = event(9, 10, myStatus: .accepted)
+        let events = [
+            personal,
+            event(8.5, 9.5, hasGuests: true),
+            accepted,
+            event(10, 11, myStatus: .declined),
+            event(11, 12, myStatus: .tentative),
+            event(12, 13, myStatus: .needsAction)
+        ]
+
+        #expect(events.filterUpcomingAttending(at: hour(8)) == [personal, accepted])
+    }
+
+    @Test func dropsCancelledEventsRegardlessOfAttendance() {
+        let events = [
+            event(8, 9, myStatus: .accepted, isCancelled: true),
+            event(9, 10, isCancelled: true)
+        ]
+
+        #expect(events.filterUpcomingAttending(at: hour(8)).isEmpty)
     }
 }

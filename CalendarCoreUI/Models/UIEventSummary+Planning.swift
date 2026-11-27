@@ -30,8 +30,14 @@ public extension Sequence<UIEventSummary> {
         }
     }
 
-    func upcoming(at date: Date) -> [UIEventSummary] {
-        filter { $0.endDate > date }
+    func filterUpcomingAttending(at date: Date) -> [UIEventSummary] {
+        filter { event in
+            guard event.endDate > date, event.status != .cancelled else { return false }
+
+            let hasAccepted = event.myStatus == .accepted
+            let requiresNoReply = event.myStatus == nil && !event.hasAttendees
+            return hasAccepted || requiresNoReply
+        }
     }
 }
 
